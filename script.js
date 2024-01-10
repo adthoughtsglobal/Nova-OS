@@ -114,7 +114,7 @@ function flwin(x) {
 async function openapp(x) {
 	const defapps = ['files', 'settings', 'camera', 'clock']
 	if (defapps.includes(x)) {
-		const y = await fetchData("/appdata/"+ x + "/index.html");
+		const y = await fetchData("/Nova-OS/appdata/"+ x + "/index.html");
 		openwindow(x, y)
 	} else {
 		if (confirm("This app is BETA and may be harmful for your device.\n\nDo you wish to open it?")) {
