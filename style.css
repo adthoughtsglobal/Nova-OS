@@ -1,0 +1,197 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
+
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: transparent; 
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #2b2b2b; 
+	border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
+
+html {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+	margin: 0;
+	background-color: #181a1b;
+	overflow: hidden;
+	font-family: 'Poppins', sans-serif;
+}
+
+nav {
+	bottom: 0;
+	position: fixed;
+	width: calc(100vw);
+	background-color: #2a2b2c;
+	color: white;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: row;
+	z-index: 99;
+	user-select: none;
+}
+
+nav [navobj] {
+	padding: 1px;
+	margin: 3px;
+	border-radius: 5px;
+	background-color: #252627;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: row;
+}
+
+nav [navobj] div {
+	display: inline-block;
+	margin: 5px 7px;
+	text-align: center;
+	font-size: 11px;
+}
+
+nav info {
+	align-self: flex-end;
+}
+
+#battery-display {
+	transform: rotate(90deg) scale(0.8) translateX(-8px);
+}
+
+#battery-p-display {
+	transform: translate(0px, 11px);
+	display: block;
+	height: 0px;
+	color: white;
+}
+
+#date-display {
+	font-size: 9px;
+	line-height: 10px;
+	display: block;
+}
+
+[navobj] [app-shortcut] {
+	background-color:transparent;
+	cursor: pointer;
+	transition: .2s;
+}
+
+[navobj] [app-shortcut]:hover {
+	transform: scale(1.1);
+}
+
+.mmic {
+	width: 10px;
+	height: 23px;
+}
+
+.window {
+	min-width: 400px;
+	position: absolute;
+	min-height: 200px;
+	
+	background-color: black;
+	display: inline-block;
+	color: white;
+	font-size: 0.8rem;
+	overflow: hidden;
+	box-shadow:-1px 2px 12px 2px #000000a6;
+	resize: both;
+	animation: appshow 0.3s 1;
+}
+
+@keyframes appshow {
+	0% {
+		transform: translateY(0px) scale(0.5);
+		filter: blur(10px);
+		opacity: 0%;
+	}
+	100% {
+		transform: translateY(0px) scale(1);
+		filter: blur(0px);
+		opacity: 100%;
+	}
+}
+
+.windowheader {
+	background-color: #121212;
+	padding: 3px;
+	cursor: grab;
+}
+
+.windowheader:active {
+	cursor: grabbing;
+}
+
+.windowcontent {
+	padding: 3px;
+	box-sizing: border-box;
+	height: calc(100% - 11px);
+}
+
+.windowcontent iframe {
+	border: none;
+	width: 100%;
+	height: calc(100% - 20px);
+}
+
+.wincl {
+	font-size: 15px !important;
+	float: right;
+	background: #1e1e1e;
+	border-radius: 3px;
+	color: white;
+	margin: 2px;
+	transform: translate(2px, -2px);
+	cursor: pointer;
+	padding: 1px;
+}
+
+.app-shortcut {
+	background-color: transparent;
+	border-radius: 5px;
+	padding: 10px;
+	margin: 5px;
+	cursor: pointer;
+	width: 40px;
+	overflow: hidden;
+	border: 1px solid transparent;
+	transition: .2s;
+	text-align: center;
+}
+
+.app-shortcut:hover {
+	border: 1px solid grey;
+	backdrop-filter: brightness(130%);
+}
+
+.app-shortcut .app-icon {
+	color: white;
+	display: block;
+}
+
+.app-shortcut .appname {
+	margin-top: 3px;
+	color: white;
+	display: block;
+	font-size: 11px;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+}
