@@ -7,6 +7,7 @@ Nova is a web based operating system that could,
 2. manage files
 3. configure memory
 4. download external files
+5. create and install apps
 and much more!
 
 # Includes
@@ -17,5 +18,5 @@ and much more!
 # Say goodbye to data leaks with the Nova Ecosystem
 Nova OS do not send and recive data from any external server to process your personal data in the safe hands. Your Data never escapes your device, all cache and personal data are saved in your Browser Storage.
 
-## Nova is running Non-profit
-We are running without any profit now, if you want to help us out by spending a bit, use our [Patreon page](https://www.patreon.com/adthoughtsglobal/)
+## Nova is Free
+Nova are running without any Ads, if you want to help us out, please visit our [Patreon page](https://www.patreon.com/adthoughtsglobal/)
