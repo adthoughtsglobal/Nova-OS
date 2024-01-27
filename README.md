@@ -2,13 +2,7 @@
 The Operating system of the Nova Ecosystem.
 
 ## Introducing Nova OS
-Nova is a web based operating system that could,
-1. install apps
-2. manage files
-3. configure memory
-4. download external files
-5. create and install apps
-and much more!
+Nova is a web based operating system that has an App Ecosystem with a community of Creators.
 
 # Includes
 1. Operating system written in HTML, JS and CSS. (JSON is included in JS. No dependencies other than that for version 10.01.2024.)
