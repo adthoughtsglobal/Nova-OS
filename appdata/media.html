@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Media Viewer</title>
+	<style>
+		body {
+			justify-content: center;
+			align-items: center;
+			margin: 0;
+			font-size: 12px;
+			color: white;
+			font-family: Arial, Helvetica, sans-serif;
+			box-sizing: border-box;
+			background: linear-gradient(to top, #000000 0%, #1b1b1b 100%);
+		}
+
+		img {
+			border-radius: 10px;
+			font-size: 14px;
+			display: block;
+			padding: 10px;
+			width: calc(100% - 41px);
+			margin: auto;
+			object-fit: contain;
+			background: #1f1f1f;
+			outline: none;
+			height: calc(100vh - 62px);
+			resize: none;
+			border: none;
+		}
+
+		audio {
+			margin: auto;
+			display: block;
+			margin-top: 20vh;
+		}
+
+		nav {
+			padding: 5px 10px;
+		}
+
+		nav button {
+			background: #161616;
+			border: 1px solid #282f39;
+			border-radius: 5px;
+			color: #858585;
+			font-size: 10px;
+			padding: 2px 10px;
+		}
+	</style>
+</head>
+
+<body>
+
+	<nav>
+		<button><span id="tils"></span></button>
+	</nav>
+	<div id="displays">
+		<img id="thedisplay" alt="Nova" src="">
+	</div>
+
+	<script>
+		var disp;
+		async function greenflag() {
+			var todo = localStorage.getItem("todo");
+			var disp = document.getElementById("displays")
+			try {
+				const parsedTodo = JSON.parse(todo);
+
+				if (parsedTodo.appname === "media" && parsedTodo.data && parsedTodo.data.lclfile) {
+					const theID = parsedTodo.data.lclfile;
+					const file = await window.parent.getFileById(theID);
+
+					if (file && file.content) {
+						console.log("DODA"+ file.content)
+
+						const type = file.type || 'application/octet-stream';
+						const base64Content = file.content;
+						
+						if (file.type.startsWith("image")) {
+						disp.innerHTML = `<img id="thedisplay" alt="Nova" src="">`;
+						document.getElementById("thedisplay").src = `${base64Content}`;
+						} else if (file.type.startsWith("audio")) {
+							disp.innerHTML = `<audio controls>
+  <source src="" type="audio/mp3" id="thedisplay">
+  Your browser does not support the audio tag.
+</audio>
+`;
+							document.getElementById("thedisplay").src = `${base64Content}`;
+						}
+
+						document.getElementById("tils").innerHTML = file.type+ ": " +file.fileName
+						localStorage.setItem("todo", "");
+					} else {
+						console.error("Error: Unable to retrieve file content.");
+					}
+				} else {
+					document.getElementById("thedisplay").alt = "Please open the files app to read a file from your system memory.";
+				}
+			} catch (error) {
+				console.error("Error parsing todo JSON:", error);
+			}
+
+		}
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Text App</title>
+	<style>
+		body {
+			justify-content: center;
+			align-items: center;
+			margin: 0;
+			font-size: 12px;
+			color: white;
+			font-family: Arial, Helvetica, sans-serif;
+			box-sizing: border-box;
+			background: linear-gradient(to top, #000000 0%, #1b1b1b 100%);
+		}
+
+		textarea {
+			border-radius: 3px;
+			font-size: 14px;
+			display: block;
+			padding: 10px;
+			width: calc(100% - 23px);
+			margin: auto;
+			outline: none;
+			height: calc(100vh - 30px);
+			resize: none;
+			border: none;
+		}
+
+		nav {
+			padding: 5px 10px;
+		}
+	</style>
+</head>
+
+<body>
+
+	<nav>
+		<button>New</button>
+		<button>Load</button>
+		<button>Save</button>
+		<button>Save As</button>
+	</nav>
+	<textarea id="thedisplay"></textarea>
+
+	<script>
+		async function greenflag() {
+			var todo = localStorage.getItem("todo");
+			var disp = document.getElementById("thedisplay")
+			try {
+				const parsedTodo = JSON.parse(todo);
+
+				if (parsedTodo.appname === "text" && parsedTodo.data && parsedTodo.data.lclfile) {
+					const theID = parsedTodo.data.lclfile;
+					const file = await window.parent.getFileById(theID);
+
+					if (file && file.content) {
+						document.getElementById("thedisplay").value = file.content;
+						console.log(file);
+						localStorage.setItem("todo", "");
+					} else {
+						console.error("Error: Unable to retrieve file content.");
+					}
+				} else {
+					document.getElementById("thedisplay").value = "Please open the files app to read a file from your system memory.";
+				}
+			} catch (error) {
+				console.error("Error parsing todo JSON:", error);
+			}
+
+		}
+	</script>
+</body>
+
+</html>

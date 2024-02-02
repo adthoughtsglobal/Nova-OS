@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>store</title>
+	<style>
+		html {
+			height: 100%;
+			width: 100%;
+		}
+
+		/* width */
+		::-webkit-scrollbar {
+			width: 5px;
+		}
+
+		/* Track */
+		::-webkit-scrollbar-track {
+			background: transparent;
+		}
+
+		/* Handle */
+		::-webkit-scrollbar-thumb {
+			background: #2b2b2b;
+			border-radius: 5px;
+		}
+
+		/* Handle on hover */
+		::-webkit-scrollbar-thumb:hover {
+			background: #555;
+		}
+
+		body {
+			font-family: Arial, Helvetica, sans-serif;
+			margin: 0;
+			background: #1a1b1b;
+			color: white;
+			padding-bottom: 10px;
+			font-size: 12px;
+		}
+
+		.mains {
+			padding-top: 6px;
+		}
+
+		#topse {
+			display: flex;
+			border-radius: 10px;
+			padding: 5px;
+			box-shadow: rgb(0 0 0 / 5%) 0px 0px 0px 1px, rgb(95 95 95) 0px 0px 0px 1px inset;
+			background: #252525;
+			margin: auto 10px;
+			margin-top: 5px;
+			margin-bottom: 10px;
+		}
+
+		#topse input {
+			flex-grow: 5;
+			border: none;
+			font-size: 15px;
+			outline: none;
+			padding: 5px;
+			margin-left: 5px;
+			background-color: transparent;
+			color: white;
+			border-radius: 15px;
+		}
+
+		#topse button {
+			border-radius: 7px;
+			flex-grow: 1;
+			border: none;
+			margin-left: 5px;
+			padding: 7px;
+			cursor: pointer;
+			background: #343c3f;
+			color: #dce9fc;
+		}
+
+		#topse button:hover {
+			background-color: #505e62;
+		}
+
+		small {
+			margin-left: 13px;
+			display: inline-block;
+		}
+
+		.app {
+			padding: 10px;
+			animation: fa 0.5s;
+			border-radius: 11px;
+			margin-right: 10px;
+			display: inline-block;
+			background-color: #101111;
+			width: 150px;
+			color: white;
+		}
+
+		.app h3 {
+			margin: 10px 0px;
+			font-weight: normal;
+		}
+
+		.app .appfes {
+			display: block;
+		}
+
+		.app .appfes div {
+			display: block;
+			font-size: smaller;
+			border: none;
+			opacity: 0.5;
+		}
+
+		.insbtn {
+			display: block;
+			width: 100%;
+			margin: 3px 0px;
+			border-radius: 5px;
+			padding: 5px;
+			transition: .5s;
+			cursor: pointer;
+			background: #356070;
+			border: none;
+			color: #ffffff;
+		}
+
+		#sugapps {
+			overflow-x: scroll;
+			margin: 10px 10px;
+			white-space: nowrap;
+			padding: 0px;
+		}
+
+
+		.jdstsa {
+			text-align: center;
+			display: block;
+			width: fit-content;
+			margin: 15px auto;
+			background: #2a2d2f;
+			color: white;
+			border: 1px solid #5b6268;
+			padding: 9px 16px;
+			border-radius: 25px;
+		}
+
+		.jdstsa button {
+			padding: 5px 10px;
+			border: none;
+			background: #668aad;
+			color: white;
+			border-radius: 21px;
+			cursor: pointer;
+		}
+
+		nav {
+			padding: 14px;
+			box-shadow: 0px 1px 20px #0000007a;
+			margin-bottom: 18px;
+			background-color: #232424;
+			display: block;
+		}
+
+		.app p {
+			height: 21vh;
+			width: calc(100% - 20px);
+			overflow-y: scroll;
+			word-wrap: break-word;
+			padding: 10px;
+			border-radius: 5px;
+			white-space: break-spaces;
+			box-shadow: 0px -9px 10px #080909 inset;
+		}
+
+		.loader {
+			width: 80px;
+			height: 42px;
+			display: block;
+			margin: auto;
+			padding: 0 8px;
+			box-sizing: border-box;
+			background: linear-gradient(#323232 0 0) 10% 0/4px 20px, linear-gradient(#323232 0 0) 70% 0/4px 20px, radial-gradient(farthest-side, #83ff8c 90%, #0000) 7% 5px/8px 8px content-box, #0000;
+			background-repeat: no-repeat;
+			animation: l3 2s infinite cubic-bezier(0, 0, 0.26, 0.65);
+		}
+
+		@keyframes l3 {
+			25% {
+				background-position: 0 0, 100% 100%, 100% calc(100% - 5px)
+			}
+
+			50% {
+				background-position: 0 100%, 100% 100%, 0 calc(100% - 5px)
+			}
+
+			75% {
+				background-position: 0 100%, 100% 0, 100% 5px
+			}
+		}
+
+		@keyframes fa {
+			0% {
+				opacity: 0;
+				transform: translateY(-10px);
+			}
+			75% {
+				opacity: 0.7;
+				transform: translateY(5px);
+			}
+			75% {
+				opacity: 1;
+				transform: translateY(0px);
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<nav>
+		<b>Nova</b> Store
+	</nav>
+	<div class="mains">
+		<small>Install through app link</small>
+		<div id="topse" title="Unavailable">
+
+			<input placeholder="Paste an App Link..." id="fesinp">
+			<button onclick="installappfes(this)">
+				Install
+			</button>
+		</div>
+		<div>
+			<small>Featured</small>
+			<div id="sugapps">
+
+			</div>
+		</div>
+		<div class="jdstsa">
+			Join our <button>Discord Server</button> to submit apps.
+		</div>
+	</div>
+	<script defer>
+		function greenflag() {
+			// Fetch JSON data from the URL
+			document.getElementById("sugapps").innerHTML = `<div class="loader"></div>`;
+
+			fetch('https://adthoughtsglobal.github.io/Nova-Store/database.json')
+				.then(response => response.json())
+				.then(data => {
+					document.getElementById("sugapps").innerHTML = ``
+					// Iterate through the 'data' array
+					data.data.forEach(app => {
+						// Extract app details
+						const appName = Object.keys(app)[0];
+						const appDetails = app[appName];
+
+						// Create HTML elements
+						const appDiv = document.createElement('div');
+						appDiv.className = 'app';
+
+						const h3 = document.createElement('h3');
+						h3.textContent = appName;
+						appDiv.appendChild(h3);
+
+						const appfesDiv = document.createElement('div');
+						appfesDiv.className = 'appfes';
+						const appInfoDiv = document.createElement('div');
+						appInfoDiv.textContent = "" + appDetails.find(item => item.by).by;
+						appfesDiv.appendChild(appInfoDiv);
+
+						appDiv.appendChild(appfesDiv);
+
+						const p = document.createElement('p');
+						const appDescItem = appDetails.find(item => item.desc);
+
+						if (appDescItem) {
+							p.textContent = appDescItem.desc;
+						} else {
+							p.textContent = 'Description not available.';
+						}
+
+						appDiv.appendChild(p);
+
+
+
+						const installButton = document.createElement('button');
+						installButton.className = 'insbtn';
+						let appald = window.parent.getFileNamesByFolder("Apps")
+							.then(appald => {
+								console.log(appald);
+								if (appald.some(app => app.name === appName)) {
+									installButton.textContent = 'Open Files app';
+									installButton.style.backgroundColor = "#1f1f1f";
+									installButton.onclick = function () {
+										window.parent.openapp("files", 1);
+									};
+								} else {
+									installButton.textContent = 'Install';
+									installButton.onclick = function () {
+										installapp(appDetails.find(item => item.src), appName, this);
+									};
+								}
+							})
+							.catch(error => {
+								console.error(error);
+							});
+
+
+						appDiv.appendChild(installButton);
+
+						// Append the appDiv to the document body or any desired container
+						document.getElementById("sugapps").appendChild(appDiv);
+					});
+				})
+				.catch(error => console.error('Error fetching JSON:', error));
+		}
+
+		async function installappfes(that) {
+			that.innerHTML = "Installing..."
+			that.style.backgroundColor = "grey"
+			const response = await fetch(document.getElementById("fesinp").value);
+			const content = await response.text();
+			let mmmm = prompt("Enter the App Name:");
+			if (mmmm && mmmm != null) {
+				await window.parent.createFile("Apps", mmmm , "app", content);
+				setTimeout(() => {
+					that.innerHTML = "Install"
+					document.getElementById("fesinp").value = "";
+					that.style.backgroundColor = "#343c3f"
+				}, 1000)
+
+			}
+		}
+		async function installapp(x, appName, obj) {
+			obj.innerHTML = "Installing..."
+			obj.style.backgroundColor = "grey"
+			console.log(x)
+			const response = await fetch("https://adthoughtsglobal.github.io/" + x.src);
+			const content = await response.text();
+			await window.parent.createFile("Apps", appName, "app", content);
+			setTimeout(() => {
+				obj.innerHTML = "Open Files App"
+				obj.onclick = function () {
+					window.parent.openapp("files", 1);
+				};
+				obj.style.backgroundColor = "#1f1f1f"
+			}, 1000)
+
+		}
+
+	</script>
+</body>
+
+</html>
