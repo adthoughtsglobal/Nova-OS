@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Files app</title>
+	<meta name="description" content="Default Files app for Nova OS">
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
+
+		/* width */
+		::-webkit-scrollbar {
+			width: 5px;
+		}
+
+		/* Track */
+		::-webkit-scrollbar-track {
+			background: transparent;
+		}
+
+		/* Handle */
+		::-webkit-scrollbar-thumb {
+			background: #2b2b2b;
+			border-radius: 5px;
+		}
+
+		/* Handle on hover */
+		::-webkit-scrollbar-thumb:hover {
+			background: #555;
+		}
+
+		html {
+			height: 100%;
+		}
+
+		body {
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			font-family: 'Poppins', sans-serif;
+			color: white;
+		}
+
+		#flap-mot {
+			display: block;
+			box-sizing: border-box;
+			overflow: hidden;
+			background-color: #0e0e0e;
+			height: calc(100% - 2px);
+		}
+
+		[flap-nav] y {
+			displa: flex;
+			background-color: #151515;
+			width: 100%;
+			flex-direction: row;
+			flex-wrap: nowrap;
+			align-items: center;
+		}
+
+		[flap-nav] {
+			display: flex;
+			height: 31px;
+			flex-direction: row;
+			flex-wrap: nowrap;
+		}
+
+		.flappsearch {
+			flex-grow: 10;
+			text-align: center;
+			background: #191919;
+			border-radius: 5px;
+			font-size: 11px;
+			padding: 2px !important;
+			margin-top: -10px;
+			color: #b8b8b8;
+			border: 1px solid #414141;
+			height: fit-content;
+			transform: translate(-21px, 19px);
+		}
+
+		.nowid {
+			width: 0px;
+			padding: 5px;
+		}
+
+		.navbfobtns {
+			font-size: 17px;
+			background-color: #222222;
+			border-radius: 50%;
+			padding: 1px;
+		}
+
+		.setbtn {
+			font-size: 17px;
+			transform: translate(5px, 0px);
+		}
+
+		.sdfld {
+			width: 90%;
+			margin: auto;
+			margin-bottom: 3px;
+			background: linear-gradient(4deg, #151515 90%, #5dabff);
+			border-radius: 5px;
+			text-align: left;
+			overflow: hidden;
+			transition: 0.3s;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			padding: 3px;
+			cursor: pointer;
+		}
+
+		.sdfld:hover {
+			color: dodgerblue;
+		}
+
+		[flap-sidenav] {
+			width: 0;
+			overflow-y: scroll;
+			font-size: 11px !important;
+			min-width: 120px;
+			border-right: 1px solid #2a2a2a;
+			padding-bottom: 50px;
+		}
+
+		[flap-sidenav] small {
+			padding-left: 5px;
+		}
+
+		.themainstuff {
+			margin: 10px 5px;
+			display: flex;
+			width: 100%;
+			height: 100%;
+		}
+
+		[flap-fl-topnav] {
+			display: block;
+			padding: 3px 10px;
+			font-size: 9px;
+			opacity: 70%;
+			transform: translateY(3px);
+		}
+
+		[flap-files] {
+			overflow: scroll;
+			flex-grow: 8;
+			padding-bottom: 50px;
+			padding: 10px;
+			padding-top: 5px;
+		}
+
+		.file {
+			display: block;
+			padding: 3px 5px;
+			background: #1c1c1c;
+			user-select: none;
+			border-radius: 7px;
+			margin-bottom: 2px;
+		}
+
+		.file:hover {
+			background: #373737;
+		}
+
+		.file small {
+			float: right;
+			display: inline-block;
+			transform: translate(-3px, 4px);
+			opacity: 0.5;
+			font-size: 11px;
+		}
+
+		.file span {
+			font-size: 14px;
+			display: inline-block;
+			width: 70%;
+			overflow: hidden;
+			white-space: nowrap;
+			margin: 0;
+		}
+
+		.file span .material-symbols-rounded {
+			width: fit-content;
+			margin-right: 6px;
+			transform: translate(2px, 1px) scale(1.3);
+			color: #7193ff;
+		}
+
+		#slfile {
+			background: #414e59;
+			transform: scale(1.01);
+		}
+
+		[bottomnav] {
+			width: 100%;
+			text-align: left;
+			border: 1px solid;
+			padding: 3px 5px;
+			font-size: 14px;
+		}
+
+		[flap-fl-bottomnav] {
+			padding: 5px 7px;
+			background: #161616;
+			font-size: 12px;
+		}
+
+		.delbtn {
+			background: #1f1f1f;
+			border: none;
+			border-radius: 10px;
+			color: #ff7c7c;
+			margin: 0px 10px;
+			float: right;
+			transition: .2s;
+			padding: 2px 8px;
+			cursor: pointer;
+		}
+
+		.delbtn:hover {
+			background-color: #442a2a;
+		}
+
+		input[type="file"] {
+			outline: none;
+			width: 252px;
+			margin: auto;
+			display: block;
+			position: relative;
+			overflow: scroll;
+		}
+
+		input[type="file"]::file-selector-button {
+			width: 135px;
+			color: transparent;
+		}
+
+		/* Faked label styles and icon */
+		input[type="file"]::before {
+			position: absolute;
+			pointer-events: none;
+			top: 7px;
+			left: 16px;
+			filter: brightness(200%);
+			height: 20px;
+			width: 20px;
+			content: "";
+			background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230964B0'%3E%3Cpath d='M18 15v3H6v-3H4v3c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-3h-2zM7 9l1.41 1.41L11 7.83V16h2V7.83l2.59 2.58L17 9l-5-5-5 5z'/%3E%3C/svg%3E");
+		}
+
+		button {
+			border-radius: 5px;
+			border: none;
+			padding: 7px 15px;
+			background: #2e363d;
+			color: white;
+			font-family: 'Poppins';
+			font-size: 11px;
+			cursor: pointer;
+		}
+
+		input[type="file"]::after {
+			position: absolute;
+			pointer-events: none;
+			top: 11px;
+			left: 40px;
+			color: white;
+			content: "Upload File";
+		}
+
+		/* file upload button */
+		input[type="file"]::file-selector-button {
+			border-radius: 4px;
+			padding: 0 16px;
+			height: 40px;
+			cursor: pointer;
+			border-radius: 5px;
+			background-color: #2f2f2f;
+			border: 1px solid rgba(0, 0, 0, 0.16);
+			box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.05);
+			margin-right: 16px;
+			transition: background-color 200ms;
+		}
+
+		/* file upload button hover state */
+		input[type="file"]::file-selector-button:hover {
+			background-color: #3f3f3f;
+		}
+
+		/* file upload button active state */
+		input[type="file"]::file-selector-button:active {
+			background-color: grey;
+		}
+
+		dialog::backdrop {
+			backdrop-filter: blur(13px);
+		}
+
+		#upmod {
+			border: 1px solid grey;
+			background: #1f1f1f;
+			color: white;
+			border-radius: 10px;
+			padding: 25px;
+			width: 50%;
+			animation: pop .2s;
+			text-align: center;
+		}
+
+		#upmod [cv] {
+			display: block;
+			padding: 5px 10px;
+			background: #282828;
+			width: fit-content;
+			border-radius: 10px;
+			opacity: 0.5;
+			margin: 5px auto;
+			margin-bottom: 10px;
+		}
+
+		@keyframes pop {
+			0% {
+				opacity: 0;
+				transform: translate(10px, -10px) scale(0.9);
+			}
+
+			100% {
+				transform: none;
+				opacity: 1;
+			}
+		}
+
+		#upmod svg {
+			height: 69px;
+			margin-bottom: 13px;
+		}
+
+		.custom-loader {
+			width: 40px;
+			height: 40px;
+			border-radius: 50%;
+			background:#92D8F4;
+			clip-path: polygon(0 0,100% 0,100% 100%,0 100%);
+			animation: sh1 2s infinite cubic-bezier(0.3,1,0,1);
+		}
+		@keyframes sh1 {
+		  33% {border-radius: 0;background:#ED8850 ;clip-path: polygon(0 0,100% 0,100% 100%,0 100%)}
+		  66% {border-radius: 0;background:#89CB91 ;clip-path: polygon(50% 0,50% 0,100% 100%,0 100%)}
+		}
+	</style>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+</head>
+
+<body>
+	<dialog id="ld">
+		<div class="custom-loader"></div>
+	</dialog>
+	<dialog id="upmod">
+		<div>
+			<svg style="height: 50px;" version="1.1" xmlns="http://www.w3.org/2000/svg"
+				xmlns:xlink="http://www.w3.org/1999/xlink" width="209.43806" height="162.25"
+				viewBox="0,0,209.43806,162.25">
+				<g transform="translate(-140.68755,-116.25)">
+					<g data-paper-data="{&quot;isPaintingLayer&quot;:true}" fill-rule="nonzero" stroke-linejoin="miter"
+						stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" style="mix-blend-mode: normal">
+						<path
+							d="M159.5,198c0,-44.45892 36.04108,-80.5 80.5,-80.5c44.45893,0 80.5,36.04108 80.5,80.5c0,44.45892 -36.04107,80.5 -80.5,80.5c-44.45892,0 -80.5,-36.04108 -80.5,-80.5z"
+							fill-opacity="0.20784" fill="#66bfff" stroke="none" stroke-width="0"
+							stroke-linecap="butt" />
+						<g fill="none" stroke="none" stroke-width="1" stroke-linecap="butt" font-family="sans-serif"
+							font-weight="normal" font-size="12" text-anchor="start" />
+						<g fill="#b5e0ff" stroke="none" stroke-width="0" stroke-linecap="butt">
+							<path
+								d="M283.87771,241.79302c-4.02173,-8.33081 -0.52853,-18.34453 7.80228,-22.36626c8.33081,-4.02173 18.34453,-0.52853 22.36626,7.80228c4.02173,8.33081 0.52853,18.34453 -7.80228,22.36625c-8.33081,4.02173 -18.34453,0.52853 -22.36626,-7.80228z" />
+							<path
+								d="M273.25718,259.24412c-4.98215,-10.32026 -0.65475,-22.72531 9.66551,-27.70745c10.32026,-4.98215 22.72531,-0.65475 27.70745,9.66551c4.98215,10.32026 0.65475,22.7253 -9.66551,27.70745c-10.32026,4.98215 -22.72531,0.65475 -27.70745,-9.66551z" />
+							<path
+								d="M321.85231,245.54072c-3.57143,-7.39803 -0.46935,-16.29055 6.92869,-19.86197c7.39803,-3.57143 16.29054,-0.46935 19.86197,6.92868c3.57143,7.39803 0.46935,16.29055 -6.92868,19.86198c-7.39803,3.57143 -16.29055,0.46935 -19.86198,-6.92869z" />
+							<path
+								d="M303.83054,248.09589c-3.57143,-7.39803 -0.46936,-16.29055 6.92868,-19.86198c7.39803,-3.57143 16.29055,-0.46935 19.86198,6.92869c3.57143,7.39803 0.46935,16.29055 -6.92868,19.86198c-7.39803,3.57143 -16.29055,0.46936 -19.86198,-6.92868z" />
+							<path
+								d="M306.87771,258.29302c-4.02173,-8.33081 -0.52853,-18.34453 7.80228,-22.36626c8.33081,-4.02173 18.34453,-0.52853 22.36626,7.80228c4.02173,8.33081 0.52853,18.34453 -7.80228,22.36625c-8.33081,4.02173 -18.34453,0.52853 -22.36626,-7.80228z" />
+						</g>
+						<g fill="#b5e0ff" stroke="none" stroke-width="0" stroke-linecap="butt">
+							<path
+								d="M140.68756,140c0,-9.25077 7.49923,-16.75 16.75,-16.75c9.25077,0 16.75,7.49923 16.75,16.75c0,9.25077 -7.49923,16.75 -16.75,16.75c-9.25077,0 -16.75,-7.49923 -16.75,-16.75z" />
+							<path
+								d="M184.063,149c0,-8.21499 6.65957,-14.87455 14.87456,-14.87455c8.21499,0 14.87455,6.65956 14.87455,14.87455c0,8.21499 -6.65956,14.87455 -14.87455,14.87455c-8.21499,0 -14.87456,-6.65956 -14.87456,-14.87455z" />
+							<path
+								d="M162.313,148c0,-8.21499 6.65957,-14.87455 14.87456,-14.87455c8.21499,0 14.87455,6.65956 14.87455,14.87455c0,8.21499 -6.65956,14.87455 -14.87455,14.87455c-8.21499,0 -14.87456,-6.65956 -14.87456,-14.87455z" />
+							<path
+								d="M156.43756,137c0,-11.45991 9.29009,-20.75 20.75,-20.75c11.45991,0 20.75,9.29009 20.75,20.75c0,11.45991 -9.29009,20.75 -20.75,20.75c-11.45991,0 -20.75,-9.29009 -20.75,-20.75z" />
+						</g>
+						<g fill="none" stroke="#56b8ff" stroke-width="10" stroke-linecap="round">
+							<path d="M239.21771,168.1191v74.73533" />
+							<path d="M211.45887,188.04852l27.40295,-27.40295l28.82648,28.82648" />
+						</g>
+					</g>
+				</g>
+			</svg><br>
+			<span style="display: block;
+			opacity: 0.7;
+			margin-bottom: 13px;
+		">Import your files</span>
+			<small cv>Files won't leave your device.</small>
+			<input type="file" id="filupin" /><br>
+			<button onclick="fupit()">
+				Import This File
+			</button>
+		</div>
+		<script>
+			var out;
+			function fupit() {
+			  const fileInput = document.getElementById('filupin');
+			  const file = fileInput.files[0];
+
+			  if (file) {
+				  const type = file.type || 'application/octet-stream';
+				  let folderName;
+
+					if (file.type.startsWith('video') || file.type.startsWith('audio') || file.type.startsWith('image')) {
+					  folderName = 'Media';
+					} else if (file.type.startsWith('text') || file.type.endsWith('md') || file.type.endsWith('rtf')) {
+					  folderName = 'Documents';
+					} else if (file.type.startsWith('html')) {
+					  folderName = 'Apps';
+					} else {
+					  folderName = 'Other';
+					}
+				  getBase64(file)
+				  setTimeout(function () {
+					  window.top.createFile(folderName, file.name, type, out);
+				  }, 1000)
+
+				};
+			}
+
+			function getBase64(file) {
+				var reader = new FileReader();
+				reader.readAsDataURL(file);
+				reader.onload = function() {
+					out = reader.result;
+					console.log("DODA3: " + out)
+				};
+				reader.onerror = function(error) {
+					console.log('Error: ', error);
+				};
+			}
+
+			function b64EncodeUnicode(str) {
+			  return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) => String.fromCharCode('0x' + p1)));
+			}
+		</script>
+	</dialog>
+	<div id="flap-mot">
+		<div flap-nav>
+			<div style="flex-grow: 3;" class="nowid">
+				<span class="material-symbols-rounded navbfobtns">
+					arrow_back
+				</span>
+				<span class="material-symbols-rounded navbfobtns" onclick="refresh()">
+					refresh
+				</span>
+			</div>
+			<div class="nowid flappsearch">
+				Files App
+			</div>
+			<div style="flex-grow: 1;" class="nowid"><span class="material-symbols-rounded setbtn" style="
+					transform: translate(-7px, 3px); cursor: pointer;
+				" onclick="upmd()">upload</span></div>
+		</div>
+		<div style="height: calc(100% - 58px);">
+			<div class="themainstuff">
+				<div flap-sidenav style="flex-grow: 1;
+		height: 100%;">
+					<small>This Device</small>
+					<div id="folders">
+						loading...
+					</div>
+					<div flap-sidenav-mems>
+
+					</div>
+				</div>
+				<div flap-mains style="flex-grow: 3;
+		display: flex;
+		flex-direction: column;
+		height: 100%;">
+					<div flap-fl-topnav id="pathdisp">
+						device://*
+					</div>
+					<div flap-files style="flex-grow: 8; padding-bottom: 50px;padding: 10px;    padding-top: 5px;"
+						id="filelist">
+
+					</div>
+					<div flap-fl-bottomnav id="fileinfobn">Click on a file to select it.
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		var currentPath, nowfile;
+
+		var memory;
+		var fllist;
+		var fdlist;
+		function greenflag() {
+			fllist = document.getElementById("filelist");
+			fdlist = document.getElementById("folders");
+
+			getdb('trojencat', 'rom')
+				.then((result) => {
+					try {
+						if (result !== null) {
+							memory = result;
+							liststuff()
+							listFiles("Downloads")
+							console.log(memory)
+						} else {
+							console.log('No data found for key "rom"');
+						}
+					} catch (error) {
+						console.error('Error:', error);
+					}
+				})
+				.catch((error) => {
+					console.error('Database operation failed:', error);
+				});
+			const backdrop = document.getElementById('upmod');
+
+			backdrop.addEventListener('click', (event) => {
+				if (event.target === backdrop) {
+					backdrop.close();
+				}
+			});
+
+		}
+
+		function liststuff() {
+			if (fdlist) {
+				fdlist.innerText = "";
+				memory.forEach(obj => {
+					let element = document.createElement('div');
+					element.classList.add("sdfld");
+					element.innerText = obj.folderName;
+					element.setAttribute('onclick', "listFiles(this.innerText)")
+					fdlist.appendChild(element);
+				});
+			} else {
+				console.error("Element with id 'folders' not found.");
+			}
+		}
+
+		function refresh() {
+			getdb('trojencat', 'rom')
+				.then((result) => {
+					if (result !== null) {
+						memory = result;
+					}
+				});
+			listFiles(currentPath)
+		}
+
+
+		function listFiles(folderName) {
+			fllist.innerText = "";
+
+			// Find the folder with the given name
+
+			const folder = memory.find(folder => folder.folderName === folderName);
+			console.log(folder)
+			if (folder) {
+				currentPath = folderName;
+				updpth()
+				// Display files in the folder
+				if (folder.content && folder.content.length > 0) {
+					folder.content.forEach(file => {
+						let fileElement = document.createElement('div');
+						fileElement.classList.add("file");
+						fileElement.setAttribute("unid", file.uid);
+
+						fileElement.setAttribute("onclick", "slfile(this)");
+						fileElement.innerHTML = `<span flname> ` + geticon(file.type) + ` ${file.fileName}</span> <small >${file.type}</small>`;
+						fllist.appendChild(fileElement);
+					});
+				} else {
+					fllist.innerHTML = "<center style='padding-top: 30px'>This folder is empty.</center>"
+				}
+			} else {
+				console.log("Folder not found");
+			}
+		}
+
+
+
+		function updpth() {
+			document.getElementById("pathdisp").innerHTML = "device://" + currentPath;
+		}
+
+		async function slfile(y) {
+
+			let x = y;
+			if (x.id === "slfile") {
+				openfile(x);
+			} else {
+				if (document.getElementById("slfile")) {document.getElementById("slfile").id = null;}
+				nowfile = x;
+				x.id = "slfile";
+
+				try {
+					let fileData = await window.parent.getFileById(x.getAttribute("unid"));
+
+					if (fileData && fileData.content) {
+						var fileSize = fileData.content.length;
+						console.log("File size:", fileSize);
+					} else {
+						console.error("Error: Unable to retrieve file content.");
+					}
+				} catch (error) {
+					console.error("Error:", error);
+				}
+
+				var units = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+
+				var unitIndex = 0;
+
+				while (fileSize > 1024 && unitIndex < units.length - 1) {
+					fileSize /= 1024;
+					unitIndex++;
+				}
+
+				document.getElementById("fileinfobn").innerHTML = `<button class="delbtn" onclick="remfile('` + x.getAttribute("unid") + `')">Delete</button>`;
+				document.getElementById("fileinfobn").innerHTML += fileSize.toFixed(2) + ' ' + units[unitIndex]
+			}
+		}
+
+		async function remfile(ID) {
+			try {
+				let memory = await getdb('trojencat', 'rom');
+
+				// Iterate through folders to find the file with the specified ID
+				for (let folder of memory) {
+					let fileIndex = folder.content.findIndex(file => file.uid === ID);
+
+					if (fileIndex !== -1) {
+						// Remove the file from the folder's content array
+						let removedFile = folder.content.splice(fileIndex, 1)[0];
+						console.log(`File "${removedFile.fileName}" removed.`);
+
+						await setdb('trojencat', 'rom', memory);
+						refresh()
+						return; // File found and removed, exit the function
+					}
+				}
+
+				// If the loop completes without finding the file
+				console.error(`File with ID "${ID}" not found.`);
+			} catch (error) {
+				console.error("Error fetching or updating data:", error);
+			}
+		}
+
+		async function openfile(x) {
+
+			try {
+				let mm = await window.parent.getFileById(x.getAttribute("unid"));
+
+				if (mm.type == "app") {
+					await window.parent.openapp(mm.fileName, x.getAttribute("unid"));
+				} else if (mm.type.startsWith("image") || mm.type.startsWith("audio")) {
+					await window.parent.openlaunchprotocol("media", {"lclfile": x.getAttribute("unid")});
+				} else {
+					window.parent.openlaunchprotocol("text", {"lclfile": x.getAttribute("unid")});
+				}
+
+				refresh();
+			} catch (error) {
+				console.error("Error:", error);
+			}
+		}
+
+
+		const databaseName = 'trojencat';
+		// Function to open or create an IndexedDB database
+		function openDB(databaseName, version) {
+			return new Promise((resolve, reject) => {
+				const request = indexedDB.open(databaseName, version);
+
+				request.onupgradeneeded = (event) => {
+					const db = event.target.result;
+					if (!db.objectStoreNames.contains('store')) {
+						db.createObjectStore('store', {keyPath: 'key'});
+					}
+				};
+
+				request.onsuccess = (event) => {
+					const db = event.target.result;
+
+					// Listen for the 'versionchange' event and call refresh() when it occurs
+					db.onversionchange = () => {
+						refresh();
+					};
+
+					resolve(db);
+				};
+
+				request.onerror = () => {
+					reject(request.error);
+				};
+			});
+		}
+
+
+		// Function to set a key-value pair in the database
+		function setdb(databaseName, key, value) {
+			return openDB(databaseName, 1).then((db) => {
+				return new Promise((resolve, reject) => {
+					const transaction = db.transaction(['store'], 'readwrite');
+					const store = transaction.objectStore('store');
+					const request = store.put({key, value});
+
+					request.onsuccess = () => {
+						resolve();
+					};
+
+					request.onerror = () => {
+						reject(request.error);
+					};
+				});
+			});
+		}
+
+		// Function to get a value by key from the database
+		function getdb(databaseName, key) {
+			return openDB(databaseName, 1).then((db) => {
+				return new Promise((resolve, reject) => {
+					const transaction = db.transaction(['store'], 'readonly');
+					const store = transaction.objectStore('store');
+					const request = store.get(key);
+
+					request.onsuccess = () => {
+						const result = request.result;
+						if (result) {
+							resolve(result.value);
+						} else {
+							resolve(null); // Key not found
+						}
+					};
+
+					request.onerror = () => {
+						reject(request.error);
+					};
+				});
+			});
+		}
+
+		function geticon(x) {
+			let i;
+			if (x == "txt") {
+				i = "text_snippet"
+			} else if (x == "app") {
+				i = "rocket_launch"
+			} else {
+				i = "bug_report"
+			}
+			return `<span class="material-symbols-rounded">
+		`+ i + `
+		</span>`
+		}
+
+		function upmd() {
+			document.getElementById("upmod").showModal();
+		}
+	</script>
+</body>
+
+</html>
