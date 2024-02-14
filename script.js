@@ -217,7 +217,7 @@ async function openapp(x, od) {
 				y = await getFileById(od)
 				y = y.content
 			} else {
-				y = await fetchData("/Nova-OS/appdata/" + x + ".html");
+				y = await fetchData("appdata/" + x + ".html");
 				await createFile("Apps", x, "app", y);
 			}
 
