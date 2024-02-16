@@ -1,3 +1,4 @@
+<!---Code Licensed under Nova license and Adthoughtsglobal Nova Terms of use https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use--->
 <!DOCTYPE html>
 <html>
 
@@ -6,7 +7,11 @@
 	<meta name="viewport" content="width=device-width">
 	<title>Nova OS</title>
 	<link href="style.css" rel="stylesheet" type="text/css" />
-	<script src="SuperNova" defer></script>
+	<script src="SuperNova/system32.js" defer></script>
+	<!-- Include pako library (CDN) -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.0.3/pako.min.js"></script>
+	</script>
+
 	<script src="script.js" defer></script>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	<link rel="stylesheet"
@@ -18,30 +23,14 @@
 		<h1>I don't even know what time is it now. Who to say? your browser...</h1>
 		<p>Well your browser seems to be messing around turning off some JS...</p>
 		<b>If you have set JS to be desabled:</b>
-		<p>
-			<ul>
-				<li>We do not do illegal, or bad stuff, like selling your data without permission or running bad code
-					that will harm your device.</li>
-				<li>This is not 1999, and your browser - every single new browsers on the market has very cool rules
-					just to make you safe.</li>
-				<li>You can always <b><a href="https://www.larimer.gov/it/enable-javascript"> turn JS on</a>.</b></li>
+		<p>Nova OS require JS to run.
+			<li>You can always <b><a href="https://www.larimer.gov/it/enable-javascript"> turn JS on</a>.</b></li>
 			</ul>
 		</p>
 	</noscript>
 
 	<div class="container" id="desktop">
-		<div onclick="openapp('clock', 1)" class="app-shortcut">
-			<span class="material-icons app-icon">
-				timer
-			</span>
-			<span class="appname">Clock</span>
-		</div>
-		<div onclick="openapp('text', 1)" class="app-shortcut">
-			<span class="material-icons app-icon">
-				edit_note
-			</span>
-			<span class="appname">Text</span>
-		</div>
+		<span class="deskloadspan">Desktop Is loading...</span>
 	</div>
 	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -52,8 +41,8 @@
 		});
 	</script>
 
-	<nav>
-		<quicks navobj>
+	<nav id="novanav">
+		<quicks navobj id="dock">
 			<div app-shortcut onclick="openapp('files', 1)">
 				<span ic class="material-icons">
 					folder
@@ -72,7 +61,7 @@
 		</quicks>
 		<your navobj>
 			<div app-shortcut>
-				<span ic class="material-icons" id="mm" onclick="document.getElementById('appdmod').showModal()">N?
+				<span ic class="material-icons" id="mm" onclick="openn()">N?
 				</span>
 			</div>
 			<g id="your-apps">
@@ -93,40 +82,29 @@
 				<span id="date-display">date</span>
 			</div>
 		</info>
+		<info class="">
+			
+		</info>
 	</nav>
 	<dialog id="appdmod">
 		<div>
 			<h1>Apps</h1>
 		</div>
 		<div id="appdeck">
-			<div onclick="openapp('text', 1)" class="app-shortcut">
-				<span class="material-icons app-icon">
-					edit_note
-				</span>
-				<span class="appname">Text</span>
-			</div>
-			<div onclick="openapp('store', 1)" class="app-shortcut">
-				<span class="material-icons app-icon">
-					shopping_bag
-				</span>
-				<span class="appname">Store</span>
-			</div>
-			<div onclick="openapp('media', 1)" class="app-shortcut">
-				<span class="material-icons app-icon">live_tv</span>
-				<span class="appname">Media Viewer</span>
+			<div id="appsindeck">
+				
 			</div>
 		</div>
+		<div class="strtappsugs" id="strtappsugs">
+			apps appear here
+		</div>
+		<input placeholder="Search an app..." autocomplete="off" id="strtsear" onkeyup="strtappse()">
 	</dialog>
-	<dialog id="installer">
-		<div appinfos>
-			<span id="installer-icon" class="material-icons">
-				book
-			</span>
-			<h1>App Name</h1>
-			<small>data</small>
+	<dialog id="startup">
+		<div class="content">
+			<div class="custom-loader2"></div>
+			<h1 id="startuptx">Setting up your OS</h1>
 		</div>
-		<button id="installer-installbtn" onclick="installerProc()">Install</button>
-
 	</dialog>
 </body>
 

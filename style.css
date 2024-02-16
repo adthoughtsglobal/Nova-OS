@@ -96,6 +96,7 @@ nav info {
 [navobj] [app-shortcut] {
 	background-color: transparent;
 	cursor: pointer;
+	animation: appop 0.3s;
 	transition: .2s;
 }
 
@@ -112,11 +113,12 @@ nav info {
 	min-width: 400px;
 	position: absolute;
 	min-height: 200px;
-	background-color: #262626;
+	background-color: transparent;
 	border-radius: 5px;
 	display: inline-block;
 	color: white;
 	font-size: 0.8rem;
+	padding: 0px;
 	overflow: hidden;
 	box-shadow: -1px 2px 12px 2px #000000a6;
 	resize: both;
@@ -139,10 +141,9 @@ nav info {
 
 .windowheader {
 	background-color: #121212;
-	background: radial-gradient(at center top, #ffffff2b 20%, #ffffff00 23%);
+	background: radial-gradient(at center top, #252525 20%, #121212 23%);
 	backdrop-filter: blur(5px) brightness(0.5);
 	padding: 3px 5px;
-	
 	cursor: grab;
 }
 
@@ -151,7 +152,6 @@ nav info {
 }
 
 .windowcontent {
-	padding: 3px;
 	box-sizing: border-box;
 	height: calc(100% - 11px);
 }
@@ -159,8 +159,7 @@ nav info {
 .windowcontent iframe {
 	border: none;
 	width: 100%;
-	height: calc(100% - 20px);
-	border-radius: 7px;
+	height: calc(100% - 15px);
 }
 
 .wincl {
@@ -189,15 +188,41 @@ nav info {
 	text-align: center;
 }
 
+@keyframes appop {
+	0% {
+		opacity: 0;
+		transform: scale(0.7);
+	}
+
+	35% {
+		opacity: 0.4;
+		transform: scale(1.1);
+	}
+
+	100% {
+		opacity: 1;
+	}
+}
+
 .app-shortcut:hover {
 	border: 1px solid grey;
-	transform: scale(1.03);
+	transform: scale(1.01);
+}
+
+.app-shortcut:hover .app-icon {
+	transform: scale(1.2);
+}
+
+
+.app-shortcut:active {
+	cursor: grabbing;
 }
 
 .app-shortcut .app-icon {
 	color: #ffffff;
 	text-shadow: 0px 0px 10px #378497;
 	display: block;
+	transition: 0.5s;
 }
 
 .app-shortcut .appname {
@@ -258,16 +283,16 @@ nav info {
 }
 
 #installer button {
-		display: block;
-		width: 100%;
-		border-radius: 25px;
-		padding: 5px;
-		background: linear-gradient(1deg, #3d884c, #32a046);
-		color: white;
-		border: none;
-		margin-top: 10px;
-		cursor: pointer;
-		font-family: poppins;
+	display: block;
+	width: 100%;
+	border-radius: 25px;
+	padding: 5px;
+	background: linear-gradient(1deg, #3d884c, #32a046);
+	color: white;
+	border: none;
+	margin-top: 10px;
+	cursor: pointer;
+	font-family: poppins;
 }
 
 #appdmod {
@@ -280,10 +305,11 @@ nav info {
 	transition: 0.2s;
 	margin-bottom: 50px;
 	background: #a3a3a373;
+	overflow: hidden;
 	color: white;
 	backdrop-filter: brightness(0.3) blur(6px);
 	box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
-	animation: dmodthingy 0.2s ;
+	animation: dmodthingy 0.2s;
 	outline: none;
 }
 
@@ -292,6 +318,7 @@ nav info {
 		transform: translateY(50px);
 		opacity: 0;
 	}
+
 	100% {
 		transform: none;
 		opacity: 1;
@@ -300,4 +327,150 @@ nav info {
 
 .transp2 {
 	transition: .2s;
+}
+
+.modal {
+	padding: 24px 47px;
+	padding-top: 0;
+	border: 0;
+	border-radius: 10px;
+	backdrop-filter: brightness(0.3) blur(5px);
+	color: white;
+	background: transparent;
+	text-align: center;
+	width: 70%;
+	max-height: 80%;
+}
+
+.modal button {
+	padding: 8px 18px;
+	background: #434343;
+	color: white;
+	flex-grow: 1;
+	border: none;
+	border-radius: 7px;
+	margin: 10px 4px;
+}
+
+#startup {
+	background-color: #1f1f1f;
+	color: white;
+	width: 100%;
+	height: 100%;
+	border: 0;
+	padding: calc(1rem + 6px);
+	border-radius: 0;
+}
+
+#startup .content {
+	display: grid;
+	align-items: center;
+	width: 100%;
+	height: 100%;
+	justify-content: center;
+	justify-items: center;
+	align-content: center;
+}
+
+
+.custom-loader2 {
+	width: 100px;
+	height: 100px;
+	--c: radial-gradient(farthest-side, #b1d5fb 92%, #0000);
+	background: var(--c) 50% 0, var(--c) 50% 100%, var(--c) 100% 50%, var(--c) 0 50%;
+	background-size: 24px 24px;
+	background-repeat: no-repeat;
+	margin-bottom: 20px;
+	animation: s7 1s infinite, s3 .5s;
+}
+
+@keyframes s7 {
+	to {
+		transform: rotate(.5turn)
+	}
+}
+
+@keyframes s3 {
+	from {
+		filter: blur(5px);
+	}
+
+	to {
+		filter: blur(0px);
+	}
+}
+
+.fade-out {
+	opacity: 0;
+	transition: opacity 0.5s ease;
+	/* Adjust timing as needed */
+}
+
+#strtsear {
+	width: calc(100% - 30px);
+	display: block;
+	margin: auto;
+	margin-bottom: 10px;
+	border-radius: 7px;
+	padding: 5px 7px;
+	background: #3b3b3b;
+	color: white;
+	border: 1px solid #1f1f1f;
+	font-family: 'Poppins';
+	outline: none;
+}
+
+.strtappsugs {
+	position: absolute;
+	bottom: 51px;
+	background: #1f1f1f;
+	padding: 10px;
+	border-radius: 7px;
+	width: calc(100% - 46px);
+	margin-left: 8px;
+
+	animation: pop .2s;
+	max-height: 50%;
+	overflow-y: scroll;
+	visibility: hidden;
+}
+
+.strtappsugs div {
+	text-align: left;
+}
+
+.strtappsugs div span {
+	font-size: 15px;
+	right: 7px;
+	position: absolute;
+	background: #2f2f2f;
+	cursor: pointer;
+	border-radius: 50%;
+	padding: 2px;
+}
+
+.strtappsugs div span:hover {
+	transform: scale(1.1);
+}
+
+@keyframes pop {
+	from {
+		opacity: 0;
+		transform: scale(0.9);
+	}
+
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+.deskloadspan {
+	margin: auto;
+	display: block;
+	width: fit-content;
+	width: -moz-fit-content;
+	margin-top: calc(50vh - 26px);
+	opacity: 0.5;
+	font-size: 10px;
 }

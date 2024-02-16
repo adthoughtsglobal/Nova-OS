@@ -303,7 +303,7 @@
 			color: white;
 			border-radius: 10px;
 			padding: 25px;
-			width: 50%;
+			min-margin-top: 10px;
 			animation: pop .2s;
 			text-align: center;
 		}
@@ -315,6 +315,7 @@
 			width: fit-content;
 			border-radius: 10px;
 			opacity: 0.5;
+			font-size: 11px;
 			margin: 5px auto;
 			margin-bottom: 10px;
 		}
@@ -340,13 +341,88 @@
 			width: 40px;
 			height: 40px;
 			border-radius: 50%;
-			background:#92D8F4;
-			clip-path: polygon(0 0,100% 0,100% 100%,0 100%);
-			animation: sh1 2s infinite cubic-bezier(0.3,1,0,1);
+			background: #92D8F4;
+			clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+			animation: sh1 2s infinite cubic-bezier(0.3, 1, 0, 1);
 		}
+
 		@keyframes sh1 {
-		  33% {border-radius: 0;background:#ED8850 ;clip-path: polygon(0 0,100% 0,100% 100%,0 100%)}
-		  66% {border-radius: 0;background:#89CB91 ;clip-path: polygon(50% 0,50% 0,100% 100%,0 100%)}
+			33% {
+				border-radius: 0;
+				background: #ED8850;
+				clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%)
+			}
+
+			66% {
+				border-radius: 0;
+				background: #89CB91;
+				clip-path: polygon(50% 0, 50% 0, 100% 100%, 0 100%)
+			}
+		}
+
+		/* Dropup Button */
+		.dropbtn {
+			background-color: #2d2d2d;
+			color: white;
+			padding: 2px 10px;
+			margin-right: 10px;
+			font-size: 11px;
+			border: none;
+		}
+
+		/* The container <div> - needed to position the dropup content */
+		.dropup {
+			position: relative;
+			display: inline-block;
+		}
+
+		@keyframes bop {
+			0% {
+				transform: scaleY(0.5) translateY(15px);
+			}
+
+			100% {
+				opacity: 100%;
+			}
+		}
+
+		/* Dropup content (Hidden by Default) */
+		.dropup-content {
+			display: none;
+			position: absolute;
+			animation: bop 0.2s;
+			bottom: 21px;
+			border-bottom: 5px solid #161616;
+			border-radius: 5px;
+			background-color: #282828;
+			min-width: 160px;
+			z-index: 1;
+			overflow: hidden;
+		}
+
+		/* Links inside the dropup */
+		.dropup-content a {
+			color: white;
+			padding: 8px 13px;
+			text-decoration: none;
+			display: block;
+			cursor: pointer;
+		}
+
+		/* Change color of dropup links on hover */
+		.dropup-content a:hover {
+			color: #cbcbcb;
+			background: #1f1f1f;
+		}
+
+		/* Show the dropup menu on hover */
+		.dropup:hover .dropup-content {
+			display: block;
+		}
+
+		/* Change the background color of the dropup button when the dropup content is shown */
+		.dropup:hover .dropbtn {
+			background-color: #393939;
 		}
 	</style>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -408,33 +484,49 @@
 		">Import your files</span>
 			<small cv>Files won't leave your device.</small>
 			<input type="file" id="filupin" /><br>
-			<button onclick="fupit()">
+			<button onclick="fupit()" id="fupibu">
 				Import This File
 			</button>
 		</div>
 		<script>
 			var out;
 			function fupit() {
-			  const fileInput = document.getElementById('filupin');
-			  const file = fileInput.files[0];
+				document.getElementById("fupibu").innerHTML = "Importing..."
+				const fileInput = document.getElementById('filupin');
+				const file = fileInput.files[0];
 
-			  if (file) {
-				  const type = file.type || 'application/octet-stream';
-				  let folderName;
+				if (file) {
 
-					if (file.type.startsWith('video') || file.type.startsWith('audio') || file.type.startsWith('image')) {
-					  folderName = 'Media';
-					} else if (file.type.startsWith('text') || file.type.endsWith('md') || file.type.endsWith('rtf')) {
-					  folderName = 'Documents';
-					} else if (file.type.startsWith('html')) {
-					  folderName = 'Apps';
-					} else {
-					  folderName = 'Other';
-					}
-				  getBase64(file)
-				  setTimeout(function () {
-					  window.top.createFile(folderName, file.name, type, out);
-				  }, 1000)
+					const type = file.type || 'application/octet-stream';
+					let folderName;
+
+					getBase64(file)
+					setTimeout(function () {
+						if (file.type.startsWith('video') || file.type.startsWith('audio') || file.type.startsWith('image')) {
+							folderName = 'Media';
+
+							out = window.parent.shrinkbsf(out)
+
+						} else if (file.type.startsWith('text') || file.type.endsWith('md') || file.type.endsWith('rtf')) {
+							folderName = 'Documents';
+						} else if (file.type.startsWith('html')) {
+							folderName = 'Apps';
+						} else {
+							folderName = 'Other';
+						}
+
+let md = {
+	"via":"imported"
+}
+						window.parent.createFile(folderName, file.name, type, out, md)
+							.then(function () {
+								document.getElementById("fupibu").innerHTML = "File Saved, Close";
+								document.getElementById("fupibu").onclick = function () {
+									document.getElementById("upmod").close();
+								};
+
+							});
+					}, 1000)
 
 				};
 			}
@@ -442,17 +534,17 @@
 			function getBase64(file) {
 				var reader = new FileReader();
 				reader.readAsDataURL(file);
-				reader.onload = function() {
+				reader.onload = function () {
 					out = reader.result;
-					console.log("DODA3: " + out)
+					document.getElementById("fupibu").innerHTML = "Saving..."
 				};
-				reader.onerror = function(error) {
+				reader.onerror = function (error) {
 					console.log('Error: ', error);
 				};
 			}
 
 			function b64EncodeUnicode(str) {
-			  return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) => String.fromCharCode('0x' + p1)));
+				return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) => String.fromCharCode('0x' + p1)));
 			}
 		</script>
 	</dialog>
@@ -488,7 +580,7 @@
 				<div flap-mains style="flex-grow: 3;
 		display: flex;
 		flex-direction: column;
-		height: 100%;">
+		height: 100%;width: 0;">
 					<div flap-fl-topnav id="pathdisp">
 						device://*
 					</div>
@@ -512,6 +604,7 @@
 			fllist = document.getElementById("filelist");
 			fdlist = document.getElementById("folders");
 
+
 			getdb('trojencat', 'rom')
 				.then((result) => {
 					try {
@@ -519,9 +612,9 @@
 							memory = result;
 							liststuff()
 							listFiles("Downloads")
-							console.log(memory)
+
 						} else {
-							console.log('No data found for key "rom"');
+							console.log('0003');
 						}
 					} catch (error) {
 						console.error('Error:', error);
@@ -562,6 +655,7 @@
 						memory = result;
 					}
 				});
+			liststuff()
 			listFiles(currentPath)
 		}
 
@@ -572,7 +666,6 @@
 			// Find the folder with the given name
 
 			const folder = memory.find(folder => folder.folderName === folderName);
-			console.log(folder)
 			if (folder) {
 				currentPath = folderName;
 				updpth()
@@ -591,7 +684,7 @@
 					fllist.innerHTML = "<center style='padding-top: 30px'>This folder is empty.</center>"
 				}
 			} else {
-				console.log("Folder not found");
+				console.log("0003");
 			}
 		}
 
@@ -610,13 +703,13 @@
 				if (document.getElementById("slfile")) {document.getElementById("slfile").id = null;}
 				nowfile = x;
 				x.id = "slfile";
-
+				let fileData
 				try {
-					let fileData = await window.parent.getFileById(x.getAttribute("unid"));
+					fileData = await window.parent.getFileById(x.getAttribute("unid"));
 
 					if (fileData && fileData.content) {
 						var fileSize = fileData.content.length;
-						console.log("File size:", fileSize);
+
 					} else {
 						console.error("Error: Unable to retrieve file content.");
 					}
@@ -634,7 +727,19 @@
 				}
 
 				document.getElementById("fileinfobn").innerHTML = `<button class="delbtn" onclick="remfile('` + x.getAttribute("unid") + `')">Delete</button>`;
-				document.getElementById("fileinfobn").innerHTML += fileSize.toFixed(2) + ' ' + units[unitIndex]
+				try {
+					document.getElementById("fileinfobn").innerHTML += `<div class="dropup">
+								  <button class="dropbtn">More</button>
+								  <div class="dropup-content">
+									${fileData.type.startsWith("image") ? '<a onclick="window.parent.makewall(\'' + x.getAttribute("unid") + '\')">Set As Desktop Background</a>' : ''}
+									<a onclick="openfile(document.getElementById('`+ x.id + `'), 'text')">Open as text</a>
+									<a onclick="movefile(document.getElementById('`+ x.id + `'))">Move</a>
+								  </div>
+								</div>`+ fileSize.toFixed(2) + ' ' + units[unitIndex];
+				} catch (error) {
+					refresh()
+					console.error("An error occurred:", error);
+				}
 			}
 		}
 
@@ -649,11 +754,13 @@
 					if (fileIndex !== -1) {
 						// Remove the file from the folder's content array
 						let removedFile = folder.content.splice(fileIndex, 1)[0];
-						console.log(`File "${removedFile.fileName}" removed.`);
-
-						await setdb('trojencat', 'rom', memory);
-						refresh()
-						return; // File found and removed, exit the function
+						console.log(`0004`);
+						document.getElementById("fileinfobn").innerHTML = "Deleting file..."
+						await setdb('trojencat', 'rom', memory).then(() => {
+							setTimeout(refresh, 1000);
+							document.getElementById("fileinfobn").innerHTML = "File Deleted";
+						});
+						return;
 					}
 				}
 
@@ -664,22 +771,67 @@
 			}
 		}
 
-		async function openfile(x) {
+		async function openfile(x, rt) {
 
 			try {
 				let mm = await window.parent.getFileById(x.getAttribute("unid"));
-
+				let realtype = mm.type;
+				if (rt) {
+					mm.type = rt
+					if (!(await window.parent.justConfirm("Yo sure?", "That's a media file, it would harm your device if you open it - it would be a lot of content!"))) {
+						return;
+					}
+				}
 				if (mm.type == "app") {
 					await window.parent.openapp(mm.fileName, x.getAttribute("unid"));
-				} else if (mm.type.startsWith("image") || mm.type.startsWith("audio")) {
+				} else if (mm.type.startsWith("image") || mm.type.startsWith("audio") || mm.type.startsWith("video")) {
 					await window.parent.openlaunchprotocol("media", {"lclfile": x.getAttribute("unid")});
 				} else {
+					if (realtype == "app" || realtype.startsWith("image") || realtype.startsWith("video") || realtype.startsWith("audio")) {
+						// if its compressed
+						window.parent.openlaunchprotocol("text", {"lclfile": x.getAttribute("unid"), "shrinkray": true});
+					} else if (mm.type.startsWith("text/html")) {
+						window.parent.openlaunchprotocol("studio", {"lclfile": x.getAttribute("unid")});
+					} else {
 					window.parent.openlaunchprotocol("text", {"lclfile": x.getAttribute("unid")});
 				}
+			}
 
-				refresh();
-			} catch (error) {
-				console.error("Error:", error);
+		refresh();
+		} catch (error) {
+			console.error("Error:", error);
+		}
+		}
+
+		async function movefile(flid) {
+			flid = flid.getAttribute("unid")
+			console.log("dodo: " + flid)
+			// Get folder names array
+			let folders = await window.parent.getFolderNames();
+			
+			let filteredFolders = folders.filter(folder => folder !== currentPath);
+
+			// Create select element
+			let selectOptions = filteredFolders.map(folder => `<option>${folder}</option>`).join('');
+			let selectElement = `<select id="filesappselecttomovedest">${selectOptions}</select>`;
+
+			// Ask user to select a folder
+			let confpromise = await window.parent.justConfirm("Select a folder", `Move to ${selectElement}`);
+
+			console.log(confpromise)
+			if (confpromise) {
+				let x = window.parent.document.getElementById("filesappselecttomovedest").value;
+				let y = await window.parent.getFileById(flid);
+		if (y.type == "app") {
+			window.parent.alert("Function Cancelled.\n\nDue to some issues, App files cannot be moved. \nThis message is only for your safety.")
+			document.getElementById("fileinfobn").innerHTML = "Moving failed";
+			return;
+		}
+				console.log(y)
+				console.log(x)
+				await window.parent.createFile(x, y.fileName, y.type, y.content, y.metadata)
+				remfile(flid)
+				document.getElementById("fileinfobn").innerHTML = "File was moved to " + x;
 			}
 		}
 
@@ -773,8 +925,13 @@
 		}
 
 		function upmd() {
+			document.getElementById("fupibu").innerHTML = "Import";
+
+			document.getElementById("fupibu").onclick = fupit;
 			document.getElementById("upmod").showModal();
 		}
+
+
 	</script>
 </body>
 

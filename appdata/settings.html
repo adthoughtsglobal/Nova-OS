@@ -5,6 +5,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Settings App</title>
+	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 	<style>
 		@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
 
@@ -37,12 +38,14 @@
 		html {
 			height: 100%;
 			width: 100%;
+			scroll-behavior: smooth;
 		}
 
 		body {
 			color: white;
 			height: 100%;
 			margin: 0px;
+			background: #2f2f2f;
 			font-size: 12px;
 			font-family: 'Poppins', sans-serif;
 		}
@@ -94,6 +97,7 @@
 			padding: 0px 12px;
 			border: 1px solid #1f1f1f;
 			width: calc(70% - 5px);
+			padding-bottom: 30vh;
 			background-color: #101010;
 			border-left: none;
 			border-radius: 6px;
@@ -121,6 +125,7 @@
 		td {
 			padding: 0px 5px;
 			font-size: 10px;
+			padding-top: 2px;
 		}
 
 		supportb {
@@ -287,6 +292,106 @@
 			border: none;
 		}
 
+
+		.appli {
+			background-color: #2f2f2f;
+			padding: 10px;
+			margin-bottom: 3px;
+			border-radius: 10px;
+		}
+
+		#appdi {
+			margin-top: 5px;
+		}
+
+		.checkbox-wrapper-46 input[type="checkbox"] {
+			display: none;
+			visibility: hidden;
+		}
+
+		.checkbox-wrapper-46 .cbx {
+			margin: auto;
+			-webkit-user-select: none;
+			user-select: none;
+			cursor: pointer;
+		}
+
+		.checkbox-wrapper-46 .cbx span {
+			display: inline-block;
+			vertical-align: middle;
+			transform: translate3d(0, 0, 0);
+		}
+
+		.checkbox-wrapper-46 .cbx span:first-child {
+			position: relative;
+			width: 18px;
+			height: 18px;
+			border-radius: 3px;
+			transform: scale(1);
+			vertical-align: middle;
+			border: 1px solid #9098A9;
+			transition: all 0.2s ease;
+		}
+
+		.checkbox-wrapper-46 .cbx span:first-child svg {
+			position: absolute;
+			top: 3px;
+			left: 2px;
+			fill: none;
+			stroke: #FFFFFF;
+			stroke-width: 2;
+			stroke-linecap: round;
+			stroke-linejoin: round;
+			stroke-dasharray: 16px;
+			stroke-dashoffset: 16px;
+			transition: all 0.3s ease;
+			transition-delay: 0.1s;
+			transform: translate3d(0, 0, 0);
+		}
+
+		.checkbox-wrapper-46 .cbx span:first-child:before {
+			content: "";
+			width: 100%;
+			height: 100%;
+			background: #506EEC;
+			display: block;
+			transform: scale(0);
+			opacity: 1;
+			border-radius: 50%;
+		}
+
+		.checkbox-wrapper-46 .cbx span:last-child {
+			padding-left: 8px;
+		}
+
+		.checkbox-wrapper-46 .cbx:hover span:first-child {
+			border-color: #506EEC;
+		}
+
+		.checkbox-wrapper-46 .inp-cbx:checked+.cbx span:first-child {
+			background: #506EEC;
+			border-color: #506EEC;
+			animation: wave-46 0.4s ease;
+		}
+
+		.checkbox-wrapper-46 .inp-cbx:checked+.cbx span:first-child svg {
+			stroke-dashoffset: 0;
+		}
+
+		.checkbox-wrapper-46 .inp-cbx:checked+.cbx span:first-child:before {
+			transform: scale(3.5);
+			opacity: 0;
+			transition: all 0.6s ease;
+		}
+
+		@keyframes wave-46 {
+			50% {
+				transform: scale(0.9);
+			}
+		}
+
+
+
 		.progbarma {
 			width: 100%;
 			background-color: #1d1d1d;
@@ -296,7 +401,9 @@
 			margin: 10px 0px;
 		}
 
-		
+		.appli:hover {
+			background-color: #434343;
+		}
 
 		.progbar {
 			width: 1%;
@@ -304,6 +411,7 @@
 			min-width: 2px;
 			background-color: #04AA6D;
 		}
+
 		button {
 			border-radius: 5px;
 			border: none;
@@ -318,6 +426,24 @@
 			background: #1e1212;
 			color: #ff7272;
 		}
+
+		.inpbox {
+			margin: 10px 0;
+			background: #1f1f1f;
+			padding: 6px;
+			border-radius: 7px;
+			outline: none;
+		}
+
+		.inpbox select {
+			background: #2f2f2f;
+			color: white;
+			border: 1px solid #1a1a1a;
+			border-radius: 5px;
+			padding: 3px 1px !important;
+			float: right;
+			transform: translate(2px,-3px);
+		}
 	</style>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
@@ -328,7 +454,9 @@
 			<h3>System</h3>
 			<button class="tablinks" onclick="openCity(event, 'storage')" id="defaultOpen">Storage</button>
 			<button class="tablinks" onclick="openCity(event, 'battery')">Battery</button>
+			<button class="tablinks" onclick="openCity(event, 'tbar')">Taskbar</button>
 			<button class="tablinks" onclick="openCity(event, 'exp')">Flags</button>
+			<button class="tablinks" onclick="openCity(event, 'defaults')">Defaults</button>
 			<button class="tablinks" onclick="openCity(event, 'about')">About</button>
 		</div>
 
@@ -342,8 +470,8 @@
 				<small id="storemark2">Your system has crashed. Please Update.</small>
 			</div>
 			<div settingn>
-			<p style="margin-top: 0px;">Ran out of storage?<br>Get more storage by removing some files</p>
-			<button>Open Files</button>
+				<p style="margin-top: 0px;">Ran out of storage?<br>Get more storage by removing some files</p>
+				<button>Open Files</button>
 			</div>
 			<div settingn>
 				<p style="margin-top: 0px;">Be careful while interacting with extremely dangerous settings.</p>
@@ -355,12 +483,12 @@
 						}
 						let indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
 						let dbName = 'trojencat';
-						  let storeName = 'store';
-						  let keyToRemove = 'rom';
+						let storeName = 'store';
+						let keyToRemove = 'rom';
 
-						  let request = indexedDB.open(dbName);
+						let request = indexedDB.open(dbName);
 
-						  request.onsuccess = function(event) {
+						request.onsuccess = function (event) {
 							let db = event.target.result;
 
 							let transaction = db.transaction(storeName, 'readwrite');
@@ -368,24 +496,290 @@
 
 							let deleteRequest = objectStore.delete(keyToRemove);
 
-							deleteRequest.onsuccess = function(event) {
-							  console.log("Key 'rom' removed successfully");
+							deleteRequest.onsuccess = function (event) {
+								console.log("Key 'rom' removed successfully");
 								if (confirm("OS Cleared. Let us reboot the OS to prevent errors in future?")) {
-									window.top.location.reload()
+									window.parent.location.reload()
 								}
 							};
 
-							deleteRequest.onerror = function(event) {
-							  console.error("Error removing key 'rom':", event.target.errorCode);
+							deleteRequest.onerror = function (event) {
+								console.error("Error removing key 'rom':", event.target.errorCode);
 							};
-						  };
+						};
 
-						  request.onerror = function(event) {
+						request.onerror = function (event) {
 							console.error("Error opening database:", event.target.errorCode);
-						  };
+						};
 					}
 				</script>
+			</div>
+		</div>
+
+		<div id="defaults" class="tabcontent">
+			<h1>Defaults</h1>
+			<div class="inpbox">
+				<span>Save Camera images as </span>
+				<select id="scapimas">
+					<option>PNG</option>
+					<option>JPEG</option>
+				</select>
+			</div>
+			<small>PNG could be compressed more without losing much quality. So we didn't actually made this. Its just the UI for later. Sorry!</small>
+			<script>
+				let selinp = document.getElementById("scapimas");
+				if (JSON.parse(localStorage.getItem("objsets")).svcpimas) {
+				selinp.value = JSON.parse(localStorage.getItem("objsets")).svcpimas;	
+				}
+			</script>
+		</div>
+
+		<div id="tbar" class="tabcontent">
+			<h1>TaskBar</h1>
+			<nav>
+				<quicks navobj="">
+					<div app-shortcut="">
+						<span ic="" class="material-icons">
+							rocket_launch
+						</span>
+					</div>
+					<div app-shortcut="">
+						<span ic="" class="material-icons">
+							rocket_launch
+						</span>
+					</div>
+					<div app-shortcut="">
+						<span ic="" class="material-icons">
+							rocket_launch
+						</span>
+					</div>
+				</quicks>
+				<your navobj="">
+					<div app-shortcut="">
+						<span ic="" class="material-icons"><svg class="mmic" version="1.1"
+								xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+								width="22.93098" height="43.31773" viewBox="0,0,22.93098,43.31773">
+								<g transform="translate(-228.53451,-158.34114)">
+									<g data-paper-data="{&quot;isPaintingLayer&quot;:true}" fill="#ffffff"
+										fill-rule="nonzero" stroke="none" stroke-width="0" stroke-linecap="butt"
+										stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray=""
+										stroke-dashoffset="0" style="mix-blend-mode: normal">
+										<path
+											d="M228.68924,195.01197l-0.15473,-36.67083l19.03116,29.04225l0.00895,-17.05191l3.55036,-5.02752l0.3405,36.35491c0,0 -18.13437,-29.80707 -18.13437,-29.23736c0,5.15736 -0.30946,16.4013 -0.30946,16.4013z">
+										</path>
+									</g>
+								</g>
+							</svg></span>
+					</div>
+
+				</your>
+				<info navobj="">
+					<div>
+						<span id="battery-p-display">00%</span>
+						<span id="battery-display" class="material-icons">battery_5_bar</span>
+					</div>
+					<div>
+						<span id="time-display">00:00:00</span><br>
+						<span id="date-display">00-00-0000</span>
+					</div>
+				</info>
+			</nav>
+			<style>
+				nav {
+					width: calc(100%);
+					background-color: #2a2b2c8c;
+					color: white;
+					backdrop-filter: blur(7px);
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					flex-direction: row;
+					border-radius: 7px;
+					user-select: none;
+				}
+
+				nav [navobj] {
+					padding: 1px;
+					margin: 3px;
+					border-radius: 5px;
+					background-color: #c4c4c429;
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					flex-direction: row;
+				}
+
+				nav [navobj] div {
+					display: inline-block;
+					margin: 5px 7px;
+					text-align: center;
+					font-size: 11px;
+				}
+
+				.mmic {
+					width: 10px;
+					height: 23px;
+				}
+
+				nav info {
+					align-self: flex-end;
+				}
+
+				#battery-display {
+					transform: rotate(90deg) scale(0.8) translateX(-8px);
+				}
+
+				#battery-p-display {
+					transform: translate(0px, 11px);
+					display: block;
+					height: 0px;
+					color: white;
+				}
+
+				#date-display {
+					font-size: 9px;
+					line-height: 10px;
+					display: block;
+				}
+
+				[navobj] [app-shortcut] {
+					background-color: transparent;
+					cursor: pointer;
+					transition: .2s;
+				}
+
+				[navobj] [app-shortcut]:hover {
+					transform: scale(1.1);
+				}
+			</style>
+			<br>
+			<b>Apps Dock</b>
+			<script>
+				function updtsb(eve) {
+					let ele = eve.getElementsByClassName("theappname")[0].innerHTML;
+					console.log("ele: " + ele)
+				}
+			</script>
+			<div id="appdi">
+
+				<div class="appli" onclick="updtsb(this)">
+					<div class="checkbox-wrapper-46">
+						<input class="inp-cbx" id="cbx-fli" type="checkbox" disabled checked/>
+						<label class="cbx" for="cbx-fli"><span>
+								<svg width="12px" height="10px" viewbox="0 0 12 10">
+									<polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+								</svg></span><span class="theappname">Files</span>
+							
+						</label>
+						<small style="margin-top: 5px;">Files cannot be removed.</small>
+					</div>
 				</div>
+				<div class="appli" onclick="updtsb(this)">
+					<div class="checkbox-wrapper-46">
+						<input class="inp-cbx" id="cbx-cam" type="checkbox" />
+						<label class="cbx" for="cbx-cam"><span>
+								<svg width="12px" height="10px" viewbox="0 0 12 10">
+									<polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+								</svg></span><span class="theappname">Camera</span>
+						</label>
+					</div>
+				</div>
+				<div class="appli" onclick="updtsb(this)">
+					<div class="checkbox-wrapper-46">
+						<input class="inp-cbx" id="cbx-sets" type="checkbox" />
+						<label class="cbx" for="cbx-sets"><span>
+								<svg width="12px" height="10px" viewbox="0 0 12 10">
+									<polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+								</svg></span><span class="theappname">Settings</span>
+						</label>
+					</div>
+				</div>
+				<div class="appli" onclick="updtsb(this)">
+					<div class="checkbox-wrapper-46">
+						<input class="inp-cbx" id="cbx-str" type="checkbox" />
+						<label class="cbx" for="cbx-str"><span>
+								<svg width="12px" height="10px" viewbox="0 0 12 10">
+									<polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+								</svg></span><span class="theappname"> Store</span>
+						</label>
+					</div>
+				</div>
+				<button onclick="sytb()">Save</button><br>
+<!--
+				<div setting>
+					<div class="checkbox-wrapper-51">
+						<input type="checkbox" id="cbx-53" onclick="toggleatbr()" role="submit">
+						<label for="cbx-53" class="toggle">
+							<span>
+								<svg width="10px" height="10px" viewBox="0 0 10 10">
+									<path
+										d="M5,1 L5,1 C2.790861,1 1,2.790861 1,5 L1,5 C1,7.209139 2.790861,9 5,9 L5,9 C7.209139,9 9,7.209139 9,5 L9,5 C9,2.790861 7.209139,1 5,1 L5,9 L5,1 Z">
+									</path>
+								</svg>
+							</span>
+						</label>
+					</div>
+					<b>In App TaskBar</b>
+					<p>Show TaskBar while on an app fullscreen</p>
+
+				</div>
+				<script>
+					if (localStorage.getItem("tsets")) {
+							if (JSON.parse(localStorage.getItem("tsets")).tbsh) {
+					document.getElementById("cbx-53").checked = false;
+							} else {
+								document.getElementById("cbx-53").checked = true;
+							}
+						}
+					function toggleatbr() {
+						var tbsh = localStorage.getItem("tsets.tbsh");
+
+						if (document.getElementById("cbx-53").checked) {
+							document.getElementById("cbx-53").checked = true;
+							localStorage.setItem("tsets.tbsh", true);
+						} else {
+							document.getElementById("cbx-53").checked = false;
+							localStorage.setItem("tsets.tbsh", false);
+							window.parent.checktaskbar();
+						}
+					}
+				</script>
+-->
+			</div>
+			
+			<script>
+				function sytb() {
+					let tbtb = "";
+					const pref = `<div app-shortcut="" onclick="openapp('`
+					const suff = `</span>
+			</div>`
+					if (document.getElementById("cbx-fli").checked) {
+						tbtb += pref + `files', 1)">
+				<span ic="" class="material-icons">
+					folder` + suff
+					}
+					if (document.getElementById("cbx-cam").checked) {
+						tbtb += pref + `camera', 1)">
+						<span ic="" class="material-icons">
+							camera` + suff
+					} 
+					if (document.getElementById("cbx-sets").checked) {
+						tbtb += pref + `settings', 1)">
+						<span ic="" class="material-icons">
+							settings` + suff
+				} 
+				if (document.getElementById("cbx-str").checked) {
+					tbtb += pref + `store', 1)">
+						<span ic="" class="material-icons">
+							store` + suff
+				}
+						localStorage.setItem("sets",tbtb)
+					window.top.reloadTaskbar();
+					}
+				
+			</script>
+			<small>Changes reset on rebooting Nova</small>
+			
 		</div>
 
 		<div id="battery" class="tabcontent">
@@ -447,7 +841,7 @@
 				}</script>
 		</div>
 		<div id="about" class="tabcontent">
-			<h2>About</h2>
+			<h2>Nova OS 1.3</h2>
 			<p>You are Using Nova OS Web. <br>Thank you for being in the Nova Ecosystem.</p>
 			<supportb>
 				<b>Support Us</b>
@@ -462,12 +856,23 @@
 			<table>
 				<tbody style="width: 100%;">
 					<tr>
-						<td>adthoughtsglobal</td>
+						<td><b>adthoughtsglobal</b></td>
 						<td>Developer</td>
 					</tr>
 					<tr>
-						<td>Ador Rahman</td>
-						<td>Developer</td>
+						<td><b>G-Progress</b></td>
+						<td>App Developer</td>
+						
+					</tr>
+					<tr>
+						<td>Pixabay</td>
+						<td>Default Wallpaper</td>
+
+					</tr>
+					<tr>
+						<td>Google Fonts</td>
+						<td>Icons and fonts</td>
+
 					</tr>
 				</tbody>
 			</table>
@@ -493,12 +898,15 @@
 					</label>
 				</div>
 				<b>Power Saving Mode</b>
-				<p>Dim the lights by: <input class="nocss" type="number" min=10 max=80 value="50" id="dimlightsby">%</p>
+				<p>Dim the lights by: <input class="nocss" type="number" min=10 max=80 value="50" id="dimlightsby">%
+				</p>
 
 			</div>
+
 			<small style="margin-top: 10px;">
 				<b>Highly Experimental</b>
-				<p>CAUTION: some features may not be suggested or may cause harm for some people or their devices. Use
+				<p>CAUTION: some features may not be suggested or may cause harm for some people or their devices.
+					Use
 					these settings with extreme care.</p>
 			</small>
 
@@ -518,12 +926,13 @@
 				}
 
 				function greenflag() {
+
 					var usedMemoryPercentage;
 					document.getElementById("defaultOpen").click();
 
 					if ('storage' in navigator && 'estimate' in navigator.storage) {
 						navigator.storage.estimate().then(({usage, quota}) => {
-							
+
 							const elem = document.getElementById("myBar2");
 							const storemarkElem = document.getElementById("storemark2");
 							elem.style.width = usedMemoryPercentage + "%";
@@ -539,26 +948,24 @@
 				}
 
 
-					var psmm = window.parent.document.body.style.opacity == "1";
-					if (psmm) {togglepsm()}
-					function togglepsm() {
-						if (psmm) {
-							window.parent.document.body.style.filter = "brightness(1)"
-							psmm = false
-						} else {
-							window.parent.document.body.style.filter = "brightness(" + (100 - document.getElementById("dimlightsby").value) + "%)"
+				var psmm = window.parent.document.body.style.opacity == "1";
+				if (psmm) {togglepsm()}
+				function togglepsm() {
+					if (psmm) {
+						window.parent.document.body.style.filter = "brightness(1)"
+						psmm = false
+					} else {
+						window.parent.document.body.style.filter = "brightness(" + (100 - document.getElementById("dimlightsby").value) + "%)"
 
-							psmm = true
-						}
-						console.log(psmm)
-
-
-
+						psmm = true
 					}
+					console.log(psmm)
+
+
+
+				}
 
 			</script>
-
 	</container>
 </body>
-
 </html>

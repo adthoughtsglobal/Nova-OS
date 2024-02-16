@@ -292,10 +292,10 @@
 							.then(appald => {
 								console.log(appald);
 								if (appald.some(app => app.name === appName)) {
-									installButton.textContent = 'Open Files app';
-									installButton.style.backgroundColor = "#1f1f1f";
+									installButton.textContent = 'Update';
+									installButton.style.backgroundColor = "#2f2f2f";
 									installButton.onclick = function () {
-										window.parent.openapp("files", 1);
+										installapp(appDetails.find(item => item.src), appName, this);
 									};
 								} else {
 									installButton.textContent = 'Install';
@@ -336,17 +336,13 @@
 		}
 		async function installapp(x, appName, obj) {
 			obj.innerHTML = "Installing..."
-			obj.style.backgroundColor = "grey"
+			obj.style.backgroundColor = "#2f2f2f"
 			console.log(x)
 			const response = await fetch("https://adthoughtsglobal.github.io/" + x.src);
 			const content = await response.text();
 			await window.parent.createFile("Apps", appName, "app", content);
 			setTimeout(() => {
-				obj.innerHTML = "Open Files App"
-				obj.onclick = function () {
-					window.parent.openapp("files", 1);
-				};
-				obj.style.backgroundColor = "#1f1f1f"
+				obj.innerHTML = "Update"
 			}, 1000)
 
 		}

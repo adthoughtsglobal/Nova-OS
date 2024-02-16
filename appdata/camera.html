@@ -10,6 +10,7 @@
       justify-content: center;
       align-items: center;
       margin: 0;
+		background-color: black;
     }
 
     #video-container {
@@ -17,19 +18,18 @@
     }
 
     #video {
-      width: 100%;
-      max-width: 600px;
+      height: 100%;
+      max-width: 95vw;
       border-radius: 8px;
       transform: scaleX(1); /* Initial scaling without mirroring */
-      transition: transform 0.3s ease-in-out;
+      transition: 0.3s ease-in-out;
     }
 
     #camera-select {
       position: absolute;
       top: 10px;
       right: 10px;
-		background-color: transparent;
-		backdrop-filter: blur(3px) brightness(50%);
+		background-color: #1f1f1f;
 		color: grey;
 		border: none;
 		padding: 5px;
@@ -41,20 +41,42 @@
       bottom: 10px;
       left: 10px;
       padding: 8px;
-      background-color: #3498db;
+      background-color: #1f1f1f;
       color: #fff;
       border: none;
-      border-radius: 4px;
+      border-radius: 50%;
       cursor: pointer;
     }
+
+	  #photo-btn {
+		  position: fixed;
+		  bottom: 5%;
+		  border: cornsilk;
+		  height: 15%;
+		  aspect-ratio: 1/1;
+		  border-radius: 50%;
+		  opacity: 75%;
+		  box-shadow: 0 0 20px black;
+	  }
+
+	  #photo-btn:active {
+		  transform: scale(0.9);
+	  }
   </style>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
   <div id="video-container">
     <video id="video" playsinline autoplay></video>
-    <select id="camera-select"></select>
-    <button id="mirror-btn" onclick="toggleMirror()">Mirror</button>
+    
   </div>
+	<select id="camera-select"></select>
+	<button id="mirror-btn" onclick="toggleMirror()"><span class="material-icons">
+	360
+	</span></button>
+	<button id="photo-btn" onclick="capture(this)"><span class="material-icons">
+	camera
+	</span></button>
 
   <script>
     let isMirrored = false;
@@ -65,31 +87,46 @@
       return cameras;
     }
 
-    async function startCamera() {
-      const video = document.getElementById('video');
-      const cameras = await getVideoSources();
-      const cameraSelect = document.getElementById('camera-select');
+	  async function startCamera() {
+		const video = document.getElementById('video');
+		const cameras = await getVideoSources();
+		const cameraSelect = document.getElementById('camera-select');
 
-      cameras.forEach(camera => {
-        const option = document.createElement('option');
-        option.value = camera.deviceId;
-        option.text = camera.label || `Camera ${cameraSelect.length + 1}`;
-        cameraSelect.appendChild(option);
-      });
+		if (cameras.length === 0) {
+		  console.error('No cameras found.');
+		  return;
+		}
 
-      cameraSelect.addEventListener('change', async () => {
-        const selectedCameraId = cameraSelect.value;
-        const stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: selectedCameraId } });
-        video.srcObject = stream;
-        resetMirror();
-      });
+		cameras.forEach(camera => {
+		  const option = document.createElement('option');
+		  option.value = camera.deviceId;
+		  option.text = camera.label || `Camera ${cameraSelect.length + 1}`;
+		  cameraSelect.appendChild(option);
+		});
 
-      if (cameras.length > 0) {
-        const defaultCameraId = cameras[0].deviceId;
-        const stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: defaultCameraId } });
-        video.srcObject = stream;
-      }
-    }
+		cameraSelect.addEventListener('change', async () => {
+		  const selectedCameraId = cameraSelect.value;
+		  try {
+			const stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: selectedCameraId } });
+			video.srcObject = stream;
+			resetMirror();
+		  } catch (error) {
+			console.error('Error accessing camera:', error);
+		  }
+		});
+
+		const defaultCameraId = cameras[0].deviceId;
+		try {
+		  const stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: defaultCameraId } });
+		  video.srcObject = stream;
+		} catch (error) {
+		  console.error('Error accessing default camera:', error);
+			let x = window.parent.justConfirm("Can't Get Camera", "Your device seem to say that there's no camera, Should we try again harder?")
+			if (x) {
+				startCamera();
+			}
+		}
+	  }
 
     function toggleMirror() {
       const video = document.getElementById('video');
@@ -105,6 +142,48 @@
 
 	  function greenflag() {
 		  startCamera()
+	  }
+
+	  function captureCameraImage() {
+		  const video = document.getElementById('video');
+		  const canvas = document.createElement('canvas');
+		  const ctx = canvas.getContext('2d');
+
+		  // Set canvas dimensions to match video dimensions
+		  canvas.width = video.videoWidth;
+		  canvas.height = video.videoHeight;
+
+		  // Apply mirror effect if needed
+		  if (isMirrored) {
+			  ctx.translate(canvas.width, 0);
+			  ctx.scale(-1, 1);
+		  }
+
+		  // Draw video frame onto canvas
+		  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+		  // Convert canvas content to base64-encoded PNG
+		  const dataUrl = canvas.toDataURL('image/png');
+
+		  return dataUrl;
+	  }
+
+	  function capture(obj) {
+		  const video = document.getElementById('video');
+		  video.style.filter = "brightness(5)"
+		  let cakebuff = obj.innerHTML;
+		  obj.innerHTML = "..."
+		  let x = captureCameraImage();
+		  x = window.parent.shrinkbsf(x);
+		  let y = {
+			  "via":"camera"
+		  }
+		  window.parent.createFile("Media", "captured", "image/png", x, y)
+		  obj.innerHTML = cakebuff;
+		  setTimeout(() => {
+			  video.style.filter = "none";
+		  }, 500);
+		  
 	  }
   </script>
 </body>
