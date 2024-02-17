@@ -125,6 +125,12 @@ nav info {
 	animation: appshow 0.3s 1;
 }
 
+@media only screen and (max-width: 500px) {
+	.window {
+		min-width: 0;
+	}
+}
+
 @keyframes appshow {
 	0% {
 		transform: translateY(0px) scale(0.5);
@@ -313,6 +319,25 @@ nav info {
 	outline: none;
 }
 
+@media only screen and (max-width: 800px) {
+	#appdmod {
+		width: 70%;
+	}
+}
+
+@media only screen and (max-height: 450px) {
+	#appdmod {
+		max-height: 100%;
+	}
+}
+
+@media only screen and (max-width: 600px) {
+	#appdmod {
+		width: 90%;
+	}
+}
+
+
 @keyframes dmodthingy {
 	0% {
 		transform: translateY(50px);
@@ -413,11 +438,11 @@ nav info {
 	margin-bottom: 10px;
 	border-radius: 7px;
 	padding: 5px 7px;
-	background: #3b3b3b;
+	background: #00000069;
 	color: white;
-	border: 1px solid #1f1f1f;
 	font-family: 'Poppins';
 	outline: none;
+	border: none;
 }
 
 .strtappsugs {
@@ -473,4 +498,10 @@ nav info {
 	margin-top: calc(50vh - 26px);
 	opacity: 0.5;
 	font-size: 10px;
+}
+
+#appsindeck {
+	overflow-x: hidden;
+	height: calc(50vh - 29px);
+	overflow-y: scroll;
 }

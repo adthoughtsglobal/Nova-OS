@@ -323,11 +323,14 @@
 				const parsedTodo = JSON.parse(todo);
 
 				if (parsedTodo.appname === "studio" && parsedTodo.data && parsedTodo.data.lclfile) {
+					console.log("Data is valid")
 					const theID = parsedTodo.data.lclfile;
 					defile = theID;
-					const file = await window.parent.getFileById(theID);
+					let file = await window.parent.getFileById(theID);
 
 					if (file && file.content) {
+						console.log("file is valid: " + JSON.stringify(file.content));
+						file.content = window.parent.unshrinkbsf(file.content);
 						if (file.content.startsWith("data:") && file.content.includes("base64")) {
 							if (await window.parent.justConfirm("Convert Base64?", "The code you tried to open is encoded with base64. Do you want to decode it?")) {
 								document.getElementById("thedisplay").value = atob(file.content.split(',')[1]);

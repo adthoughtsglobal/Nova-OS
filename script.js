@@ -216,10 +216,10 @@ async function dod() {
 
 function clwin(x) {
 	console.log("who said pasta?: " + x.parentElement.getElementsByClassName("wincl")[1].innerHTML)
-	if (x.parentElement.getElementsByClassName("wincl")[1].innerHTML == "filter_none") {
-		fulsapp = true;
-		checktaskbar()
-	}
+	// if (x.parentElement.getElementsByClassName("wincl")[1].innerHTML == "filter_none") {
+//		fulsapp = true;
+//		checktaskbar()
+//	}
 	x.parentElement.parentElement.remove();
 }
 
@@ -293,7 +293,6 @@ async function fetchData(url) {
 var content
 function openwindow(title, cont) {
 	content = cont
-	const ismob = window.innerWidth;
 	if (content == undefined) {
 		content = "<center><h1>Unavailable</h1>App Data cannot be read.</center>";
 	}
@@ -308,7 +307,7 @@ function openwindow(title, cont) {
 	var randomRight = Math.random() * (20 - 1) + 1 + 'vw';
 	var randomTop = Math.random() * (6 - 1) + 1 + 'vh';
 
-	let isitmob = window.innerWidth <= 400;
+	let isitmob = window.innerWidth <= 500;
 
 	// Set the style of windowDiv
 	if (!isitmob) {
@@ -323,7 +322,7 @@ function openwindow(title, cont) {
 		windowDiv.style.height = '274px';
 	} else {
 		windowDiv.style.width = '100%';
-		windowDiv.style.height = 'calc(100% - 0px)';
+		windowDiv.style.height = 'calc(100% - 42px)';
 	}
 
 	// Create the window header
@@ -332,8 +331,6 @@ function openwindow(title, cont) {
 	windowHeader.classList += "windowheader";
 	windowHeader.textContent = toTitleCase(title);
 
-
-	if (!isitmob) {
 		var flButton = document.createElement("span");
 		flButton.classList.add("material-icons", "wincl");
 		flButton.style = "right: 20px;font-size: 10px !important;padding: 3px;";
@@ -341,7 +338,6 @@ function openwindow(title, cont) {
 		flButton.onclick = function() {
 			flwin(flButton);
 		};
-	}
 
 	// Create the close button in the header
 	var closeButton = document.createElement("span");

@@ -59,28 +59,31 @@
 
 		[flap-nav] {
 			display: flex;
-			height: 31px;
+			height: 29px;
 			flex-direction: row;
 			flex-wrap: nowrap;
+			margin-top: 10px;
 		}
 
 		.flappsearch {
-			flex-grow: 10;
-			text-align: center;
+			flex-grow: 10 !important;
+			text-align: center !important;
 			background: #191919;
 			border-radius: 5px;
 			font-size: 11px;
 			padding: 2px !important;
-			margin-top: -10px;
 			color: #b8b8b8;
 			border: 1px solid #414141;
-			height: fit-content;
-			transform: translate(-21px, 19px);
+			display: grid;
+			align-items: center;
 		}
 
 		.nowid {
 			width: 0px;
 			padding: 5px;
+			flex-grow: 1;
+			align-self: flex-end;
+			text-align: center;
 		}
 
 		.navbfobtns {
@@ -177,6 +180,7 @@
 			width: 70%;
 			overflow: hidden;
 			white-space: nowrap;
+			text-overflow: ellipsis;
 			margin: 0;
 		}
 
@@ -550,10 +554,7 @@ let md = {
 	</dialog>
 	<div id="flap-mot">
 		<div flap-nav>
-			<div style="flex-grow: 3;" class="nowid">
-				<span class="material-symbols-rounded navbfobtns">
-					arrow_back
-				</span>
+			<div style="" class="nowid">
 				<span class="material-symbols-rounded navbfobtns" onclick="refresh()">
 					refresh
 				</span>
@@ -732,13 +733,17 @@ let md = {
 								  <button class="dropbtn">More</button>
 								  <div class="dropup-content">
 									${fileData.type.startsWith("image") ? '<a onclick="window.parent.makewall(\'' + x.getAttribute("unid") + '\')">Set As Desktop Background</a>' : ''}
+									${fileData.type.startsWith("app") ? `<a onclick="openfile(document.getElementById('`+ x.id + `'), 'text/html')">Open in studio</a>` : ''}
 									<a onclick="openfile(document.getElementById('`+ x.id + `'), 'text')">Open as text</a>
 									<a onclick="movefile(document.getElementById('`+ x.id + `'))">Move</a>
 								  </div>
 								</div>`+ fileSize.toFixed(2) + ' ' + units[unitIndex];
 				} catch (error) {
+					document.getElementById("fileinfobn").innerHTML += ":( Can't process file...";
 					refresh()
+					
 					console.error("An error occurred:", error);
+					
 				}
 			}
 		}
@@ -772,35 +777,53 @@ let md = {
 		}
 
 		async function openfile(x, rt) {
-
+			document.getElementById("fileinfobn").innerHTML = "";
 			try {
-				let mm = await window.parent.getFileById(x.getAttribute("unid"));
+				let unid = x.getAttribute("unid");
+				if (!unid) {
+					console.error("Error: 'unid' attribute not found");
+					return;
+				}
+
+				let mm = await window.parent.getFileById(unid);
+				if (!mm) {
+					console.error("Error: File not found");
+					return;
+				}
+
 				let realtype = mm.type;
-				if (rt) {
-					mm.type = rt
-					if (!(await window.parent.justConfirm("Yo sure?", "That's a media file, it would harm your device if you open it - it would be a lot of content!"))) {
+				if (rt && realtype != "txt") {
+					mm.type = rt;
+					if (!(await window.parent.justConfirm("Are you sure?", "The file you are about to open is meant to be not opened."))) {
 						return;
 					}
 				}
 				if (mm.type == "app") {
-					await window.parent.openapp(mm.fileName, x.getAttribute("unid"));
+					console.log("donald duck quack");
+					if (rt) {
+						console.log("ducks quack");
+						window.parent.openlaunchprotocol("studio", {"lclfile": mm.id});
+						return;
+					}
+					await window.parent.openapp(mm.fileName, unid);
 				} else if (mm.type.startsWith("image") || mm.type.startsWith("audio") || mm.type.startsWith("video")) {
-					await window.parent.openlaunchprotocol("media", {"lclfile": x.getAttribute("unid")});
+					await window.parent.openlaunchprotocol("media", {"lclfile": unid});
 				} else {
-					if (realtype == "app" || realtype.startsWith("image") || realtype.startsWith("video") || realtype.startsWith("audio")) {
-						// if its compressed
-						window.parent.openlaunchprotocol("text", {"lclfile": x.getAttribute("unid"), "shrinkray": true});
-					} else if (mm.type.startsWith("text/html")) {
-						window.parent.openlaunchprotocol("studio", {"lclfile": x.getAttribute("unid")});
-					} else {
-					window.parent.openlaunchprotocol("text", {"lclfile": x.getAttribute("unid")});
-				}
-			}
+					if ((realtype == "app" || realtype.startsWith("image") || realtype.startsWith("video") || realtype.startsWith("audio")) && !rt) {
 
-		refresh();
-		} catch (error) {
-			console.error("Error:", error);
-		}
+						// if it's compressed
+						console.log("passed test");
+						window.parent.openlaunchprotocol("text", {"lclfile": unid, "shrinkray": true});
+					} else if (mm.type.startsWith("text/html")) {
+						window.parent.openlaunchprotocol("studio", {"lclfile": unid});
+					} else {
+						window.parent.openlaunchprotocol("text", {"lclfile": unid});
+					}
+				}
+				refresh();
+			} catch (error) {
+				console.error(":( Error:", error);
+			}
 		}
 
 		async function movefile(flid) {
