@@ -24,7 +24,7 @@ getdb('trojencat', 'rom')
 								"fileName": "Welcome",
 								"uid": "sibq81",
 								"type": "txt",
-								"content": "Welcome to Nova OS! Thank you for using this OS, we belive that we have made this 'software' as the most efficient for your daily usage. If not, kindly reach us https://adthoughtsglobal.github.io and connect via the available options, we will respond you back! Enjoy!"
+								"content": "Welcome to Nova OS! Thank you for using this OS, we believe that we have made this 'software' as the most efficient for your daily usage. If not, kindly reach us https://adthoughtsglobal.github.io and connect via the available options, we will respond you back! Enjoy!"
 							},
 							{
 								"fileName": "Basic Help",
