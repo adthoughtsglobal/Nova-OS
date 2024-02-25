@@ -1,5 +1,5 @@
 # Its not the OS, but the one who using it should work easily. 
-We've been and will be making Nova OS to create an operating system that does what you want it to, simple and fast. Nova OS has been evolving into the OS that you've predicted would exist in far future. We are making this not only for the ones who may learn it, we belive that you shall never 'learn' to operating an everyday operating system, creating an ecosystem that fits in right for you is indeed the future or as we hope it must be.
+We've been and will be making Nova OS to create an operating system that does what you want it to, simple and fast. Nova OS has been evolving into the OS that you've predicted would exist in far future. We are making this not only for the ones who may learn it, we belive that you shall never 'learn' to operate an everyday operating system, creating an ecosystem that fits in right for you is indeed the future or as we hope it must be.
 
 ## Introducing Nova OS - An OS Made For You.
 ![image](https://github.com/adthoughtsglobal/Nova-OS/assets/123654929/35409b32-4db2-4e40-af7f-878e612c235a)
