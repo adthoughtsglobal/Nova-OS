@@ -19,18 +19,33 @@
 </head>
 
 <body>
-	<noscript>
-		<h1>I don't even know what time is it now. Who to say? your browser...</h1>
-		<p>Well your browser seems to be messing around turning off some JS...</p>
-		<b>If you have set JS to be desabled:</b>
-		<p>Nova OS require JS to run.
-			<li>You can always <b><a href="https://www.larimer.gov/it/enable-javascript"> turn JS on</a>.</b></li>
-			</ul>
-		</p>
-	</noscript>
+	<div class="container2">
+		<div id="bgimage" class="layer44"></div>
+		<dialog id="edison">
+			<img src="https://adthoughtsglobal.github.io/Nova-OS/zv8P8U9w8A.webp" alt="Nova">
+			<div class="loader5345"></div>
+			<h1 class="gradient-text">Platinum</h1>
+		</dialog>
+		<script>
+			function gid(x) {
+				return document.getElementById(x);
+			}
+			gid("edison").showModal()
+		</script>
 
-	<div class="container" id="desktop">
-		<span class="deskloadspan">Desktop Is loading...</span>
+		<noscript>
+			<h1>I don't even know what time is it now. Who to say? your browser...</h1>
+			<p>Well your browser seems to be messing around turning off some JS...</p>
+			<b>If you have set JS to be desabled:</b>
+			<p>Nova OS require JS to run.
+				<li>You can always <b><a href="https://www.larimer.gov/it/enable-javascript"> turn JS on</a>.</b></li>
+				</ul>
+			</p>
+		</noscript>
+
+		<div class="container layer44" id="desktop">
+			<span class="deskloadspan">Desktop Is loading...</span>
+		</div>
 	</div>
 	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -42,49 +57,66 @@
 	</script>
 
 	<nav id="novanav">
-		<quicks navobj id="dock">
-			<div app-shortcut onclick="openapp('files', 1)">
-				<span ic class="material-icons">
-					folder
-				</span>
-			</div>
-			<div app-shortcut onclick="openapp('camera', 1)">
-				<span ic class="material-icons">
-					photo_camera
-				</span>
-			</div>
-			<div app-shortcut onclick="openapp('settings', 1)">
-				<span ic class="material-icons">
-					settings
-				</span>
-			</div>
-		</quicks>
-		<your navobj>
-			<div app-shortcut>
-				<span ic class="material-icons" id="mm" onclick="openn()">N?
-				</span>
-			</div>
-			<g id="your-apps">
+		<div class="flodiv">
+			<quicks navobj id="dock">
+				<biv class="tooltip">
+					<div app-shortcut onclick="openapp('files', 1)">
 
-			</g>
-		</your>
-		<info navobj>
-			<div>
-				<span id="battery-p-display">
-					%
-				</span>
-				<span id="battery-display" class="material-icons">
-					p ic
-				</span>
-			</div>
-			<div>
-				<span id="time-display">time</span><br>
-				<span id="date-display">date</span>
-			</div>
-		</info>
-		<info class="">
+						<span ic class="material-icons">
+							folder
+						</span>
+						<span class="tooltiptext">Files</span>
+					</div>
+				</biv>
+				<biv class="tooltip">
+					<div app-shortcut onclick="openapp('camera', 1)">
 
-		</info>
+						<span ic class="material-icons">
+							photo_camera
+						</span>
+						<span class="tooltiptext">Camera</span>
+					</div>
+				</biv>
+				<biv class="tooltip">
+					<div app-shortcut onclick="openapp('settings', 1)">
+						<span ic class="material-icons">
+							settings
+						</span>
+						<span class="tooltiptext">Settings</span>
+					</div>
+				</biv>
+			</quicks>
+			<your navobj>
+				<div app-shortcut>
+					<span ic class="material-icons" id="mm" onclick="openn()">N?
+					</span>
+				</div>
+				<g id="your-apps">
+
+				</g>
+			</your>
+			<info navobj>
+				<div>
+					<span id="battery-p-display">
+						%
+					</span>
+					<span id="battery-display" class="material-icons">
+						p ic
+					</span>
+				</div>
+				<div>
+					<span id="time-display">time</span><br>
+					<span id="date-display">date</span>
+				</div>
+			</info>
+			<info navobj onclick="dashtoggle()">
+				<div>
+					<span class="material-icons">
+						dashboard
+					</span>
+				</div>
+			</info>
+		</div>
 	</nav>
 	<dialog id="appdmod">
 		<div>
@@ -100,10 +132,68 @@
 			<input placeholder="Search an app..." autocomplete="off" id="strtsear" onkeyup="strtappse()">
 		</div>
 	</dialog>
+	<dialog id="bios">
+		<h1>Nova Setup</h1>
+		<p>Welcome to Nova Setup. This page deals with critical choices that may affect your data and the os itself.
+			remember, clicking on any buttons here might cause damage to your data.</p>
+		<button class="gudbtn" onclick="gid('bios').close()">Exit Setup</button>
+		<button onclick="">Remove Existance (IDB)</button>
+		<button onclick="location.reload()">Hard Refresh (ReBoot)</button>
+		<button onclick="window.location.href = 'versionloader.html'">Switch to other versions of Nova OS</button>
+
+
+	</dialog>
 	<dialog id="startup">
 		<div class="content">
 			<div class="custom-loader2"></div>
 			<h1 id="startuptx">Setting up your OS</h1>
+		</div>
+	</dialog>
+
+	<div id="contextMenu" class="context-menu" style="display:none">
+		<ul>
+			<li><a href="#">
+					<span ic="" class="material-icons">
+						settings
+					</span>
+					Settings</a></li>
+			<li><a onclick="dod()">
+					<span ic="" class="material-icons">
+						refresh
+					</span>
+					Refresh</a></li>
+			<li><a onclick="document.getElementById('bios').showModal()">
+					<span ic="" class="material-icons">
+						account_circle
+					</span>
+					Launch BIOS</a></li>
+		</ul>
+	</div>
+	<dialog id="dashboard">
+		<div id="dashnots">
+			<div class="notifpan">
+				<span class="notifpan-appic"></span>
+				<b>Welcome Back To Nova OS!</b>
+				<small>Welcome to Nova OS! Thank you for using this OS, we believe that this OS is built efficient for
+					your daily usage. Don't forget that this OS is still under development! Enjoy!</small>
+			</div>
+		</div>
+		<div id="quicsets" title="comming soon">
+			<biv class="tooltip">
+				<button id="qksts-int">
+					<span class="material-icons">
+						language
+					</span>
+				</button>
+				<span class="tooltiptext">Internet</span>
+			</biv>
+
+			<biv class="tooltip">
+				<button id="qksts-int">
+					<span class="material-icons">delete</span>
+				</button>
+				<span class="tooltiptext">Bin</span>
+			</biv>
 		</div>
 	</dialog>
 </body>

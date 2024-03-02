@@ -1,4 +1,26 @@
-var batteryLevel, winds = [], rp, flwint = true, opentrigger, memory, nowapp, stx = document.getElementById("startuptx"), applogs = {}, fulsapp;
+var batteryLevel, winds = [], rp, flwint = true, opentrigger, memory, nowapp, stx = gid("startuptx"), applogs = {}, fulsapp;
+
+async function fetchDataAndUpdate() {
+  let localupdatedataver = localStorage.getItem("updver");
+  let fetchupdatedata = await fetch("/versions.json");
+
+  if (fetchupdatedata.ok) {
+	let fetchupdatedataver = (await fetchupdatedata.json()).osver;
+
+	if (localupdatedataver !== fetchupdatedataver) {
+	  if (await justConfirm("Update default apps?", "Your default apps are old. Update them to access new features and fixes.")) {
+		  await installdefaultapps();
+	  } else {
+		  say("You can always update app on settings app/Preferances")
+	  }
+	}
+  } else {
+	console.error("Failed to fetch data from the server.");
+  }
+}
+
+fetchDataAndUpdate();
+
 
 // Check if the database 'trojencat' exists
 getdb('trojencat', 'rom')
@@ -6,12 +28,12 @@ getdb('trojencat', 'rom')
 		try {
 			if (result !== null) {
 				memory = result;
-				let folders = await window.parent.getFolderNames();
+				let folders = await getFolderNames();
 				if (!folders.includes("Desktop")) {
 					createFolder("Desktop")
 				}
 			} else {
-				document.getElementById("startup").showModal();
+				gid("startup").showModal();
 				stx.innerHTML = "Preparing memory"
 				// If the 'rom' key doesn't exist, assign a random array to the 'memory' list
 				memory = [
@@ -24,7 +46,7 @@ getdb('trojencat', 'rom')
 								"fileName": "Welcome",
 								"uid": "sibq81",
 								"type": "txt",
-								"content": "Welcome to Nova OS! Thank you for using this OS, we believe that we have made this 'software' as the most efficient for your daily usage. If not, kindly reach us https://adthoughtsglobal.github.io and connect via the available options, we will respond you back! Enjoy!"
+								"content": "Welcome to Nova OS! Thank you for using this OS, we belive that we have made this 'software' as the most efficient for your daily usage. If not, kindly reach us https://adthoughtsglobal.github.io and connect via the available options, we will respond you back! Enjoy!"
 							},
 							{
 								"fileName": "Basic Help",
@@ -57,6 +79,7 @@ getdb('trojencat', 'rom')
 	});
 
 
+
 function updateTime() {
 	const now = new Date();
 	const hours = now.getHours().toString().padStart(2, '0');
@@ -64,22 +87,24 @@ function updateTime() {
 	const seconds = now.getSeconds().toString().padStart(2, '0');
 
 	const timeString = `${hours}:${minutes}:${seconds}`;
-	document.getElementById('time-display').innerText = timeString;
+	gid('time-display').innerText = timeString;
 
 	const year = now.getFullYear();
 	const month = (now.getMonth() + 1).toString().padStart(2, '0');
 	const day = now.getDate().toString().padStart(2, '0');
 
 	const dateString = `${day}-${month}-${year}`;
-	document.getElementById('date-display').innerText = dateString;
+	gid('date-display').innerText = dateString;
 
 }
 updateTime();
 setInterval(updateTime, 1000);
 
 async function openn() {
+	gid("appsindeck").innerHTML = ""
+	gid("strtsear").value = ""
 	let x = await getFileNamesByFolder("Apps");
-	x.forEach(function(app) {
+	x.forEach(async function(app) {
 		// Create a div element for the app shortcut
 		var appShortcutDiv = document.createElement("div");
 		appShortcutDiv.className = "app-shortcut";
@@ -87,8 +112,51 @@ async function openn() {
 
 		// Create a span element for the app icon
 		var iconSpan = document.createElement("span");
-		iconSpan.className = "material-icons app-icon";
-		iconSpan.textContent = "rocket_launch";
+
+		// Fetch the content asynchronously using getFileById
+		const content = await getFileById(app.id);
+
+		// Unshrink the content
+		const unshrunkContent = unshrinkbsf(content.content);
+
+		// Create a temporary div to parse the content
+		const tempElement = document.createElement('div');
+		tempElement.innerHTML = unshrunkContent;
+
+		// Get all meta tags
+		const metaTags = tempElement.getElementsByTagName('meta');
+
+		// Create an object to store meta tag data
+		let metaTagData = null;
+		let metaiconresult = "well, take the case of " + app.name + ": ";
+
+		// Iterate through meta tags and extract data
+		Array.from(metaTags).forEach(tag => {
+			const tagName = tag.getAttribute('name');
+			const tagContent = tag.getAttribute('content');
+			if (tagName === 'nova-icon' && tagContent) {
+				metaTagData = tagContent;
+				metaiconresult += " it does have nova-icon"
+			}
+		});
+
+
+		if (typeof metaTagData === "string") {
+			if (containsSmallSVGElement(metaTagData)) {
+				iconSpan.innerHTML = metaTagData;
+
+			} else {
+				metaiconresult += ". But it didn't or had an other element rather than having a single svg element."
+				iconSpan.innerHTML = `<span class="material-icons app-icon">rocket_launch</span>`;
+				console.log(metaiconresult)
+			}
+		} else {
+			metaiconresult += " it wasn't even a string"
+			iconSpan.innerHTML = `<span class="material-icons app-icon">rocket_launch</span>`;
+			console.log(metaiconresult)
+		}
+
+
 
 		// Create a span element for the app name
 		var nameSpan = document.createElement("span");
@@ -99,9 +167,9 @@ async function openn() {
 		appShortcutDiv.appendChild(iconSpan);
 		appShortcutDiv.appendChild(nameSpan);
 
-		document.getElementById("appsindeck").appendChild(appShortcutDiv);
+		gid("appsindeck").appendChild(appShortcutDiv);
 	})
-	document.getElementById('appdmod').showModal()
+	gid('appdmod').showModal()
 }
 
 function updateBattery() {
@@ -122,10 +190,10 @@ function updateBattery() {
 		}
 
 		// Check if the value has changed
-		if (iconClass !== document.getElementById('battery-display').innerText) {
+		if (iconClass !== gid('battery-display').innerText) {
 			// Update the display only if the value changes
-			document.getElementById('battery-display').innerHTML = iconClass;
-			document.getElementById('battery-p-display').innerHTML = batteryLevel + "%";
+			gid('battery-display').innerHTML = iconClass;
+			gid('battery-p-display').innerHTML = batteryLevel + "%";
 		}
 	});
 }
@@ -138,9 +206,9 @@ navigator.getBattery().then(function(battery) {
 function dragElement(elmnt) {
 	bringToTop(elmnt)
 	var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-	if (document.getElementById(elmnt.id + "header")) {
+	if (gid(elmnt.id + "header")) {
 		// if present, the header is where you move the DIV from:
-		document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+		gid(elmnt.id + "header").onmousedown = dragMouseDown;
 	} else {
 		// otherwise, move the DIV from anywhere inside the DIV:
 		elmnt.onmousedown = dragMouseDown;
@@ -179,24 +247,63 @@ function dragElement(elmnt) {
 	}
 }
 
-document.getElementById("mm").innerHTML = `<svg class="mmic" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="22.93098" height="43.31773" viewBox="0,0,22.93098,43.31773"><g transform="translate(-228.53451,-158.34114)"><g data-paper-data="{&quot;isPaintingLayer&quot;:true}" fill="#ffffff" fill-rule="nonzero" stroke="none" stroke-width="0" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" style="mix-blend-mode: normal"><path d="M228.68924,195.01197l-0.15473,-36.67083l19.03116,29.04225l0.00895,-17.05191l3.55036,-5.02752l0.3405,36.35491c0,0 -18.13437,-29.80707 -18.13437,-29.23736c0,5.15736 -0.30946,16.4013 -0.30946,16.4013z"/></g></g></svg>`;
+gid("mm").innerHTML = `<svg class="mmic" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="22.93098" height="43.31773" viewBox="0,0,22.93098,43.31773"><g transform="translate(-228.53451,-158.34114)"><g data-paper-data="{&quot;isPaintingLayer&quot;:true}" fill="#ffffff" fill-rule="nonzero" stroke="none" stroke-width="0" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" style="mix-blend-mode: normal"><path d="M228.68924,195.01197l-0.15473,-36.67083l19.03116,29.04225l0.00895,-17.05191l3.55036,-5.02752l0.3405,36.35491c0,0 -18.13437,-29.80707 -18.13437,-29.23736c0,5.15736 -0.30946,16.4013 -0.30946,16.4013z"/></g></g></svg>`;
 
 dod()
 
 async function dod() {
 	setTimeout(async function() {
-		document.getElementById("desktop").innerHTML = ``;
-		let appslist = await getFileNamesByFolder("Desktop")
-		appslist.forEach(function(app) {
+		gid("desktop").innerHTML = ``;
+		let y = await getFileNamesByFolder("Desktop")
+		y.forEach(async function(app) {
 			// Create a div element for the app shortcut
 			var appShortcutDiv = document.createElement("div");
 			appShortcutDiv.className = "app-shortcut";
-			appShortcutDiv.setAttribute("onclick", "openapp('" + app.name + "', '" + app.id + "')");
+			appShortcutDiv.setAttribute("onclick", "openfile(this)");
+			appShortcutDiv.setAttribute("unid", app.id);
+
 
 			// Create a span element for the app icon
 			var iconSpan = document.createElement("span");
-			iconSpan.className = "material-icons app-icon";
-			iconSpan.textContent = "rocket_launch";
+
+			// Fetch the content asynchronously using getFileById
+			const content = await getFileById(app.id);
+
+			// Unshrink the content
+			const unshrunkContent = unshrinkbsf(content.content);
+
+			// Create a temporary div to parse the content
+			const tempElement = document.createElement('div');
+			tempElement.innerHTML = unshrunkContent;
+
+			// Get all meta tags
+			const metaTags = tempElement.getElementsByTagName('meta');
+
+			// Create an object to store meta tag data
+			let metaTagData = null;
+
+			// Iterate through meta tags and extract data
+			Array.from(metaTags).forEach(tag => {
+				const tagName = tag.getAttribute('name');
+				const tagContent = tag.getAttribute('content');
+				if (tagName === 'nova-icon' && tagContent) {
+					metaTagData = tagContent;
+				}
+			});
+
+
+			if (typeof metaTagData === "string") {
+				if (containsSmallSVGElement(metaTagData)) {
+					iconSpan.innerHTML = metaTagData;
+
+				} else {
+					iconSpan.innerHTML = `<span class="material-icons app-icon">rocket_launch</span>`;
+				}
+			} else {
+				iconSpan.innerHTML = `<span class="material-icons app-icon">rocket_launch</span>`;
+			}
+
+
 
 			// Create a span element for the app name
 			var nameSpan = document.createElement("span");
@@ -207,31 +314,53 @@ async function dod() {
 			appShortcutDiv.appendChild(iconSpan);
 			appShortcutDiv.appendChild(nameSpan);
 
-			// Append the app shortcut container to the desktop
-			document.getElementById("desktop").appendChild(appShortcutDiv);
-
+			gid("desktop").appendChild(appShortcutDiv);
 		});
+		closeElementedis()
+		let x = localStorage.getItem("qsets");
+		x = await getFileById(JSON.parse(x).wall);
+
+		if (x) {
+			let unshrinkbsfX = unshrinkbsf(x.content);
+			document.body.style.backgroundImage = `url("` + unshrinkbsfX + `")`;
+		}
 	}, 1000);
+
 }
 
+function closeElementedis() {
+	var element = document.getElementById("edison");
+	element.classList.add("closeEffect");
+	setTimeout(function() {
+		element.close()
+	}, 400);
+}
+
+
 function clwin(x) {
-	console.log("who said pasta?: " + x.parentElement.getElementsByClassName("wincl")[1].innerHTML)
 	// if (x.parentElement.getElementsByClassName("wincl")[1].innerHTML == "filter_none") {
-//		fulsapp = true;
-//		checktaskbar()
-//	}
-	x.parentElement.parentElement.remove();
+	//		fulsapp = true;
+	//		checktaskbar()
+	//	}
+	x.parentElement.parentElement.classList.add("transp3")
+	
+	setTimeout(() => {
+		x.parentElement.parentElement.classList.remove("transp3")
+		x.parentElement.parentElement.remove();
+	}, 700);
 }
 
 function flwin(x) {
 	x.parentElement.parentElement.classList.add("transp2")
 	if (x.innerHTML == "web_asset") {
-			x.parentElement.parentElement.style = "left: 0px; top: 0px; width: 100%; height: calc(100% - 47px);";
+		x.parentElement.parentElement.style = "left: 3px; top: 3px; width: calc(100% - 7px); height: calc(100% - 63px);";
 		x.innerHTML = "filter_none";
 		fulsapp = true;
 	} else {
-		
+
 		x.parentElement.parentElement.style = "left: calc(50vw - 200px);top: calc(50vh - 135px); width: 381px; height: 227px;"
+		nowapp = ""
+		dewallblur();
 		x.innerHTML = "web_asset"
 		fulsapp = false;
 	}
@@ -246,15 +375,15 @@ function flwin(x) {
 
 async function openapp(x, od) {
 	dod()
-	if (document.getElementById('appdmod').open) {
-		document.getElementById('appdmod').close()
+	if (gid('appdmod').open) {
+		gid('appdmod').close()
 	}
 
 
 	// opening an app
 	const fetchDataAndSave = async (x) => {
 		try {
-			let m = await getFileNamesByFolder("Apps");
+			
 
 			var y;
 			if (od != 1) {
@@ -262,6 +391,7 @@ async function openapp(x, od) {
 				y = unshrinkbsf(y.content)
 			} else {
 				y = await fetchData("/appdata/" + x + ".html");
+				let m = await getFileNamesByFolder("Apps");
 				await createFile("Apps", x, "app", y);
 			}
 
@@ -296,12 +426,17 @@ function openwindow(title, cont) {
 	if (content == undefined) {
 		content = "<center><h1>Unavailable</h1>App Data cannot be read.</center>";
 	}
-	winds.push("arr" + winds.length);
+	winds.push(title + genUID());
 
 	// Create the window element
 	var windowDiv = document.createElement("div");
 	windowDiv.id = "window" + winds.length;
-	windowDiv.onclick = nowapp = title
+	windowDiv.onclick = function() {
+		nowapp = title;
+		dewallblur();
+	}
+	nowapp = title;
+	dewallblur();
 	windowDiv.classList += "window";
 	// Generate random values
 	var randomRight = Math.random() * (20 - 1) + 1 + 'vw';
@@ -321,8 +456,8 @@ function openwindow(title, cont) {
 		windowDiv.style.width = '449px';
 		windowDiv.style.height = '274px';
 	} else {
-		windowDiv.style.width = '100%';
-		windowDiv.style.height = 'calc(100% - 42px)';
+		windowDiv.style.width = 'calc(100% - 5px)';
+		windowDiv.style.height = 'calc(100% - 63px)';
 	}
 
 	// Create the window header
@@ -330,21 +465,28 @@ function openwindow(title, cont) {
 	windowHeader.id = "window" + winds.length + "header";
 	windowHeader.classList += "windowheader";
 	windowHeader.textContent = toTitleCase(title);
+	windowHeader.addEventListener("mouseup", function() {
+		checksnapping(windowDiv, event);
+	});
 
-		var flButton = document.createElement("span");
-		flButton.classList.add("material-icons", "wincl");
-		flButton.style = "right: 20px;font-size: 10px !important;padding: 3px;";
-		flButton.textContent = "web_asset";
-		flButton.onclick = function() {
-			flwin(flButton);
-		};
+	var flButton = document.createElement("span");
+	flButton.classList.add("material-icons", "wincl", "flbtn");
+	flButton.style = "right: 20px;font-size: 10px !important;padding: 3px;";
+	flButton.textContent = "web_asset";
+	flButton.onclick = function() {
+		flwin(flButton);
+	};
 
 	// Create the close button in the header
 	var closeButton = document.createElement("span");
 	closeButton.classList.add("material-icons", "wincl");
 	closeButton.textContent = "close";
 	closeButton.onclick = function() {
-		clwin(closeButton);
+		setTimeout(function() {
+			nowapp = '';
+			dewallblur();
+		}, 500);
+		clwin(closeButton, title);
 	};
 
 	// Append the close button to the header
@@ -434,7 +576,6 @@ function openlaunchprotocol(x, y) {
 }
 
 function bringToTop(element) {
-
 }
 
 function getMaxZIndex() {
@@ -485,57 +626,51 @@ async function createFolder(folderName) {
 
 
 async function createFile(folderName, fileName, type, content, metadata) {
-	if (metadata == undefined) {
-		metadata = {"via":"nope"}
+	if (metadata === undefined) {
+		metadata = { "via": "nope" };
 	}
-	let memory = await getdb('trojencat', 'rom');
-	const folderIndex = memory.findIndex(folder => folder.folderName === folderName);
+	let memory2 = await getdb('trojencat', 'rom');
+	const folderIndex = memory2.findIndex(folder => folder.folderName === folderName);
 	try {
 		if (type === "app") {
-			let x = await getFileNamesByFolder("Apps");
 			
-			if (x.some(obj => obj.name === fileName)) {
-				console.log("0001");
-				console.log("*Ignores the data* Overwriting...")
-				let uid = genUID();
-				memory[folderIndex].content.push({
-					fileName,
-					uid,
-					type,
-					content,
-					metadata
-				});
-				console.log(`0002 FN: "${fileName}" @ "${folderName}". Did you even know what that means?`);
-				return;
+			let appdataquacks = await getFileByPath(folderName+"/" + fileName);
+			appdataquacks = appdataquacks[0];
+			console.log("Filesbepath: " + fileName)
+			console.log("YES YES YES:" +appdataquacks)
+			if (appdataquacks != null) {
+				const newData = {
+					metadata: metadata,
+					content: content,
+					fileName: fileName,
+					type: type
+				};
+				await updateFile("Apps", appId, newData);
+				return
 			}
-			content = shrinkbsf(content)
-			dod()
 		}
-
-		
-
 		// Check if the folder exists
 		if (folderIndex !== -1) {
 			// Push the new file object to the folder's content array
 			let uid = genUID();
-			console.log("The preface of the constitution of the file says that it is "+metadata)
+			console.log("The preface of the constitution of the file says that it is " + metadata);
 			metadata.datetime = getfourthdimension();
 			metadata = JSON.stringify(metadata);
-			
-			memory[folderIndex].content.push({
+
+			memory2[folderIndex].content.push({
 				fileName,
 				uid,
 				type,
 				content,
 				metadata
 			});
-			console.log(`0002 FN: "${fileName}" @ "${folderName}" Yay!`);
-			setdb('trojencat', 'rom', memory);
+			console.log(`File "${fileName}" created in folder "${folderName}".`);
+			setdb('trojencat', 'rom', memory2);
 		} else {
-			console.log("Im making a folder anyway, if you wanna know...")
+			console.log("Creating a folder anyway...");
 			await createFolder(folderName);
 			await createFile(folderName, fileName, type, content);
-			dod()
+			dod();
 			return;
 		}
 	} catch (error) {
@@ -544,6 +679,40 @@ async function createFile(folderName, fileName, type, content, metadata) {
 	}
 }
 
+async function updateFile(folderName, fileId, newData) {
+	let memory = await getdb('trojencat', 'rom');
+	let folderIndex = memory.findIndex(folder => folder.folderName === folderName);
+
+	try {
+		if (folderIndex === -1) {
+			console.log(`Folder "${folderName}" not found. Creating folder...`);
+			await createFolder(folderName);
+			memory = await getdb('trojencat', 'rom');
+			folderIndex = memory.findIndex(folder => folder.folderName === folderName);
+		}
+
+		const fileIndex = memory[folderIndex].content.findIndex(file => file.uid === fileId);
+
+		if (fileIndex !== -1) {
+			// Update the file with the new data
+			let fileToUpdate = memory[folderIndex].content[fileIndex];
+			fileToUpdate.metadata = newData.metadata !== undefined ? JSON.stringify(newData.metadata) : fileToUpdate.metadata;
+			fileToUpdate.content = newData.content !== undefined ? newData.content : fileToUpdate.content;
+			fileToUpdate.fileName = newData.fileName !== undefined ? newData.fileName : fileToUpdate.fileName;
+			fileToUpdate.type = newData.type !== undefined ? newData.type : fileToUpdate.type;
+
+			// Update the file in memory
+			memory[folderIndex].content[fileIndex] = fileToUpdate;
+			setdb('trojencat', 'rom', memory);
+			console.log(`File "${fileToUpdate.fileName}" updated.`);
+		} else {
+			console.log(`File with ID "${fileId}" not found in folder "${folderName}". Creating new file...`);
+			await createFile(folderName, fileId, newData.type, newData.content, newData.metadata);
+		}
+	} catch (error) {
+		console.error("Error updating file:", error);
+	}
+}
 
 async function getFileById(x) {
 	try {
@@ -571,9 +740,9 @@ function hackAllData() {
 	console.log(":skull-emoji:")
 }
 
-document.body.style.backgroundImage = `url("https://media.discordapp.net/attachments/1194915269869588501/1196721804870438922/photo-1622547748225-3fc4abd2cca0.png")`;
+gid("bgimage").style.backgroundImage = `url("https://images.unsplash.com/photo-1498429089284-41f8cf3ffd39?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")`;
 
-var myDialog = document.getElementById('appdmod');
+var myDialog = gid('appdmod');
 
 document.addEventListener('click', (event) => {
 	if (event.target === myDialog) {
@@ -581,9 +750,11 @@ document.addEventListener('click', (event) => {
 	}
 });
 
+
+
 async function getFileNamesByFolder(folderName) {
 	try {
-		var memory = await getdb('trojencat', 'rom');
+		let memory = await getdb('trojencat', 'rom');
 		const filesInFolder = [];
 
 		for (const folder of memory) {
@@ -655,7 +826,7 @@ function justConfirm(title, message, modal) {
 }
 
 
-function ask(message) {
+function say(message) {
 	return new Promise((resolve) => {
 		const modal = document.createElement('div');
 		modal.classList.add('modal');
@@ -667,25 +838,14 @@ function ask(message) {
 		promptMessage.textContent = message;
 		modalContent.appendChild(promptMessage);
 
-		const inputField = document.createElement('input');
-		inputField.type = 'text';
-		modalContent.appendChild(inputField);
-
 		const yesButton = document.createElement('button');
-		yesButton.textContent = 'Yes';
+		yesButton.textContent = 'Ok';
 		yesButton.addEventListener('click', () => {
-			const userInput = inputField.value;
 			document.body.removeChild(modal);
-			resolve({ confirmed: true, userInput });
+			resolve(true);
 		});
 		modalContent.appendChild(yesButton);
-
-		const noButton = document.createElement('button');
-		noButton.textContent = 'No';
-		noButton.addEventListener('click', () => {
-			document.body.removeChild(modal);
-			resolve({ confirmed: false, userInput: null });
-		});
+		
 		modalContent.appendChild(noButton);
 
 		modal.appendChild(modalContent);
@@ -707,7 +867,6 @@ function unshrinkbsf(compressedStr) {
 	try {
 		return pako.inflate(compressedStr, { to: 'string' });
 	} catch (error) {
-		console.error("Error occurred during decompression:", error);
 		return compressedStr;
 	}
 }
@@ -716,55 +875,145 @@ async function makewall(deid) {
 	console.log("dod just quacks. He then says: " + deid)
 	let x = await getFileById(deid);
 	x = x.content
-	console.log("or is it? " + x)
 	x = unshrinkbsf(x)
+	let y = {
+		"wall": deid
+	}
+	localStorage.setItem("qsets", JSON.stringify(y))
 	document.body.style.backgroundImage = `url("` + x + `")`;
 }
 
 function reloadTaskbar() {
 	let x = localStorage.getItem("sets");
-	document.getElementById("dock").innerHTML = x;
+	gid("dock").innerHTML = x;
 }
 
-function initialiseOS() {
+async function remfile(ID) {
+	try {
+		let memory = await getdb('trojencat', 'rom');
+
+		// Iterate through folders to find the file with the specified ID
+		for (let folder of memory) {
+			let fileIndex = folder.content.findIndex(file => file.uid === ID);
+
+			if (fileIndex !== -1) {
+				// Remove the file from the folder's content array
+				let removedFile = folder.content.splice(fileIndex, 1)[0];
+				console.log(`0004`);
+				await setdb('trojencat', 'rom', memory);
+
+				// Check if the file was successfully removed
+				if (!folder.content.includes(removedFile)) {
+					console.log("File successfully removed.");
+				} else {
+					console.log("File removal failed.");
+				}
+
+				return;
+			}
+		}
+
+		// If the loop completes without finding the file
+		console.error(`File with ID "${ID}" not found.`);
+	} catch (error) {
+		console.error("Error fetching or updating data:", error);
+	}
+}
+async function remFilesByFolder(folderName) {
+	try {
+		let memory2 = await getdb('trojencat', 'rom');
+
+		// Find the folder with the specified name
+		let folderIndex = memory2.findIndex(folder => folder.name === folderName);
+
+		if (folderIndex !== -1) {
+			// Remove all files in the folder
+			memory2[folderIndex].content = [];
+			console.log(`All files removed from folder "${folderName}".`);
+		} else {
+			console.error(`Folder "${folderName}" not found.`);
+		}
+
+		await setdb('trojencat', 'rom', memory2);
+	} catch (error) {
+		console.error("Error fetching or updating data:", error);
+	}
+}
+
+var defAppsList = [
+	"camera",
+	"clock",
+	"files",
+	"media",
+	"settings",
+	"store",
+	"text",
+	"studio",
+	"gallery",
+	"wiki",
+	"browser",
+	"calculator"
+];
+
+async function initialiseOS() {
+	let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
+	qsets.cbx65 = true;
+	localStorage.setItem("qsets", JSON.stringify(qsets));
+	await installdefaultapps();
+	let x = await getFileNamesByFolder("Apps")
+	if (defAppsList.length = x.length) {
+		stx.innerHTML = "Nova is updating..."
+		setTimeout(installdefaultapps, 1000)
+	}
+}
+
+async function installdefaultapps() {
 	stx.innerHTML = "Installing System Apps (0%)";
 
-	let defappsli = [
-		"camera",
-		"clock",
-		"files",
-		"media",
-		"settings",
-		"store",
-		"text",
-		"studio",
-		"gallery"
-	];
+	const maxRetries = 3;
 
-	function fetchFileWithInterval(i) {
-		const filePath = "/appdata/" + defappsli[i] + ".html";
-
-		fetch(filePath)
-			.then(response => response.text())
-			.then(fileContent => {
-				stx.innerHTML = "Installing System Apps (" + Math.round(i / defappsli.length * 100) + "%)";
-				createFile("Apps", defappsli[i], "app", fileContent);
-
-				// If there are more files to fetch, schedule the next fetch
-				if (i < defappsli.length - 1) {
-					setTimeout(() => fetchFileWithInterval(i + 1), 200); // Delay of 0.2 seconds
-				} else {
-					// Close the element after all files are fetched with fade-out animation
-					const modal = document.getElementById("startup");
-					modal.classList.add("fade-out");
-					setTimeout(() => modal.close(), 500); // Adjust timing to match CSS transition duration
-				}
-			})
-			.catch(error => console.error("Error fetching file:", error));
+	async function updateApp(appName, attempt = 1) {
+		try {
+			const filePath = "/appdata/" + appName + ".html";
+			const response = await fetch(filePath);
+			if (!response.ok) {
+				throw new Error("Failed to fetch file for " + appName);
+			}
+			const fileContent = await response.text();
+			
+			createFile("Apps", appName, "app", fileContent);
+			console.log(appName + " updated successfully.");
+		} catch (error) {
+			console.error("Error updating " + appName + ":", error.message);
+			if (attempt < maxRetries) {
+				console.log("Retrying update for " + appName + " (attempt " + (attempt + 1) + ")");
+				await updateApp(appName, attempt + 1);
+			} else {
+				console.error("Max retries reached for " + appName + ". Skipping update.");
+			}
+		}
 	}
 
-	// Start fetching the first file
-	fetchFileWithInterval(0);
+	// Update each app sequentially
+	for (let i = 0; i < defAppsList.length; i++) {
+		await updateApp(defAppsList[i]);
+		stx.innerHTML= "Installing System Apps (" + Math.round((i + 1) / defAppsList.length * 100) + "%)";
+	}
+	  let fetchupdatedata = await fetch("/versions.json");
+
+	  if (fetchupdatedata.ok) {
+		let fetchupdatedataver = (await fetchupdatedata.json()).osver;
+		localStorage.setItem("updver", fetchupdatedataver);
+	  } else {
+		console.error("Failed to fetch data from the server.");
+	  }
+
+	// Close the element after all files are fetched and created with fade-out animation
+	let modal = gid("startup");
+	modal.classList.add("fade-out");
+	setTimeout(() => {
+		modal.close();
+	}, 500);
 }
 
 async function getFileByPath(filePath) {
@@ -797,7 +1046,7 @@ async function getFileByPath(filePath) {
 	}
 }
 
-function checktaskbar(){}
+function checktaskbar() { }
 
 function getfourthdimension() {
 	const currentDate = new Date();
@@ -812,15 +1061,15 @@ function getfourthdimension() {
 }
 
 async function strtappse() {
-	document.getElementById("strtappsugs").innerHTML = "";
+	gid("strtappsugs").innerHTML = "";
 
 	// Get the input value
-	const searchValue = document.getElementById("strtsear").value.toLowerCase();
-	if (searchValue.length < 2) {
-		document.getElementById("strtappsugs").style.visibility = "hidden"
+	const searchValue = gid("strtsear").value.toLowerCase();
+	if (searchValue.length <= 1) {
+		gid("strtappsugs").style.visibility = "hidden"
 		return
 	} else {
-		document.getElementById("strtappsugs").style.visibility = "visible"
+		gid("strtappsugs").style.visibility = "visible"
 	}
 
 	let arrayToSearch = await getFileNamesByFolder("Apps");
@@ -834,8 +1083,8 @@ async function strtappse() {
 
 		if (similarity >= similarityThreshold) {
 			const newElement = document.createElement("div");
-			newElement.innerHTML = item.name + `<span class="material-icons" onclick="openapp('`+item.name+`', '`+item.id+`')">arrow_outward</span>`;
-			document.getElementById("strtappsugs").appendChild(newElement);
+			newElement.innerHTML = item.name + `<span class="material-icons" onclick="openapp('` + item.name + `', '` + item.id + `')">arrow_outward</span>`;
+			gid("strtappsugs").appendChild(newElement);
 		}
 	});
 }
@@ -860,7 +1109,7 @@ function calculateSimilarity(string1, string2) {
 	return 1 - dp[m][n] / Math.max(m, n);
 }
 
-document.getElementById("strtsear").addEventListener("keydown", async function(event) {
+gid("strtsear").addEventListener("keydown", async function(event) {
 	if (event.key === "Enter") {
 		event.preventDefault();
 		const searchValue = this.value.toLowerCase();
@@ -901,5 +1150,175 @@ async function getFolderNames() {
 	} catch (error) {
 		console.error("Error fetching data:", error);
 		return null;
+	}
+}
+
+function containsSmallSVGElement(str) {
+	var svgRegex = /^<svg\s*[^>]*>[\s\S]*<\/svg>$/i;
+	return svgRegex.test(str) && str.length <= 5000;
+}
+
+document.onclick = hideMenu;
+document.oncontextmenu = rightClick;
+
+function hideMenu() {
+	gid(
+		"contextMenu").style.display = "none"
+}
+
+function rightClick(e) {
+	e.preventDefault();
+
+	if (gid(
+		"contextMenu").style.display == "block")
+		hideMenu();
+	else {
+		var menu = document
+			.getElementById("contextMenu")
+
+		menu.style.display = 'block';
+		menu.style.left = e.pageX + "px";
+		menu.style.top = e.pageY + "px";
+	}
+}
+
+var dash = gid("dashboard");
+
+function dashtoggle() {
+
+	if (dash.open) {
+		dash.close();
+	} else {
+		dash.showModal();
+	}
+}
+
+document.addEventListener('click', (event) => {
+	if (event.target === dash) {
+		dash.close();
+	}
+});
+
+
+async function openfile(x, rt) {
+	try {
+		let unid = x.getAttribute("unid");
+		if (!unid) {
+			console.error("Error: 'unid' attribute not found");
+			return;
+		}
+
+		let mm = await getFileById(unid);
+		if (!mm) {
+			console.error("Error: File not found");
+			return;
+		}
+
+		let realtype = mm.type;
+		if (mm.type == "app") {
+			await openapp(mm.fileName, unid);
+		} else if (mm.type.startsWith("image") || mm.type.startsWith("audio") || mm.type.startsWith("video")) {
+			openlaunchprotocol("media", { "lclfile": unid });
+		} else {
+			if ((realtype == "app" || realtype.startsWith("image") || realtype.startsWith("video") || realtype.startsWith("audio")) && !rt) {
+
+				// if it's compressed
+				openlaunchprotocol("text", { "lclfile": unid, "shrinkray": true });
+			} else if (mm.type.startsWith("text/html")) {
+				openlaunchprotocol("studio", { "lclfile": unid });
+			} else {
+				openlaunchprotocol("text", { "lclfile": unid });
+			}
+		}
+		refresh();
+	} catch (error) {
+		console.error(":( Error:", error);
+	}
+}
+
+function dewallblur() {
+	let f = localStorage.getItem("qsets");
+	if (f) {
+		f = JSON.parse(f); // Assuming it's JSON data
+		if (f.cbx65) {} else {
+			// cbx65 is not defined
+			return;
+		}
+	} else {
+		// qsets is not defined in localStorage
+		return;
+	}
+	console.log("dewallblur: " + nowapp)
+	if (nowapp != "" && nowapp != undefined) {
+		gid("bgimage").style.filter = "blur(5px)";
+	} else {
+		gid("bgimage").style.filter = "blur(0px)";
+	}
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+	var bgImage = document.getElementById("bgimage");
+
+	bgImage.addEventListener("click", function() {
+		nowapp = '';
+		dewallblur();
+	});
+});
+
+function checksnapping(x, event) {
+	console.log(x);
+	var cursorX = event.clientX;
+	var cursorY = event.clientY;
+
+	var viewportWidthInPixels = window.innerWidth;
+	var viewportHeightInPixels = window.innerHeight;
+
+	var VWInPixels = (3 * viewportWidthInPixels) / 100;
+	var VHInPixels = (3 * viewportHeightInPixels) / 100;
+
+	if (fulsapp) {
+		x.classList.add("transp2");
+		x.getElementsByClassName("flbtn")[0].innerHTML = "web_asset";
+		x.style = "left: calc(50vw - 200px);top: calc(50vh - 135px); width: 381px; height: 227px;";
+		checktaskbar();
+		fulsapp = false;
+		setTimeout(() => {
+			x.classList.remove("transp2");
+		}, 1000);
+	}
+
+	if (cursorY < VHInPixels || (viewportHeightInPixels - cursorY) < VHInPixels) {
+		x.classList.add("transp2");
+		x.style = "left: 3px; top: 3px; width: calc(100% - 7px); height: calc(100% - 63px);";
+		fulsapp = true;
+		x.getElementsByClassName("flbtn")[0].innerHTML = "filter_none";
+		checktaskbar();
+		setTimeout(() => {
+			x.classList.remove("transp2");
+		}, 1000);
+	}
+
+	// left
+	if (cursorX < VWInPixels) {
+		x.classList.add("transp2");
+		x.style = "left: 3px; top: 3px; width: calc(50% - 5px); height: calc(100% - 63px);";
+		fulsapp = true;
+		x.getElementsByClassName("flbtn")[0].innerHTML = "filter_none";
+		checktaskbar();
+		setTimeout(() => {
+			x.classList.remove("transp2");
+		}, 1000);
+	}
+
+	// right
+	if ((viewportWidthInPixels - cursorX) < VWInPixels) {
+		x.classList.add("transp2");
+		x.style = "right: 3px; top: 3px; width: calc(50% - 5px); height: calc(100% - 63px);";
+		fulsapp = true;
+		x.getElementsByClassName("flbtn")[0].innerHTML = "filter_none";
+		checktaskbar();
+		setTimeout(() => {
+			x.classList.remove("transp2");
+		}, 1000);
 	}
 }

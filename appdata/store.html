@@ -4,6 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
+	<meta name="nova-icon" content="<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='31.91668' height='31.91668' viewBox='0,0,31.91668,31.91668'><g transform='translate(-224.04166,-164.04166)'><g data-paper-data='{&quot;isPaintingLayer&quot;:true}' fill-rule='nonzero' stroke='none' stroke-linecap='butt' stroke-linejoin='miter' stroke-miterlimit='10' stroke-dasharray='' stroke-dashoffset='0' style='mix-blend-mode: normal'><path d='M224.04166,192c0,-6.80976 0,-20.37172 0,-24.11111c0,-1.87183 2.04092,-3.84723 3.95834,-3.84723c3.74381,0 17.07715,0 23.88889,0c2.46001,0 4.06945,2.04092 4.06945,3.95834c0,3.80587 0,17.52187 0,24.22222c0,2.27105 -1.56108,3.73612 -3.95834,3.73612c-6.7768,0 -20.23574,0 -24,0c-1.91742,0 -3.95834,-1.56062 -3.95834,-3.95834z' fill='#ffffff' stroke-width='NaN'/><path d='M228.75317,177.39085l1.21587,-4.42302h20.06191l1.21587,4.42302z' fill='##1f1f1f' stroke-width='0'/><path d='M229.96905,173.11069v-1.36786h20.06191v1.36786z' fill='##1f1f1f' stroke-width='0'/><path d='M229.96905,188.40003v-10.38226h20.06191v10.38226c0,0 -8.25342,0 -13.6544,0c-0.23641,0 -0.03639,-6.41414 -0.26267,-6.41414c-1.16272,0 -2.18029,0 -2.93619,0c-0.30373,0 0.03929,6.41414 -0.17238,6.41414c-1.18213,0 -3.03627,0 -3.03627,0z' fill='##1f1f1f' stroke-width='0'/><path d='M239.26143,184.2452v-2.0726h7.59955v2.0726z' fill='#ffffff' stroke-width='0'/></g></g></svg>">
 	<title>store</title>
 	<style>
 		html {
@@ -42,7 +43,7 @@
 		}
 
 		.mains {
-			padding-top: 6px;
+			padding-top: 0;
 		}
 
 		#topse {
@@ -123,7 +124,7 @@
 			padding: 5px;
 			transition: .5s;
 			cursor: pointer;
-			background: #356070;
+			background: #43A047;
 			border: none;
 			color: #ffffff;
 		}
@@ -158,11 +159,12 @@
 		}
 
 		nav {
-			padding: 14px;
-			box-shadow: 0px 1px 20px #0000007a;
+			padding: 7px;
 			margin-bottom: 18px;
 			background-color: #232424;
 			display: block;
+			text-align: center;
+			opacity: 0.5;
 		}
 
 		.app p {
@@ -170,10 +172,8 @@
 			width: calc(100% - 20px);
 			overflow-y: scroll;
 			word-wrap: break-word;
-			padding: 10px;
 			border-radius: 5px;
 			white-space: break-spaces;
-			box-shadow: 0px -9px 10px #080909 inset;
 		}
 
 		.loader {
@@ -233,13 +233,13 @@
 			</button>
 		</div>
 		<div>
-			<small>Featured</small>
+			<small>Newest Apps</small>
 			<div id="sugapps">
 
 			</div>
 		</div>
 		<div class="jdstsa">
-			Join our <button>Discord Server</button> to submit apps.
+			Join our <button onclick="window.open('https://discord.gg/pGRscJ72D3')">Discord Server</button> to submit apps.
 		</div>
 	</div>
 	<script defer>

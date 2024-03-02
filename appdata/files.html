@@ -4,6 +4,8 @@
 <head>
 	<title>Files app</title>
 	<meta name="description" content="Default Files app for Nova OS">
+	<meta name="nova-icon"
+		content="<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='115.79063' height='79.42629' viewBox='0,0,115.79063,79.42629'><g transform='translate(-182.26576,-138.78469)'><g data-paper-data='{&quot;isPaintingLayer&quot;:true}' fill-rule='nonzero' stroke-linecap='butt' stroke-linejoin='miter' stroke-miterlimit='10' stroke-dasharray='' stroke-dashoffset='0' style='mix-blend-mode: normal'><path d='M192.5,211v-70.66666h96.33333v70.66666z' fill='#5e511c' stroke='none' stroke-width='0'/><path d='M214.94361,194.01973l7.87476,-55.19191l75.23803,10.73494l-7.87476,55.19191z' fill='#cbcbcb' stroke='none' stroke-width='0'/><path d='M215.52729,204.79778l-7.94546,-55.18178l75.22422,-10.83131l7.94545,55.18177z' fill='#ffffff' stroke='none' stroke-width='0'/><path d='M191.80875,211.01003l-9.54298,-67.4916c0,0 17.94997,0 29.05001,0c1.75099,0 3.83004,5.47155 6.1555,5.47155c21.27569,0 63.17701,0 63.17701,0l7.54298,62.02005z' fill='#ffe166' stroke='none' stroke-width='0'/><path d='M217.66762,213.21099c-0.25148,-4.40441 -2.40197,-12.90365 1.84715,-16.36796c3.99005,-3.25308 24.23976,-3.39012 28.02687,0.40735c3.79805,3.80844 6.43466,11.61379 6.49657,16.10718' fill='none' stroke='#00b8ff' stroke-width='10'/></g></g></svg>">
 	<style>
 		@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
 
@@ -62,7 +64,7 @@
 			height: 29px;
 			flex-direction: row;
 			flex-wrap: nowrap;
-			margin-top: 10px;
+			margin-top: 2px;
 		}
 
 		.flappsearch {
@@ -91,6 +93,7 @@
 			background-color: #222222;
 			border-radius: 50%;
 			padding: 1px;
+			transform: translate(2px, 5px);
 		}
 
 		.setbtn {
@@ -143,6 +146,8 @@
 			font-size: 9px;
 			opacity: 70%;
 			transform: translateY(3px);
+			box-shadow: 1px 5px 12px #0e0e0e;
+			background: #0e0e0e;
 		}
 
 		[flap-files] {
@@ -382,7 +387,8 @@
 
 		@keyframes bop {
 			0% {
-				transform: scaleY(0.5) translateY(15px);
+				transform: scaleY(0.5) translateY(35px);
+				opacity: 0%;
 			}
 
 			100% {
@@ -427,6 +433,23 @@
 		/* Change the background color of the dropup button when the dropup content is shown */
 		.dropup:hover .dropbtn {
 			background-color: #393939;
+		}
+
+		[flap-fl-topnav] div {
+			display: inline-block;
+			transform: translate(-5px, -2px);
+		}
+
+		.flarrbtn {
+			padding: 1px 2px;
+		}
+
+		.nvbtns {
+			float: right;
+		}
+
+		.nvbtns span {
+			font-size: 13px;
 		}
 	</style>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -519,9 +542,9 @@
 							folderName = 'Other';
 						}
 
-let md = {
-	"via":"imported"
-}
+						let md = {
+							"via": "imported"
+						}
 						window.parent.createFile(folderName, file.name, type, out, md)
 							.then(function () {
 								document.getElementById("fupibu").innerHTML = "File Saved, Close";
@@ -582,380 +605,401 @@ let md = {
 		display: flex;
 		flex-direction: column;
 		height: 100%;width: 0;">
-					<div flap-fl-topnav id="pathdisp">
-						device://*
+					<div flap-fl-topnav><span id="pathdisp">
+							device://*
+						</span>
+						<div class="nvbtns">
+							<button class="flarrbtn">
+								<span class="material-symbols-rounded">
+									view_list
+								</span>
+							</button>
+							<button class="flarrbtn">
+								<span class="material-symbols-rounded">
+									grid_view
+								</span>
+							</button>
+						</div>
 					</div>
-					<div flap-files style="flex-grow: 8; padding-bottom: 50px;padding: 10px;    padding-top: 5px;"
-						id="filelist">
+						<div flap-files style="flex-grow: 8; padding-bottom: 50px;padding: 10px;    padding-top: 5px;"
+							id="filelist">
 
-					</div>
-					<div flap-fl-bottomnav id="fileinfobn">Click on a file to select it.
+						</div>
+						<div flap-fl-bottomnav id="fileinfobn">Click on a file to select it.
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-	<script>
-		var currentPath, nowfile;
+		<script>
+			var currentPath, nowfile;
 
-		var memory;
-		var fllist;
-		var fdlist;
-		function greenflag() {
-			fllist = document.getElementById("filelist");
-			fdlist = document.getElementById("folders");
+			var memory;
+			var fllist;
+			var fdlist;
+			var binmode = false;
+			function greenflag() {
+				fllist = document.getElementById("filelist");
+				fdlist = document.getElementById("folders");
 
 
-			getdb('trojencat', 'rom')
-				.then((result) => {
-					try {
-						if (result !== null) {
-							memory = result;
-							liststuff()
-							listFiles("Downloads")
+				getdb('trojencat', 'rom')
+					.then((result) => {
+						try {
+							if (result !== null) {
+								memory = result;
+								liststuff()
+								listFiles("Downloads")
 
-						} else {
-							console.log('0003');
+							} else {
+								console.log('0003');
+							}
+						} catch (error) {
+							console.error('Error:', error);
 						}
-					} catch (error) {
-						console.error('Error:', error);
+					})
+					.catch((error) => {
+						console.error('Database operation failed:', error);
+					});
+				const backdrop = document.getElementById('upmod');
+
+				backdrop.addEventListener('click', (event) => {
+					if (event.target === backdrop) {
+						backdrop.close();
 					}
-				})
-				.catch((error) => {
-					console.error('Database operation failed:', error);
 				});
-			const backdrop = document.getElementById('upmod');
 
-			backdrop.addEventListener('click', (event) => {
-				if (event.target === backdrop) {
-					backdrop.close();
-				}
-			});
-
-		}
-
-		function liststuff() {
-			if (fdlist) {
-				fdlist.innerText = "";
-				memory.forEach(obj => {
-					let element = document.createElement('div');
-					element.classList.add("sdfld");
-					element.innerText = obj.folderName;
-					element.setAttribute('onclick', "listFiles(this.innerText)")
-					fdlist.appendChild(element);
-				});
-			} else {
-				console.error("Element with id 'folders' not found.");
 			}
-		}
 
-		function refresh() {
-			getdb('trojencat', 'rom')
-				.then((result) => {
-					if (result !== null) {
-						memory = result;
-					}
-				});
-			liststuff()
-			listFiles(currentPath)
-		}
-
-
-		function listFiles(folderName) {
-			fllist.innerText = "";
-
-			// Find the folder with the given name
-
-			const folder = memory.find(folder => folder.folderName === folderName);
-			if (folder) {
-				currentPath = folderName;
-				updpth()
-				// Display files in the folder
-				if (folder.content && folder.content.length > 0) {
-					folder.content.forEach(file => {
-						let fileElement = document.createElement('div');
-						fileElement.classList.add("file");
-						fileElement.setAttribute("unid", file.uid);
-
-						fileElement.setAttribute("onclick", "slfile(this)");
-						fileElement.innerHTML = `<span flname> ` + geticon(file.type) + ` ${file.fileName}</span> <small >${file.type}</small>`;
-						fllist.appendChild(fileElement);
+			function liststuff() {
+				if (fdlist) {
+					fdlist.innerText = "";
+					memory.forEach(obj => {
+						let element = document.createElement('div');
+						element.classList.add("sdfld");
+						element.innerText = obj.folderName;
+						element.setAttribute('onclick', "listFiles(this.innerText)")
+						fdlist.appendChild(element);
 					});
 				} else {
-					fllist.innerHTML = "<center style='padding-top: 30px'>This folder is empty.</center>"
+					console.error("Element with id 'folders' not found.");
 				}
-			} else {
-				console.log("0003");
 			}
-		}
+
+			function refresh() {
+				getdb('trojencat', 'rom')
+					.then((result) => {
+						if (result !== null) {
+							memory = result;
+						}
+					});
+				liststuff()
+				listFiles(currentPath)
+			}
 
 
+			function listFiles(folderName) {
+				fllist.innerText = "";
 
-		function updpth() {
-			document.getElementById("pathdisp").innerHTML = "device://" + currentPath;
-		}
+				// Find the folder with the given name
 
-		async function slfile(y) {
+				const folder = memory.find(folder => folder.folderName === folderName);
+				if (folder) {
+					currentPath = folderName;
+					updpth()
+					// Display files in the folder
+					if (folder.content && folder.content.length > 0) {
+						folder.content.forEach(file => {
+							let fileElement = document.createElement('div');
+							fileElement.classList.add("file");
+							fileElement.setAttribute("unid", file.uid);
 
-			let x = y;
-			if (x.id === "slfile") {
-				openfile(x);
-			} else {
-				if (document.getElementById("slfile")) {document.getElementById("slfile").id = null;}
-				nowfile = x;
-				x.id = "slfile";
-				let fileData
-				try {
-					fileData = await window.parent.getFileById(x.getAttribute("unid"));
-
-					if (fileData && fileData.content) {
-						var fileSize = fileData.content.length;
-
+							fileElement.setAttribute("onclick", "slfile(this)");
+							fileElement.innerHTML = `<span flname> ` + geticon(file.type) + ` ${file.fileName}</span> <small >${file.type}</small>`;
+							fllist.appendChild(fileElement);
+						});
 					} else {
-						console.error("Error: Unable to retrieve file content.");
+						fllist.innerHTML = "<center style='padding-top: 30px'>This folder is empty.</center>"
 					}
-				} catch (error) {
-					console.error("Error:", error);
+				} else {
+					console.log("0003");
 				}
+			}
 
-				var units = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
 
-				var unitIndex = 0;
 
-				while (fileSize > 1024 && unitIndex < units.length - 1) {
-					fileSize /= 1024;
-					unitIndex++;
-				}
+			function updpth() {
+				document.getElementById("pathdisp").innerHTML = "device://" + currentPath;
+			}
 
-				document.getElementById("fileinfobn").innerHTML = `<button class="delbtn" onclick="remfile('` + x.getAttribute("unid") + `')">Delete</button>`;
-				try {
-					document.getElementById("fileinfobn").innerHTML += `<div class="dropup">
+			async function slfile(y) {
+
+				let x = y;
+				if (x.id === "slfile") {
+					openfile(x);
+				} else {
+					if (document.getElementById("slfile")) {document.getElementById("slfile").id = null;}
+					nowfile = x;
+					x.id = "slfile";
+					let fileData
+					try {
+						fileData = await window.parent.getFileById(x.getAttribute("unid"));
+
+						if (fileData && fileData.content) {
+							var fileSize = fileData.content.length;
+
+						} else {
+							console.error("Error: Unable to retrieve file content.");
+						}
+					} catch (error) {
+						console.error("Error:", error);
+					}
+
+					var units = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+
+					var unitIndex = 0;
+
+					while (fileSize > 1024 && unitIndex < units.length - 1) {
+						fileSize /= 1024;
+						unitIndex++;
+					}
+
+					if (binmode) {
+						document.getElementById("fileinfobn").innerHTML = `<button class="delbtn" onclick="remfile('` + x.getAttribute("unid") + `')">Delete</button>`;
+					}else { 
+						document.getElementById("fileinfobn").innerHTML = `<button class="delbtn" onclick="remfile('` + x.getAttribute("unid") + `')">Delete</button>`;
+					}
+					try {
+						document.getElementById("fileinfobn").innerHTML += `<div class="dropup">
 								  <button class="dropbtn">More</button>
 								  <div class="dropup-content">
 									${fileData.type.startsWith("image") ? '<a onclick="window.parent.makewall(\'' + x.getAttribute("unid") + '\')">Set As Desktop Background</a>' : ''}
-									${fileData.type.startsWith("app") ? `<a onclick="openfile(document.getElementById('`+ x.id + `'), 'text/html')">Open in studio</a>` : ''}
+									${fileData.type.startsWith("app") ? `<a onclick="openfile(document.getElementById('` + x.id + `'), 'text/html')">Open in studio</a>` : ''}
 									<a onclick="openfile(document.getElementById('`+ x.id + `'), 'text')">Open as text</a>
 									<a onclick="movefile(document.getElementById('`+ x.id + `'))">Move</a>
 								  </div>
 								</div>`+ fileSize.toFixed(2) + ' ' + units[unitIndex];
-				} catch (error) {
-					document.getElementById("fileinfobn").innerHTML += ":( Can't process file...";
-					refresh()
-					
-					console.error("An error occurred:", error);
-					
+					} catch (error) {
+						document.getElementById("fileinfobn").innerHTML += ":( Can't process file...";
+						refresh()
+
+						console.error("An error occurred:", error);
+
+					}
 				}
 			}
-		}
-
-		async function remfile(ID) {
-			try {
-				let memory = await getdb('trojencat', 'rom');
-
-				// Iterate through folders to find the file with the specified ID
-				for (let folder of memory) {
-					let fileIndex = folder.content.findIndex(file => file.uid === ID);
-
-					if (fileIndex !== -1) {
-						// Remove the file from the folder's content array
-						let removedFile = folder.content.splice(fileIndex, 1)[0];
-						console.log(`0004`);
-						document.getElementById("fileinfobn").innerHTML = "Deleting file..."
-						await setdb('trojencat', 'rom', memory).then(() => {
-							setTimeout(refresh, 1000);
-							document.getElementById("fileinfobn").innerHTML = "File Deleted";
-						});
-						return;
-					}
-				}
-
-				// If the loop completes without finding the file
-				console.error(`File with ID "${ID}" not found.`);
-			} catch (error) {
-				console.error("Error fetching or updating data:", error);
-			}
-		}
-
-		async function openfile(x, rt) {
-			document.getElementById("fileinfobn").innerHTML = "";
-			try {
-				let unid = x.getAttribute("unid");
-				if (!unid) {
-					console.error("Error: 'unid' attribute not found");
-					return;
-				}
-
-				let mm = await window.parent.getFileById(unid);
-				if (!mm) {
-					console.error("Error: File not found");
-					return;
-				}
-
-				let realtype = mm.type;
-				if (rt && realtype != "txt") {
-					mm.type = rt;
-					if (!(await window.parent.justConfirm("Are you sure?", "The file you are about to open is meant to be not opened."))) {
-						return;
-					}
-				}
-				if (mm.type == "app") {
-					console.log("donald duck quack");
-					if (rt) {
-						console.log("ducks quack");
-						window.parent.openlaunchprotocol("studio", {"lclfile": mm.id});
-						return;
-					}
-					await window.parent.openapp(mm.fileName, unid);
-				} else if (mm.type.startsWith("image") || mm.type.startsWith("audio") || mm.type.startsWith("video")) {
-					await window.parent.openlaunchprotocol("media", {"lclfile": unid});
-				} else {
-					if ((realtype == "app" || realtype.startsWith("image") || realtype.startsWith("video") || realtype.startsWith("audio")) && !rt) {
-
-						// if it's compressed
-						console.log("passed test");
-						window.parent.openlaunchprotocol("text", {"lclfile": unid, "shrinkray": true});
-					} else if (mm.type.startsWith("text/html")) {
-						window.parent.openlaunchprotocol("studio", {"lclfile": unid});
-					} else {
-						window.parent.openlaunchprotocol("text", {"lclfile": unid});
-					}
-				}
-				refresh();
-			} catch (error) {
-				console.error(":( Error:", error);
-			}
-		}
-
-		async function movefile(flid) {
-			flid = flid.getAttribute("unid")
-			console.log("dodo: " + flid)
-			// Get folder names array
-			let folders = await window.parent.getFolderNames();
 			
-			let filteredFolders = folders.filter(folder => folder !== currentPath);
+			async function remfile(ID) {
+				try {
+					let memory = await getdb('trojencat', 'rom');
 
-			// Create select element
-			let selectOptions = filteredFolders.map(folder => `<option>${folder}</option>`).join('');
-			let selectElement = `<select id="filesappselecttomovedest">${selectOptions}</select>`;
+					// Iterate through folders to find the file with the specified ID
+					for (let folder of memory) {
+						let fileIndex = folder.content.findIndex(file => file.uid === ID);
 
-			// Ask user to select a folder
-			let confpromise = await window.parent.justConfirm("Select a folder", `Move to ${selectElement}`);
+							if (fileIndex !== -1) {
+								// Remove the file from the folder's content array
+								let removedFile = folder.content.splice(fileIndex, 1)[0];
+								console.log(`0004`);
+								await setdb('trojencat', 'rom', memory);
 
-			console.log(confpromise)
-			if (confpromise) {
-				let x = window.parent.document.getElementById("filesappselecttomovedest").value;
-				let y = await window.parent.getFileById(flid);
-		if (y.type == "app") {
-			window.parent.alert("Function Cancelled.\n\nDue to some issues, App files cannot be moved. \nThis message is only for your safety.")
-			document.getElementById("fileinfobn").innerHTML = "Moving failed";
-			return;
-		}
-				console.log(y)
-				console.log(x)
-				await window.parent.createFile(x, y.fileName, y.type, y.content, y.metadata)
-				remfile(flid)
-				document.getElementById("fileinfobn").innerHTML = "File was moved to " + x;
-			}
-		}
-
-
-		const databaseName = 'trojencat';
-		// Function to open or create an IndexedDB database
-		function openDB(databaseName, version) {
-			return new Promise((resolve, reject) => {
-				const request = indexedDB.open(databaseName, version);
-
-				request.onupgradeneeded = (event) => {
-					const db = event.target.result;
-					if (!db.objectStoreNames.contains('store')) {
-						db.createObjectStore('store', {keyPath: 'key'});
+								// Check if the file was successfully removed
+								if (!folder.content.includes(removedFile)) {
+									console.log("File successfully removed.");
+								} else {
+									console.log("File removal failed.");
+								}
+							document.getElementById("fileinfobn").innerHTML = "Deleting file..."
+							await setdb('trojencat', 'rom', memory).then(() => {
+								setTimeout(refresh, 1000);
+								document.getElementById("fileinfobn").innerHTML = "File Deleted";
+							});
+							return;
+						}
 					}
-				};
 
-				request.onsuccess = (event) => {
-					const db = event.target.result;
+					// If the loop completes without finding the file
+					console.error(`File with ID "${ID}" not found.`);
+				} catch (error) {
+					console.error("Error fetching or updating data:", error);
+				}
+			}
 
-					// Listen for the 'versionchange' event and call refresh() when it occurs
-					db.onversionchange = () => {
-						refresh();
-					};
+			async function openfile(x, rt) {
+				document.getElementById("fileinfobn").innerHTML = "";
+				try {
+					let unid = x.getAttribute("unid");
+					if (!unid) {
+						console.error("Error: 'unid' attribute not found");
+						return;
+					}
 
-					resolve(db);
-				};
+					let mm = await window.parent.getFileById(unid);
+					if (!mm) {
+						console.error("Error: File not found");
+						return;
+					}
 
-				request.onerror = () => {
-					reject(request.error);
-				};
-			});
-		}
+					let realtype = mm.type;
+					if (rt && realtype != "txt") {
+						mm.type = rt;
+						if (!(await window.parent.justConfirm("Are you sure?", "The file you are about to open is meant to be not opened."))) {
+							return;
+						}
+					}
+					if (mm.type == "app") {
+						console.log("donald duck quack");
+						if (rt) {
+							console.log("ducks quack");
+							window.parent.openlaunchprotocol("studio", {"lclfile": mm.id});
+							return;
+						}
+						await window.parent.openapp(mm.fileName, unid);
+					} else if (mm.type.startsWith("image") || mm.type.startsWith("audio") || mm.type.startsWith("video")) {
+						await window.parent.openlaunchprotocol("media", {"lclfile": unid});
+					} else {
+						if ((realtype == "app" || realtype.startsWith("image") || realtype.startsWith("video") || realtype.startsWith("audio")) && !rt) {
 
-
-		// Function to set a key-value pair in the database
-		function setdb(databaseName, key, value) {
-			return openDB(databaseName, 1).then((db) => {
-				return new Promise((resolve, reject) => {
-					const transaction = db.transaction(['store'], 'readwrite');
-					const store = transaction.objectStore('store');
-					const request = store.put({key, value});
-
-					request.onsuccess = () => {
-						resolve();
-					};
-
-					request.onerror = () => {
-						reject(request.error);
-					};
-				});
-			});
-		}
-
-		// Function to get a value by key from the database
-		function getdb(databaseName, key) {
-			return openDB(databaseName, 1).then((db) => {
-				return new Promise((resolve, reject) => {
-					const transaction = db.transaction(['store'], 'readonly');
-					const store = transaction.objectStore('store');
-					const request = store.get(key);
-
-					request.onsuccess = () => {
-						const result = request.result;
-						if (result) {
-							resolve(result.value);
+							// if it's compressed
+							console.log("passed test");
+							window.parent.openlaunchprotocol("text", {"lclfile": unid, "shrinkray": true});
+						} else if (mm.type.startsWith("text/html")) {
+							window.parent.openlaunchprotocol("studio", {"lclfile": unid});
 						} else {
-							resolve(null); // Key not found
+							window.parent.openlaunchprotocol("text", {"lclfile": unid});
+						}
+					}
+					refresh();
+				} catch (error) {
+					console.error(":( Error:", error);
+				}
+			}
+
+			async function movefile(flid) {
+				flid = flid.getAttribute("unid")
+				console.log("NAV MOVE file with id: " + flid)
+				// Get folder names array
+				let folders = await window.parent.getFolderNames();
+
+				let filteredFolders = folders.filter(folder => folder !== currentPath);
+
+				// Create select element
+				let selectOptions = filteredFolders.map(folder => `<option>${folder}</option>`).join('');
+				let selectElement = `<select id="filesappselecttomovedest">${selectOptions}</select>`;
+
+				// Ask user to select a folder
+				let confpromise = await window.parent.justConfirm("Select a folder", `Move to ${selectElement}`);
+
+				console.log("promise result: "+ confpromise)
+				if (confpromise) {
+					let x = window.parent.document.getElementById("filesappselecttomovedest").value;
+					console.log("Moving to: " + x)
+					let y = await window.parent.getFileById(flid);
+					console.log("got file: " + JSON.stringify(y))
+					await window.parent.createFile(x, y.fileName, y.type, y.content, y.metadata)
+					console.log("file made, " + JSON.stringify(y))
+					console.log("removing: " + flid)
+					remfile(flid)
+					document.getElementById("fileinfobn").innerHTML = "File was moved to " + x;
+				}
+			}
+
+
+			const databaseName = 'trojencat';
+			// Function to open or create an IndexedDB database
+			function openDB(databaseName, version) {
+				return new Promise((resolve, reject) => {
+					const request = indexedDB.open(databaseName, version);
+
+					request.onupgradeneeded = (event) => {
+						const db = event.target.result;
+						if (!db.objectStoreNames.contains('store')) {
+							db.createObjectStore('store', {keyPath: 'key'});
 						}
 					};
 
+					request.onsuccess = (event) => {
+						const db = event.target.result;
+
+						// Listen for the 'versionchange' event and call refresh() when it occurs
+						db.onversionchange = () => {
+							refresh();
+						};
+
+						resolve(db);
+					};
+
 					request.onerror = () => {
 						reject(request.error);
 					};
 				});
-			});
-		}
-
-		function geticon(x) {
-			let i;
-			if (x == "txt") {
-				i = "text_snippet"
-			} else if (x == "app") {
-				i = "rocket_launch"
-			} else {
-				i = "bug_report"
 			}
-			return `<span class="material-symbols-rounded">
+
+
+			// Function to set a key-value pair in the database
+			function setdb(databaseName, key, value) {
+				return openDB(databaseName, 1).then((db) => {
+					return new Promise((resolve, reject) => {
+						const transaction = db.transaction(['store'], 'readwrite');
+						const store = transaction.objectStore('store');
+						const request = store.put({key, value});
+
+						request.onsuccess = () => {
+							resolve();
+						};
+
+						request.onerror = () => {
+							reject(request.error);
+						};
+					});
+				});
+			}
+
+			// Function to get a value by key from the database
+			function getdb(databaseName, key) {
+				return openDB(databaseName, 1).then((db) => {
+					return new Promise((resolve, reject) => {
+						const transaction = db.transaction(['store'], 'readonly');
+						const store = transaction.objectStore('store');
+						const request = store.get(key);
+
+						request.onsuccess = () => {
+							const result = request.result;
+							if (result) {
+								resolve(result.value);
+							} else {
+								resolve(null); // Key not found
+							}
+						};
+
+						request.onerror = () => {
+							reject(request.error);
+						};
+					});
+				});
+			}
+
+			function geticon(x) {
+				let i;
+				if (x == "txt") {
+					i = "text_snippet"
+				} else if (x == "app") {
+					i = "rocket_launch"
+				} else {
+					i = "bug_report"
+				}
+				return `<span class="material-symbols-rounded">
 		`+ i + `
 		</span>`
-		}
+			}
 
-		function upmd() {
-			document.getElementById("fupibu").innerHTML = "Import";
+			function upmd() {
+				document.getElementById("fupibu").innerHTML = "Import";
 
-			document.getElementById("fupibu").onclick = fupit;
-			document.getElementById("upmod").showModal();
-		}
-
-
-	</script>
+				document.getElementById("fupibu").onclick = fupit;
+				document.getElementById("upmod").showModal();
+			}
+		</script>
 </body>
 
 </html>

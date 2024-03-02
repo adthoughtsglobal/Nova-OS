@@ -36,22 +36,40 @@ body {
 	background-position: center;
 	color: white;
 	font-family: 'Poppins', sans-serif;
+	transition: 2s;
 	background-repeat: no-repeat;
 }
 
+#bgimage {
+	background-size: cover;
+	background-position: center;
+	height: 100vh;
+	width: 100%;
+	transition: 3s;
+}
+
 nav {
-	bottom: 0;
+	bottom: 5px;
 	position: fixed;
 	width: calc(100%);
-	background-color: #2a2b2c8c;
+	background-color: transparent;
 	color: white;
-	backdrop-filter: blur(7px);
+	z-index: 99;
+	display: grid;
+	user-select: none;
+	justify-content: center;
+	align-items: center;
+}
+
+nav .flodiv {
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	flex-direction: row;
-	z-index: 99;
-	user-select: none;
+	background: #00000057;
+	backdrop-filter: blur(10px);
+	border-radius: 7px;
+	padding: 1px;
 }
 
 nav [navobj] {
@@ -110,7 +128,7 @@ nav info {
 }
 
 .window {
-	min-width: 400px;
+	min-width: 110px;
 	position: absolute;
 	min-height: 200px;
 	background-color: transparent;
@@ -187,11 +205,25 @@ nav info {
 	margin: 5px;
 	cursor: pointer;
 	width: 40px;
+	animation: pop .2s;
 	display: inline-block;
 	overflow: hidden;
 	border: 1px solid transparent;
 	transition: .2s;
 	text-align: center;
+}
+
+.app-shortcut span {
+	overflow: hidden;
+		margin-bottom: 5px;
+		padding: 0;
+		display: grid;
+		border-radius: 10px;
+}
+
+.app-shortcut span svg {
+	width: 100%;
+	height: 40px;
 }
 
 @keyframes appop {
@@ -211,12 +243,12 @@ nav info {
 }
 
 .app-shortcut:hover {
-	border: 1px solid grey;
-	transform: scale(1.01);
+	filter: brightness(110%);
+	transform: scale(1.01) translateY(-5px);
 }
 
 .app-shortcut:hover .app-icon {
-	transform: scale(1.2);
+	transform: scale(1.2) ;
 }
 
 
@@ -309,11 +341,11 @@ nav info {
 	text-align: center;
 	max-height: 70%;
 	transition: 0.2s;
-	margin-bottom: 50px;
-	background: #a3a3a373;
+	margin-bottom: 60px;
+	background: #7d7d7d73;
 	overflow: hidden;
 	color: white;
-	backdrop-filter: brightness(0.3) blur(6px);
+	backdrop-filter: blur(14px);
 	box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
 	animation: dmodthingy 0.2s;
 	outline: none;
@@ -329,11 +361,20 @@ nav info {
 	#appdmod {
 		max-height: 100%;
 	}
+
+	
 }
 
 @media only screen and (max-width: 600px) {
 	#appdmod {
 		width: 90%;
+	}
+
+	#dashboard {
+		max-width: 100% !important;
+		width: 90% !important;
+		margin-left: auto !important;
+		margin-right: auto !important;
 	}
 }
 
@@ -354,25 +395,37 @@ nav info {
 	transition: .2s;
 }
 
+.transp3 {
+	transition: .2s;
+	opacity: 0;
+	
+}
+
 .modal {
-	padding: 24px 47px;
+	padding: 10px 25px;
 	padding-top: 0;
 	border: 0;
 	border-radius: 10px;
-	backdrop-filter: brightness(0.3) blur(5px);
-	color: white;
-	background: transparent;
+	color: #ededed;
+	background: #262626;
 	text-align: center;
-	width: 70%;
 	max-height: 80%;
+}
+
+.modal select {
+	background: transparent;
+	color: #969696;
+	border-radius: 5px;
+	padding: 2px;
 }
 
 .modal button {
 	padding: 8px 18px;
-	background: #434343;
+	background: #313131;
+	border: 1px solid #434343;
 	color: white;
 	flex-grow: 1;
-	border: none;
+	cursor: pointer;
 	border-radius: 7px;
 	margin: 10px 4px;
 }
@@ -504,4 +557,304 @@ nav info {
 	overflow-x: hidden;
 	height: calc(50vh - 29px);
 	overflow-y: scroll;
+	text-align: left;
+}
+
+.context-menu { 
+	position: absolute;
+	text-align: center;
+	background: #7777771f;
+	backdrop-filter: blur(6px) brightness(30%);
+	color: white;
+	border-radius: 5px;
+	box-shadow: 0px 0px 5px 0px black;
+	overflow: hidden;
+	animation: pop3 .2s ease-out;
+	z-index: 99;
+	padding: 0;
+} 
+
+@keyframes pop3 {
+	from {
+		transform: translate(-10px, -10px) scale(0.9);
+		filter: opacity(0%);
+	}
+
+	to {
+		transform: none;
+		filter: opacity(100%);
+	}
+}
+
+.context-menu ul { 
+	padding: 0px;
+	margin: 0px;
+	min-width: 150px;
+	list-style: none;
+} 
+
+.context-menu ul li { 
+	padding: 3px;
+	text-align: left;
+	border: 1px solid transparent;
+	border-radius: 5px;
+	transition: .3s;
+} 
+
+.context-menu ul li a { 
+	text-decoration: none;
+	color: white;
+} 
+
+.context-menu ul li:hover { 
+	transform: scale(0.95);
+	border: 1px solid #2f2f2f;
+} 
+
+.context-menu ul li a .material-icons { 
+	font-size: 17px;
+	transform: translate(4px, 3px);
+	margin-right: 6px;
+}
+
+.notifbtn {
+	position: absolute;
+	right: 10px;
+	margin: 3px;
+	color: #ffffff;
+	transition: .2s;
+	opacity: 0.5;
+	cursor: pointer;
+}
+
+.notifbtn:hover {
+	opacity: 1;
+	transform: scale(0.9);
+}
+
+#dashboard {
+	margin: auto;
+	position: absolute;
+	margin-bottom: 61px;
+	border: 0;
+	background: #292929a1;
+	backdrop-filter: blur(15px);
+	padding: 10px;
+	border-radius: 15px;
+	width: 40%;
+	max-width: 300px;
+	transition: .3s;
+	color: white;
+}
+
+#dashboard button {
+	background: #35699c;
+	color: white;
+	border-radius: 50%;
+	padding: 6px 7px;
+	outline: none;
+	border: none;
+	margin: 5px;
+}
+
+#dashboard span {
+	transform: translateY(2px);
+}
+
+#dashboard button:hover {
+	background-color: #4078b0;
+}
+
+.notifpan {
+	width: calc(100% - 20px);
+	background: #353535;
+	border-radius: 10px;
+	color: #cdcdcd;
+	padding: 10px;
+}
+
+.notifpan b {
+	display: block;
+	font-size: 13px;
+}
+
+.notifpan small {
+	font-size: 12px;
+	opacity: 0.5;
+	display: block;
+	line-height: 16px;
+	margin-top: 2px;
+}
+
+#dashnots {
+	margin-bottom: 10px;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+	visibility: hidden;
+	width: 68px;
+	background-color: #555555;
+	color: #fff;
+	text-align: center;
+	border-radius: 6px;
+	padding: 2px;
+	position: absolute;
+	z-index: 1;
+	bottom: 110%;
+	left: 50%;
+	margin-left: -33px;
+	font-size: 12px;
+	opacity: 0;
+	transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+#bios {
+	height: 100%;
+	width: 100%;
+	padding: 20px;
+	border: none;
+	background: #121516;
+	text-align: center;
+	color: #fae0e0;
+}
+
+#bios h1 {
+	margin: 0;
+	margin-top: calc(25vh - 6px);
+}
+
+#bios p {
+	font-size: 12px;
+	opacity: 70%;
+	width: 80%;
+	margin: 10px auto;
+	margin-bottom: 15px;
+	text-align: left;
+}
+
+#bios button {
+	padding: 10px;
+	background: #401f1f;
+	color: #ff4343;
+	border: none;
+	border-radius: 6px;
+	margin: 4px auto;
+	width: 80%;
+	overflow-x: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	display: block;
+	transition: .3s;
+	cursor: pointer;
+}
+
+#bios button:hover {
+	filter: brightness(50%);
+}
+
+#bios .gudbtn {
+	padding: 10px;
+	background: #2daa3c;
+	box-shadow: 0px 0px 30px 7px #298429;
+	color: #aeffb2;
+	border: none;
+	border-radius: 6px;
+}
+
+#bios .gudbtn:hover {
+	box-shadow: 0px 0px 70px 7px #8eff42;
+	filter: brightness(110%);
+}
+
+#edison {
+	width: 100%;
+	height: 100%;
+	padding: 20px;
+	border: 0px;
+	overflow: hidden;
+	text-align: center;
+	background: #202020;
+}
+
+#edison img {
+	width: 50px;
+	aspect-ratio: 2/2;
+	border-radius: 10px;
+	box-shadow: 0 0 10px #202020;
+	margin-top: calc(50vh - 45px);
+	z-index: 99;
+}
+
+@keyframes closeEffect {
+  0% {
+	opacity: 1;
+  }
+  100% {
+	opacity: 0;
+  }
+}
+
+.closeEffect {
+  animation-name: closeEffect;
+  animation-duration: 0.5s; /* Adjust the duration as needed */
+}
+
+.loader5345 {
+	left: calc(50% - 15px);
+	top: calc(50% - 15px);
+	width: 30px;
+	height: 30px;
+	border-radius: 50%;
+	animation: radar 1s infinite;
+	background-color: #424242;
+	z-index: 1;
+	position: absolute;
+}
+
+@keyframes radar {
+	0% {
+		opacity: 0;
+		transform: scale(0.1);
+	}
+	50% {
+		opacity: .5;
+		transform: scale(3);
+	}
+
+	100% {
+		opacity: 0;
+		transform: scale(5);
+	}
+}
+
+.gradient-text {
+	position: absolute;
+	width: calc(100% - 38px);
+	font-size: 20px;
+	bottom: 20%;
+	background: linear-gradient(to bottom, #ffffff, transparent);
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+	opacity: 1;
+}
+
+.container2 {
+  position: relative;
+}
+
+.layer44 {
+	position: absolute;
+	  top: 0;
+	  left: 0;
 }

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Wikipedia Search</title>
+	<meta name="nova-icon" content="<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='54.46157' height='53.88818' viewBox='0,0,54.46157,53.88818'><defs><linearGradient x1='230.12501' y1='176.76262' x2='230.12501' y2='221.05485' gradientUnits='userSpaceOnUse' id='color-1'><stop offset='0' stop-color='#ffffff' stop-opacity='0.6902'/><stop offset='1' stop-color='#ffffff' stop-opacity='0'/></linearGradient><linearGradient x1='238.75001' y1='168.76262' x2='238.75001' y2='211.30485' gradientUnits='userSpaceOnUse' id='color-2'><stop offset='0' stop-color='#ffffff' stop-opacity='0.6902'/><stop offset='1' stop-color='#ffffff' stop-opacity='0'/></linearGradient><linearGradient x1='243.03422' y1='163.48733' x2='245.7158' y2='201.83012' gradientUnits='userSpaceOnUse' id='color-3'><stop offset='0' stop-color='#ffffff' stop-opacity='0.6902'/><stop offset='1' stop-color='#ffffff' stop-opacity='0'/></linearGradient></defs><g transform='translate(-212.37178,-153.16666)'><g data-paper-data='{&quot;isPaintingLayer&quot;:true}' fill-rule='nonzero' stroke-width='0' stroke-linecap='butt' stroke-linejoin='miter' stroke-miterlimit='10' stroke-dasharray='' stroke-dashoffset='0' style='mix-blend-mode: normal'><path d='M213.16669,206.83333v-53.66667h53.66667v53.66667z' fill='#353535' stroke='#6c6c6c'/><path d='M213.64262,206.55485c0,0 -2.77348,-26.85082 -0.12596,-27.05447c6.71181,-0.51629 35.59073,-2.73775 35.59073,-2.73775l3.66373,29.8785z' fill='url(#color-1)' stroke='none'/><path d='M221.01762,207.05485l-3.53873,-35.25349l39.5035,-3.03873l2.53873,38.25349z' fill='url(#color-2)' stroke='none'/><path d='M228.28548,203.30485l-2.68159,-38.34278l34.86064,-2.94944l2.68159,38.34278z' fill='url(#color-3)' stroke='none'/></g></g></svg>">
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			background-color: #f7f7f7;
+			margin: 0;
+			padding: 0;
+		}
+
+		.container {
+			max-width: 800px;
+			margin: 50px auto;
+			padding: 20px;
+			background-color: white;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+			border-radius: 8px;
+		}
+
+		input[type="text"] {
+			width: 70%;
+			padding: 10px;
+			font-size: 16px;
+			border: 1px solid #ddd;
+			border-radius: 5px;
+		}
+
+		button {
+			padding: 10px 20px;
+			font-size: 16px;
+			cursor: pointer;
+			background-color: #007bff;
+			color: white;
+			border: none;
+			border-radius: 5px;
+			transition: background-color 0.3s;
+		}
+
+		button:hover {
+			background-color: #0056b3;
+		}
+
+		#output {
+			margin-top: 20px;
+		}
+
+		.result {
+			margin-bottom: 20px;
+			padding: 15px;
+			background-color: #f9f9f9;
+			border-radius: 8px;
+		}
+
+		.result h3 {
+			margin-top: 0;
+		}
+
+		.result p {
+			margin-bottom: 0;
+		}
+
+		.result a {
+			color: #007bff;
+			text-decoration: none;
+		}
+
+		.result a:hover {
+			text-decoration: underline;
+		}
+
+		#pageContent {
+			margin-top: 20px;
+			padding: 20px;
+			background-color: #f9f9f9;
+			border-radius: 8px;
+		}
+
+		#pageContent h1, #pageContent h2, #pageContent h3, #pageContent h4, #pageContent h5, #pageContent h6 {
+			margin-top: 0;
+		}
+
+		#pageContent p {
+			margin-bottom: 15px;
+		}
+
+		#pageContent a {
+			color: #007bff;
+			text-decoration: none;
+		}
+
+		#pageContent a:hover {
+			text-decoration: underline;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<h1>Wikipedia Search</h1>
+		<input type="text" id="searchInput" placeholder="Enter your search term">
+		<button id="searchButton">Search</button>
+		<div id="output"></div>
+		<div id="pageContent"></div>
+	</div>
+	<script>
+		
+		
+		greenflag()
+		function greenflag() {
+			const searchInput = document.getElementById("searchInput");
+			const searchButton = document.getElementById("searchButton");
+			const outputDiv = document.getElementById("output");
+			const pageContentDiv = document.getElementById("pageContent");
+
+			searchButton.addEventListener("click", function() {
+				const searchTerm = searchInput.value.trim();
+				if (searchTerm !== "") {
+					searchWikipedia(searchTerm);
+				}
+			});
+		}
+			function searchWikipedia(term) {
+				const url = `https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&list=search&srsearch=${term}`;
+
+				fetch(url)
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("Network response was not ok");
+						}
+						return response.json();
+					})
+					.then(data => {
+						displayResults(data.query.search);
+					})
+					.catch(error => {
+						console.error("There was a problem fetching data:", error);
+					});
+			}
+
+			function displayResults(results) {
+				outputDiv.innerHTML = ""; // Clear previous results
+
+				if (results.length === 0) {
+					outputDiv.innerHTML = "<p>No results found.</p>";
+					return;
+				}
+
+				results.forEach(result => {
+					const title = result.title;
+					const snippet = result.snippet;
+					const url = `https://en.wikipedia.org/wiki/${encodeURI(title)}`;
+
+					const resultDiv = document.createElement("div");
+					resultDiv.classList.add("result");
+					resultDiv.innerHTML = `
+						<h3><a href="#" class="result-link" data-title="${title}">${title}</a></h3>
+						<p>${snippet}</p>
+					`;
+					outputDiv.appendChild(resultDiv);
+				});
+
+				const resultLinks = document.querySelectorAll('.result-link');
+				resultLinks.forEach(link => {
+					link.addEventListener('click', function(event) {
+						event.preventDefault();
+
+						const pageTitle = this.getAttribute('data-title');
+						getPageContent(pageTitle);
+					});
+				});
+			}
+
+			function getPageContent(title) {
+				const url = `https://en.wikipedia.org/w/api.php?action=parse&format=json&origin=*&page=${title}`;
+
+				fetch(url)
+					.then(response => {
+						if (!response.ok) {
+							throw new Error("Network response was not ok");
+						}
+						return response.json();
+					})
+					.then(data => {
+						displayPageContent(data.parse.text['*']);
+					})
+					.catch(error => {
+						console.error("There was a problem fetching page content:", error);
+					});
+			}
+
+			function displayPageContent(content) {
+				pageContentDiv.innerHTML = content;
+			}
+	</script>
+</body>
+</html>

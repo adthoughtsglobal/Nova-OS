@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Nova New Tab</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+		<style>
+			@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap&family=Barriecito&display=swap');
+
+			* {
+				box-sizing: border-box;
+			}
+
+			/* width */
+			::-webkit-scrollbar {
+				width: 5px;
+			}
+
+			/* Track */
+			::-webkit-scrollbar-track {
+				background: transparent;
+			}
+
+			/* Handle */
+			::-webkit-scrollbar-thumb {
+				background: #2b2b2b;
+				border-radius: 5px;
+			}
+
+			/* Handle on hover */
+			::-webkit-scrollbar-thumb:hover {
+				background: #555;
+			}
+
+
+			html {
+				height: 100%;
+				width: 100%;
+				scroll-behavior: smooth;
+			}
+
+			body {
+				color: white;
+				height: 100%;
+				margin: 0px;
+				font-size: 12px;
+				font-family: 'Poppins', sans-serif;
+				background-color: #101010;
+				background-image: url('https://tab.sli.ce.it/static/media/tobiasRademacher.7c48d501f5cd4031ca0f.webp');
+				background-repeat: no-repeat;
+				background-size: cover;
+				display: grid;
+				align-items: center;
+				justify-content: center;
+			}
+
+			.search-container {
+				backdrop-filter: brightness(0.8) blur(7px);
+				padding: 10px;
+				border-radius: 10px;
+			}
+
+			form {
+				display: flex;
+			}
+
+			.search-input {
+				background: #2b2b2b99;
+				outline: none;
+				color: white;
+				padding: 10px;
+				border-radius: 6px;
+				border: 1px solid #404040;
+				font-size: 1rem;
+				font-family: poppins;
+			}
+
+			.search-button {
+				background: #355372;
+				color: white;
+				border: none;
+				border-radius: 6px;
+				padding: 10px;
+				margin-left: 3px;
+			}
+
+			.gradient-text {
+				
+			  color: white;
+				font-size: 3rem;
+				text-align: center;
+				font-weight: bolder;
+				letter-spacing: 2px;
+				font-family: "Barriecito", system-ui;
+				margin-bottom: 10px;
+			}
+
+		</style>
+	</head>
+	<body>
+		<div class="search-container">
+			<div class="gradient-text">
+			  Explore
+			</div>
+
+			<form action="https://www.bing.com/search" method="GET">
+			  <input type="text" name="q" class="search-input" placeholder="Search on Bing" spellcheck="false" data-ms-editor="true">
+			  <input type="hidden" name="igu" value="1">
+				<button type="submit" class="search-button">
+					<span class="material-icons">search</span>
+				</button>
+
+			</form>
+
+
+		  </div>
+	</body>
+</html>

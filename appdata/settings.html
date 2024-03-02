@@ -6,6 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Settings App</title>
 	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+	<meta name="nova-icon" content="<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='40.8208' height='40.94891' viewBox='0,0,40.8208,40.94891'><g transform='translate(-219.51359,-159.63806)'><g data-paper-data='{&quot;isPaintingLayer&quot;:true}' fill-rule='nonzero' stroke-linecap='butt' stroke-linejoin='miter' stroke-miterlimit='10' stroke-dasharray='' stroke-dashoffset='0' style='mix-blend-mode: normal'><path d='M224.49728,191.97943c0,-6.51609 0,-20.12167 0,-23.80086c0,-1.79525 1.27743,-3.6813 3.28885,-3.6813c6.47459,0 20.55435,0 24.11403,0c1.56415,0 3.60258,1.44253 3.60258,3.6813c0,6.76316 0,20.4796 0,23.95744c0,1.53 -1.83996,3.36671 -3.60258,3.36671c-3.67444,0 -17.45008,0 -23.95744,0c-2.10186,0 -3.44544,-1.37709 -3.44544,-3.52329zM239.52997,189.92242c5.52285,0 10,-4.47715 10,-10c0,-5.52285 -4.47715,-10 -10,-10c-5.52285,0 -10,4.47715 -10,10c0,5.52285 4.47715,10 10,10z' fill='#ffffff' stroke='none' stroke-width='0'/><path d='M237.50865,199.43282c-4.60757,-4.60757 -14.22817,-14.22817 -16.82975,-16.82975c-1.26943,-1.26943 -1.69979,-3.50635 -0.2775,-4.92864c4.57823,-4.57823 14.53412,-14.53412 17.05119,-17.05119c1.10602,-1.10602 3.56743,-1.52738 5.15048,0.05567c4.78228,4.78228 14.48126,14.48126 16.94047,16.94047c1.08187,1.08187 1.07958,3.68167 -0.16678,4.92803c-2.59822,2.59822 -12.33907,12.33907 -16.94047,16.94047c-1.48624,1.48624 -3.41004,1.46254 -4.92764,-0.05506zM239.52997,189.92242c5.52285,0 10,-4.47715 10,-10c0,-5.52285 -4.47715,-10 -10,-10c-5.52285,0 -10,4.47715 -10,10c0,5.52285 4.47715,10 10,10z' fill='#ffffff' stroke='none' stroke-width='0'/><path d='M235.7745,180.11252c0,-2.2917 1.85779,-4.14949 4.14949,-4.14949c2.2917,0 4.14949,1.85779 4.14949,4.14949c0,2.2917 -1.85779,4.14949 -4.14949,4.14949c-2.2917,0 -4.14949,-1.85779 -4.14949,-4.14949z' fill='none' stroke='#ffffff' stroke-width='2.5'/></g></g></svg>">
 	<style>
 		@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
 
@@ -45,7 +46,7 @@
 			color: white;
 			height: 100%;
 			margin: 0px;
-			background: #2f2f2f;
+			background: #171717;
 			font-size: 12px;
 			font-family: 'Poppins', sans-serif;
 		}
@@ -56,6 +57,7 @@
 			height: 100%;
 			color: white;
 			border-radius: 7px;
+			overflow-y: scroll;
 		}
 
 		.tab h3 {
@@ -68,6 +70,10 @@
 		/* Style the buttons inside the tab */
 		.tab button.active {
 			background-color: #535e68;
+		}
+
+		.tab button.active:hover {
+			background-color: #545f69;
 		}
 
 		.tab button {
@@ -88,7 +94,13 @@
 
 		/* Change background color of buttons on hover */
 		.tab button:hover {
-			background-color: #2f2f2f;
+			background-color: #1f1f1f;
+		}
+
+		.tab button i {
+			font-size: 10px;
+			transform: translate(-6px, 0px) scale(1.5);
+			margin-left: 10px;
 		}
 
 		/* Style the tab content */
@@ -120,6 +132,7 @@
 		container {
 			height: 100%;
 			display: block;
+			padding: 5px;
 		}
 
 		td {
@@ -442,7 +455,7 @@
 			border-radius: 5px;
 			padding: 3px 1px !important;
 			float: right;
-			transform: translate(2px,-3px);
+			transform: translate(2px, -3px);
 		}
 	</style>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -451,15 +464,17 @@
 <body>
 	<container>
 		<div class="tab">
-			<h3>System</h3>
-			<button class="tablinks" onclick="openCity(event, 'storage')" id="defaultOpen">Storage</button>
-			<button class="tablinks" onclick="openCity(event, 'battery')">Battery</button>
-			<button class="tablinks" onclick="openCity(event, 'tbar')">Taskbar</button>
-			<button class="tablinks" onclick="openCity(event, 'exp')">Flags</button>
-			<button class="tablinks" onclick="openCity(event, 'defaults')">Defaults</button>
-			<button class="tablinks" onclick="openCity(event, 'about')">About</button>
-		</div>
+			<button class="tablinks" onclick="openCity(event, 'storage')" id="defaultOpen"><i class="material-icons">storage</i> Storage</button>
+			<button class="tablinks" onclick="openCity(event, 'battery')"><i class="material-icons">battery_full</i> Battery</button>
+			<button class="tablinks" onclick="openCity(event, 'devices')"><i class="material-icons">devices</i> Devices</button>
+			<button class="tablinks" onclick="openCity(event, 'tbar')"><i class="material-icons">task</i> Taskbar</button>
+			<button class="tablinks" onclick="openCity(event, 'exp')"><i class="material-icons">explore</i> Flags</button>
+			<button class="tablinks" onclick="openCity(event, 'defaults'); defs();"
+><i class="material-icons">settings</i> Preferances</button>
+			<button class="tablinks" onclick="openCity(event, 'about')"><i class="material-icons">info</i> About</button>
 
+		</div>
+		
 		<div id="storage" class="tabcontent">
 			<h1>Storage</h1>
 			<div settingn>
@@ -517,7 +532,24 @@
 		</div>
 
 		<div id="defaults" class="tabcontent">
-			<h1>Defaults</h1>
+			<h1>Preferances</h1>
+			<div setting>
+					<div class="checkbox-wrapper-51">
+						<input type="checkbox" id="cbx-65" role="submit">
+						<label for="cbx-65" class="toggle">
+							<span>
+								<svg width="10px" height="10px" viewBox="0 0 10 10">
+									<path
+										d="M5,1 L5,1 C2.790861,1 1,2.790861 1,5 L1,5 C1,7.209139 2.790861,9 5,9 L5,9 C7.209139,9 9,7.209139 9,5 L9,5 C9,2.790861 7.209139,1 5,1 L5,9 L5,1 Z">
+									</path>
+								</svg>
+							</span>
+						</label>
+					</div>
+					<b>Focus Mode</b>
+					<p>Blur the background image slowly while you use apps.
+					</p>
+				</div>
 			<div class="inpbox">
 				<span>Save Camera images as </span>
 				<select id="scapimas">
@@ -525,13 +557,54 @@
 					<option>JPEG</option>
 				</select>
 			</div>
-			<small>PNG could be compressed more without losing much quality. So we didn't actually made this. Its just the UI for later. Sorry!</small>
+			<small>Retain quality while compression using PNG.</small>
 			<script>
-				let selinp = document.getElementById("scapimas");
-				if (JSON.parse(localStorage.getItem("objsets")).svcpimas) {
-				selinp.value = JSON.parse(localStorage.getItem("objsets")).svcpimas;	
+				function defs() {
+					document.getElementById("cbx-65").addEventListener("change", function() {
+						let newValue2 = document.getElementById("cbx-65").checked;
+						let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
+						qsets.cbx65 = newValue2;
+						localStorage.setItem("qsets", JSON.stringify(qsets));
+					});
+					
+					if (JSON.parse(localStorage.getItem("qsets")).cbx65) {
+						document.getElementById("cbx-65").checked = true;
+					}
+
+					let selinp;
+					selinp = document.getElementById("scapimas");
+					if (JSON.parse(localStorage.getItem("qsets")).svcpimas) {
+						console.log("what: " + JSON.parse(localStorage.getItem("qsets")).svcpimas)
+						selinp.value = JSON.parse(localStorage.getItem("qsets")).svcpimas;
+					}
+
+					document.getElementById("scapimas").addEventListener("change", function() {
+						let newValue = document.getElementById("scapimas").value;
+						let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
+						qsets.svcpimas = newValue;
+						localStorage.setItem("qsets", JSON.stringify(qsets));
+					});
 				}
 			</script>
+			<div setting>
+				<b>Update Default Apps</b>
+				<p>Update or reinstall deleted or corrupted versions of default apps.</p>
+				<button style="margin-top: 5px;" onclick="updefapps();">Update</button>
+				<small id="updefapplog" style="margin-top: 5px;">Updating default apps frequently can assure newer
+					features and bug fixes.</small>
+				<script>
+					async function updefapps() {
+						document.getElementById("updefapplog").innerHTML = "Installing...";
+						try {
+							await window.parent.installdefaultapps();
+							document.getElementById("updefapplog").innerHTML = "All Default apps updated. <b>Re-open Settings to reflect changes.</b>";
+						} catch (error) {
+							console.error("Error updating default apps:", error);
+						}
+					}
+
+				</script>
+			</div>
 		</div>
 
 		<div id="tbar" class="tabcontent">
@@ -664,12 +737,12 @@
 
 				<div class="appli" onclick="updtsb(this)">
 					<div class="checkbox-wrapper-46">
-						<input class="inp-cbx" id="cbx-fli" type="checkbox" disabled checked/>
+						<input class="inp-cbx" id="cbx-fli" type="checkbox" disabled checked />
 						<label class="cbx" for="cbx-fli"><span>
 								<svg width="12px" height="10px" viewbox="0 0 12 10">
 									<polyline points="1.5 6 4.5 9 10.5 1"></polyline>
 								</svg></span><span class="theappname">Files</span>
-							
+
 						</label>
 						<small style="margin-top: 5px;">Files cannot be removed.</small>
 					</div>
@@ -705,7 +778,7 @@
 					</div>
 				</div>
 				<button onclick="sytb()">Save</button><br>
-<!--
+				<!--
 				<div setting>
 					<div class="checkbox-wrapper-51">
 						<input type="checkbox" id="cbx-53" onclick="toggleatbr()" role="submit">
@@ -746,7 +819,7 @@
 				</script>
 -->
 			</div>
-			
+
 			<script>
 				function sytb() {
 					let tbtb = "";
@@ -762,24 +835,24 @@
 						tbtb += pref + `camera', 1)">
 						<span ic="" class="material-icons">
 							camera` + suff
-					} 
+					}
 					if (document.getElementById("cbx-sets").checked) {
 						tbtb += pref + `settings', 1)">
 						<span ic="" class="material-icons">
 							settings` + suff
-				} 
-				if (document.getElementById("cbx-str").checked) {
-					tbtb += pref + `store', 1)">
+					}
+					if (document.getElementById("cbx-str").checked) {
+						tbtb += pref + `store', 1)">
 						<span ic="" class="material-icons">
 							store` + suff
-				}
-						localStorage.setItem("sets",tbtb)
-					window.top.reloadTaskbar();
 					}
-				
+					localStorage.setItem("sets", tbtb)
+					window.top.reloadTaskbar();
+				}
+
 			</script>
 			<small>Changes reset on rebooting Nova</small>
-			
+
 		</div>
 
 		<div id="battery" class="tabcontent">
@@ -841,7 +914,7 @@
 				}</script>
 		</div>
 		<div id="about" class="tabcontent">
-			<h2>Nova OS 1.3</h2>
+			<h2>Nova OS 1.4 Platinium</h2>
 			<p>You are Using Nova OS Web. <br>Thank you for being in the Nova Ecosystem.</p>
 			<supportb>
 				<b>Support Us</b>
@@ -857,17 +930,11 @@
 				<tbody style="width: 100%;">
 					<tr>
 						<td><b>adthoughtsglobal</b></td>
+						<td>Primary Developer</td>
+					</tr>
+					<tr>
+						<td><b>felix543</b></td>
 						<td>Developer</td>
-					</tr>
-					<tr>
-						<td><b>G-Progress</b></td>
-						<td>App Developer</td>
-						
-					</tr>
-					<tr>
-						<td>Pixabay</td>
-						<td>Default Wallpaper</td>
-
 					</tr>
 					<tr>
 						<td>Google Fonts</td>
@@ -881,7 +948,145 @@
 				Credits to all those who we didn't mention here.
 			</small>
 			<br>
-		</div setting>
+		</div>
+		<div id="devices" class="tabcontent">
+			<h1>Devices</h1>
+			<style>
+				.device {
+					padding: 10px;
+					background: #191919;
+					border-radius: 5px;
+					margin: 5px 0;
+				}
+
+				.device .dic {
+					display: inline-grid;
+					width: 30px;
+					height: 30px;
+					justify-content: center;
+					align-items: center;
+					justify-items: center;
+				}
+
+				.device .ddts {
+					display: inline-block;
+					width: calc(100% - 35px);
+					overflow: hidden;
+					white-space: nowrap;
+					text-overflow: ellipsis;
+					font-size: 15px;
+				}
+
+				.device [boo] {
+					opacity: 0.7;
+					overflow: hidden;
+					text-wrap: nowrap;
+					width: calc(100% - 20px);
+					display: block;
+					text-overflow: ellipsis;
+				}
+
+				.device-type {
+					margin-right: 3px;
+					padding-right: 3px;
+					border-right: 1px solid grey;
+				}
+			</style>
+			<div id="deviceslist">
+				<div class="device">
+					<div class="dic">
+						<span class="material-icons">
+							refresh
+						</span>
+					</div>
+					<div class="ddts">
+						<span>Reindex Devices</span>
+					</div>
+					<button onclick="generateDeviceDivs()">Refresh</button>
+				</div>
+			</div>
+			<script>
+				function generateDeviceDivs() {
+					const devicesListDiv = document.getElementById("deviceslist");
+
+					navigator.mediaDevices.enumerateDevices().then(devices => {
+						if (devices.length === 0) {
+							devicesListDiv.innerHTML = "<p>No media devices found.</p>";
+							return;
+						}
+
+						const uniqueDevices = {};
+
+						devices.forEach(device => {
+							const deviceId = device.deviceId;
+							if (uniqueDevices[device.label]) {
+								return;
+							}
+
+							const info = {
+								id: deviceId || 'N/A',
+							};
+
+							if (device.kind === 'audioinput' && devices.some(d => d.deviceId === deviceId && d.kind === 'audiooutput')) {
+								info.type = 'both';
+							} else if (device.kind === 'audioinput') {
+								info.type = 'microphone';
+							} else if (device.kind === 'audiooutput') {
+								info.type = 'speakers';
+							} else if (device.kind === 'videoinput') {
+								info.type = 'camera';
+							}
+
+							uniqueDevices[device.label] = info;
+						});
+
+						devicesListDiv.innerHTML = ""; // Clear previous content
+
+						Object.keys(uniqueDevices).forEach(deviceLabel => {
+							const deviceInfo = uniqueDevices[deviceLabel];
+
+							const deviceDiv = document.createElement("div");
+							deviceDiv.classList.add("device");
+
+							const powerDiv = document.createElement("div");
+							powerDiv.classList.add("dic");
+							const powerIcon = document.createElement("span");
+							powerIcon.classList.add("material-icons");
+							if (deviceInfo.type === 'microphone') {
+								powerIcon.textContent = "mic";
+							} else if (deviceInfo.type === 'camera') {
+								powerIcon.textContent = "videocam";
+							} else if (deviceInfo.type === 'speakers') {
+								powerIcon.textContent = "volume_up"; 
+							} else {
+								powerIcon.textContent = "power_settings_new";
+							}
+							powerDiv.appendChild(powerIcon);
+
+
+							const deviceTextDiv = document.createElement("div");
+							deviceTextDiv.classList.add("ddts");
+							const deviceNameSpan = document.createElement("span");
+							deviceNameSpan.textContent = deviceLabel;
+							deviceTextDiv.appendChild(deviceNameSpan);
+
+							const deviceIdSpan = document.createElement("span");
+							deviceIdSpan.textContent = deviceInfo.id;
+							deviceIdSpan.setAttribute("boo", true);
+
+							deviceDiv.appendChild(powerDiv);
+							deviceDiv.appendChild(deviceTextDiv);
+							deviceDiv.appendChild(deviceIdSpan);
+
+							devicesListDiv.appendChild(deviceDiv);
+						});
+					}).catch(err => {
+						devicesListDiv.innerHTML = "<p>Error enumerating devices: " + err + "</p>";
+					});
+				}
+			</script>
+		</div>
+
 		<div id="exp" class="tabcontent">
 			<b style="margin-top: 10px;display: block;">Available</b>
 			<div setting>
@@ -947,6 +1152,8 @@
 					}
 				}
 
+				generateDeviceDivs()
+
 
 				var psmm = window.parent.document.body.style.opacity == "1";
 				if (psmm) {togglepsm()}
@@ -957,15 +1164,14 @@
 					} else {
 						window.parent.document.body.style.filter = "brightness(" + (100 - document.getElementById("dimlightsby").value) + "%)"
 
-						psmm = true
+						psmm = true;
+						document.getElementById("cbx-51").check()
 					}
 					console.log(psmm)
-
-
-
 				}
 
 			</script>
 	</container>
 </body>
+
 </html>
