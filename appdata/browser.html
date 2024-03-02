@@ -267,13 +267,17 @@
 	</div>
 
 	<script>
-		var tabhistory = ["defaultOpen"]
-		var tabsnow = ["defaultOpen"];
-		var nowtab = "defaultOpen";
-		var deftab = "appdata/oops.html"
+		var tabhistory = [];
+		var tabsnow = [];
+		var nowtab;
+		var deftab;
 		greenflag();
 
 		function greenflag() {
+			var tabhistory = ["defaultOpen"]
+			var tabsnow = ["defaultOpen"];
+			var nowtab = "defaultOpen";
+			var deftab = "appdata/oops.html";
 			document.getElementById("tabndefaultOpen").click();
 		}
 
