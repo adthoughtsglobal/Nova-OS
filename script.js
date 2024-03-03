@@ -390,7 +390,7 @@ async function openapp(x, od) {
 				y = await getFileById(od)
 				y = unshrinkbsf(y.content)
 			} else {
-				y = await fetchData("/appdata/" + x + ".html");
+				y = await fetchData("appdata/" + x + ".html");
 				let m = await getFileNamesByFolder("Apps");
 				await createFile("Apps", x, "app", y);
 			}
@@ -999,7 +999,7 @@ async function installdefaultapps() {
 		await updateApp(defAppsList[i]);
 		stx.innerHTML= "Installing System Apps (" + Math.round((i + 1) / defAppsList.length * 100) + "%)";
 	}
-	  let fetchupdatedata = await fetch("/versions.json");
+	  let fetchupdatedata = await fetch("versions.json");
 
 	  if (fetchupdatedata.ok) {
 		let fetchupdatedataver = (await fetchupdatedata.json()).osver;
