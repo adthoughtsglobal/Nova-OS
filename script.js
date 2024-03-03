@@ -2,7 +2,7 @@ var batteryLevel, winds = [], rp, flwint = true, opentrigger, memory, nowapp, st
 
 async function fetchDataAndUpdate() {
   let localupdatedataver = localStorage.getItem("updver");
-  let fetchupdatedata = await fetch("/versions.json");
+  let fetchupdatedata = await fetch("versions.json");
 
   if (fetchupdatedata.ok) {
 	let fetchupdatedataver = (await fetchupdatedata.json()).osver;
@@ -974,7 +974,7 @@ async function installdefaultapps() {
 
 	async function updateApp(appName, attempt = 1) {
 		try {
-			const filePath = "/appdata/" + appName + ".html";
+			const filePath = "appdata/" + appName + ".html";
 			const response = await fetch(filePath);
 			if (!response.ok) {
 				throw new Error("Failed to fetch file for " + appName);
