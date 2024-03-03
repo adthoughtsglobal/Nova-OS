@@ -1,25 +1,5 @@
 var batteryLevel, winds = [], rp, flwint = true, opentrigger, memory, nowapp, stx = gid("startuptx"), applogs = {}, fulsapp;
 
-async function fetchDataAndUpdate() {
-  let localupdatedataver = localStorage.getItem("updver");
-  let fetchupdatedata = await fetch("versions.json");
-
-  if (fetchupdatedata.ok) {
-	let fetchupdatedataver = (await fetchupdatedata.json()).osver;
-
-	if (localupdatedataver !== fetchupdatedataver) {
-	  if (await justConfirm("Update default apps?", "Your default apps are old. Update them to access new features and fixes.")) {
-		  await installdefaultapps();
-	  } else {
-		  say("You can always update app on settings app/Preferances")
-	  }
-	}
-  } else {
-	console.error("Failed to fetch data from the server.");
-  }
-}
-
-fetchDataAndUpdate();
 
 
 // Check if the database 'trojencat' exists
@@ -33,6 +13,8 @@ getdb('trojencat', 'rom')
 					createFolder("Desktop")
 				}
 			} else {
+				say(`<h2>Terms of service and License</h2><p>By using Nova OS, you agree to the <a href="https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use">Adthoughtsglobal Nova Terms of Use</a>. <h3>Usage Data</h3>your usage data (OS errors, bandwidth issues etc.) may be collected by us to keep the OS safe for everyone.</p>`);
+				
 				gid("startup").showModal();
 				stx.innerHTML = "Preparing memory"
 				// If the 'rom' key doesn't exist, assign a random array to the 'memory' list
@@ -69,7 +51,28 @@ getdb('trojencat', 'rom')
 				// Save the default array to the 'rom' key in the 'trojencat' database
 				setdb('trojencat', 'rom', memory);
 				initialiseOS()
+
 			}
+			async function fetchDataAndUpdate() {
+				  let localupdatedataver = localStorage.getItem("updver");
+				  let fetchupdatedata = await fetch("versions.json");
+
+				  if (fetchupdatedata.ok) {
+					let fetchupdatedataver = (await fetchupdatedata.json()).osver;
+
+					if (localupdatedataver !== fetchupdatedataver) {
+					  if (await justConfirm("Update default apps?", "Your default apps are old. Update them to access new features and fixes.")) {
+						  await installdefaultapps();
+					  } else {
+						  say("You can always update app on settings app/Preferances")
+					  }
+					}
+				  } else {
+					console.error("Failed to fetch data from the server.");
+				  }
+				}
+
+				fetchDataAndUpdate();
 		} catch (error) {
 			console.error('Error in database operations:', error);
 		}
@@ -603,7 +606,7 @@ function genUID() {
 
 async function createFolder(folderName) {
 	try {
-		let memory = await getdb('trojencat', 'rom');
+		memory = await getdb('trojencat', 'rom');
 
 		// Check if the folder already exists
 		const folderIndex = memory.findIndex(folder => folder.folderName === folderName);
@@ -625,19 +628,20 @@ async function createFolder(folderName) {
 }
 
 
-async function createFile(folderName, fileName, type, content, metadata) {
-	if (metadata === undefined) {
-		metadata = { "via": "nope" };
-	}
-	let memory2 = await getdb('trojencat', 'rom');
-	const folderIndex = memory2.findIndex(folder => folder.folderName === folderName);
-	try {
-		if (type === "app") {
-			
-			let appdataquacks = await getFileByPath(folderName+"/" + fileName);
-			appdataquacks = appdataquacks[0];
-			console.log("Filesbepath: " + fileName)
-			console.log("YES YES YES:" +appdataquacks)
+	async function createFile(folderName, fileName, type, content, metadata) {
+		if (metadata === undefined) {
+			metadata = { "via": "nope" };
+		}
+		let memory2 = await getdb('trojencat', 'rom');
+		const folderIndex = memory2.findIndex(folder => folder.folderName === folderName);
+		try {
+			if (type === "app") {
+				let appdataquacks = await getFileByPath(folderName + "/" + fileName);
+				console.log("NO NO NO:", appdataquacks);
+				appdataquacks = appdataquacks[0];
+				console.log("Filesbepath:", fileName);
+				console.log("YES YES YES:", appdataquacks);
+
 			if (appdataquacks != null) {
 				const newData = {
 					metadata: metadata,
@@ -645,7 +649,7 @@ async function createFile(folderName, fileName, type, content, metadata) {
 					fileName: fileName,
 					type: type
 				};
-				await updateFile("Apps", appId, newData);
+				await updateFile("Apps", appdataquacks.id, newData);
 				return
 			}
 		}
@@ -680,7 +684,7 @@ async function createFile(folderName, fileName, type, content, metadata) {
 }
 
 async function updateFile(folderName, fileId, newData) {
-	let memory = await getdb('trojencat', 'rom');
+	memory = await getdb('trojencat', 'rom');
 	let folderIndex = memory.findIndex(folder => folder.folderName === folderName);
 
 	try {
@@ -716,7 +720,7 @@ async function updateFile(folderName, fileId, newData) {
 
 async function getFileById(x) {
 	try {
-		let memory = await getdb('trojencat', 'rom');
+		memory = await getdb('trojencat', 'rom');
 		for (const folder of memory) {
 			for (const item of folder.content) {
 				if (item.uid === x) {
@@ -754,7 +758,7 @@ document.addEventListener('click', (event) => {
 
 async function getFileNamesByFolder(folderName) {
 	try {
-		let memory = await getdb('trojencat', 'rom');
+		memory = await getdb('trojencat', 'rom');
 		const filesInFolder = [];
 
 		for (const folder of memory) {
@@ -828,28 +832,28 @@ function justConfirm(title, message, modal) {
 
 function say(message) {
 	return new Promise((resolve) => {
-		const modal = document.createElement('div');
+		const modal = document.createElement('dialog');
 		modal.classList.add('modal');
 
 		const modalContent = document.createElement('div');
 		modalContent.classList.add('modal-content');
 
 		const promptMessage = document.createElement('p');
-		promptMessage.textContent = message;
+		promptMessage.innerHTML = message;
 		modalContent.appendChild(promptMessage);
 
-		const yesButton = document.createElement('button');
-		yesButton.textContent = 'Ok';
-		yesButton.addEventListener('click', () => {
-			document.body.removeChild(modal);
+		const okButton = document.createElement('button');
+		okButton.textContent = 'OK';
+		okButton.addEventListener('click', () => {
+			modal.close();
 			resolve(true);
 		});
-		modalContent.appendChild(yesButton);
-		
-		modalContent.appendChild(noButton);
+		modalContent.appendChild(okButton);
 
 		modal.appendChild(modalContent);
 		document.body.appendChild(modal);
+
+		modal.showModal();
 	});
 }
 
@@ -890,7 +894,7 @@ function reloadTaskbar() {
 
 async function remfile(ID) {
 	try {
-		let memory = await getdb('trojencat', 'rom');
+		memory = await getdb('trojencat', 'rom');
 
 		// Iterate through folders to find the file with the specified ID
 		for (let folder of memory) {
