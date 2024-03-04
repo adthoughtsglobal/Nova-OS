@@ -915,6 +915,7 @@
 		</div>
 		<div id="about" class="tabcontent">
 			<h2>Nova OS 1.4 Platinium</h2>
+			<div id="felix"></div>
 			<p>You are Using Nova OS Web. <br>Thank you for being in the Nova Ecosystem.</p>
 			<supportb>
 				<b>Support Us</b>
@@ -1131,6 +1132,27 @@
 				}
 
 				function greenflag() {
+
+					var currentDate = new Date();
+
+					// Check if the current date is 05-03-2024
+					if (
+					  currentDate.getDate() === 5 && // Day
+					  currentDate.getMonth() === 2 && // Month (Note: JavaScript months are zero-based)
+					  currentDate.getFullYear() === 2024 // Year
+					) {
+					  // Create the message
+					  var message = "<supportb>" +
+									"<b>Happy Birthday Felix!</b>" +
+									"<p>Felix is a developer at Nova, wish him in our " +
+									"<a href='https://discord.gg/pGRscJ72D3'>Wish Felix!</a></p>" +
+									"</supportb>";
+
+					  // Add the message to the element with id "felix"
+					  document.getElementById("felix").innerHTML = message;
+					} else {
+					  console.log("It's not Felix's birthday yet!");
+					}
 
 					var usedMemoryPercentage;
 					document.getElementById("defaultOpen").click();
