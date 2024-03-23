@@ -26,6 +26,10 @@ html {
 	width: 100%;
 }
 
+button, input, textarea {
+	outline: none;
+}
+
 body {
 	margin: 0;
 	height: 100vh;
@@ -67,15 +71,13 @@ nav .flodiv {
 	justify-content: center;
 	align-items: center;
 	flex-direction: row;
-	background: #00000057;
-	backdrop-filter: blur(10px);
-	border-radius: 7px;
+	background: transparent;
 	padding: 1px;
 }
 
 nav [navobj] {
 	padding: 1px;
-	margin: 3px;
+	margin: 1px;
 	border-radius: 5px;
 	background-color: #c4c4c429;
 	display: flex;
@@ -103,7 +105,6 @@ nav info {
 	transform: translate(0px, 11px);
 	display: block;
 	height: 0px;
-	color: white;
 }
 
 #date-display {
@@ -146,7 +147,7 @@ nav info {
 
 @media only screen and (max-width: 500px) {
 	.window {
-		min-width: 0;
+		min-width: 10px;
 	}
 }
 
@@ -178,7 +179,7 @@ nav info {
 
 .windowcontent {
 	box-sizing: border-box;
-	height: calc(100% - 11px);
+	height: calc(100% - 7px);
 }
 
 .windowcontent iframe {
@@ -188,43 +189,63 @@ nav info {
 }
 
 .wincl {
-	font-size: 15px !important;
 	float: right;
 	box-shadow: 0px 4px 6px 0px #0000003b inset;
-	border-radius: 3px;
 	color: white;
 	margin: 2px;
 	transform: translate(2px, -2px);
 	cursor: pointer;
-	padding: 1px;
+	border-radius: 5px;
+	padding: 2px 2px 2px 3px;
+	font-size: 12px !important;
+}
+
+.wincl:hover {
+	background: #292929;
+	color: #cfcfcf;
 }
 
 .app-shortcut {
 	background-color: transparent;
-	border-radius: 5px;
+	border-radius: 10px;
 	padding: 10px;
 	margin: 5px;
 	cursor: pointer;
 	width: 40px;
 	animation: pop .2s;
 	display: inline-block;
-	overflow: hidden;
 	border: 1px solid transparent;
 	transition: .2s;
 	text-align: center;
+	align-self: flex-start;
+}
+
+.app-shortcut.tooltip .tooltiptext {
+	background-color: #272727;
+	border-radius: 10px;
+	bottom: 9% !important;
+	opacity: 1;
+	transform: scale(0.9) translateX(-4px);
+	transition: .2s;
+}
+
+.app-shortcut.tooltip:hover .tooltiptext {
+	transform: scale(1) translateX(-4px);
 }
 
 .app-shortcut span {
 	overflow: hidden;
-		margin-bottom: 5px;
-		padding: 0;
-		display: grid;
-		border-radius: 10px;
+	margin-bottom: 5px;
+	padding: 0;
+	display: grid;
+	border-radius: 10px;
 }
 
 .app-shortcut span svg {
-	width: 100%;
-	height: 40px;
+	width: 31px;
+	height: 31px;
+	background: #6d6d6d1f;
+	padding: 5px;
 }
 
 @keyframes appop {
@@ -244,24 +265,25 @@ nav info {
 }
 
 .app-shortcut:hover {
-	filter: brightness(110%);
-	transform: scale(1.01) translateY(-5px);
+	background-color: rgb(31 31 31 / 16%);
 }
-
-.app-shortcut:hover .app-icon {
-	transform: scale(1.2) ;
-}
-
 
 .app-shortcut:active {
 	cursor: grabbing;
 }
 
 .app-shortcut .app-icon {
-	color: #ffffff;
-	text-shadow: 0px 0px 10px #378497;
-	display: block;
 	transition: 0.5s;
+	text-align: center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	padding: 5px 0;
+	font-family: inherit;
+	font-size: 21px;
+	background: linear-gradient(360deg, #b9b9b9, #ffffff);
+	color: #585858;
 }
 
 .app-shortcut .appname {
@@ -338,8 +360,8 @@ nav info {
 	width: 50%;
 	border-radius: 10px;
 	padding: 5px;
-	border: 1px solid #8a8a8a;
 	text-align: center;
+	border: none;
 	max-height: 70%;
 	transition: 0.2s;
 	margin-bottom: 60px;
@@ -412,6 +434,21 @@ nav info {
 	text-align: center;
 	max-height: 80%;
 	max-width: 80%;
+	box-shadow: 0 0 10px black;
+	animation: pop .2s;
+}
+
+.modal::backdrop {
+	backdrop-filter: blur(5px) brightness(0.5);
+}
+
+.modal input {
+	width: 90%;
+	padding: 7px 10px;
+	color: white;
+	background: #181818;
+	border: none;
+	border-radius: 5px;
 }
 
 .modal p {
@@ -497,13 +534,13 @@ nav info {
 }
 
 #strtsear {
-	width: calc(100% - 30px);
-	display: block;
+	width: calc(100% - 65px);
+	display: inline-block;
 	margin: auto;
 	margin-bottom: 10px;
 	border-radius: 7px;
 	padding: 5px 7px;
-	background: #00000069;
+	background: #2a2929;
 	color: white;
 	font-family: 'Poppins';
 	outline: none;
@@ -518,7 +555,7 @@ nav info {
 	border-radius: 7px;
 	width: calc(100% - 46px);
 	margin-left: 8px;
-
+	color: white;
 	animation: pop .2s;
 	max-height: 50%;
 	overflow-y: scroll;
@@ -567,23 +604,26 @@ nav info {
 
 #appsindeck {
 	overflow-x: hidden;
-	height: calc(50vh - 29px);
+	max-height: calc(50vh - 29px);
 	overflow-y: scroll;
 	text-align: left;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
 }
 
 .context-menu { 
 	position: absolute;
 	text-align: center;
-	background: #7777771f;
-	backdrop-filter: blur(6px) brightness(30%);
+	background: #5d5d5d;
 	color: white;
-	border-radius: 5px;
-	box-shadow: 0px 0px 5px 0px black;
+	border-radius: 7px;
+	box-shadow: 0px 3px 5px 0px black;
 	overflow: hidden;
+	border: 1px solid #858585;
 	animation: pop3 .2s ease-out;
 	z-index: 99;
-	padding: 0;
+	padding: 2px;
 } 
 
 @keyframes pop3 {
@@ -600,17 +640,19 @@ nav info {
 
 .context-menu ul { 
 	padding: 0px;
-	margin: 0px;
+	margin-bottom: 0px;
+	margin-top: 0;
 	min-width: 150px;
 	list-style: none;
 } 
 
 .context-menu ul li { 
-	padding: 3px;
+	padding: 0;
 	text-align: left;
 	border: 1px solid transparent;
 	border-radius: 5px;
-	transition: .3s;
+	transition: .2s;
+	cursor: pointer;
 } 
 
 .context-menu ul li a { 
@@ -619,8 +661,7 @@ nav info {
 } 
 
 .context-menu ul li:hover { 
-	transform: scale(0.95);
-	border: 1px solid #2f2f2f;
+	background-color: #737373;
 } 
 
 .context-menu ul li a .material-icons { 
@@ -653,8 +694,8 @@ nav info {
 	backdrop-filter: blur(15px);
 	padding: 10px;
 	border-radius: 15px;
-	width: 40%;
-	max-width: 300px;
+	width: 100vw;
+	height: calc(100vh - 90px);
 	transition: .3s;
 	color: white;
 }
@@ -700,6 +741,12 @@ nav info {
 
 #dashnots {
 	margin-bottom: 10px;
+	max-height: 50vh;
+}
+
+#quicsets {
+	position: absolute;
+	bottom: 10px;
 }
 
 .tooltip {
@@ -869,4 +916,219 @@ nav info {
 	position: absolute;
 	  top: 0;
 	  left: 0;
+}
+
+#loginmod {
+	background: #2c2c2c8a;
+	border: none;
+	backdrop-filter: blur(32px);
+	box-shadow: 0 0 55px black;
+	border-radius: 0;
+	color: white;
+	width: 50%;
+	height: 100%;
+	padding: 21px;
+	margin-right: 0px;
+}
+
+#loginmod::backdrop {
+	backdrop-filter: blur(3px);
+}
+
+logincard {
+	height: calc(100% - 1rem);
+	display: grid;
+	align-items: center;
+	align-content: center;
+}
+
+.logincard material-icons {
+	display: block;
+	text-align: center;
+	margin: 10px;
+	font-size: 1rem;
+	width: fit-content;
+	float: left;
+}
+
+.logincard button {
+	width: 100%;
+	max-width: 197px;
+	padding: 5px;
+	border-radius: 7px;
+	border: none;
+	display: block;
+	background: #e1e1e1;
+	box-shadow: 0 5px #969696;
+	margin: 3px auto;
+}
+
+.logincard button [hi] {
+	display: inline-block;
+	transform: translateY(-5px);
+	margin-left: 5px;
+	color: black;
+}
+
+.logincardwelt {
+	font-size: 2rem;
+	display: block;
+	text-align: center;
+	margin: 1rem;
+}
+
+.strtsearcont button {
+	background: #2a2929;
+	color: #c3c3c3;
+	border: none;
+	padding: 6px 7px;
+	border-radius: 6px;
+	cursor: pointer;
+	transform: translateY(2px);
+}
+
+.strtsearcont button span {
+	font-size: 15px;
+	transform: translate(0px, 2px);
+}
+
+#bobthedropdown {
+	visibility: visible;
+	display: block;
+	position: absolute;
+	background: #1f1f1f;
+	transform: translate(8px,-40px);
+	border-radius: 8px;
+	padding: 3px;
+	box-shadow: 0 4px 5px #00000045;
+}
+
+#bobthedropdown button {
+	background: #2a2929;
+	color: #c3c3c3;
+	border: none;
+	padding: 6px 7px;
+	border-radius: 6px;
+	cursor: pointer;
+}
+
+#bobthedropdown button:hover {
+	background-color: #454545;
+}
+
+#sleepwindow {
+	width: 100%;
+	height: 100%;
+	border: none;
+	padding: 20px;
+	background:radial-gradient(black, #000000c7);
+	backdrop-filter: blur(10px);
+	animation: sleepwin .2s;
+}
+
+@keyframes sleepwin {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+.sleepwincon {
+	display: grid;
+	justify-items: center;
+	align-items: center;
+	align-content: center;
+	height: 100%;
+}
+
+#sleepwindow h1 {
+	font-size: 5rem;
+	background: linear-gradient(45deg, #ff5b5b, #ecff4e);
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+	margin: 0;
+	animation: pop .2s;
+}
+
+#sleepwindow button {
+	padding: 7px 11px;
+	background: #242424;
+	border-radius: 5px;
+	border: none;
+	color: white;
+	cursor: pointer;
+	transition: 0.3s;
+	animation: pop .2s;
+}
+
+#sleepwindow button:hover {
+	background: #333333;
+}
+
+#sleepwindow .material-icons {
+	color: white;
+	opacity: 0.5;
+	position: absolute;
+	right: 2rem;
+	top: 2rem;
+	cursor: pointer;
+}
+
+#sleepwindow .material-icons:hover {
+	opacity: 1;
+}
+
+#sleepbtns {
+	text-align: center;
+}
+
+#sleepmessage {
+	color: white;
+	font-size: 1rem;
+}
+
+#notification {
+	position: absolute;
+	right: 10px;
+	width: 250px;
+	background: transparent;
+	backdrop-filter: blur(10px) brightness(50%);
+	border-radius: 10px;
+	padding: 10px;
+	bottom: 61px;
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+	display: none;
+	animation: notifpull .2s ease-out;
+
+}
+
+@keyframes notifpull {
+	from {
+		opacity: 0;
+		transform: translateX(50px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+#notification span {
+	opacity: 0.5;
+	font-size: 11px;
+}
+
+#notification h2 {
+	font-size: 15px;
+	font-weight: normal;
+	margin: 5px 0;
+}
+
+#notification p {
+	font-size: 10px;
+	margin: 10px 0;
 }

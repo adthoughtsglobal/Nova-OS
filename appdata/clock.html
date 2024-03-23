@@ -32,25 +32,6 @@
 			border-radius: 10px;
 			-webkit-box-reflect: below 1px linear-gradient(transparent, rgba(255, 255, 255, 0.1));
 
-			/* Animation for border change and hue-rotate */
-			animation: animateBorder 2s linear infinite;
-		}
-
-		@keyframes animateBorder {
-			0% {
-				border: 3px solid #2aafb2;
-				filter: hue-rotate(0deg);
-			}
-
-			50% {
-				border: 3px solid #2aafb2;
-				filter: hue-rotate(180deg);
-			}
-
-			100% {
-				border: 3px solid #2aafb2;
-				filter: hue-rotate(360deg);
-			}
 		}
 
 		.date {
@@ -294,8 +275,6 @@
 	<div class="Buttons">
 		<button class="but1" onclick="CScene('time')"> Time </button>
 		<button class="but1" onclick="CScene('timer')"> Timer </button>
-		<button class="but1" onclick="CScene('alarm')"> Alarm </button>
-		<button class="but1" onclick="CScene('stopwatch')"> Stopwatch </button>
 	</div>
 
 	<div id="time">

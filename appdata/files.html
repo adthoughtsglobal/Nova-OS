@@ -16,7 +16,7 @@
 
 		/* Track */
 		::-webkit-scrollbar-track {
-			background: transparent;
+			background: #101010;
 		}
 
 		/* Handle */
@@ -40,6 +40,7 @@
 			padding: 0;
 			font-family: 'Poppins', sans-serif;
 			color: white;
+			user-select: none;
 		}
 
 		#flap-mot {
@@ -94,6 +95,11 @@
 			border-radius: 50%;
 			padding: 1px;
 			transform: translate(2px, 5px);
+			transisiton: .3s;
+		}
+
+		.navinfobtns:active {
+			transform: rotate(360deg);
 		}
 
 		.setbtn {
@@ -105,7 +111,7 @@
 			width: 90%;
 			margin: auto;
 			margin-bottom: 3px;
-			background: linear-gradient(4deg, #151515 90%, #5dabff);
+			background: #151515;
 			border-radius: 5px;
 			text-align: left;
 			overflow: hidden;
@@ -117,7 +123,14 @@
 		}
 
 		.sdfld:hover {
-			color: dodgerblue;
+			background-color: #2f2f2f;
+		}
+
+		.sdfld span {
+			font-size: 15px;
+			transform: translate(1px, 2px);
+			margin-right: 6px;
+			color: #dcba37;
 		}
 
 		[flap-sidenav] {
@@ -146,8 +159,6 @@
 			font-size: 9px;
 			opacity: 70%;
 			transform: translateY(3px);
-			box-shadow: 1px 5px 12px #0e0e0e;
-			background: #0e0e0e;
 		}
 
 		[flap-files] {
@@ -159,12 +170,38 @@
 		}
 
 		.file {
-			display: block;
-			padding: 3px 5px;
 			background: #1c1c1c;
 			user-select: none;
 			border-radius: 7px;
+			transition: .3s;
+			animation: poprs .2s ease-out;
+		}
+
+		.file[list] {
+			display: block;
+			padding: 3px 5px;
 			margin-bottom: 2px;
+		}
+
+		.file[grid]{
+			display: inline-table;
+			height: 72px;
+			width: calc(50% - 42px);
+			min-width: 80px;
+			margin: 5px;
+			transition: .3s;
+			padding: 1rem;
+		}
+
+		@keyframes poprs {
+			from {
+				opacity: 0;
+				transform: translateY(-10px);
+			}
+			to {
+				opacity: 1;
+				transform: translateY(0px);
+			}
 		}
 
 		.file:hover {
@@ -179,10 +216,34 @@
 			font-size: 11px;
 		}
 
-		.file span {
+		.file[grid] > [flname] {
 			font-size: 14px;
 			display: inline-block;
-			width: 70%;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			margin: 0;
+			position: relative;
+			width: 100%;
+			background: #252525;
+			padding: 10px;
+			border-radius: 5px;
+			transform: translate(-10px, 10px);
+			transition: 0.2s;
+		}
+
+		.file[grid] > [flname] [flfrname] {
+			display: inline-block;
+			overflow: hidden;
+			white-space: nowrap;
+			width: calc(100% - 34px);
+			text-overflow: ellipsis;
+		}
+
+		.file[list] > [flname] {
+			font-size: 14px;
+			display: inline-block;
+			width: calc(100% - 30px);
 			overflow: hidden;
 			white-space: nowrap;
 			text-overflow: ellipsis;
@@ -190,15 +251,28 @@
 		}
 
 		.file span .material-symbols-rounded {
-			width: fit-content;
-			margin-right: 6px;
-			transform: translate(2px, 1px) scale(1.3);
 			color: #7193ff;
+		}
+		
+		.file[list] span .material-symbols-rounded {
+			width: fit-content;
+			margin-right: 3px;
+			margin-left: 0;
+			transform: translate(-1px, 0px) scale(0.8);
+		}
+
+		.file[grid] span .material-symbols-rounded {
+			font-size: 41px;
+			display: block;
 		}
 
 		#slfile {
 			background: #414e59;
 			transform: scale(1.01);
+		}
+
+		#slfile[grid] [flname] {
+			background: #566877;
 		}
 
 		[bottomnav] {
@@ -583,7 +657,7 @@
 				</span>
 			</div>
 			<div class="nowid flappsearch">
-				Files App
+				Files App 2.1
 			</div>
 			<div style="flex-grow: 1;" class="nowid"><span class="material-symbols-rounded setbtn" style="
 					transform: translate(-7px, 3px); cursor: pointer;
@@ -609,12 +683,12 @@
 							device://*
 						</span>
 						<div class="nvbtns">
-							<button class="flarrbtn">
+							<button class="flarrbtn" onclick="changeview('list')">
 								<span class="material-symbols-rounded">
 									view_list
 								</span>
 							</button>
-							<button class="flarrbtn">
+							<button class="flarrbtn" onclick="changeview('grid')">
 								<span class="material-symbols-rounded">
 									grid_view
 								</span>
@@ -632,7 +706,7 @@
 			</div>
 		</div>
 		<script>
-			var currentPath, nowfile;
+			var currentPath, nowfile, flmode = 'grid';
 
 			var memory;
 			var fllist;
@@ -677,8 +751,8 @@
 					memory.forEach(obj => {
 						let element = document.createElement('div');
 						element.classList.add("sdfld");
-						element.innerText = obj.folderName;
-						element.setAttribute('onclick', "listFiles(this.innerText)")
+						element.innerHTML = '<span class="material-icons"> folder </span>' + obj.folderName;
+						element.setAttribute('onclick', "listFiles('"+obj.folderName+"', true)")
 						fdlist.appendChild(element);
 					});
 				} else {
@@ -687,35 +761,74 @@
 			}
 
 			function refresh() {
-				getdb('trojencat', 'rom')
-					.then((result) => {
-						if (result !== null) {
-							memory = result;
-						}
-					});
-				liststuff()
-				listFiles(currentPath)
+				setTimeout(() => {
+					getdb('trojencat', 'rom')
+						.then((result) => {
+							if (result !== null) {
+								memory = result;
+							}
+						});
+					liststuff();
+					listFiles(currentPath);
+				}, 1000);
 			}
 
 
-			function listFiles(folderName) {
+			async function listFiles(folderName, gen) {
+				if (currentPath == folderName && gen) {
+					return;
+				}
 				fllist.innerText = "";
 
 				// Find the folder with the given name
-
 				const folder = memory.find(folder => folder.folderName === folderName);
 				if (folder) {
 					currentPath = folderName;
-					updpth()
+					updpth();
+
 					// Display files in the folder
 					if (folder.content && folder.content.length > 0) {
-						folder.content.forEach(file => {
+						// Define a map to store day divs
+						const dayDivs = {};
+
+						folder.content.forEach(async file => {
 							let fileElement = document.createElement('div');
 							fileElement.classList.add("file");
+							fileElement.setAttribute(flmode, '');
 							fileElement.setAttribute("unid", file.uid);
-
 							fileElement.setAttribute("onclick", "slfile(this)");
-							fileElement.innerHTML = `<span flname> ` + geticon(file.type) + ` ${file.fileName}</span> <small >${file.type}</small>`;
+
+							// Assuming metadata is stored as a JSON object within the file
+							let metadata = {};
+							if (file.metadata) {
+								try {
+									metadata = JSON.parse(file.metadata);
+								} catch (error) {
+									console.error("Error parsing metadata:", error);
+								}
+							}
+
+							// Extract datetime from metadata if available
+							let datetime = null;
+							if (metadata.datetime) {
+								datetime = metadata.datetime;
+							}
+
+							// Check if datetime is defined and has required identifiers (e.g., 'month', 'year')
+							if (datetime && datetime.year && datetime.month && datetime.day) {
+								const dateIdentifier = `${datetime.year}-${datetime.month}-${datetime.day}`;
+
+								// Create day div if it doesn't exist
+								if (!dayDivs[dateIdentifier]) {
+									dayDivs[dateIdentifier] = document.createElement("div");
+									let dayHeader = document.createElement("div");
+									dayHeader.innerHTML = '<b>' + dateIdentifier + '</b>';
+									dayDivs[dateIdentifier].appendChild(dayHeader);
+									document.getElementById("cont").appendChild(dayDivs[dateIdentifier]);
+								}
+							}
+
+							fileElement.innerHTML = `<span>` + geticon(file.type) + `</span><span flname><span class='flfrname'> ${file.fileName}</span> <small>${file.type}</small></span>`;
 							fllist.appendChild(fileElement);
 						});
 					} else {
@@ -776,6 +889,7 @@
 									${fileData.type.startsWith("image") ? '<a onclick="window.parent.makewall(\'' + x.getAttribute("unid") + '\')">Set As Desktop Background</a>' : ''}
 									${fileData.type.startsWith("app") ? `<a onclick="openfile(document.getElementById('` + x.id + `'), 'text/html')">Open in studio</a>` : ''}
 									<a onclick="openfile(document.getElementById('`+ x.id + `'), 'text')">Open as text</a>
+									<a onclick="renamef(document.getElementById('`+ x.id + `'))">Rename</a>
 									<a onclick="movefile(document.getElementById('`+ x.id + `'))">Move</a>
 								  </div>
 								</div>`+ fileSize.toFixed(2) + ' ' + units[unitIndex];
@@ -811,7 +925,7 @@
 								}
 							document.getElementById("fileinfobn").innerHTML = "Deleting file..."
 							await setdb('trojencat', 'rom', memory).then(() => {
-								setTimeout(refresh, 1000);
+								refresh()
 								document.getElementById("fileinfobn").innerHTML = "File Deleted";
 							});
 							return;
@@ -875,6 +989,26 @@
 				}
 			}
 
+			async function renamef(x) {
+				try {
+					const fileId = x.getAttribute("unid");
+
+					let file = await window.parent.getFileById(fileId);
+
+					file.fileName = await window.parent.ask("New Name:");
+					await window.parent.updateFile(file);
+
+					document.getElementById("fileinfobn").innerHTML = "File renamed successfully.";
+
+					refresh()
+				} catch (error) {
+					// Handle any errors that may occur during the renaming process
+					console.error("Error renaming file:", error);
+					// Optionally, provide feedback to the user about the error
+					document.getElementById("fileinfobn").innerHTML = "Failed to rename file.";
+				}
+			}
+
 			async function movefile(flid) {
 				flid = flid.getAttribute("unid")
 				console.log("NAV MOVE file with id: " + flid)
@@ -899,7 +1033,7 @@
 					await window.parent.createFile(x, y.fileName, y.type, y.content, y.metadata)
 					console.log("file made, " + JSON.stringify(y))
 					console.log("removing: " + flid)
-					remfile(flid)
+					await remfile(flid)
 					document.getElementById("fileinfobn").innerHTML = "File was moved to " + x;
 				}
 			}
@@ -985,6 +1119,10 @@
 					i = "text_snippet"
 				} else if (x == "app") {
 					i = "rocket_launch"
+				} else if (x.startsWith("image")) {
+					i = "image"
+				} else if (x.startsWith("audio")) {
+					i = "graphic_eq"
 				} else {
 					i = "bug_report"
 				}
@@ -998,6 +1136,11 @@
 
 				document.getElementById("fupibu").onclick = fupit;
 				document.getElementById("upmod").showModal();
+			}
+
+			function changeview(how) {
+				flmode = how;
+				listFiles(currentPath)
 			}
 		</script>
 </body>

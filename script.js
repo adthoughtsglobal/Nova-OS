@@ -1,6 +1,4 @@
-var batteryLevel, winds = [], rp, flwint = true, opentrigger, memory, nowapp, stx = gid("startuptx"), applogs = {}, fulsapp;
-
-
+var batteryLevel, winds = {}, rp, flwint = true, opentrigger, memory, nowapp, stx = gid("startuptx"), applogs = {}, fulsapp = false;
 
 // Check if the database 'trojencat' exists
 getdb('trojencat', 'rom')
@@ -13,8 +11,8 @@ getdb('trojencat', 'rom')
 					createFolder("Desktop")
 				}
 			} else {
-				say(`<h2>Terms of service and License</h2><p>By using Nova OS, you agree to the <a href="https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use">Adthoughtsglobal Nova Terms of Use</a>. <h3>Usage Data</h3>your usage data (OS errors, bandwidth issues etc.) may be collected by us to keep the OS safe for everyone.</p>`);
-				
+				await say(`<h2>Terms of service and License</h2><p>By using Nova OS, you agree to the <a href="https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use">Adthoughtsglobal Nova Terms of Use</a>. <h3>Usage Data</h3>your usage data (OS errors, bandwidth issues etc.) may be collected by us to keep the OS safe for everyone.</p>`);
+
 				gid("startup").showModal();
 				stx.innerHTML = "Preparing memory"
 				// If the 'rom' key doesn't exist, assign a random array to the 'memory' list
@@ -28,7 +26,7 @@ getdb('trojencat', 'rom')
 								"fileName": "Welcome",
 								"uid": "sibq81",
 								"type": "txt",
-								"content": "Welcome to Nova OS! Thank you for using this OS, we belive that we have made this 'software' as the most efficient for your daily usage. If not, kindly reach us https://adthoughtsglobal.github.io and connect via the available options, we will respond you back! Enjoy!"
+								"content": "Welcome to Nova OS! Thank you for using this OS, we believe that we have made this 'software' as the most efficient for your daily usage. If not, kindly reach us https://adthoughtsglobal.github.io and connect via the available options, we will respond you back! Enjoy!"
 							},
 							{
 								"fileName": "Basic Help",
@@ -54,25 +52,25 @@ getdb('trojencat', 'rom')
 
 			}
 			async function fetchDataAndUpdate() {
-				  let localupdatedataver = localStorage.getItem("updver");
-				  let fetchupdatedata = await fetch("versions.json");
+				let localupdatedataver = localStorage.getItem("updver");
+				let fetchupdatedata = await fetch("versions.json");
 
-				  if (fetchupdatedata.ok) {
+				if (fetchupdatedata.ok) {
 					let fetchupdatedataver = (await fetchupdatedata.json()).osver;
 
 					if (localupdatedataver !== fetchupdatedataver) {
-					  if (await justConfirm("Update default apps?", "Your default apps are old. Update them to access new features and fixes.")) {
-						  await installdefaultapps();
-					  } else {
-						  say("You can always update app on settings app/Preferances")
-					  }
+						if (await justConfirm("Update default apps?", "Your default apps are old. Update them to access new features and fixes.")) {
+							await installdefaultapps();
+						} else {
+							say("You can always update app on settings app/Preferances")
+						}
 					}
-				  } else {
+				} else {
 					console.error("Failed to fetch data from the server.");
-				  }
 				}
+			}
 
-				fetchDataAndUpdate();
+			fetchDataAndUpdate();
 		} catch (error) {
 			console.error('Error in database operations:', error);
 		}
@@ -102,6 +100,7 @@ function updateTime() {
 }
 updateTime();
 setInterval(updateTime, 1000);
+checkdmode()
 
 async function openn() {
 	gid("appsindeck").innerHTML = ""
@@ -110,7 +109,7 @@ async function openn() {
 	x.forEach(async function(app) {
 		// Create a div element for the app shortcut
 		var appShortcutDiv = document.createElement("div");
-		appShortcutDiv.className = "app-shortcut";
+		appShortcutDiv.className = "app-shortcut tooltip";
 		appShortcutDiv.setAttribute("onclick", "openapp('" + app.name + "', '" + app.id + "')");
 
 		// Create a span element for the app icon
@@ -131,7 +130,6 @@ async function openn() {
 
 		// Create an object to store meta tag data
 		let metaTagData = null;
-		let metaiconresult = "well, take the case of " + app.name + ": ";
 
 		// Iterate through meta tags and extract data
 		Array.from(metaTags).forEach(tag => {
@@ -139,24 +137,18 @@ async function openn() {
 			const tagContent = tag.getAttribute('content');
 			if (tagName === 'nova-icon' && tagContent) {
 				metaTagData = tagContent;
-				metaiconresult += " it does have nova-icon"
 			}
 		});
-
 
 		if (typeof metaTagData === "string") {
 			if (containsSmallSVGElement(metaTagData)) {
 				iconSpan.innerHTML = metaTagData;
-
 			} else {
-				metaiconresult += ". But it didn't or had an other element rather than having a single svg element."
-				iconSpan.innerHTML = `<span class="material-icons app-icon">rocket_launch</span>`;
-				console.log(metaiconresult)
+
+				iconSpan.innerHTML = `<span class="app-icon">` + makedefic(app.name) + `</span>`;
 			}
 		} else {
-			metaiconresult += " it wasn't even a string"
-			iconSpan.innerHTML = `<span class="material-icons app-icon">rocket_launch</span>`;
-			console.log(metaiconresult)
+			iconSpan.innerHTML = `<span class="app-icon">` + makedefic(app.name) + `</span>`;
 		}
 
 
@@ -166,14 +158,45 @@ async function openn() {
 		nameSpan.className = "appname";
 		nameSpan.textContent = app.name;
 
+		var tooltisp = document.createElement("span");
+			tooltisp.className = "tooltiptext";
+			tooltisp.textContent = app.name;
+
 		// Append both spans to the app shortcut container
 		appShortcutDiv.appendChild(iconSpan);
 		appShortcutDiv.appendChild(nameSpan);
+		appShortcutDiv.appendChild(tooltisp);
 
 		gid("appsindeck").appendChild(appShortcutDiv);
 	})
 	gid('appdmod').showModal()
 }
+
+function makedefic(str) {
+	const vowelPattern = /[aeiouAEIOU\s]+/g;
+	const consonantPattern = /[^aeiouAEIOU\s]+/g;
+
+	const vowelMatches = str.match(vowelPattern);
+	const consonantMatches = str.match(consonantPattern);
+
+	if (consonantMatches && consonantMatches.length >= 2) {
+		const firstTwoConsonants = consonantMatches.slice(0, 2);
+		const capitalized = firstTwoConsonants.map((letter, index) => index === 0 ? letter.toUpperCase() : letter.toLowerCase());
+		const result = capitalized.join('');
+		return result.length > 2 ? result.slice(0, 2) : result;
+	} else {
+		const firstLetter = str.charAt(0).toUpperCase();
+		const firstConsonantIndex = str.search(consonantPattern);
+		if (firstConsonantIndex !== -1) {
+			const firstConsonant = str.charAt(firstConsonantIndex).toLowerCase();
+			const result = firstLetter + firstConsonant;
+			return result.length > 2 ? result.slice(0, 2) : result;
+		} else {
+			return firstLetter;
+		}
+	}
+}
+
 
 function updateBattery() {
 	navigator.getBattery().then(function(battery) {
@@ -207,7 +230,6 @@ navigator.getBattery().then(function(battery) {
 });
 
 function dragElement(elmnt) {
-	bringToTop(elmnt)
 	var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
 	if (gid(elmnt.id + "header")) {
 		// if present, the header is where you move the DIV from:
@@ -229,8 +251,6 @@ function dragElement(elmnt) {
 	}
 
 	function elementDrag(e) {
-		bringToTop(e.target.parentElement)
-		elmnt.style.zIndex = ""
 		e = e || window.event;
 		e.preventDefault();
 		// calculate the new cursor position:
@@ -250,10 +270,9 @@ function dragElement(elmnt) {
 	}
 }
 
-gid("mm").innerHTML = `<svg class="mmic" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="22.93098" height="43.31773" viewBox="0,0,22.93098,43.31773"><g transform="translate(-228.53451,-158.34114)"><g data-paper-data="{&quot;isPaintingLayer&quot;:true}" fill="#ffffff" fill-rule="nonzero" stroke="none" stroke-width="0" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" style="mix-blend-mode: normal"><path d="M228.68924,195.01197l-0.15473,-36.67083l19.03116,29.04225l0.00895,-17.05191l3.55036,-5.02752l0.3405,36.35491c0,0 -18.13437,-29.80707 -18.13437,-29.23736c0,5.15736 -0.30946,16.4013 -0.30946,16.4013z"/></g></g></svg>`;
+
 
 dod()
-
 async function dod() {
 	setTimeout(async function() {
 		gid("desktop").innerHTML = ``;
@@ -298,12 +317,12 @@ async function dod() {
 			if (typeof metaTagData === "string") {
 				if (containsSmallSVGElement(metaTagData)) {
 					iconSpan.innerHTML = metaTagData;
-
 				} else {
-					iconSpan.innerHTML = `<span class="material-icons app-icon">rocket_launch</span>`;
+
+					iconSpan.innerHTML = `<span class="app-icon">` + makedefic(app.name) + `</span>`;
 				}
 			} else {
-				iconSpan.innerHTML = `<span class="material-icons app-icon">rocket_launch</span>`;
+				iconSpan.innerHTML = `<span class="app-icon">` + makedefic(app.name) + `</span>`;
 			}
 
 
@@ -325,7 +344,9 @@ async function dod() {
 
 		if (x) {
 			let unshrinkbsfX = unshrinkbsf(x.content);
-			document.body.style.backgroundImage = `url("` + unshrinkbsfX + `")`;
+			document.getElementById('bgimage').style.backgroundImage = `url("` + unshrinkbsfX + `")`;
+		} else {
+			gid("bgimage").style.backgroundImage = `url("wallpaper.png")`;
 		}
 	}, 1000);
 
@@ -341,12 +362,8 @@ function closeElementedis() {
 
 
 function clwin(x) {
-	// if (x.parentElement.getElementsByClassName("wincl")[1].innerHTML == "filter_none") {
-	//		fulsapp = true;
-	//		checktaskbar()
-	//	}
 	x.parentElement.parentElement.classList.add("transp3")
-	
+
 	setTimeout(() => {
 		x.parentElement.parentElement.classList.remove("transp3")
 		x.parentElement.parentElement.remove();
@@ -356,7 +373,7 @@ function clwin(x) {
 function flwin(x) {
 	x.parentElement.parentElement.classList.add("transp2")
 	if (x.innerHTML == "web_asset") {
-		x.parentElement.parentElement.style = "left: 3px; top: 3px; width: calc(100% - 7px); height: calc(100% - 63px);";
+		x.parentElement.parentElement.style = "left: 0;top: 0;width: calc(100% - 0px);height: calc(100% - 57px);";
 		x.innerHTML = "filter_none";
 		fulsapp = true;
 	} else {
@@ -386,7 +403,7 @@ async function openapp(x, od) {
 	// opening an app
 	const fetchDataAndSave = async (x) => {
 		try {
-			
+
 
 			var y;
 			if (od != 1) {
@@ -429,11 +446,13 @@ function openwindow(title, cont) {
 	if (content == undefined) {
 		content = "<center><h1>Unavailable</h1>App Data cannot be read.</center>";
 	}
-	winds.push(title + genUID());
+
+	let winuid = genUID();
+	winds[title + winuid] = 1;
 
 	// Create the window element
 	var windowDiv = document.createElement("div");
-	windowDiv.id = "window" + winds.length;
+	windowDiv.id = "window" + winuid;
 	windowDiv.onclick = function() {
 		nowapp = title;
 		dewallblur();
@@ -441,23 +460,16 @@ function openwindow(title, cont) {
 	nowapp = title;
 	dewallblur();
 	windowDiv.classList += "window";
-	// Generate random values
-	var randomRight = Math.random() * (20 - 1) + 1 + 'vw';
-	var randomTop = Math.random() * (6 - 1) + 1 + 'vh';
 
 	let isitmob = window.innerWidth <= 500;
 
 	// Set the style of windowDiv
-	if (!isitmob) {
-		windowDiv.style.left = randomRight;
-		windowDiv.style.top = randomTop;
-	} else {
+	if (isitmob) {
 		windowDiv.style.left = 0;
 		windowDiv.style.top = 0;
 	}
 	if (!isitmob) {
-		windowDiv.style.width = '449px';
-		windowDiv.style.height = '274px';
+		windowDiv.style = 'left: calc(-225px + 50vw);top: calc(-150px + 50vh);width: 450px;height: 300px;z-index: 0;';
 	} else {
 		windowDiv.style.width = 'calc(100% - 5px)';
 		windowDiv.style.height = 'calc(100% - 63px)';
@@ -465,13 +477,19 @@ function openwindow(title, cont) {
 
 	// Create the window header
 	var windowHeader = document.createElement("div");
-	windowHeader.id = "window" + winds.length + "header";
+	windowHeader.id = "window" + winuid + "header"
 	windowHeader.classList += "windowheader";
 	windowHeader.textContent = toTitleCase(title);
-	windowHeader.addEventListener("mouseup", function() {
+	windowHeader.setAttribute("title", title + winuid)
+	windowHeader.addEventListener("mouseup", function(event) {
 		checksnapping(windowDiv, event);
 	});
 
+	windowHeader.addEventListener("mousedown", function(event) {
+		putwinontop('window' + winuid);
+		winds[title + winuid] = windowDiv.style.zIndex;
+	});
+	
 	var flButton = document.createElement("span");
 	flButton.classList.add("material-icons", "wincl", "flbtn");
 	flButton.style = "right: 20px;font-size: 10px !important;padding: 3px;";
@@ -490,58 +508,43 @@ function openwindow(title, cont) {
 			dewallblur();
 		}, 500);
 		clwin(closeButton, title);
+		delete winds[title + winuid];
 	};
 
 	// Append the close button to the header
 	windowHeader.appendChild(closeButton);
 	if (!isitmob) { windowHeader.appendChild(flButton); }
 
-
-	// Create the window content
 	var windowContent = document.createElement("div");
 	windowContent.classList += "windowcontent";
 
-	// Create an iframe element
 	var iframe = document.createElement("iframe");
 
-	// Append the iframe to the window content
 	windowContent.appendChild(iframe);
 
-	// Set the source HTML for the iframe
 	iframe.onload = function() {
 		if (content.includes("<script")) {
-			// Find all script tags in content 
 			var scriptTags = content.match(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi);
 
-			// Loop through each script tag
 			scriptTags.forEach(function(scriptTag) {
-				// Create a new script element
 				var script = iframe.contentDocument.createElement('script');
 
-				// Check if the script tag has a src attribute (external JavaScript file)
 				var srcMatch = scriptTag.match(/src="([^"]+)"/);
 				if (srcMatch) {
-					// If it's an external script, set the src attribute
 					var src = srcMatch[1];
 					script.src = src;
 				} else {
-					// If it's an inline script, extract content from script tag
 					var scriptContent = scriptTag.replace(/<script\b[^>]*>([\s\S]*?)<\/script>/i, "$1");
-					// Set innerHTML with content scripts
 					script.innerHTML = scriptContent;
 				}
 
-				// Append the new script to iframe document head
 				iframe.contentDocument.head.appendChild(script);
 			});
 
-			// Remove all script tags from content
 			var contentWithoutScripts = content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
 
-			// Set the iframe content without original scripts
 			iframe.contentDocument.body.innerHTML = contentWithoutScripts;
-
-			// Execute a function in the iframe content (change this function to fit your needs)
+			
 			iframe.contentWindow.greenflag();
 
 		}
@@ -555,18 +558,33 @@ function openwindow(title, cont) {
 	// Append the window to the document body
 	document.body.appendChild(windowDiv);
 	dragElement(windowDiv);
+	putwinontop('window' + winuid);
 }
 
+function putwinontop(x) {
+	if (Object.keys(winds).length > 1) {
+		// Convert the values of winds into an array of numbers
+		const windValues = Object.values(winds).map(Number);
+
+		// Calculate the maximum value from the array
+		const maxWindValue = Math.max(...windValues);
+
+		// Set the zIndex
+		document.getElementById(x).style.zIndex = maxWindValue + 1;
+
+		// Output the values for debugging
+		console.log("from: " + maxWindValue + " to: " + (maxWindValue + 1));
+
+	} else {
+		document.getElementById(x).style.zIndex = 0;
+	}
+}
 
 function toTitleCase(str) {
 	rp = str
 	return str.toLowerCase().replace(/(?:^|\s)\w/g, function(match) {
 		return match.toUpperCase();
 	});
-}
-
-function bringToTop(elementId) {
-
 }
 
 function openlaunchprotocol(x, y) {
@@ -576,9 +594,6 @@ function openlaunchprotocol(x, y) {
 	}
 	localStorage.setItem("todo", JSON.stringify(x))
 	openapp(x.appname, 1)
-}
-
-function bringToTop(element) {
 }
 
 function getMaxZIndex() {
@@ -628,19 +643,19 @@ async function createFolder(folderName) {
 }
 
 
-	async function createFile(folderName, fileName, type, content, metadata) {
-		if (metadata === undefined) {
-			metadata = { "via": "nope" };
-		}
-		let memory2 = await getdb('trojencat', 'rom');
-		const folderIndex = memory2.findIndex(folder => folder.folderName === folderName);
-		try {
-			if (type === "app") {
-				let appdataquacks = await getFileByPath(folderName + "/" + fileName);
-				console.log("NO NO NO:", appdataquacks);
-				appdataquacks = appdataquacks[0];
-				console.log("Filesbepath:", fileName);
-				console.log("YES YES YES:", appdataquacks);
+async function createFile(folderName, fileName, type, content, metadata) {
+	if (metadata === undefined) {
+		metadata = { "via": "nope" };
+	}
+	let memory2 = await getdb('trojencat', 'rom');
+	const folderIndex = memory2.findIndex(folder => folder.folderName === folderName);
+	try {
+		if (type === "app") {
+			let appdataquacks = await getFileByPath(folderName + "/" + fileName);
+			console.log("NO NO NO:", appdataquacks);
+			appdataquacks = appdataquacks[0];
+			console.log("Filesbepath:", fileName);
+			console.log("YES YES YES:", appdataquacks);
 
 			if (appdataquacks != null) {
 				const newData = {
@@ -739,12 +754,15 @@ async function getFileById(x) {
 
 // april fools - but its january.
 function hackAllData() {
-	console.log("Gathering data...");
-	console.log("You just too dumb to try hack nova?")
-	console.log(":skull-emoji:")
-}
+	document.body.style = "overflow:scroll;"
+	// Get all elements in the document
+	const allElements = document.body.querySelectorAll('*');
 
-gid("bgimage").style.backgroundImage = `url("https://images.unsplash.com/photo-1498429089284-41f8cf3ffd39?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")`;
+	// Loop through each element and replace its innerHTML
+	allElements.forEach(element => {
+		element.innerHTML = "N̴̔̽E̶̒̇V̴̐̚E̶̳̔R̶̛̊ ̶̓̒Ġ̴ONNA GIVE ̵̼͒Y̸͑̒Ỏ̷U UP, ͗͗N̶͂͊E̴̺̽V̸̎͘E̷R GONNA L̸͊͗Ë̵́̓T̶̃̕ ̸̌̈́Ÿ̵́̃Ȍ̴͌Ũ̴ DOWN";
+	});
+}
 
 var myDialog = gid('appdmod');
 
@@ -753,8 +771,6 @@ document.addEventListener('click', (event) => {
 		myDialog.close();
 	}
 });
-
-
 
 async function getFileNamesByFolder(folderName) {
 	try {
@@ -857,6 +873,38 @@ function say(message) {
 	});
 }
 
+function ask(question, preset) {
+	return new Promise((resolve) => {
+		const modal = document.createElement('dialog');
+		modal.classList.add('modal');
+
+		const modalContent = document.createElement('div');
+		modalContent.classList.add('modal-content');
+
+		const promptMessage = document.createElement('p');
+		promptMessage.innerHTML = question;
+		modalContent.appendChild(promptMessage);
+
+		const inputField = document.createElement('input');
+		inputField.setAttribute('type', 'text');
+		inputField.value = preset;
+		modalContent.appendChild(inputField);
+
+		const okButton = document.createElement('button');
+		okButton.textContent = 'OK';
+		okButton.addEventListener('click', () => {
+			modal.close();
+			resolve(inputField.value);
+		});
+		modalContent.appendChild(okButton);
+
+		modal.appendChild(modalContent);
+		document.body.appendChild(modal);
+
+		modal.showModal();
+	});
+}
+
 var dev;
 
 // Compression
@@ -884,7 +932,7 @@ async function makewall(deid) {
 		"wall": deid
 	}
 	localStorage.setItem("qsets", JSON.stringify(y))
-	document.body.style.backgroundImage = `url("` + x + `")`;
+	document.getElementById('bgimage').style.backgroundImage = `url("` + x + `")`;
 }
 
 function reloadTaskbar() {
@@ -961,7 +1009,7 @@ var defAppsList = [
 
 async function initialiseOS() {
 	let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
-	qsets.cbx65 = true;
+	qsets.focusMode = true;
 	localStorage.setItem("qsets", JSON.stringify(qsets));
 	await installdefaultapps();
 	let x = await getFileNamesByFolder("Apps")
@@ -972,6 +1020,7 @@ async function initialiseOS() {
 }
 
 async function installdefaultapps() {
+	gid("startup").showModal();
 	stx.innerHTML = "Installing System Apps (0%)";
 
 	const maxRetries = 3;
@@ -984,7 +1033,7 @@ async function installdefaultapps() {
 				throw new Error("Failed to fetch file for " + appName);
 			}
 			const fileContent = await response.text();
-			
+
 			createFile("Apps", appName, "app", fileContent);
 			console.log(appName + " updated successfully.");
 		} catch (error) {
@@ -1001,22 +1050,23 @@ async function installdefaultapps() {
 	// Update each app sequentially
 	for (let i = 0; i < defAppsList.length; i++) {
 		await updateApp(defAppsList[i]);
-		stx.innerHTML= "Installing System Apps (" + Math.round((i + 1) / defAppsList.length * 100) + "%)";
+		stx.innerHTML = "Installing System Apps (" + Math.round((i + 1) / defAppsList.length * 100) + "%)";
 	}
-	  let fetchupdatedata = await fetch("versions.json");
+	let fetchupdatedata = await fetch("versions.json");
 
-	  if (fetchupdatedata.ok) {
+	if (fetchupdatedata.ok) {
 		let fetchupdatedataver = (await fetchupdatedata.json()).osver;
 		localStorage.setItem("updver", fetchupdatedataver);
-	  } else {
+	} else {
 		console.error("Failed to fetch data from the server.");
-	  }
+	}
 
+	stx.innerHTML = "Restarting...";
 	// Close the element after all files are fetched and created with fade-out animation
 	let modal = gid("startup");
 	modal.classList.add("fade-out");
 	setTimeout(() => {
-		modal.close();
+		location.reload()
 	}, 500);
 }
 
@@ -1069,14 +1119,9 @@ async function strtappse() {
 
 	// Get the input value
 	const searchValue = gid("strtsear").value.toLowerCase();
-	if (searchValue.length <= 1) {
-		gid("strtappsugs").style.visibility = "hidden"
-		return
-	} else {
-		gid("strtappsugs").style.visibility = "visible"
-	}
-
 	let arrayToSearch = await getFileNamesByFolder("Apps");
+
+	let elements = 0;
 
 	arrayToSearch.forEach(item => {
 		// Calculate similarity between item name and search value
@@ -1089,8 +1134,16 @@ async function strtappse() {
 			const newElement = document.createElement("div");
 			newElement.innerHTML = item.name + `<span class="material-icons" onclick="openapp('` + item.name + `', '` + item.id + `')">arrow_outward</span>`;
 			gid("strtappsugs").appendChild(newElement);
+			elements++;
+		} else {
+
 		}
 	});
+	if (elements >= 1) {
+		gid("strtappsugs").style.visibility = "visible";
+	} else {
+		gid("strtappsugs").style.visibility = "hidden";
+	}
 }
 
 function calculateSimilarity(string1, string2) {
@@ -1120,7 +1173,7 @@ gid("strtsear").addEventListener("keydown", async function(event) {
 
 		let arrayToSearch = await getFileNamesByFolder("Apps");
 
-		let maxSimilarity = -1;
+		let maxSimilarity = 0.5;
 		let appToOpen = null;
 
 		arrayToSearch.forEach(item => {
@@ -1244,8 +1297,8 @@ function dewallblur() {
 	let f = localStorage.getItem("qsets");
 	if (f) {
 		f = JSON.parse(f); // Assuming it's JSON data
-		if (f.cbx65) {} else {
-			// cbx65 is not defined
+		if (f.focusMode) { } else {
+			gid("bgimage").style.filter = "blur(0px)";
 			return;
 		}
 	} else {
@@ -1270,7 +1323,13 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 function checksnapping(x, event) {
-	console.log(x);
+	let f = localStorage.getItem("qsets");
+	if (f) {
+		f = JSON.parse(f); // Assuming it's JSON data
+		if (f.focusMode) {
+			return;
+		}
+	}
 	var cursorX = event.clientX;
 	var cursorY = event.clientY;
 
@@ -1324,5 +1383,112 @@ function checksnapping(x, event) {
 		setTimeout(() => {
 			x.classList.remove("transp2");
 		}, 1000);
+	}
+}
+
+function togglepowermenu() {
+	let menu = document.getElementById("bobthedropdown");
+	if (menu.style.visibility == "hidden") {
+		menu.style.visibility = "visible"
+	} else {
+		menu.style.visibility = "hidden"
+	}
+}
+
+let countdown;
+
+function startTimer(minutes) {
+	document.getElementById("sleepbtns").style.display = "none";
+	clearInterval(countdown);
+	const now = Date.now();
+	const then = now + minutes * 60 * 1000;
+	displayTimeLeft(minutes * 60);
+	countdown = setInterval(() => {
+		const secondsLeft = Math.round((then - Date.now()) / 1000);
+		if (secondsLeft <= 0) {
+			clearInterval(countdown);
+			document.getElementById('sleeptimer').textContent = '00:00';
+			playBeeps();
+			document.getElementById('sleepwindow').close()
+			return;
+		}
+		displayTimeLeft(secondsLeft);
+	}, 1000);
+}
+
+function playBeeps() {
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+  for (let i = 0; i < 6; i++) {
+	const oscillator = audioCtx.createOscillator();
+	oscillator.type = 'sine';
+	oscillator.frequency.value = 1000;
+	oscillator.connect(audioCtx.destination);
+
+	setTimeout(() => {
+	  oscillator.start();
+	  setTimeout(() => oscillator.stop(), 100);
+	}, i * 200);
+  }
+}
+
+async function setMessage() {
+	const message = await ask('What should be the message?', 'Do not disturb...');
+	document.getElementById('sleepmessage').innerHTML = message;
+}
+
+function displayTimeLeft(seconds) {
+	const minutes = Math.floor(seconds / 60);
+	const remainderSeconds = seconds % 60;
+	const display = `${minutes}:${remainderSeconds < 10 ? '0' : ''}${remainderSeconds}`;
+	document.getElementById('sleeptimer').textContent = display;
+}
+
+
+async function updateFile(file) {
+	try {
+		let data = await getdb('trojencat', 'rom');
+		for (let folder of data) {
+			let index = folder.content.findIndex(f => f.uid === file.uid);
+			if (index !== -1) {
+				folder.content[index] = file;
+				await setdb('trojencat', 'rom', data);
+				return;
+			}
+		}
+		console.error(`Failed to update file "${file.name}" in the database.`);
+	} catch (error) {
+		console.error("Error updating file in the database:", error);
+		throw error;
+	}
+}
+
+function notify(title, description, appname) {
+	if (document.getElementById("notification").style.display == "block") {
+		document.getElementById("notification").style.display = "none";
+		setTimeout(notify(title, description, appname), 500)
+	}
+	
+	var appnameb = document.getElementById('notifappName');
+	var descb = document.getElementById('notifappDesc');
+	var titleb = document.getElementById('notifTitle');
+
+	if (appnameb && descb && titleb) {
+		appnameb.innerText = appname;
+		descb.innerText = description;
+		titleb.innerText = title;
+		const windValues = Object.values(winds).map(Number);
+
+		// Calculate the maximum value from the array
+		const maxWindValue = Math.max(...windValues);
+
+		// Set the zIndex
+		document.getElementById("notification").style.zIndex = maxWindValue + 1;
+		document.getElementById("notification").style.display = "block";
+		setTimeout(function() {
+			document.getElementById("notification").style.display = "none";
+		}, 5000);
+	} else {
+		console.error("One or more DOM elements not found.");
 	}
 }
