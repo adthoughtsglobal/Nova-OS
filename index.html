@@ -7,11 +7,12 @@
 	<meta name="viewport" content="width=device-width">
 	<title>Nova OS</title>
 	<link href="style.css" rel="stylesheet" type="text/css" />
-	<script src="SuperNova.js" defer></script>
+	<script src="SuperNova/system32.js" defer></script>
 	<!-- Include pako library (CDN) -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.0.3/pako.min.js"></script>
 	</script>
-	<!-- Clarity tracking code for https://adthoughtsglobal.github.io/Nova-OS/ --><script>    (function(c,l,a,r,i,t,y){        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i+"?ref=bwt";        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);    })(window, document, "clarity", "script", "lat355e2uu");</script>
+
+	<script src="scripties.js" defer></script>
 	<script src="script.js" defer></script>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	<link rel="stylesheet"
@@ -22,7 +23,7 @@
 	<div class="container2">
 		<div id="bgimage" class="layer44"></div>
 		<dialog id="edison">
-			<img src="https://adthoughtsglobal.github.io/Nova-OS/zv8P8U9w8A.webp" alt="Nova">
+			<img src="/N.webp" alt="Nova">
 			<div class="loader5345"></div>
 			<h1 class="gradient-text">Platinum</h1>
 		</dialog>
@@ -55,6 +56,13 @@
 			$(".container").sortable();
 		});
 	</script>
+
+	<div id="notification">
+		<span class="material-icons wincl" onclick="document.getElementById('notification').style.display = 'none';">close</span>
+		<span id="notifappName">App Name</span>
+		<h2 id="notifTitle">Title</h2>
+		<p id="notifappDesc">Description</p>
+	</div>
 
 	<nav id="novanav">
 		<div class="flodiv">
@@ -129,7 +137,35 @@
 			<div class="strtappsugs" id="strtappsugs">
 				apps appear here
 			</div>
-			<input placeholder="Search an app..." autocomplete="off" id="strtsear" onkeyup="strtappse()">
+			<div class="strtsearcont">
+				<div class="neweles" id="bobthedropdown" style="visibility: hidden;">
+					<button class="tooltip" onclick="location.reload()">
+						<span class="tooltiptext">Restart</span>
+						<span class="material-symbols-rounded">
+							restart_alt
+						</span>
+					</button>
+					<button class="tooltip" onclick="document.getElementById('sleepwindow').showModal()">
+						<span class="tooltiptext">Sleep</span>
+						<span class="material-symbols-rounded">
+							bedtime
+						</span>
+					</button>
+					<button class="tooltip" onclick="location.href = 'platiniumloader.html'">
+						<span class="tooltiptext">Close Nova</span>
+						<span class="material-symbols-rounded">
+							power
+
+						</span>
+					</button>
+				</div>
+				<button onclick="togglepowermenu()">
+					<span class="material-icons">
+						power_settings_new
+					</span>
+				</button>
+				<input placeholder="Search an app..." autocomplete="off" id="strtsear" onkeyup="strtappse()">
+			</div>
 		</div>
 	</dialog>
 	<dialog id="bios">
@@ -139,8 +175,7 @@
 		<button class="gudbtn" onclick="gid('bios').close()">Exit Setup</button>
 		<button onclick="">Remove Existance (IDB)</button>
 		<button onclick="location.reload()">Hard Refresh (ReBoot)</button>
-		<button onclick="window.location.href = 'platinumloader.html'">Switch to other versions of Nova OS</button>
-
+		<button onclick="window.location.href = 'platiniumloader.html'">Switch to other versions of Nova OS</button>
 
 	</dialog>
 	<dialog id="startup">
@@ -152,11 +187,6 @@
 
 	<div id="contextMenu" class="context-menu" style="display:none">
 		<ul>
-			<li><a href="#">
-					<span ic="" class="material-icons">
-						settings
-					</span>
-					Settings</a></li>
 			<li><a onclick="dod()">
 					<span ic="" class="material-icons">
 						refresh
@@ -194,6 +224,35 @@
 				</button>
 				<span class="tooltiptext">Bin</span>
 			</biv>
+		</div>
+	</dialog>
+	<dialog id="loginmod">
+		<div class="logincard">
+			<span class="logincardwelt">Welcome!</span>
+			<button>
+
+				<span hi>Guest</span>
+				<span class="material-icons">navigate_next</span>
+			</button>
+		</div>
+	</dialog>
+	<dialog id="sleepwindow">
+		<div class="sleepwincon">
+			<h1 id="sleeptimer">00:00</h1>
+			<p id="sleepmessage"></p>
+			<div id="sleepbtns">
+				<div>
+					<button onclick="startTimer(1)">60s</button>
+					<button onclick="startTimer(5)">5m</button>
+					<button onclick="startTimer(10)">10m</button>
+					<button onclick="startTimer(60)">1h</button>
+				</div>
+
+				<br>
+				<button onclick="setMessage()">Display a message</button>
+				<br>
+			</div>
+			<span class="material-icons" onclick="document.getElementById('sleepwindow').close(); clearInterval(countdown);document.getElementById('sleeptimer').textContent = '00:00';document.getElementById('sleepbtns').style.display = 'block';">close</span>
 		</div>
 	</dialog>
 </body>
