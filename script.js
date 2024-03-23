@@ -1,5 +1,20 @@
 var batteryLevel, winds = {}, rp, flwint = true, opentrigger, memory, nowapp, stx = gid("startuptx"), applogs = {}, fulsapp = false;
 
+var defAppsList = [
+	"camera",
+	"clock",
+	"files",
+	"media",
+	"settings",
+	"store",
+	"text",
+	"studio",
+	"gallery",
+	"wiki",
+	"browser",
+	"calculator"
+];
+
 // Check if the database 'trojencat' exists
 getdb('trojencat', 'rom')
 	.then(async (result) => {
@@ -992,20 +1007,7 @@ async function remFilesByFolder(folderName) {
 	}
 }
 
-var defAppsList = [
-	"camera",
-	"clock",
-	"files",
-	"media",
-	"settings",
-	"store",
-	"text",
-	"studio",
-	"gallery",
-	"wiki",
-	"browser",
-	"calculator"
-];
+
 
 async function initialiseOS() {
 	let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
