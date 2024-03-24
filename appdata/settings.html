@@ -781,7 +781,6 @@
 				</div>
 				<script>
 					function defs2() {
-						alert('This feature is OnDev, the developer is too lazy.')
 						let selinp;
 						selinp = document.getElementById("defflvm");
 						if (JSON.parse(localStorage.getItem("qsets")).defflvm) {
@@ -789,6 +788,7 @@
 							selinp.value = JSON.parse(localStorage.getItem("qsets")).defflvm;
 						}
 						document.getElementById("defflvm").addEventListener("change", function () {
+							alert('changes will affect after app updates including features selected.')
 							let newValue = document.getElementById("defflvm").value;
 							let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
 							qsets.defFileLayout = newValue;
@@ -805,7 +805,6 @@
 				</div>
 				<script>
 					function defs3() {
-						alert('This feature is OnDev, the developer is too lazy.')
 						let selinp;
 						selinp = document.getElementById("deftexappth");
 						if (JSON.parse(localStorage.getItem("qsets")).deftexappth) {
@@ -813,6 +812,7 @@
 							selinp.value = JSON.parse(localStorage.getItem("qsets")).deftexappth;
 						}
 						document.getElementById("deftexappth").addEventListener("change", function () {
+							alert('changes will affect after app updates including features selected.')
 							let newValue = document.getElementById("deftexappth").value;
 							let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
 							qsets.deftexappth = newValue;
@@ -1312,26 +1312,7 @@
 
 				function greenflag() {
 
-					var currentDate = new Date();
-
-					// Check if the current date is 05-03-2024
-					if (
-						currentDate.getDate() === 5 && // Day
-						currentDate.getMonth() === 2 && // Month (Note: JavaScript months are zero-based)
-						currentDate.getFullYear() === 2024 // Year
-					) {
-						// Create the message
-						var message = "<supportb>" +
-							"<b>Happy Birthday Felix!</b>" +
-							"<p>Felix is a developer at Nova, wish him in our " +
-							"<a href='https://discord.gg/pGRscJ72D3'>Wish Felix!</a></p>" +
-							"</supportb>";
-
-						// Add the message to the element with id "felix"
-						document.getElementById("felix").innerHTML = message;
-					} else {
-						console.log("It's not Felix's birthday yet!");
-					}
+					
 
 					var usedMemoryPercentage;
 					document.getElementById("defaultOpen").click();
