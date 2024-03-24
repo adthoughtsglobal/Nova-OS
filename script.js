@@ -26,7 +26,7 @@ getdb('trojencat', 'rom')
 					createFolder("Desktop")
 				}
 			} else {
-				await say(`<h2>Terms of service and License</h2><p>By using Nova OS, you agree to the <a href="https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use">Adthoughtsglobal Nova Terms of Use</a>. <h3>Usage Data</h3>your usage data (OS errors, bandwidth issues etc.) may be collected by us to keep the OS safe for everyone.</p>`);
+				await say(`<h2>Terms of service and License</h2><p>By using Nova OS, you agree to the <a href="https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use">Adthoughtsglobal Nova Terms of Use</a>. <h3>Usage Data</h3>We do not have access to your usage data.</p>`);
 
 				gid("startup").showModal();
 				stx.innerHTML = "Preparing memory"
@@ -41,13 +41,13 @@ getdb('trojencat', 'rom')
 								"fileName": "Welcome",
 								"uid": "sibq81",
 								"type": "txt",
-								"content": "Welcome to Nova OS! Thank you for using this OS, we believe that we have made this 'software' as the most efficient for your daily usage. If not, kindly reach us https://adthoughtsglobal.github.io and connect via the available options, we will respond you back! Enjoy!"
+								"content": "Welcome to Nova OS! Thank you for using this OS, we believe we are making this Web OS the most efficient for your daily usage. If not, kindly reach us at https://adthoughtsglobal.github.io and connect via the available options, and we will respond to you! Enjoy!"
 							},
 							{
 								"fileName": "Basic Help",
 								"uid": "y67njs",
 								"type": "txt",
-								"content": "Please visit the Nova wiki page on GitHub to learn how to use Nova if you seem to struggle using it. You can find it at: https://github.com/adthoughtsglobal/Nova-OS/wiki/"
+								"content": "Please visit the Nova wiki page on GitHub to learn how to use Nova if you seem to struggle using it. You can find it at: https://github.com/adthoughtsglobal/Nova-OS/wiki/. Why am I seeing this? This is one of the 2 demo text files that comes with Nova OS by default. You can delete them"
 							}
 						]
 					},
