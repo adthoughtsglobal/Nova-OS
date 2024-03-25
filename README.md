@@ -26,7 +26,7 @@ Nova runs without any ads, and we never deal with your data. If you consider hel
 - mistium
 
 > "Nova is cool, it has many features which help me solve my problems, Nova has all the things that are needed in an OS which makes it a very good OS."
--Felix
+- Felix
 
 # You're always welcome to the creators!
 We have made an amazing place for developers too in Nova OS, starting with a Studio app to make apps in Nova OS itself, to a detailed documentation and a discord server for your help! We have got you covered!
