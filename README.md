@@ -6,7 +6,8 @@ and it's a Web OS, that's made for you.
 We've been and will be making Nova OS to create a web operating system that does what you want it to, simple and fast. Nova OS has been and will be evolving into the OS that you've predicted would exist in the far future. 
 We are creating this for everyone, confident that no one will ever need to 'learn' to operate an everyday operating system. creating an ecosystem that fits in right for you is indeed the future or as we hope it must be.
 ## Introducing Nova OS
-![image](https://github.com/adthoughtsglobal/Nova-OS/assets/123654929/35409b32-4db2-4e40-af7f-878e612c235a)
+![image](https://github.com/adthoughtsglobal/Nova-OS/assets/123654929/89d4a256-85cb-4428-a57d-09fbf40e6692)
+
 
 Nova is a web-based operating system that has an App Ecosystem powered by a community of Creators like you.
 
