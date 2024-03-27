@@ -1328,7 +1328,7 @@ function checksnapping(x, event) {
 	let f = localStorage.getItem("qsets");
 	if (f) {
 		f = JSON.parse(f); // Assuming it's JSON data
-		if (f.focusMode) {
+		if (!f.wsnapping) {
 			return;
 		}
 	}
