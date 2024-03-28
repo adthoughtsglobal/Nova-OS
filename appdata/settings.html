@@ -1,1529 +1,1389 @@
-var batteryLevel, winds = {}, rp, flwint = true, opentrigger, memory, nowapp, stx = gid("startuptx"), applogs = {}, fulsapp = false, nowappdo, appsHistory = [];
+<!DOCTYPE html>
+<html lang="en">
 
-// Check if the database 'trojencat' exists
-getdb('trojencat', 'rom')
-	.then(async (result) => {
-		try {
-			if (result !== null) {
-				memory = result;
-				let folders = await getFolderNames();
-				if (!folders.includes("Desktop")) {
-					createFolder("Desktop")
-				}
-			} else {
-				await say(`<h2>Terms of service and License</h2><p>By using Nova OS, you agree to the <a href="https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use">Adthoughtsglobal Nova Terms of Use</a>.`);
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Settings App</title>
+	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+	<meta name="nova-icon"
+		content="<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='40.8208' height='40.94891' viewBox='0,0,40.8208,40.94891'><g transform='translate(-219.51359,-159.63806)'><g data-paper-data='{&quot;isPaintingLayer&quot;:true}' fill-rule='nonzero' stroke-linecap='butt' stroke-linejoin='miter' stroke-miterlimit='10' stroke-dasharray='' stroke-dashoffset='0' style='mix-blend-mode: normal'><path d='M224.49728,191.97943c0,-6.51609 0,-20.12167 0,-23.80086c0,-1.79525 1.27743,-3.6813 3.28885,-3.6813c6.47459,0 20.55435,0 24.11403,0c1.56415,0 3.60258,1.44253 3.60258,3.6813c0,6.76316 0,20.4796 0,23.95744c0,1.53 -1.83996,3.36671 -3.60258,3.36671c-3.67444,0 -17.45008,0 -23.95744,0c-2.10186,0 -3.44544,-1.37709 -3.44544,-3.52329zM239.52997,189.92242c5.52285,0 10,-4.47715 10,-10c0,-5.52285 -4.47715,-10 -10,-10c-5.52285,0 -10,4.47715 -10,10c0,5.52285 4.47715,10 10,10z' fill='#ffffff' stroke='none' stroke-width='0'/><path d='M237.50865,199.43282c-4.60757,-4.60757 -14.22817,-14.22817 -16.82975,-16.82975c-1.26943,-1.26943 -1.69979,-3.50635 -0.2775,-4.92864c4.57823,-4.57823 14.53412,-14.53412 17.05119,-17.05119c1.10602,-1.10602 3.56743,-1.52738 5.15048,0.05567c4.78228,4.78228 14.48126,14.48126 16.94047,16.94047c1.08187,1.08187 1.07958,3.68167 -0.16678,4.92803c-2.59822,2.59822 -12.33907,12.33907 -16.94047,16.94047c-1.48624,1.48624 -3.41004,1.46254 -4.92764,-0.05506zM239.52997,189.92242c5.52285,0 10,-4.47715 10,-10c0,-5.52285 -4.47715,-10 -10,-10c-5.52285,0 -10,4.47715 -10,10c0,5.52285 4.47715,10 10,10z' fill='#ffffff' stroke='none' stroke-width='0'/><path d='M235.7745,180.11252c0,-2.2917 1.85779,-4.14949 4.14949,-4.14949c2.2917,0 4.14949,1.85779 4.14949,4.14949c0,2.2917 -1.85779,4.14949 -4.14949,4.14949c-2.2917,0 -4.14949,-1.85779 -4.14949,-4.14949z' fill='none' stroke='#ffffff' stroke-width='2.5'/></g></g></svg>">
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
 
-				gid("startup").showModal();
-				stx.innerHTML = "Preparing memory"
-				// If the 'rom' key doesn't exist, assign a random array to the 'memory' list
-				memory = [
-					// array with all folders
-					{
-						// folder
-						"folderName": "Downloads",
-						"content": [
-							{
-								"fileName": "Welcome",
-								"uid": "sibq81",
-								"type": "txt",
-								"content": "Welcome to Nova OS! Thank you for using this OS, we believe that we have made this 'software' as the most efficient for your daily usage. If not, kindly reach us https://adthoughtsglobal.github.io and connect via the available options, we will respond you back! Enjoy!"
-							},
-							{
-								"fileName": "Basic Help",
-								"uid": "y67njs",
-								"type": "txt",
-								"content": "Please visit the Nova wiki page on GitHub to learn how to use Nova if you seem to struggle using it. You can find it at: https://github.com/adthoughtsglobal/Nova-OS/wiki/"
-							}
-						]
-					},
-					{
-						"folderName": "Apps",
-						"content": []
-					},
-					{
-						"folderName": "Desktop",
-						"content": []
-					}
-				];
+		* {
+			box-sizing: border-box;
+		}
 
-				// Save the default array to the 'rom' key in the 'trojencat' database
-				setdb('trojencat', 'rom', memory);
-				initialiseOS()
+		/* width */
+		::-webkit-scrollbar {
+			width: 5px;
+		}
 
+		/* Track */
+		::-webkit-scrollbar-track {
+			background: #101010;
+		}
+
+		/* Handle */
+		::-webkit-scrollbar-thumb {
+			background: #2b2b2b;
+			border-radius: 5px;
+		}
+
+		/* Handle on hover */
+		::-webkit-scrollbar-thumb:hover {
+			background: #555;
+		}
+
+
+		html {
+			height: 100%;
+			width: 100%;
+			scroll-behavior: smooth;
+		}
+
+		body {
+			color: white;
+			height: 100%;
+			margin: 0px;
+			background: #171717;
+			font-size: 12px;
+			font-family: 'Poppins', sans-serif;
+		}
+
+		.tab {
+			float: left;
+			width: 30%;
+			height: calc(100% - 10px);
+			color: white;
+			overflow-y: scroll;
+			border-right: 1px solid #2f2f2f;
+		}
+
+		.tab h3 {
+			padding-left: 5px;
+			margin: 5px 0px;
+			font-weight: normal;
+			font-size: 12px;
+		}
+
+		/* Style the buttons inside the tab */
+		.tab button.active {
+			background-color: #272727;
+		}
+
+		.tab button.active:hover {
+			background-color: #282828;
+		}
+
+		.tab button {
+			color: white;
+			display: block;
+			background-color: transparent;
+			padding: 7px 7px;
+			width: calc(100% - 5px);
+			border: none;
+			margin: 2px;
+			border-radius: 5px;
+			outline: none;
+			text-align: left;
+			cursor: pointer;
+			transition: 0.3s;
+			font-size: 13px;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+
+		/* Change background color of buttons on hover */
+		.tab button:hover {
+			background-color: #1f1f1f;
+		}
+
+		.tab button i {
+			font-size: 10px;
+			transform: translate(-6px, 0px) scale(1.5);
+			margin-left: 10px;
+		}
+
+		/* Style the tab content */
+		.tabcontent {
+			float: left;
+			padding: 0px 12px;
+			border: 1px solid #1f1f1f;
+			width: calc(70% - 5px);
+			padding-bottom: 30vh;
+			background-color: #171717;
+			border-left: none;
+			border-radius: 6px;
+			height: 100%;
+			animation: tab .2s;
+			overflow-y: scroll;
+			margin-left: 5px;
+		}
+
+		@keyframes tab {
+			0% {
+				opacity: 0.1;
 			}
-			async function fetchDataAndUpdate() {
-				let localupdatedataver = localStorage.getItem("updver");
-				let fetchupdatedata = await fetch("versions.json");
+			100% {
+				opacity: 1;
+			}
+		}
 
-				if (fetchupdatedata.ok) {
-					let fetchupdatedataver = (await fetchupdatedata.json()).osver;
+		container {
+			height: 100%;
+			display: block;
+			padding: 5px;
+		}
 
-					if (localupdatedataver !== fetchupdatedataver) {
-						if (await justConfirm("Update default apps?", "Your default apps are old. Update them to access new features and fixes.", 1)) {
-							await installdefaultapps();
-						} else {
-							say("You can always update app on settings app/Preferances")
+		td {
+			padding: 0px 5px;
+			font-size: 10px;
+			padding-top: 2px;
+		}
+
+		supportb {
+			border-radius: 10px;
+			background: radial-gradient(circle at 0% 0%, #373737, #1a1a1a);
+			display: block;
+			padding: 1rem;
+			box-shadow: 0 5px 10px black;
+		}
+
+		supportb b {
+			font-size: 1rem;
+		}
+
+		supportb p {
+			margin-top: 7px;
+		}
+
+		supportb a {
+			display: inline-block;
+			border-radius: 5px;
+			background: #ffffff;
+			width: fit-content;
+			padding: 5px 10px;
+			color: black;
+			text-decoration: none;
+			margin: 10px 0px;
+			box-shadow: 5px 5px black;
+			transition: .3s;
+		}
+
+		supportb a[okay] {
+			background: #1e1e1e;
+			color: white;
+		}
+
+		supportb a:hover {
+			box-shadow: 2px 2px black;
+			transform: translate(3px, 3px);
+		}
+
+		#battery h1 {
+			display: block;
+			margin-top: 10vh;
+			font-size: 30vh;
+			text-align: center;
+			margin-bottom: 0px;
+		}
+
+		small {
+			display: block;
+			padding: 5px 7px;
+			background: #1a1a1a;
+			border-radius: 5px;
+			color: #a1a1a1;
+		}
+
+		.checkbox-wrapper-51 input[type="checkbox"] {
+			visibility: hidden;
+			display: none;
+		}
+
+		.checkbox-wrapper-51 .toggle {
+			position: relative;
+			display: block;
+			width: 42px;
+			height: 24px;
+			cursor: pointer;
+			-webkit-tap-highlight-color: transparent;
+			transform: translate3d(0, 0, 0);
+		}
+
+		.checkbox-wrapper-51 .toggle:before {
+			content: "";
+			position: relative;
+			top: 1px;
+			left: 1px;
+			width: 40px;
+			height: 22px;
+			display: block;
+			background: #c8ccd4;
+			border-radius: 12px;
+			transition: background 0.2s ease;
+		}
+
+		.checkbox-wrapper-51 .toggle span {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 24px;
+			height: 24px;
+			display: block;
+			background: #fff;
+			border-radius: 50%;
+			box-shadow: 0 2px 6px rgba(154, 153, 153, 0.75);
+			transition: all 0.2s ease;
+		}
+
+		.checkbox-wrapper-51 .toggle span svg {
+			margin: 7px;
+			fill: none;
+		}
+
+		.checkbox-wrapper-51 .toggle span svg path {
+			stroke: #c8ccd4;
+			stroke-width: 2;
+			stroke-linecap: round;
+			stroke-linejoin: round;
+			stroke-dasharray: 24;
+			stroke-dashoffset: 0;
+			transition: all 0.5s linear;
+		}
+
+		.checkbox-wrapper-51 input[type="checkbox"]:checked+.toggle:before {
+			background: #52d66b;
+		}
+
+		.checkbox-wrapper-51 input[type="checkbox"]:checked+.toggle span {
+			transform: translateX(18px);
+		}
+
+		.checkbox-wrapper-51 input[type="checkbox"]:checked+.toggle span path {
+			stroke: #52d66b;
+			stroke-dasharray: 25;
+			stroke-dashoffset: 25;
+		}
+
+		[settingn] {
+			background: #292929;
+			padding: 10px;
+			margin: 0;
+			border-bottom: 1px solid #373737;
+		}
+
+		[setting] {
+			background: #292929;
+			padding: 10px;
+			margin: 0;
+			border-bottom: 1px solid #373737;
+			
+		}
+
+		@keyframes drop {
+			0% {
+				transform: translateY(10px);
+				opacity: 0;
+			}
+			100% {
+				opacity: 1;
+			}
+		}
+
+		[setting] div {
+			float: right;
+			transform: scale(0.7);
+		}
+
+		[setting] p {
+			width: 80%;
+			opacity: 0.5;
+			margin: 0;
+			font-size: 10px;
+		}
+
+		#chargingIcon {
+			transform: translateY(2px) scale(0.8);
+			padding: 5px 1px 7px 1px;
+			background: #054305;
+			color: #4fb64f;
+			display: inline-block;
+			margin-left: 5px;
+			border-radius: 10px;
+		}
+
+		.nocss {
+			width: 29px;
+			padding: 0;
+			display: inline;
+			outline: none;
+			font-size: 10px;
+			color: white;
+			background: none;
+			margin: 0 3px;
+			text-align: center;
+			border: none;
+		}
+
+
+		.appli {
+			background-color: #252525;
+			padding: 9px;
+			margin-bottom: 0;
+			border-radius: 0;
+			border-bottom: 1px solid #4d4d4d;
+		}
+
+		#appdi {
+			margin: 5px 0;
+			border-radius: 5px;
+			overflow: hidden;
+			border: 1px solid #4d4d4d;
+		}
+
+		.checkbox-wrapper-46 input[type="checkbox"] {
+			display: none;
+			visibility: hidden;
+		}
+
+		.checkbox-wrapper-46 .cbx {
+			margin: auto;
+			-webkit-user-select: none;
+			user-select: none;
+			cursor: pointer;
+		}
+
+		.checkbox-wrapper-46 .cbx span {
+			display: inline-block;
+			vertical-align: middle;
+			transform: translate3d(0, 0, 0);
+		}
+
+		.checkbox-wrapper-46 .cbx span:first-child {
+			position: relative;
+			width: 18px;
+			height: 18px;
+			border-radius: 3px;
+			transform: scale(1);
+			vertical-align: middle;
+			border: 1px solid #9098A9;
+			transition: all 0.2s ease;
+		}
+
+		.checkbox-wrapper-46 .cbx span:first-child svg {
+			position: absolute;
+			top: 3px;
+			left: 2px;
+			fill: none;
+			stroke: #FFFFFF;
+			stroke-width: 2;
+			stroke-linecap: round;
+			stroke-linejoin: round;
+			stroke-dasharray: 16px;
+			stroke-dashoffset: 16px;
+			transition: all 0.3s ease;
+			transition-delay: 0.1s;
+			transform: translate3d(0, 0, 0);
+		}
+
+		.checkbox-wrapper-46 .cbx span:first-child:before {
+			content: "";
+			width: 100%;
+			height: 100%;
+			background: #506EEC;
+			display: block;
+			transform: scale(0);
+			opacity: 1;
+			border-radius: 50%;
+		}
+
+		.checkbox-wrapper-46 .cbx span:last-child {
+			padding-left: 8px;
+		}
+
+		.checkbox-wrapper-46 .cbx:hover span:first-child {
+			border-color: #506EEC;
+		}
+
+		.checkbox-wrapper-46 .inp-cbx:checked+.cbx span:first-child {
+			background: #506EEC;
+			border-color: #506EEC;
+			animation: wave-46 0.4s ease;
+		}
+
+		.checkbox-wrapper-46 .inp-cbx:checked+.cbx span:first-child svg {
+			stroke-dashoffset: 0;
+		}
+
+		.checkbox-wrapper-46 .inp-cbx:checked+.cbx span:first-child:before {
+			transform: scale(3.5);
+			opacity: 0;
+			transition: all 0.6s ease;
+		}
+
+		@keyframes wave-46 {
+			50% {
+				transform: scale(0.9);
+			}
+		}
+
+
+
+		.progbarma {
+			width: 100%;
+			background-color: #1d1d1d;
+			height: 20px;
+			border-radius: 20px;
+			overflow: hidden;
+			margin: 10px 0px;
+		}
+
+		.appli:hover {
+			background-color: #434343;
+		}
+
+		.progbar {
+			width: 1%;
+			height: 30px;
+			min-width: 2px;
+			background-color: #04AA6D;
+		}
+
+		button {
+			border-radius: 5px;
+			border: none;
+			padding: 7px 15px;
+			background: #2e363d;
+			color: white;
+			font-size: 11px;
+			cursor: pointer;
+		}
+
+		[danger] {
+			background: #653939;
+			color: #ff6262;
+		}
+
+		.inpbox {
+			background: #292929;
+			padding: 6px;
+			outline: none;
+			border-bottom: 1px solid #373737;
+		}
+
+		.inpbox select {
+			background: #2f2f2f;
+			color: white;
+			border: 1px solid #1a1a1a;
+			border-radius: 5px;
+			padding: 3px 1px !important;
+			float: right;
+			transform: translate(2px, -3px);
+		}
+
+		@media only screen and (max-width: 100px) {
+			.tab button i {
+				margin-bottom: 8px;
+				display: block;
+			}
+		}
+
+		h1 {
+			font-weight: normal;
+			font-size: 1rem;
+		}
+
+		segr {
+			margin: 10px 0;
+			overflow: hidden;
+			border-radius: 5px;
+			display: block;
+			border: 1px solid #434343;
+			box-shadow: 0 3px 5px #0C0C0C;
+			animation: drop .2s ease-out;
+		}
+	</style>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
+<body>
+	<container>
+		<div class="tab">
+			<button class="tablinks" onclick="openCity(event, 'storage')" id="defaultOpen"><i
+					class="material-icons">storage</i> Storage</button>
+			<button class="tablinks" onclick="openCity(event, 'battery')"><i class="material-icons">battery_full</i>
+				Battery</button>
+			<button class="tablinks" onclick="openCity(event, 'devices')"><i class="material-icons">devices</i>
+				Devices</button>
+			<button class="tablinks" onclick="openCity(event, 'perform'); updateFPS()"><i
+					class="material-icons">speed</i>
+				Performance</button>
+			<button class="tablinks" onclick="openCity(event, 'tbar')"><i class="material-icons">task</i>
+				Taskbar</button>
+			<button class="tablinks" onclick="openCity(event, 'exp'); defs();  "><i class="material-icons">monitor</i>
+				Display</button>
+			<button class="tablinks" onclick="openCity(event, 'defaults'); defs5(); defs2(); defs3()"><i
+					class="material-icons">settings</i> Preferances</button>
+			<button class="tablinks" onclick="openCity(event, 'about')"><i class="material-icons">info</i>
+				About</button>
+
+		</div>
+
+		<div id="perform" class="tabcontent">
+			<h1>Performance</h1>
+			<h1 id="fpsprof">0</h1><button class="fpssidebtn">FPS</button>
+			<br>
+			<small>
+				<h3>What is FPS?</h3>
+				<p>Frames Per Second (FPS) is a measure of how many times your device updates the display per second.
+					This value is closely tied to both the processing power of the system and the demands of the
+					software running on it.</p>
+				<h3>How to increase FPS?</h3>
+				<p>To boost your FPS, consider closing resource-heavy apps and avoid using your device while it's
+					charging, as this can impact performance.</p>
+			</small>
+			<style>
+				#fpsprof {
+					font-size: 10vw;
+					display: inline-block;
+					width: fit-content;
+					margin: 0;
+					margin-left: 1rem;
+					width: 15vw;
+					overflow: hidden;
+				}
+
+				.fpssidebtn {
+					padding: 7px 10px;
+					font-size: 13px;
+					border-radius: 20px;
+					background-color: #384a57;
+					display: inline-block;
+					border: 1px solid #55879d;
+					margin-left: 10px;
+					transform: translate(5px, -31px);
+				}
+			</style>
+			<script>
+				function updateFPS() {
+					var startTime = Date.now();
+					var frameCount = 0;
+
+					function calculateFPS() {
+						var elapsedTime = Date.now() - startTime;
+						var fps = Math.round((frameCount * 1000) / elapsedTime);
+
+						document.getElementById('fpsprof').innerText = fps;
+
+						// Reset the frame count and start time for the next interval
+						frameCount = 0;
+						startTime = Date.now();
+					}
+
+					function render() {
+						frameCount++;
+						requestAnimationFrame(render);
+					}
+
+					// Initial call to render function
+					render();
+
+					// Update FPS every 0.5 seconds
+					setInterval(calculateFPS, 500);
+				}
+			</script>
+		</div>
+
+		<div id="storage" class="tabcontent">
+			<h1>Storage</h1>
+			<segr>
+				<div settingn>
+					<b>IndexedDB</b><br>
+					<div class="progbarma" id="myProgress2">
+						<div id="myBar2" class="progbar"></div>
+					</div>
+					<small id="storemark2">Your system has crashed. Please Update.</small>
+				</div>
+				<div settingn>
+					<p style="margin-top: 0px;">Ran out of storage?<br>Get more storage by removing some files</p>
+					<button>Open Files</button>
+				</div>
+			</segr>
+			<segr>
+				<div settingn>
+					<p style="margin-top: 0px;">Be careful while interacting with extremely dangerous settings.</p>
+					
+					<script>
+						async function erdbs() {
+							if (!confirm("Erase Device? \nThis will remove all your data, including your files, folders, apps, permissions, cache and everything.\n\nWould you like to Clear your OS?")) {
+								return;
+							}
+
+							window.parent.localStorage.removeItem('todo');
+							window.parent.localStorage.removeItem('sets');
+							window.parent.localStorage.removeItem('updver');
+							window.parent.localStorage.removeItem('qsets');
+						
+							let indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
+							let dbName = 'trojencat';
+							let storeName = 'store';
+							let keyToRemove = 'rom';
+
+							let request = indexedDB.open(dbName);
+
+							request.onsuccess = function (event) {
+								let db = event.target.result;
+
+								let transaction = db.transaction(storeName, 'readwrite');
+								let objectStore = transaction.objectStore(storeName);
+
+								let deleteRequest = objectStore.delete(keyToRemove);
+
+								deleteRequest.onsuccess = function (event) {
+									console.log("Key 'rom' removed successfully");
+									if (confirm("Reboot your OS?\nOS Cleared. Let us reboot the OS to prevent errors in future?")) {
+										window.parent.location.reload()
+									}
+								};
+
+								deleteRequest.onerror = function (event) {
+									console.error("Error removing key 'rom':", event.target.errorCode);
+								};
+							};
+
+							request.onerror = function (event) {
+								console.error("Error opening database:", event.target.errorCode);
+							};
+						}
+					</script>
+					<button danger onclick="erdbs()">Erase Device</button>
+				</div>
+			</segr>
+		</div>
+
+		<div id="defaults" class="tabcontent">
+			<h1>Preferences</h1>
+			<segr>
+				<div setting>
+					<div class="checkbox-wrapper-51">
+						<input type="checkbox" id="cbx-65" role="submit">
+						<label for="cbx-65" class="toggle">
+							<span>
+								<svg width="10px" height="10px" viewBox="0 0 10 10">
+									<path
+										d="M5,1 L5,1 C2.790861,1 1,2.790861 1,5 L1,5 C1,7.209139 2.790861,9 5,9 L5,9 C7.209139,9 9,7.209139 9,5 L9,5 C9,2.790861 7.209139,1 5,1 L5,9 L5,1 Z">
+									</path>
+								</svg>
+							</span>
+						</label>
+					</div>
+					<b>Focus Mode</b>
+					<p>Blur the background image slowly while you use apps.
+					</p>
+				</div>
+				<div setting>
+					<div class="checkbox-wrapper-51">
+						<input type="checkbox" id="cbx-66" role="submit">
+						<label for="cbx-66" class="toggle">
+							<span>
+								<svg width="10px" height="10px" viewBox="0 0 10 10">
+									<path
+										d="M5,1 L5,1 C2.790861,1 1,2.790861 1,5 L1,5 C1,7.209139 2.790861,9 5,9 L5,9 C7.209139,9 9,7.209139 9,5 L9,5 C9,2.790861 7.209139,1 5,1 L5,9 L5,1 Z">
+									</path>
+								</svg>
+							</span>
+						</label>
+					</div>
+					<b>Window Snapping</b>
+					<p>Drag a window to the sides of your screen to snap it in place.
+					</p>
+				</div>
+				<div class="inpbox">
+					<span>Save Camera images as </span>
+					<select id="scapimas">
+						<option>PNG</option>
+						<option>JPEG</option>
+					</select>
+				</div>
+				<small>Retain quality while compression using PNG.</small>
+				<script>
+					function defs() {
+
+
+						// dark mode 
+						document.getElementById("cbx-67").addEventListener("change", function () {
+							let newValue2 = document.getElementById("cbx-67").checked;
+							let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
+							qsets.darkMode = newValue2;
+							localStorage.setItem("qsets", JSON.stringify(qsets));
+							window.parent.checkdmode();
+						});
+
+						if (JSON.parse(localStorage.getItem("qsets")).darkMode) {
+							document.getElementById("cbx-67").checked = true;
+						}
+
+						// simple mode 
+						document.getElementById("cbx-68").addEventListener("change", function () {
+							let newValue2 = document.getElementById("cbx-68").checked;
+							let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
+							qsets.simpleMode = newValue2;
+							localStorage.setItem("qsets", JSON.stringify(qsets));
+							window.parent.checkdmode();
+						});
+
+						if (JSON.parse(localStorage.getItem("qsets")).simpleMode) {
+							document.getElementById("cbx-68").checked = true;
 						}
 					}
-				} else {
-					console.error("Failed to fetch data from the server.");
-				}
-			}
 
-			fetchDataAndUpdate();
-		} catch (error) {
-			console.error('Error in database operations:', error);
-		}
-	})
-	.catch((error) => {
-		console.error('Error retrieving data from the database:', error);
-	});
-
-
-
-function updateTime() {
-	const now = new Date();
-	const hours = now.getHours().toString().padStart(2, '0');
-	const minutes = now.getMinutes().toString().padStart(2, '0');
-	const seconds = now.getSeconds().toString().padStart(2, '0');
-
-	const timeString = `${hours}:${minutes}:${seconds}`;
-	gid('time-display').innerText = timeString;
-
-	const year = now.getFullYear();
-	const month = (now.getMonth() + 1).toString().padStart(2, '0');
-	const day = now.getDate().toString().padStart(2, '0');
-
-	const dateString = `${day}-${month}-${year}`;
-	gid('date-display').innerText = dateString;
-
-}
-updateTime();
-setInterval(updateTime, 1000);
-checkdmode()
-
-async function openn() {
-	gid("appsindeck").innerHTML = ""
-	gid("strtsear").value = ""
-	let x = await getFileNamesByFolder("Apps");
-	x.forEach(async function(app) {
-		// Create a div element for the app shortcut
-		var appShortcutDiv = document.createElement("div");
-		appShortcutDiv.className = "app-shortcut tooltip";
-		appShortcutDiv.setAttribute("onclick", "openapp('" + app.name + "', '" + app.id + "')");
-
-		// Create a span element for the app icon
-		var iconSpan = document.createElement("span");
-
-		// Fetch the content asynchronously using getFileById
-		const content = await getFileById(app.id);
-
-		// Unshrink the content
-		const unshrunkContent = unshrinkbsf(content.content);
-
-		// Create a temporary div to parse the content
-		const tempElement = document.createElement('div');
-		tempElement.innerHTML = unshrunkContent;
-
-		// Get all meta tags
-		const metaTags = tempElement.getElementsByTagName('meta');
-
-		// Create an object to store meta tag data
-		let metaTagData = null;
-
-		// Iterate through meta tags and extract data
-		Array.from(metaTags).forEach(tag => {
-			const tagName = tag.getAttribute('name');
-			const tagContent = tag.getAttribute('content');
-			if (tagName === 'nova-icon' && tagContent) {
-				metaTagData = tagContent;
-			}
-		});
-
-		if (typeof metaTagData === "string") {
-			if (containsSmallSVGElement(metaTagData)) {
-				iconSpan.innerHTML = metaTagData;
-			} else {
-
-				iconSpan.innerHTML = `<span class="app-icon">` + makedefic(app.name) + `</span>`;
-			}
-		} else {
-			iconSpan.innerHTML = `<span class="app-icon">` + makedefic(app.name) + `</span>`;
-		}
-
-
-
-		// Create a span element for the app name
-		var nameSpan = document.createElement("span");
-		nameSpan.className = "appname";
-		nameSpan.textContent = app.name;
-
-		var tooltisp = document.createElement("span");
-			tooltisp.className = "tooltiptext";
-			tooltisp.textContent = app.name;
-
-		// Append both spans to the app shortcut container
-		appShortcutDiv.appendChild(iconSpan);
-		appShortcutDiv.appendChild(nameSpan);
-		appShortcutDiv.appendChild(tooltisp);
-
-		gid("appsindeck").appendChild(appShortcutDiv);
-	})
-	gid('appdmod').showModal()
-}
-
-function makedefic(str) {
-	const vowelPattern = /[aeiouAEIOU\s]+/g;
-	const consonantPattern = /[^aeiouAEIOU\s]+/g;
-
-	const vowelMatches = str.match(vowelPattern);
-	const consonantMatches = str.match(consonantPattern);
-
-	if (consonantMatches && consonantMatches.length >= 2) {
-		const firstTwoConsonants = consonantMatches.slice(0, 2);
-		const capitalized = firstTwoConsonants.map((letter, index) => index === 0 ? letter.toUpperCase() : letter.toLowerCase());
-		const result = capitalized.join('');
-		return result.length > 2 ? result.slice(0, 2) : result;
-	} else {
-		const firstLetter = str.charAt(0).toUpperCase();
-		const firstConsonantIndex = str.search(consonantPattern);
-		if (firstConsonantIndex !== -1) {
-			const firstConsonant = str.charAt(firstConsonantIndex).toLowerCase();
-			const result = firstLetter + firstConsonant;
-			return result.length > 2 ? result.slice(0, 2) : result;
-		} else {
-			return firstLetter;
-		}
-	}
-}
-
-
-function updateBattery() {
-	navigator.getBattery().then(function(battery) {
-		// Get the battery level
-		batteryLevel = Math.floor(battery.level * 100);
-
-		// Determine the appropriate icon based on battery level
-		let iconClass;
-		if (batteryLevel >= 75) {
-			iconClass = 'battery_full';
-		} else if (batteryLevel >= 25) {
-			iconClass = 'battery_5_bar';
-		} else if (batteryLevel >= 15) {
-			iconClass = 'battery_2_bar';
-		} else {
-			iconClass = 'battery_alert';
-		}
-
-		// Check if the value has changed
-		if (iconClass !== gid('battery-display').innerText) {
-			// Update the display only if the value changes
-			gid('battery-display').innerHTML = iconClass;
-			gid('battery-p-display').innerHTML = batteryLevel + "%";
-		}
-	});
-}
-updateBattery();
-
-navigator.getBattery().then(function(battery) {
-	battery.addEventListener('levelchange', updateBattery);
-});
-
-function dragElement(elmnt) {
-	var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-	if (gid(elmnt.id + "header")) {
-		// if present, the header is where you move the DIV from:
-		gid(elmnt.id + "header").onmousedown = dragMouseDown;
-	} else {
-		// otherwise, move the DIV from anywhere inside the DIV:
-		elmnt.onmousedown = dragMouseDown;
-	}
-
-	function dragMouseDown(e) {
-		e = e || window.event;
-		e.preventDefault();
-		// get the mouse cursor position at startup:
-		pos3 = e.clientX;
-		pos4 = e.clientY;
-		document.onmouseup = closeDragElement;
-		// call a function whenever the cursor moves:
-		document.onmousemove = elementDrag;
-	}
-
-	function elementDrag(e) {
-		e = e || window.event;
-		e.preventDefault();
-		// calculate the new cursor position:
-		pos1 = pos3 - e.clientX;
-		pos2 = pos4 - e.clientY;
-		pos3 = e.clientX;
-		pos4 = e.clientY;
-		// set the element's new position:
-		elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-		elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
-	}
-
-	function closeDragElement() {
-		// stop moving when mouse button is released:
-		document.onmouseup = null;
-		document.onmousemove = null;
-	}
-}
-
-
-
-dod()
-async function dod() {
-	setTimeout(async function() {
-		gid("desktop").innerHTML = ``;
-		let y = await getFileNamesByFolder("Desktop")
-		y.forEach(async function(app) {
-			// Create a div element for the app shortcut
-			var appShortcutDiv = document.createElement("div");
-			appShortcutDiv.className = "app-shortcut";
-			appShortcutDiv.setAttribute("onclick", "openfile(this)");
-			appShortcutDiv.setAttribute("unid", app.id);
-
-
-			// Create a span element for the app icon
-			var iconSpan = document.createElement("span");
-
-			// Fetch the content asynchronously using getFileById
-			const content = await getFileById(app.id);
-
-			// Unshrink the content
-			const unshrunkContent = unshrinkbsf(content.content);
-
-			// Create a temporary div to parse the content
-			const tempElement = document.createElement('div');
-			tempElement.innerHTML = unshrunkContent;
-
-			// Get all meta tags
-			const metaTags = tempElement.getElementsByTagName('meta');
-
-			// Create an object to store meta tag data
-			let metaTagData = null;
-
-			// Iterate through meta tags and extract data
-			Array.from(metaTags).forEach(tag => {
-				const tagName = tag.getAttribute('name');
-				const tagContent = tag.getAttribute('content');
-				if (tagName === 'nova-icon' && tagContent) {
-					metaTagData = tagContent;
-				}
-			});
-
-
-			if (typeof metaTagData === "string") {
-				if (containsSmallSVGElement(metaTagData)) {
-					iconSpan.innerHTML = metaTagData;
-				} else {
-
-					iconSpan.innerHTML = `<span class="app-icon">` + makedefic(app.name) + `</span>`;
-				}
-			} else {
-				iconSpan.innerHTML = `<span class="app-icon">` + makedefic(app.name) + `</span>`;
-			}
-
-
-
-			// Create a span element for the app name
-			var nameSpan = document.createElement("span");
-			nameSpan.className = "appname";
-			nameSpan.textContent = app.name;
-
-			// Append both spans to the app shortcut container
-			appShortcutDiv.appendChild(iconSpan);
-			appShortcutDiv.appendChild(nameSpan);
-
-			gid("desktop").appendChild(appShortcutDiv);
-		});
-		closeElementedis()
-		let x = localStorage.getItem("qsets");
-		x = await getFileById(JSON.parse(x).wall);
-
-		if (x) {
-			let unshrinkbsfX = unshrinkbsf(x.content);
-			document.getElementById('bgimage').style.backgroundImage = `url("` + unshrinkbsfX + `")`;
-		} else {
-			gid("bgimage").style.backgroundImage = `url("wallpaper.png")`;
-		}
-	}, 1000);
-
-}
-
-function closeElementedis() {
-	var element = document.getElementById("edison");
-	element.classList.add("closeEffect");
-	setTimeout(function() {
-		element.close()
-	}, 400);
-}
-
-
-function clwin(x) {
-	x.parentElement.parentElement.classList.add("transp3")
-
-	setTimeout(() => {
-		x.parentElement.parentElement.classList.remove("transp3")
-		x.parentElement.parentElement.remove();
-	}, 700);
-}
-
-function flwin(x) {
-	x.parentElement.parentElement.classList.add("transp2")
-	if (x.innerHTML == "web_asset") {
-		x.parentElement.parentElement.style = "left: 0;top: 0;width: calc(100% - 0px);height: calc(100% - 57px);";
-		x.innerHTML = "filter_none";
-		fulsapp = true;
-	} else {
-
-		x.parentElement.parentElement.style = "left: calc(50vw - 200px);top: calc(50vh - 135px); width: 381px; height: 227px;"
-		nowapp = ""
-		dewallblur();
-		x.innerHTML = "web_asset"
-		fulsapp = false;
-	}
-	checktaskbar()
-	setTimeout(() => {
-		x.parentElement.parentElement.classList.remove("transp2")
-
-	}, 1000);
-
-
-}
-
-async function openapp(x, od) {
-	
-	dod()
-	if (gid('appdmod').open) {
-		gid('appdmod').close()
-	}
-
-
-	// opening an app
-	const fetchDataAndSave = async (x) => {
-		try {
-
-
-			var y;
-			if (od != 1) {
-				y = await getFileById(od)
-				y = unshrinkbsf(y.content)
-			} else {
-				y = await fetchData("appdata/" + x + ".html");
-				let m = await getFileNamesByFolder("Apps");
-				await createFile("Apps", x, "app", y);
-			}
-
-			// Assuming you have a predefined function openwindow
-			openwindow(x, y);
-		} catch (error) {
-			console.error("Error fetching data:", error);
-		}
-	};
-
-	// Call fetchDataAndSave with the desired value of x
-	fetchDataAndSave(x);
-}
-
-async function fetchData(url) {
-	try {
-		const response = await fetch(url);
-		if (!response.ok) {
-			throw new Error(`HTTP error! Status: ${response.status}`);
-		}
-		const data = await response.text();
-		return data;
-	} catch (error) {
-		console.error("Error fetching data:", error.message);
-		const data = "App Launcher: CRITICAL ERROR<br><br><sup>" + error.message + "</sup>";
-		return data;
-	}
-}
-var content
-function openwindow(title, cont) {
-	content = cont
-	if (content == undefined) {
-		content = "<center><h1>Unavailable</h1>App Data cannot be read.</center>";
-	}
-
-	let winuid = genUID();
-	winds[title + winuid] = 1;
-
-	// Create the window element
-	var windowDiv = document.createElement("div");
-	windowDiv.id = "window" + winuid;
-	windowDiv.onclick = function() {
-		nowapp = title;
-		dewallblur();
-	}
-	nowapp = title;
-	dewallblur();
-	windowDiv.classList += "window";
-
-	let isitmob = window.innerWidth <= 500;
-
-	// Set the style of windowDiv
-	if (isitmob) {
-		windowDiv.style.left = 0;
-		windowDiv.style.top = 0;
-	}
-	if (!isitmob) {
-		windowDiv.style = 'left: calc(-225px + 50vw);top: calc(-150px + 50vh);width: 450px;height: 300px;z-index: 0;';
-	} else {
-		windowDiv.style.width = 'calc(100% - 5px)';
-		windowDiv.style.height = 'calc(100% - 63px)';
-	}
-
-	// Create the window header
-	var windowHeader = document.createElement("div");
-	windowHeader.id = "window" + winuid + "header"
-	windowHeader.classList += "windowheader";
-	windowHeader.textContent = toTitleCase(title);
-	windowHeader.setAttribute("title", title + winuid)
-	windowHeader.addEventListener("mouseup", function(event) {
-		checksnapping(windowDiv, event);
-	});
-
-	windowHeader.addEventListener("mousedown", function(event) {
-		putwinontop('window' + winuid);
-		winds[title + winuid] = windowDiv.style.zIndex;
-		
-	});
-	
-	var flButton = document.createElement("span");
-	flButton.classList.add("material-icons", "wincl", "flbtn");
-	flButton.style = "right: 20px;font-size: 10px !important;padding: 3px;";
-	flButton.textContent = "web_asset";
-	flButton.onclick = function() {
-		flwin(flButton);
-	};
-
-	// Create the close button in the header
-	var closeButton = document.createElement("span");
-	closeButton.classList.add("material-icons", "wincl");
-	closeButton.textContent = "close";
-	closeButton.onclick = function() {
-		setTimeout(function() {
-			nowapp = '';
-			dewallblur();
-		}, 500);
-		clwin(closeButton, title);
-		delete winds[title + winuid];
-	};
-
-	// Append the close button to the header
-	windowHeader.appendChild(closeButton);
-	if (!isitmob) { windowHeader.appendChild(flButton); }
-
-	var windowContent = document.createElement("div");
-	windowContent.classList += "windowcontent";
-
-	var iframe = document.createElement("iframe");
-
-	windowContent.appendChild(iframe);
-
-	// Attach onload event handler to iframe
-	iframe.onload = function() {
-		// Check if content includes script tags
-		if (content.includes("<script")) {
-			// Extract script tags from content
-			var scriptTags = content.match(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi);
-
-			// Loop through each script tag
-			scriptTags.forEach(function(scriptTag) {
-				var script = iframe.contentDocument.createElement('script');
-
-				// Check if the script tag has a src attribute
-				var srcMatch = scriptTag.match(/src="([^"]+)"/);
-				if (srcMatch) {
-					// If src attribute exists, set src attribute of script element
-					var src = srcMatch[1];
-					console.log("src : " + src)
-
-					// Fetch the script content
-					fetch(src)
-					.then(response => response.text())
-					.then(scriptContent => {
-
-						// Set the script content
-						script.innerHTML = scriptContent
-						script.onload = function() {
-							// Execute greenflag function after script is loaded
-							iframe.contentWindow.greenflag().catch(error => {
-										console.error('Error loading script:', error);
-									});
-						};
+					function defs5() {
+						// focus mode
+						document.getElementById("cbx-65").addEventListener("change", function () {
+							let newValue2 = document.getElementById("cbx-65").checked;
+							let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
+							qsets.focusMode = newValue2;
+							localStorage.setItem("qsets", JSON.stringify(qsets));
+							window.parent.dewallblur()
+						});
+
+						if (JSON.parse(localStorage.getItem("qsets")).focusMode) {
+							document.getElementById("cbx-65").checked = true;
+						}
+
+						// window snapping
+						document.getElementById("cbx-66").addEventListener("change", function () {
+							let newValue2 = document.getElementById("cbx-66").checked;
+							let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
+							qsets.wsnapping = newValue2;
+							localStorage.setItem("qsets", JSON.stringify(qsets));
+						});
+
+						if (JSON.parse(localStorage.getItem("qsets")).wsnapping) {
+							document.getElementById("cbx-66").checked = true;
+						}
+
+						// save cam images as
+
+						let selinp;
+						selinp = document.getElementById("scapimas");
+						if (JSON.parse(localStorage.getItem("qsets")).svcpimas) {
+							console.log("what: " + JSON.parse(localStorage.getItem("qsets")).svcpimas)
+							selinp.value = JSON.parse(localStorage.getItem("qsets")).svcpimas;
+						}
+
+						document.getElementById("scapimas").addEventListener("change", function () {
+							let newValue = document.getElementById("scapimas").value;
+							let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
+							qsets.CamImgFormat = newValue;
+							localStorage.setItem("qsets", JSON.stringify(qsets));
+						});
+					}
+				</script>
+				<div class="inpbox">
+					<span>Default files app view mode </span>
+					<select id="defflvm">
+						<option>Grid</option>
+						<option>List</option>
+					</select>
+				</div>
+				<script>
+					function defs2() {
+						let selinp;
+						selinp = document.getElementById("defflvm");
+						if (JSON.parse(localStorage.getItem("qsets")).defflvm) {
+							console.log("what: " + JSON.parse(localStorage.getItem("qsets")).defflvm)
+							selinp.value = JSON.parse(localStorage.getItem("qsets")).defflvm;
+						}
+						document.getElementById("defflvm").addEventListener("change", function () {
+							let newValue = document.getElementById("defflvm").value;
+							let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
+							qsets.defFileLayout = newValue;
+							localStorage.setItem("qsets", JSON.stringify(qsets));
+						});
+					}
+				</script>
+				<div class="inpbox">
+					<span>Default Text App Theme </span>
+					<select id="deftexappth">
+						<option>Bright</option>
+						<option>Dark</option>
+					</select>
+				</div>
+				<script>
+					function defs3() {
+						let selinp;
+						selinp = document.getElementById("deftexappth");
+						if (JSON.parse(localStorage.getItem("qsets")).deftexappth) {
+							console.log("what: " + JSON.parse(localStorage.getItem("qsets")).deftexappth)
+							selinp.value = JSON.parse(localStorage.getItem("qsets")).deftexappth;
+						}
+						document.getElementById("deftexappth").addEventListener("change", function () {
+							let newValue = document.getElementById("deftexappth").value;
+							let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
+							qsets.deftexappth = newValue;
+							localStorage.setItem("qsets", JSON.stringify(qsets));
+						});
+					}
+				</script>
+			</segr>
+			<segr>
+				<div setting>
+					<b>Update Default Apps</b>
+					<button style="margin-top: 5px;float: right;" onclick="updefapps();">Update</button>
+					<p>Update or reinstall deleted or corrupted versions of default apps.</p>
+
+					<small id="updefapplog" style="margin-top: 5px;">Updating default apps frequently can assure newer
+						features and bug fixes.</small>
+					<script>
+						async function updefapps() {
+							document.getElementById("updefapplog").innerHTML = "Installing...";
+							try {
+								await window.parent.installdefaultapps();
+								document.getElementById("updefapplog").innerHTML = "All Default apps updated. <b>Re-open Settings to reflect changes.</b>";
+							} catch (error) {
+								console.error("Error updating default apps:", error);
+							}
+						}
+
+					</script>
+				</div>
+				<div setting>
+					<b>Download settings as text</b>
+					<button style="margin-top: 5px;float: right;" onclick="dowserecp();">Download</button>
+					<p>Get a file based your choices. For debugging.</p>
+					<script>
+						async function dowserecp() {
+							var qsetsText = window.parent.localStorage.getItem('qsets');
+							await window.parent.createFile("Downloads", "settings", "txt", qsetsText);
+							window.parent.notify("File downloaded", "Open files app to view your file.", "Downloader")
+						}
 						
-					})
-					.catch(error => {
-						console.error('Error loading script:', error);
+						async function updefapps() {
+							document.getElementById("updefapplog").innerHTML = "Installing...";
+							try {
+								await window.parent.installdefaultapps();
+								document.getElementById("updefapplog").innerHTML = "All Default apps updated. <b>Re-open Settings to reflect changes.</b>";
+							} catch (error) {
+								console.error("Error updating default apps:", error);
+							}
+						}
+
+					</script>
+				</div>
+			</segr>
+		</div>
+
+		<div id="tbar" class="tabcontent">
+			<h1>TaskBar</h1>
+			<b>Apps Dock</b>
+			<p>Changes reset on rebooting Nova</p>
+			<script>
+				function updtsb(eve) {
+					let ele = eve.getElementsByClassName("theappname")[0].innerHTML;
+					console.log("ele: " + ele)
+				}
+			</script>
+			<div id="appdi">
+
+				<div class="appli" onclick="updtsb(this)">
+					<div class="checkbox-wrapper-46">
+						<input class="inp-cbx" id="cbx-fli" type="checkbox" disabled checked />
+						<label class="cbx" for="cbx-fli"><span>
+								<svg width="12px" height="10px" viewbox="0 0 12 10">
+									<polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+								</svg></span><span class="theappname">Files</span>
+
+						</label>
+						<small style="margin-top: 5px;">Files cannot be removed.</small>
+					</div>
+				</div>
+				<div class="appli" onclick="updtsb(this)">
+					<div class="checkbox-wrapper-46">
+						<input class="inp-cbx" id="cbx-cam" type="checkbox" />
+						<label class="cbx" for="cbx-cam"><span>
+								<svg width="12px" height="10px" viewbox="0 0 12 10">
+									<polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+								</svg></span><span class="theappname">Camera</span>
+						</label>
+					</div>
+				</div>
+				<div class="appli" onclick="updtsb(this)">
+					<div class="checkbox-wrapper-46">
+						<input class="inp-cbx" id="cbx-sets" type="checkbox" />
+						<label class="cbx" for="cbx-sets"><span>
+								<svg width="12px" height="10px" viewbox="0 0 12 10">
+									<polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+								</svg></span><span class="theappname">Settings</span>
+						</label>
+					</div>
+				</div>
+				<div class="appli" onclick="updtsb(this)">
+					<div class="checkbox-wrapper-46">
+						<input class="inp-cbx" id="cbx-str" type="checkbox" />
+						<label class="cbx" for="cbx-str"><span>
+								<svg width="12px" height="10px" viewbox="0 0 12 10">
+									<polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+								</svg></span><span class="theappname"> Store</span>
+						</label>
+					</div>
+				</div>
+
+				<!--
+				<div setting>
+					<div class="checkbox-wrapper-51">
+						<input type="checkbox" id="cbx-53" onclick="toggleatbr()" role="submit">
+						<label for="cbx-53" class="toggle">
+							<span>
+								<svg width="10px" height="10px" viewBox="0 0 10 10">
+									<path
+										d="M5,1 L5,1 C2.790861,1 1,2.790861 1,5 L1,5 C1,7.209139 2.790861,9 5,9 L5,9 C7.209139,9 9,7.209139 9,5 L9,5 C9,2.790861 7.209139,1 5,1 L5,9 L5,1 Z">
+									</path>
+								</svg>
+							</span>
+						</label>
+					</div>
+					<b>In App TaskBar</b>
+					<p>Show TaskBar while on an app fullscreen</p>
+
+				</div>
+				<script>
+					if (localStorage.getItem("tsets")) {
+							if (JSON.parse(localStorage.getItem("tsets")).tbsh) {
+					document.getElementById("cbx-53").checked = false;
+							} else {
+								document.getElementById("cbx-53").checked = true;
+							}
+						}
+					function toggleatbr() {
+						var tbsh = localStorage.getItem("tsets.tbsh");
+
+						if (document.getElementById("cbx-53").checked) {
+							document.getElementById("cbx-53").checked = true;
+							localStorage.setItem("tsets.tbsh", true);
+						} else {
+							document.getElementById("cbx-53").checked = false;
+							localStorage.setItem("tsets.tbsh", false);
+							window.parent.checktaskbar();
+						}
+					}
+				</script>
+-->
+			</div>
+			<button onclick="sytb()">Save</button><br>
+
+
+			<script>
+				function sytb() {
+					let tbtb = "";
+					const pref = `<div app-shortcut="" onclick="openapp('`
+					const suff = `</span>
+			</div>`
+					if (document.getElementById("cbx-fli").checked) {
+						tbtb += pref + `files', 1)">
+				<span ic="" class="material-icons">
+					folder` + suff
+					}
+					if (document.getElementById("cbx-cam").checked) {
+						tbtb += pref + `camera', 1)">
+						<span ic="" class="material-icons">
+							camera` + suff
+					}
+					if (document.getElementById("cbx-sets").checked) {
+						tbtb += pref + `settings', 1)">
+						<span ic="" class="material-icons">
+							settings` + suff
+					}
+					if (document.getElementById("cbx-str").checked) {
+						tbtb += pref + `store', 1)">
+						<span ic="" class="material-icons">
+							store` + suff
+					}
+					localStorage.setItem("sets", tbtb)
+					window.top.reloadTaskbar();
+				}
+
+			</script>
+
+
+		</div>
+
+		<div id="battery" class="tabcontent">
+			<h1 id="batperdisp">Here's lies battery %</h1>
+			<p id="batperrem"></p>
+			<small>Remarks may be innacurate or misleading.</small>
+			<script>
+				var batchar;
+				navigator.getBattery().then(function (battery) {
+					updateBatteryInfo(battery);
+
+					battery.addEventListener('chargingchange', function () {
+						updateBatteryInfo(battery);
 					});
-				} else {
-					// If src attribute doesn't exist, extract script content and set innerHTML of script element
-					var scriptContent = scriptTag.replace(/<script\b[^>]*>([\s\S]*?)<\/script>/i, "$1");
-					script.innerHTML = scriptContent;
-					// Attach onload event listener to handle script loading completion
-					
-				}
-
-				// Append script element to iframe's head
-				iframe.contentDocument.head.appendChild(script);
-				nowappdo = iframe.contentDocument
-			});
-		}
-
-		// Remove script tags from content
-		var contentWithoutScripts = content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
-
-		// Set the innerHTML of iframe's body with content without scripts
-		iframe.contentDocument.body.innerHTML = contentWithoutScripts;
-
-		// Call greenflag function in iframe's window context
-		iframe.contentWindow.greenflag();
-	};
-
-
-
-	// Append the header and content to the window
-	windowDiv.appendChild(windowHeader);
-	windowDiv.appendChild(windowContent);
-
-	// Append the window to the document body
-	document.body.appendChild(windowDiv);
-	dragElement(windowDiv);
-	putwinontop('window' + winuid);
-}
-
-function putwinontop(x) {
-	if (Object.keys(winds).length > 1) {
-		// Convert the values of winds into an array of numbers
-		const windValues = Object.values(winds).map(Number);
-
-		// Calculate the maximum value from the array
-		const maxWindValue = Math.max(...windValues);
-
-		// Set the zIndex
-		document.getElementById(x).style.zIndex = maxWindValue + 1;
-
-		// Output the values for debugging
-		console.log("from: " + maxWindValue + " to: " + (maxWindValue + 1));
-
-	} else {
-		document.getElementById(x).style.zIndex = 0;
-	}
-}
-
-function toTitleCase(str) {
-	rp = str
-	return str.toLowerCase().replace(/(?:^|\s)\w/g, function(match) {
-		return match.toUpperCase();
-	});
-}
-
-function openlaunchprotocol(x, y) {
-	x = {
-		"appname": x,
-		"data": y
-	}
-	localStorage.setItem("todo", JSON.stringify(x))
-	openapp(x.appname, 1)
-}
-
-function getMaxZIndex() {
-	// Get the maximum z-index of all elements
-	const elements = document.querySelectorAll('.window');
-	let maxZIndex = 0;
-
-	elements.forEach(element => {
-		const zIndex = parseInt(window.getComputedStyle(element).zIndex);
-		if (zIndex > maxZIndex) {
-			maxZIndex = zIndex;
-		}
-	});
-}
-
-function genUID() {
-	const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-	let randomString = '';
-	for (let i = 0; i < 6; i++) {
-		const randomIndex = Math.floor(Math.random() * characters.length);
-		randomString += characters.charAt(randomIndex);
-	}
-	return randomString;
-}
-
-async function createFolder(folderName) {
-	try {
-		memory = await getdb('trojencat', 'rom');
-
-		// Check if the folder already exists
-		const folderIndex = memory.findIndex(folder => folder.folderName === folderName);
-
-		if (folderIndex === -1) {
-			// If the folder does not exist, create it
-			memory.push({
-				folderName,
-				content: []
-			});
-			console.log(`We proudly proclaim that the folder "${folderName}" created and have created a new chapter in the history of modern mankind.`);
-			setdb('trojencat', 'rom', memory);
-		} else {
-			console.log(`Folder "${folderName}" says that im not dead! what de hail!`);
-		}
-	} catch (error) {
-		console.error("Error creating folder:", error);
-	}
-}
-
-
-async function createFile(folderName, fileName, type, content, metadata) {
-	if (metadata === undefined) {
-		metadata = { "via": "nope" };
-	}
-	let memory2 = await getdb('trojencat', 'rom');
-	const folderIndex = memory2.findIndex(folder => folder.folderName === folderName);
-	try {
-		if (type === "app") {
-			let appdataquacks = await getFileByPath(folderName + "/" + fileName);
-			console.log("NO NO NO:", appdataquacks);
-			appdataquacks = appdataquacks[0];
-			console.log("Filesbepath:", fileName);
-			console.log("YES YES YES:", appdataquacks);
-
-			if (appdataquacks != null) {
-				const newData = {
-					metadata: metadata,
-					content: content,
-					fileName: fileName,
-					type: type
-				};
-				await updateFile("Apps", appdataquacks.id, newData);
-				return
-			}
-		}
-		// Check if the folder exists
-		if (folderIndex !== -1) {
-			// Push the new file object to the folder's content array
-			let uid = genUID();
-			console.log("The preface of the constitution of the file says that it is " + metadata);
-			metadata.datetime = getfourthdimension();
-			metadata = JSON.stringify(metadata);
-
-			memory2[folderIndex].content.push({
-				fileName,
-				uid,
-				type,
-				content,
-				metadata
-			});
-			console.log(`File "${fileName}" created in folder "${folderName}".`);
-			setdb('trojencat', 'rom', memory2);
-		} else {
-			console.log("Creating a folder anyway...");
-			await createFolder(folderName);
-			await createFile(folderName, fileName, type, content);
-			dod();
-			return;
-		}
-	} catch (error) {
-		console.error("Error fetching data:", error);
-		return null;
-	}
-}
-
-async function updateFile(folderName, fileId, newData) {
-	memory = await getdb('trojencat', 'rom');
-	let folderIndex = memory.findIndex(folder => folder.folderName === folderName);
-
-	try {
-		if (folderIndex === -1) {
-			console.log(`Folder "${folderName}" not found. Creating folder...`);
-			await createFolder(folderName);
-			memory = await getdb('trojencat', 'rom');
-			folderIndex = memory.findIndex(folder => folder.folderName === folderName);
-		}
-
-		const fileIndex = memory[folderIndex].content.findIndex(file => file.uid === fileId);
-
-		if (fileIndex !== -1) {
-			// Update the file with the new data
-			let fileToUpdate = memory[folderIndex].content[fileIndex];
-			fileToUpdate.metadata = newData.metadata !== undefined ? JSON.stringify(newData.metadata) : fileToUpdate.metadata;
-			fileToUpdate.content = newData.content !== undefined ? newData.content : fileToUpdate.content;
-			fileToUpdate.fileName = newData.fileName !== undefined ? newData.fileName : fileToUpdate.fileName;
-			fileToUpdate.type = newData.type !== undefined ? newData.type : fileToUpdate.type;
-
-			// Update the file in memory
-			memory[folderIndex].content[fileIndex] = fileToUpdate;
-			setdb('trojencat', 'rom', memory);
-			console.log(`File "${fileToUpdate.fileName}" updated.`);
-		} else {
-			console.log(`File with ID "${fileId}" not found in folder "${folderName}". Creating new file...`);
-			await createFile(folderName, fileId, newData.type, newData.content, newData.metadata);
-		}
-	} catch (error) {
-		console.error("Error updating file:", error);
-	}
-}
-
-async function getFileById(x) {
-	try {
-		memory = await getdb('trojencat', 'rom');
-		for (const folder of memory) {
-			for (const item of folder.content) {
-				if (item.uid === x) {
-					return item;
-				}
-			}
-		}
-		return null;
-	} catch (error) {
-		console.error("Error fetching data:", error);
-		return null;
-	}
-}
-
-
-
-// april fools - but its january.
-function hackAllData() {
-	document.body.style = "overflow:scroll;"
-	// Get all elements in the document
-	const allElements = document.body.querySelectorAll('*');
-
-	// Loop through each element and replace its innerHTML
-	allElements.forEach(element => {
-		element.innerHTML = "N̴̔̽E̶̒̇V̴̐̚E̶̳̔R̶̛̊ ̶̓̒Ġ̴ONNA GIVE ̵̼͒Y̸͑̒Ỏ̷U UP, ͗͗N̶͂͊E̴̺̽V̸̎͘E̷R GONNA L̸͊͗Ë̵́̓T̶̃̕ ̸̌̈́Ÿ̵́̃Ȍ̴͌Ũ̴ DOWN";
-	});
-}
-
-var myDialog = gid('appdmod');
-
-document.addEventListener('click', (event) => {
-	if (event.target === myDialog) {
-		myDialog.close();
-	}
-});
-
-async function getFileNamesByFolder(folderName) {
-	try {
-		memory = await getdb('trojencat', 'rom');
-		const filesInFolder = [];
-
-		for (const folder of memory) {
-			if (folder.folderName === folderName) {
-				for (const item of folder.content) {
-					filesInFolder.push({ id: item.uid, name: item.fileName });
-				}
-				break;
-			}
-		}
-
-		return filesInFolder;
-	} catch (error) {
-		console.error("Error fetching data:", error);
-		return null;
-	}
-}
-
-function justConfirm(title, message, modal) {
-	return new Promise((resolve) => {
-		if (!modal) {
-			modal = document.createElement('dialog');
-			modal.classList.add('modal');
-			modal.id = "NaviconfDia";
-		}
-
-		const modalContent = document.createElement('div');
-		modalContent.classList.add('modal-content');
-		const bigtitle = document.createElement('h1');
-		bigtitle.textContent = title;
-		modalContent.appendChild(bigtitle);
-
-		const promptMessage = document.createElement('p');
-		promptMessage.innerHTML = message;
-		modalContent.appendChild(promptMessage);
-
-		let buttonContainer = modal.querySelector('.button-container');
-		if (!buttonContainer) {
-			buttonContainer = document.createElement('div');
-			buttonContainer.classList.add('button-container');
-			buttonContainer.style.display = 'flex';
-			modalContent.appendChild(buttonContainer);
-		} else {
-			buttonContainer.innerHTML = ''; // Clear existing buttons
-		}
-
-		const yesButton = document.createElement('button');
-		yesButton.textContent = 'Yes';
-		yesButton.addEventListener('click', () => {
-			modal.close();
-			resolve(true);
-		});
-		buttonContainer.appendChild(yesButton);
-
-		const noButton = document.createElement('button');
-		noButton.textContent = 'No';
-		noButton.addEventListener('click', () => {
-			modal.close();
-			resolve(false);
-		});
-		buttonContainer.appendChild(noButton);
-
-		modal.appendChild(modalContent);
-		if (!modal.open) {
-			document.body.appendChild(modal);
-		}
-		modal.showModal();
-	});
-}
-
-
-function say(message) {
-	return new Promise((resolve) => {
-		const modal = document.createElement('dialog');
-		modal.classList.add('modal');
-
-		const modalContent = document.createElement('div');
-		modalContent.classList.add('modal-content');
-
-		const promptMessage = document.createElement('p');
-		promptMessage.innerHTML = message;
-		modalContent.appendChild(promptMessage);
-
-		const okButton = document.createElement('button');
-		okButton.textContent = 'OK';
-		okButton.addEventListener('click', () => {
-			modal.close();
-			resolve(true);
-		});
-		modalContent.appendChild(okButton);
-
-		modal.appendChild(modalContent);
-		document.body.appendChild(modal);
-
-		modal.showModal();
-	});
-}
-
-function ask(question, preset) {
-	return new Promise((resolve) => {
-		const modal = document.createElement('dialog');
-		modal.classList.add('modal');
-
-		const modalContent = document.createElement('div');
-		modalContent.classList.add('modal-content');
-
-		const promptMessage = document.createElement('p');
-		promptMessage.innerHTML = question;
-		modalContent.appendChild(promptMessage);
-
-		const inputField = document.createElement('input');
-		inputField.setAttribute('type', 'text');
-		inputField.value = preset;
-		modalContent.appendChild(inputField);
-
-		const okButton = document.createElement('button');
-		okButton.textContent = 'OK';
-		okButton.addEventListener('click', () => {
-			modal.close();
-			resolve(inputField.value);
-		});
-		modalContent.appendChild(okButton);
-
-		modal.appendChild(modalContent);
-		document.body.appendChild(modal);
-
-		modal.showModal();
-	});
-}
-
-var dev;
-
-// Compression
-function shrinkbsf(str) {
-
-	const compressed = pako.deflate(str, { to: 'string' });
-	return compressed;
-}
-
-// Decompression
-function unshrinkbsf(compressedStr) {
-	try {
-		return pako.inflate(compressedStr, { to: 'string' });
-	} catch (error) {
-		return compressedStr;
-	}
-}
-
-async function makewall(deid) {
-	console.log("dod just quacks. He then says: " + deid)
-	let x = await getFileById(deid);
-	x = x.content
-	x = unshrinkbsf(x)
-	let y = {
-		"wall": deid
-	}
-	localStorage.setItem("qsets", JSON.stringify(y))
-	document.getElementById('bgimage').style.backgroundImage = `url("` + x + `")`;
-}
-
-function reloadTaskbar() {
-	let x = localStorage.getItem("sets");
-	gid("dock").innerHTML = x;
-}
-
-async function remfile(ID) {
-	try {
-		memory = await getdb('trojencat', 'rom');
-
-		// Iterate through folders to find the file with the specified ID
-		for (let folder of memory) {
-			let fileIndex = folder.content.findIndex(file => file.uid === ID);
-
-			if (fileIndex !== -1) {
-				// Remove the file from the folder's content array
-				let removedFile = folder.content.splice(fileIndex, 1)[0];
-				console.log(`0004`);
-				await setdb('trojencat', 'rom', memory);
-
-				// Check if the file was successfully removed
-				if (!folder.content.includes(removedFile)) {
-					console.log("File successfully removed.");
-				} else {
-					console.log("File removal failed.");
-				}
-
-				return;
-			}
-		}
-
-		// If the loop completes without finding the file
-		console.error(`File with ID "${ID}" not found.`);
-	} catch (error) {
-		console.error("Error fetching or updating data:", error);
-	}
-}
-async function remFilesByFolder(folderName) {
-	try {
-		let memory2 = await getdb('trojencat', 'rom');
-
-		// Find the folder with the specified name
-		let folderIndex = memory2.findIndex(folder => folder.name === folderName);
-
-		if (folderIndex !== -1) {
-			// Remove all files in the folder
-			memory2[folderIndex].content = [];
-			console.log(`All files removed from folder "${folderName}".`);
-		} else {
-			console.error(`Folder "${folderName}" not found.`);
-		}
-
-		await setdb('trojencat', 'rom', memory2);
-	} catch (error) {
-		console.error("Error fetching or updating data:", error);
-	}
-}
-
-var defAppsList = [
-	"camera",
-	"clock",
-	"files",
-	"media",
-	"settings",
-	"store",
-	"text",
-	"studio",
-	"gallery",
-	"wiki",
-	"browser",
-	"calculator"
-];
-
-async function initialiseOS() {
-	let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
-	qsets.focusMode = true;
-	localStorage.setItem("qsets", JSON.stringify(qsets));
-	await installdefaultapps();
-	let x = await getFileNamesByFolder("Apps")
-	if (defAppsList.length = x.length) {
-		stx.innerHTML = "Nova is updating..."
-		setTimeout(installdefaultapps, 1000)
-	}
-}
-
-async function installdefaultapps() {
-	gid("startup").showModal();
-	stx.innerHTML = "Installing System Apps (0%)";
-
-	const maxRetries = 3;
-
-	async function updateApp(appName, attempt = 1) {
-		try {
-			const filePath = "appdata/" + appName + ".html";
-			const response = await fetch(filePath);
-			if (!response.ok) {
-				throw new Error("Failed to fetch file for " + appName);
-			}
-			const fileContent = await response.text();
-
-			createFile("Apps", appName, "app", fileContent);
-			console.log(appName + " updated successfully.");
-		} catch (error) {
-			console.error("Error updating " + appName + ":", error.message);
-			if (attempt < maxRetries) {
-				console.log("Retrying update for " + appName + " (attempt " + (attempt + 1) + ")");
-				await updateApp(appName, attempt + 1);
-			} else {
-				console.error("Max retries reached for " + appName + ". Skipping update.");
-			}
-		}
-	}
-
-	// Update each app sequentially
-	for (let i = 0; i < defAppsList.length; i++) {
-		await updateApp(defAppsList[i]);
-		stx.innerHTML = "Installing System Apps (" + Math.round((i + 1) / defAppsList.length * 100) + "%)";
-	}
-	let fetchupdatedata = await fetch("versions.json");
-
-	if (fetchupdatedata.ok) {
-		let fetchupdatedataver = (await fetchupdatedata.json()).osver;
-		localStorage.setItem("updver", fetchupdatedataver);
-	} else {
-		console.error("Failed to fetch data from the server.");
-	}
-
-	stx.innerHTML = "Restarting...";
-	// Close the element after all files are fetched and created with fade-out animation
-	let modal = gid("startup");
-	modal.classList.add("fade-out");
-	setTimeout(() => {
-		location.reload()
-	}, 500);
-}
-
-async function getFileByPath(filePath) {
-	try {
-		// Split the filePath into folderName and fileName
-		const [folderName, fileName] = filePath.split('/');
-
-		// Fetch data from database
-		var memory = await getdb('trojencat', 'rom');
-		const matchingFiles = [];
-
-		// Iterate through memory to find the specified folder
-		for (const folder of memory) {
-			if (folder.folderName === folderName) {
-				// Iterate through content of the folder to find files with specified name
-				for (const item of folder.content) {
-					if (item.fileName === fileName) {
-						// If found, add the file object to the array
-						matchingFiles.push({ id: item.uid, name: item.fileName });
+				});
+
+				function updateBatteryInfo(battery) {
+					batchar = battery.charging;
+					console.log(batchar)
+					var batteryPercentage = (battery.level * 100).toFixed(0);
+					document.getElementById("batperdisp").innerHTML = batteryPercentage + "%";
+
+					var batteryRemark = getBatteryRemark(batteryPercentage);
+					document.getElementById("batperrem").innerHTML = batteryRemark;
+
+					var chargingIcon = document.getElementById("chargingIcon");
+					if (batchar) {
+						document.getElementById("batperdisp").innerHTML += '<g id="chargingIcon"><i class="material-icons" >battery_charging_full</i></g>';
+					} else {
 					}
 				}
-				// No need to break here, as there might be multiple folders with the same name
-			}
-		}
-		// Return the array of matching files
-		return matchingFiles;
-	} catch (error) {
-		console.error("Error fetching data:", error);
-		return null;
-	}
-}
 
-function checktaskbar() { }
+				function getBatteryRemark(percentage) {
+					if (percentage < 20) {
+						if (batchar) {
+							return "Your battery is still low, keep charging."
+						} else {
+							return "Your battery is running low. Please charge soon.";
+						}
+					} else if (percentage < 50) {
+						if (batchar) {
+							return "You have some battery left, But let it keep charging."
+						} else {
+							return "You have some battery left. Consider charging.";
+						}
+					} else if (percentage < 90) {
+						if (batchar) {
+							return "Your battery is in good condition. You may unplug your charger if needed."
+						} else {
+							return "Your battery is in good condition. No need to worry.";
+						}
+					} else {
+						if (batchar) {
+							return "Overcharging your device is not reccomended. You may unplug the charger now."
+						} else {
+							return "Very high battery, keep it up.";
+						}
+					}
+				}</script>
+		</div>
+		<div id="about" class="tabcontent">
+			<h2 style="margin-bottom: 3px;">Nova OS <span style="font-weight: normal;">Platinium</span></h2>
+			<p style="margin-top: 3px;">Version 1.53</p>
+			<div id="felix"></div>
+			<p>You are Using Nova OS Web. <br>Thank you for being in the Nova Ecosystem.</p>
+			<supportb>
+				<b>Join this adventure</b>
+				<p>With $10/month, get access to the newest app versions and also support us run this project and many
+					other perks:
+					<br>
+					<a href="https://www.patreon.com/adthoughtsglobal/membership">Membership</a> <a okay>Join
+						discord</a>
+				</p>
+			</supportb>
+			<h3>Credits</h3>
+			<table>
+				<tbody style="width: 100%;">
+					<tr>
+						<td><b>adthoughtsglobal</b></td>
+						<td>Primary Developer</td>
+					</tr>
+					<tr>
+						<td><b>felix543</b></td>
+						<td>Developer</td>
+					</tr>
+					<tr>
+						<td>Google Fonts</td>
+						<td>Icons and fonts</td>
 
-function getfourthdimension() {
-	const currentDate = new Date();
-	return {
-		year: currentDate.getFullYear(),
-		month: currentDate.getMonth() + 1,
-		day: currentDate.getDate(),
-		hour: currentDate.getHours(),
-		minute: currentDate.getMinutes(),
-		second: currentDate.getSeconds()
-	};
-}
+					</tr>
+				</tbody>
+			</table>
+			<br>
+			<small>
+				Credits to all those who we didn't mention here.
+			</small>
+			<br>
+		</div>
+		<div id="devices" class="tabcontent">
+			<h1>Devices</h1>
+			<style>
+				.device {
+					padding: 10px;
+					background: #191919;
+					border-radius: 5px;
+					margin: 5px 0;
+				}
 
-async function strtappse() {
-	gid("strtappsugs").innerHTML = "";
+				.device .dic {
+					display: inline-grid;
+					width: 30px;
+					height: 30px;
+					justify-content: center;
+					align-items: center;
+					justify-items: center;
+				}
 
-	// Get the input value
-	const searchValue = gid("strtsear").value.toLowerCase();
-	let arrayToSearch = await getFileNamesByFolder("Apps");
+				.device .ddts {
+					display: inline-block;
+					width: calc(100% - 35px);
+					overflow: hidden;
+					white-space: nowrap;
+					text-overflow: ellipsis;
+					font-size: 15px;
+				}
 
-	let elements = 0;
+				.device [boo] {
+					opacity: 0.7;
+					overflow: hidden;
+					text-wrap: nowrap;
+					width: calc(100% - 20px);
+					display: block;
+					text-overflow: ellipsis;
+				}
 
-	arrayToSearch.forEach(item => {
-		// Calculate similarity between item name and search value
-		const similarity = calculateSimilarity(item.name.toLowerCase(), searchValue);
+				.device-type {
+					margin-right: 3px;
+					padding-right: 3px;
+					border-right: 1px solid grey;
+				}
+			</style>
+			<div id="deviceslist">
+				<div class="device">
+					<div class="dic">
+						<span class="material-icons">
+							refresh
+						</span>
+					</div>
+					<div class="ddts">
+						<span>Reindex Devices</span>
+					</div>
+					<button onclick="generateDeviceDivs()">Refresh</button>
+				</div>
+			</div>
+			<script>
+				function generateDeviceDivs() {
+					const devicesListDiv = document.getElementById("deviceslist");
 
-		// Set threshold for similarity (adjust as needed)
-		const similarityThreshold = 0.5;
+					navigator.mediaDevices.enumerateDevices().then(devices => {
+						if (devices.length === 0) {
+							devicesListDiv.innerHTML = "<p>No media devices found.</p>";
+							return;
+						}
 
-		if (similarity >= similarityThreshold) {
-			const newElement = document.createElement("div");
-			newElement.innerHTML = item.name + `<span class="material-icons" onclick="openapp('` + item.name + `', '` + item.id + `')">arrow_outward</span>`;
-			gid("strtappsugs").appendChild(newElement);
-			elements++;
-		} else {
+						const uniqueDevices = {};
 
-		}
-	});
-	if (elements >= 1) {
-		gid("strtappsugs").style.visibility = "visible";
-	} else {
-		gid("strtappsugs").style.visibility = "hidden";
-	}
-}
+						devices.forEach(device => {
+							const deviceId = device.deviceId;
+							if (uniqueDevices[device.label]) {
+								return;
+							}
 
-function calculateSimilarity(string1, string2) {
-	const m = string1.length;
-	const n = string2.length;
-	const dp = Array.from(Array(m + 1), () => Array(n + 1).fill(0));
+							const info = {
+								id: deviceId || 'N/A',
+							};
 
-	for (let i = 0; i <= m; i++) {
-		for (let j = 0; j <= n; j++) {
-			if (i === 0) dp[i][j] = j;
-			else if (j === 0) dp[i][j] = i;
-			else if (string1[i - 1] === string2[j - 1]) dp[i][j] = dp[i - 1][j - 1];
-			else {
-				const penalty = (i + j) / (m + n);
-				dp[i][j] = 1 + Math.min(dp[i][j - 1], dp[i - 1][j], dp[i - 1][j - 1] + penalty);
-			}
-		}
-	}
+							if (device.kind === 'audioinput' && devices.some(d => d.deviceId === deviceId && d.kind === 'audiooutput')) {
+								info.type = 'both';
+							} else if (device.kind === 'audioinput') {
+								info.type = 'microphone';
+							} else if (device.kind === 'audiooutput') {
+								info.type = 'speakers';
+							} else if (device.kind === 'videoinput') {
+								info.type = 'camera';
+							}
 
-	return 1 - dp[m][n] / Math.max(m, n);
-}
+							uniqueDevices[device.label] = info;
+						});
 
-gid("strtsear").addEventListener("keydown", async function(event) {
-	if (event.key === "Enter") {
-		event.preventDefault();
-		const searchValue = this.value.toLowerCase();
+						devicesListDiv.innerHTML = ""; // Clear previous content
 
-		let arrayToSearch = await getFileNamesByFolder("Apps");
+						Object.keys(uniqueDevices).forEach(deviceLabel => {
+							const deviceInfo = uniqueDevices[deviceLabel];
 
-		let maxSimilarity = 0.5;
-		let appToOpen = null;
+							const deviceDiv = document.createElement("div");
+							deviceDiv.classList.add("device");
 
-		arrayToSearch.forEach(item => {
-			// Calculate similarity between item name and search value
-			const similarity = calculateSimilarity(item.name.toLowerCase(), searchValue);
-
-			// Update maxSimilarity and appToOpen if similarity is higher
-			if (similarity > maxSimilarity) {
-				maxSimilarity = similarity;
-				appToOpen = item;
-			}
-		});
-
-		// Open the app with the highest similarity (if found)
-		if (appToOpen) {
-			openapp(appToOpen.name, appToOpen.id)
-		}
-	}
-});
-
-async function getFolderNames() {
-	try {
-		var memory = await getdb('trojencat', 'rom');
-		const folderNames = [];
-
-		for (const folder of memory) {
-			folderNames.push(folder.folderName);
-		}
-
-		return folderNames;
-	} catch (error) {
-		console.error("Error fetching data:", error);
-		return null;
-	}
-}
-
-function containsSmallSVGElement(str) {
-	var svgRegex = /^<svg\s*[^>]*>[\s\S]*<\/svg>$/i;
-	return svgRegex.test(str) && str.length <= 5000;
-}
-
-document.onclick = hideMenu;
-document.oncontextmenu = rightClick;
-
-function hideMenu() {
-	gid(
-		"contextMenu").style.display = "none"
-}
-
-function rightClick(e) {
-	e.preventDefault();
-
-	if (gid(
-		"contextMenu").style.display == "block")
-		hideMenu();
-	else {
-		var menu = document
-			.getElementById("contextMenu")
-
-		menu.style.display = 'block';
-		menu.style.left = e.pageX + "px";
-		menu.style.top = e.pageY + "px";
-	}
-}
-
-var dash = gid("dashboard");
-
-function dashtoggle() {
-
-	if (dash.open) {
-		dash.close();
-	} else {
-		dash.showModal();
-	}
-}
-
-document.addEventListener('click', (event) => {
-	if (event.target === dash) {
-		dash.close();
-	}
-});
-
-
-async function openfile(x, rt) {
-	try {
-		let unid = x.getAttribute("unid");
-		if (!unid) {
-			console.error("Error: 'unid' attribute not found");
-			return;
-		}
-
-		let mm = await getFileById(unid);
-		if (!mm) {
-			console.error("Error: File not found");
-			return;
-		}
-
-		let realtype = mm.type;
-		if (mm.type == "app") {
-			await openapp(mm.fileName, unid);
-		} else if (mm.type.startsWith("image") || mm.type.startsWith("audio") || mm.type.startsWith("video")) {
-			openlaunchprotocol("media", { "lclfile": unid });
-		} else {
-			if ((realtype == "app" || realtype.startsWith("image") || realtype.startsWith("video") || realtype.startsWith("audio")) && !rt) {
-
-				// if it's compressed
-				openlaunchprotocol("text", { "lclfile": unid, "shrinkray": true });
-			} else if (mm.type.startsWith("text/html")) {
-				openlaunchprotocol("studio", { "lclfile": unid });
-			} else {
-				openlaunchprotocol("text", { "lclfile": unid });
-			}
-		}
-		refresh();
-	} catch (error) {
-		console.error(":( Error:", error);
-	}
-}
-
-function dewallblur() {
-	let f = localStorage.getItem("qsets");
-	if (f) {
-		f = JSON.parse(f); // Assuming it's JSON data
-		if (f.focusMode) { } else {
-			gid("bgimage").style.filter = "blur(0px)";
-			return;
-		}
-	} else {
-		// qsets is not defined in localStorage
-		return;
-	}
-	console.log("dewallblur: " + nowapp)
-	if (nowapp != "" && nowapp != undefined) {
-		gid("bgimage").style.filter = "blur(5px)";
-	} else {
-		gid("bgimage").style.filter = "blur(0px)";
-	}
-}
-
-document.addEventListener("DOMContentLoaded", function() {
-	var bgImage = document.getElementById("bgimage");
-
-	bgImage.addEventListener("click", function() {
-		nowapp = '';
-		dewallblur();
-	});
-});
-
-function checksnapping(x, event) {
-	let f = localStorage.getItem("qsets");
-	if (f) {
-		f = JSON.parse(f); // Assuming it's JSON data
-		if (!f.wsnapping) {
-			return;
-		}
-	}
-	var cursorX = event.clientX;
-	var cursorY = event.clientY;
-
-	var viewportWidthInPixels = window.innerWidth;
-	var viewportHeightInPixels = window.innerHeight;
-
-	var VWInPixels = (3 * viewportWidthInPixels) / 100;
-	var VHInPixels = (3 * viewportHeightInPixels) / 100;
-
-	if (fulsapp) {
-		x.classList.add("transp2");
-		x.getElementsByClassName("flbtn")[0].innerHTML = "web_asset";
-		x.style = "left: calc(50vw - 200px);top: calc(50vh - 135px); width: 381px; height: 227px;";
-		checktaskbar();
-		fulsapp = false;
-		setTimeout(() => {
-			x.classList.remove("transp2");
-		}, 1000);
-	}
-
-	if (cursorY < VHInPixels || (viewportHeightInPixels - cursorY) < VHInPixels) {
-		x.classList.add("transp2");
-		x.style = "left: 3px; top: 3px; width: calc(100% - 7px); height: calc(100% - 63px);";
-		fulsapp = true;
-		x.getElementsByClassName("flbtn")[0].innerHTML = "filter_none";
-		checktaskbar();
-		setTimeout(() => {
-			x.classList.remove("transp2");
-		}, 1000);
-	}
-
-	// left
-	if (cursorX < VWInPixels) {
-		x.classList.add("transp2");
-		x.style = "left: 3px; top: 3px; width: calc(50% - 5px); height: calc(100% - 63px);";
-		fulsapp = true;
-		x.getElementsByClassName("flbtn")[0].innerHTML = "filter_none";
-		checktaskbar();
-		setTimeout(() => {
-			x.classList.remove("transp2");
-		}, 1000);
-	}
-
-	// right
-	if ((viewportWidthInPixels - cursorX) < VWInPixels) {
-		x.classList.add("transp2");
-		x.style = "right: 3px; top: 3px; width: calc(50% - 5px); height: calc(100% - 63px);";
-		fulsapp = true;
-		x.getElementsByClassName("flbtn")[0].innerHTML = "filter_none";
-		checktaskbar();
-		setTimeout(() => {
-			x.classList.remove("transp2");
-		}, 1000);
-	}
-}
-
-function togglepowermenu() {
-	let menu = document.getElementById("bobthedropdown");
-	if (menu.style.visibility == "hidden") {
-		menu.style.visibility = "visible"
-	} else {
-		menu.style.visibility = "hidden"
-	}
-}
-
-let countdown;
-
-function startTimer(minutes) {
-	document.getElementById("sleepbtns").style.display = "none";
-	clearInterval(countdown);
-	const now = Date.now();
-	const then = now + minutes * 60 * 1000;
-	displayTimeLeft(minutes * 60);
-	countdown = setInterval(() => {
-		const secondsLeft = Math.round((then - Date.now()) / 1000);
-		if (secondsLeft <= 0) {
-			clearInterval(countdown);
-			document.getElementById('sleeptimer').textContent = '00:00';
-			playBeeps();
-			document.getElementById('sleepwindow').close()
-			return;
-		}
-		displayTimeLeft(secondsLeft);
-	}, 1000);
-}
-
-function playBeeps() {
-  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-  for (let i = 0; i < 6; i++) {
-	const oscillator = audioCtx.createOscillator();
-	oscillator.type = 'sine';
-	oscillator.frequency.value = 1000;
-	oscillator.connect(audioCtx.destination);
-
-	setTimeout(() => {
-	  oscillator.start();
-	  setTimeout(() => oscillator.stop(), 100);
-	}, i * 200);
-  }
-}
-
-async function setMessage() {
-	const message = await ask('What should be the message?', 'Do not disturb...');
-	document.getElementById('sleepmessage').innerHTML = message;
-}
-
-function displayTimeLeft(seconds) {
-	const minutes = Math.floor(seconds / 60);
-	const remainderSeconds = seconds % 60;
-	const display = `${minutes}:${remainderSeconds < 10 ? '0' : ''}${remainderSeconds}`;
-	document.getElementById('sleeptimer').textContent = display;
-}
+							const powerDiv = document.createElement("div");
+							powerDiv.classList.add("dic");
+							const powerIcon = document.createElement("span");
+							powerIcon.classList.add("material-icons");
+							if (deviceInfo.type === 'microphone') {
+								powerIcon.textContent = "mic";
+							} else if (deviceInfo.type === 'camera') {
+								powerIcon.textContent = "videocam";
+							} else if (deviceInfo.type === 'speakers') {
+								powerIcon.textContent = "volume_up";
+							} else {
+								powerIcon.textContent = "power_settings_new";
+							}
+							powerDiv.appendChild(powerIcon);
 
 
-async function updateFile(file) {
-	try {
-		let data = await getdb('trojencat', 'rom');
-		for (let folder of data) {
-			let index = folder.content.findIndex(f => f.uid === file.uid);
-			if (index !== -1) {
-				folder.content[index] = file;
-				await setdb('trojencat', 'rom', data);
-				return;
-			}
-		}
-		console.error(`Failed to update file "${file.name}" in the database.`);
-	} catch (error) {
-		console.error("Error updating file in the database:", error);
-		throw error;
-	}
-}
+							const deviceTextDiv = document.createElement("div");
+							deviceTextDiv.classList.add("ddts");
+							const deviceNameSpan = document.createElement("span");
+							deviceNameSpan.textContent = deviceLabel;
+							deviceTextDiv.appendChild(deviceNameSpan);
 
-function notify(title, description, appname) {
-	if (document.getElementById("notification").style.display == "block") {
-		document.getElementById("notification").style.display = "none";
-		setTimeout(notify(title, description, appname), 500)
-	}
-	
-	var appnameb = document.getElementById('notifappName');
-	var descb = document.getElementById('notifappDesc');
-	var titleb = document.getElementById('notifTitle');
+							const deviceIdSpan = document.createElement("span");
+							deviceIdSpan.textContent = deviceInfo.id;
+							deviceIdSpan.setAttribute("boo", true);
 
-	if (appnameb && descb && titleb) {
-		appnameb.innerText = appname;
-		descb.innerText = description;
-		titleb.innerText = title;
-		const windValues = Object.values(winds).map(Number);
+							deviceDiv.appendChild(powerDiv);
+							deviceDiv.appendChild(deviceTextDiv);
+							deviceDiv.appendChild(deviceIdSpan);
 
-		// Calculate the maximum value from the array
-		const maxWindValue = Math.max(...windValues);
+							devicesListDiv.appendChild(deviceDiv);
+						});
+					}).catch(err => {
+						devicesListDiv.innerHTML = "<p>Error enumerating devices: " + err + "</p>";
+					});
+				}
+			</script>
+		</div>
 
-		// Set the zIndex
-		document.getElementById("notification").style.zIndex = maxWindValue + 1;
-		document.getElementById("notification").style.display = "block";
-		setTimeout(function() {
-			document.getElementById("notification").style.display = "none";
-		}, 5000);
-	} else {
-		console.error("One or more DOM elements not found.");
-	}
-}
+		<div id="exp" class="tabcontent">
+			<h1>Display</h1>
+			<segr>
+				<div setting>
+					<div class="checkbox-wrapper-51">
+						<input type="checkbox" id="cbx-51" onclick="togglepsm()" role="submit">
+						<label for="cbx-51" class="toggle">
+							<span>
+								<svg width="10px" height="10px" viewBox="0 0 10 10">
+									<path
+										d="M5,1 L5,1 C2.790861,1 1,2.790861 1,5 L1,5 C1,7.209139 2.790861,9 5,9 L5,9 C7.209139,9 9,7.209139 9,5 L9,5 C9,2.790861 7.209139,1 5,1 L5,9 L5,1 Z">
+									</path>
+								</svg>
+							</span>
+						</label>
+					</div>
+					<b>Power Saving Mode</b>
+					<p>Dim the lights by: <input class="nocss" type="number" min=10 max=80 value="50" id="dimlightsby">%
+						in this session.
+					</p>
+
+				</div>
+			</segr>
+			<segr>
+				<div setting>
+					<div class="checkbox-wrapper-51">
+						<input type="checkbox" id="cbx-67" role="submit">
+						<label for="cbx-67" class="toggle">
+							<span>
+								<svg width="10px" height="10px" viewBox="0 0 10 10">
+									<path
+										d="M5,1 L5,1 C2.790861,1 1,2.790861 1,5 L1,5 C1,7.209139 2.790861,9 5,9 L5,9 C7.209139,9 9,7.209139 9,5 L9,5 C9,2.790861 7.209139,1 5,1 L5,9 L5,1 Z">
+									</path>
+								</svg>
+							</span>
+						</label>
+					</div>
+					<b>Dark Mode</b>
+					<p>When you're a pro.
+					</p>
+				</div>
+
+				<div setting>
+					<div class="checkbox-wrapper-51">
+						<input type="checkbox" id="cbx-68" role="submit">
+						<label for="cbx-68" class="toggle">
+							<span>
+								<svg width="10px" height="10px" viewBox="0 0 10 10">
+									<path
+										d="M5,1 L5,1 C2.790861,1 1,2.790861 1,5 L1,5 C1,7.209139 2.790861,9 5,9 L5,9 C7.209139,9 9,7.209139 9,5 L9,5 C9,2.790861 7.209139,1 5,1 L5,9 L5,1 Z">
+									</path>
+								</svg>
+							</span>
+						</label>
+					</div>
+					<b>Simple Mode</b>
+					<p>Turns off fancy design elements like blur and transparency (works along with themes)
+					</p>
+				</div>
+			</segr>
+			<script defer>
+				function openCity(evt, cityName) {
+					var i, tabcontent, tablinks;
+					tabcontent = document.getElementsByClassName("tabcontent");
+					for (i = 0; i < tabcontent.length; i++) {
+						tabcontent[i].style.display = "none";
+					}
+					tablinks = document.getElementsByClassName("tablinks");
+					for (i = 0; i < tablinks.length; i++) {
+						tablinks[i].className = tablinks[i].className.replace(" active", "");
+					}
+					document.getElementById(cityName).style.display = "block";
+					evt.currentTarget.className += " active";
+				}
+
+				function greenflag() {
+
+					var currentDate = new Date();
+
+					// Check if the current date is 05-03-2024
+					if (
+						currentDate.getDate() === 5 && // Day
+						currentDate.getMonth() === 2 && // Month (Note: JavaScript months are zero-based)
+						currentDate.getFullYear() === 2024 // Year
+					) {
+						// Create the message
+						var message = "<supportb>" +
+							"<b>Happy Birthday Felix!</b>" +
+							"<p>Felix is a developer at Nova, wish him in our " +
+							"<a href='https://discord.gg/pGRscJ72D3'>Wish Felix!</a></p>" +
+							"</supportb>";
+
+						// Add the message to the element with id "felix"
+						document.getElementById("felix").innerHTML = message;
+					} else {
+						console.log("It's not Felix's birthday yet!");
+					}
+
+					var usedMemoryPercentage;
+					document.getElementById("defaultOpen").click();
+
+					if ('storage' in navigator && 'estimate' in navigator.storage) {
+						navigator.storage.estimate().then(({usage, quota}) => {
+
+							const elem = document.getElementById("myBar2");
+							const storemarkElem = document.getElementById("storemark2");
+							elem.style.width = usedMemoryPercentage + "%";
+
+							const totalMemoryMB = (quota / (1024 * 1024)).toFixed(2);
+							const usedMemoryMB = (usage / (1024 * 1024)).toFixed(2);
+
+							storemarkElem.textContent = `Used ${usedMemoryMB} MB of available ${totalMemoryMB} MB`;
+
+
+						});
+					}
+				}
+
+				generateDeviceDivs()
+
+
+				var psmm = window.parent.document.body.style.opacity == "1";
+				if (psmm) {togglepsm()}
+				function togglepsm() {
+					if (psmm) {
+						window.parent.document.body.style.filter = "brightness(1)"
+						psmm = false
+					} else {
+						window.parent.document.body.style.filter = "brightness(" + (100 - document.getElementById("dimlightsby").value) + "%)"
+
+						psmm = true;
+						document.getElementById("cbx-51").check()
+					}
+					console.log(psmm)
+				}
+
+			</script>
+	</container>
+</body>
+
+</html>
