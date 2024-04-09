@@ -1,19 +1,4 @@
-var batteryLevel, winds = {}, rp, flwint = true, opentrigger, memory, nowapp, stx = gid("startuptx"), applogs = {}, fulsapp = false;
-
-var defAppsList = [
-	"camera",
-	"clock",
-	"files",
-	"media",
-	"settings",
-	"store",
-	"text",
-	"studio",
-	"gallery",
-	"wiki",
-	"browser",
-	"calculator"
-];
+var batteryLevel, winds = {}, rp, flwint = true, opentrigger, memory, nowapp, stx = gid("startuptx"), applogs = {}, fulsapp = false, nowappdo, appsHistory = [];
 
 // Check if the database 'trojencat' exists
 getdb('trojencat', 'rom')
@@ -25,8 +10,13 @@ getdb('trojencat', 'rom')
 				if (!folders.includes("Desktop")) {
 					createFolder("Desktop")
 				}
+				if (!folders.includes("System")) {
+					await createFolder("System")
+          			await createFile("System", "settings", "application/json", jsonToDataURI(localStorage.getItem('qsets')), "{}")
+          await createFile("System", "applications", "json", "currently nothing", "{}")
+				}
 			} else {
-				await say(`<h2>Terms of service and License</h2><p>By using Nova OS, you agree to the <a href="https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use">Adthoughtsglobal Nova Terms of Use</a>. <h3>Usage Data</h3>We do not have access to your usage data.</p>`);
+				await say(`<h2>Terms of service and License</h2><p>By using Nova OS, you agree to the <a href="https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use">Adthoughtsglobal Nova Terms of Use</a>.`);
 
 				gid("startup").showModal();
 				stx.innerHTML = "Preparing memory"
@@ -41,13 +31,13 @@ getdb('trojencat', 'rom')
 								"fileName": "Welcome",
 								"uid": "sibq81",
 								"type": "txt",
-								"content": "Welcome to Nova OS! Thank you for using this OS, we believe we are making this Web OS the most efficient for your daily usage. If not, kindly reach us at https://adthoughtsglobal.github.io and connect via the available options, and we will respond to you! Enjoy!"
+								"content": "Welcome to Nova OS! Thank you for using this OS, we believe that we have made this 'software' as the most efficient for your daily usage. If not, kindly reach us https://adthoughtsglobal.github.io and connect via the available options, we will respond you back! Enjoy!"
 							},
 							{
 								"fileName": "Basic Help",
 								"uid": "y67njs",
 								"type": "txt",
-								"content": "Please visit the Nova wiki page on GitHub to learn how to use Nova if you seem to struggle using it. You can find it at: https://github.com/adthoughtsglobal/Nova-OS/wiki/. Why am I seeing this? This is one of the 2 demo text files that comes with Nova OS by default. You can delete them"
+								"content": "Please visit the Nova wiki page on GitHub to learn how to use Nova if you seem to struggle using it. You can find it at: https://github.com/adthoughtsglobal/Nova-OS/wiki/"
 							}
 						]
 					},
@@ -74,7 +64,7 @@ getdb('trojencat', 'rom')
 					let fetchupdatedataver = (await fetchupdatedata.json()).osver;
 
 					if (localupdatedataver !== fetchupdatedataver) {
-						if (await justConfirm("Update default apps?", "Your default apps are old. Update them to access new features and fixes.")) {
+						if (await justConfirm("Update default apps?", "Your default apps are old. Update them to access new features and fixes.", 1)) {
 							await installdefaultapps();
 						} else {
 							say("You can always update app on settings app/Preferances")
@@ -116,6 +106,8 @@ function updateTime() {
 updateTime();
 setInterval(updateTime, 1000);
 checkdmode()
+
+const jsonToDataURI = json => `data:application/json,${encodeURIComponent(JSON.stringify(json))}`;
 
 async function openn() {
 	gid("appsindeck").innerHTML = ""
@@ -409,6 +401,7 @@ function flwin(x) {
 }
 
 async function openapp(x, od) {
+	
 	dod()
 	if (gid('appdmod').open) {
 		gid('appdmod').close()
@@ -503,6 +496,7 @@ function openwindow(title, cont) {
 	windowHeader.addEventListener("mousedown", function(event) {
 		putwinontop('window' + winuid);
 		winds[title + winuid] = windowDiv.style.zIndex;
+		
 	});
 	
 	var flButton = document.createElement("span");
@@ -537,33 +531,66 @@ function openwindow(title, cont) {
 
 	windowContent.appendChild(iframe);
 
+	// Attach onload event handler to iframe
 	iframe.onload = function() {
+		// Check if content includes script tags
 		if (content.includes("<script")) {
+			// Extract script tags from content
 			var scriptTags = content.match(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi);
 
+			// Loop through each script tag
 			scriptTags.forEach(function(scriptTag) {
 				var script = iframe.contentDocument.createElement('script');
 
-				var srcMatch = scriptTag.match(/src="([^"]+)"/);
+				// Check if the script tag has a src attribute
+				var srcMatch = scriptTag.match(/script src="([^"]+)"/);
 				if (srcMatch) {
+					// If src attribute exists, set src attribute of script element
 					var src = srcMatch[1];
-					script.src = src;
+					console.log("src : " + src)
+
+					// Fetch the script content
+					fetch(src)
+					.then(response => response.text())
+					.then(scriptContent => {
+
+						// Set the script content
+						script.innerHTML = scriptContent
+						script.onload = function() {
+							// Execute greenflag function after script is loaded
+							iframe.contentWindow.greenflag().catch(error => {
+										console.error('Error loading script:', error);
+									});
+						};
+						
+					})
+					.catch(error => {
+						console.error('Error loading script:', error);
+					});
 				} else {
+					// If src attribute doesn't exist, extract script content and set innerHTML of script element
 					var scriptContent = scriptTag.replace(/<script\b[^>]*>([\s\S]*?)<\/script>/i, "$1");
 					script.innerHTML = scriptContent;
+					// Attach onload event listener to handle script loading completion
+					
 				}
 
-				iframe.contentDocument.head.appendChild(script);
+				// Append script element to iframe's head
+				iframe.contentDocument.body.appendChild(script);
+				nowappdo = iframe.contentDocument
 			});
-
-			var contentWithoutScripts = content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
-
-			iframe.contentDocument.body.innerHTML = contentWithoutScripts;
-			
-			iframe.contentWindow.greenflag();
-
 		}
+
+		// Remove script tags from content
+		var contentWithoutScripts = content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+
+		// Set the innerHTML of iframe's body with content without scripts
+		iframe.contentDocument.body.innerHTML = contentWithoutScripts;
+
+		// Call greenflag function in iframe's window context
+		iframe.contentWindow.greenflag();
 	};
+
 
 
 	// Append the header and content to the window
@@ -680,7 +707,7 @@ async function createFile(folderName, fileName, type, content, metadata) {
 					type: type
 				};
 				await updateFile("Apps", appdataquacks.id, newData);
-				return
+				return;
 			}
 		}
 		// Check if the folder exists
@@ -703,9 +730,8 @@ async function createFile(folderName, fileName, type, content, metadata) {
 		} else {
 			console.log("Creating a folder anyway...");
 			await createFolder(folderName);
-			await createFile(folderName, fileName, type, content);
-			dod();
-			return;
+			// Recursively call createFile after creating the folder
+			await createFile(folderName, fileName, type, content, metadata);
 		}
 	} catch (error) {
 		console.error("Error fetching data:", error);
@@ -1007,7 +1033,20 @@ async function remFilesByFolder(folderName) {
 	}
 }
 
-
+var defAppsList = [
+	"camera",
+	"clock",
+	"files",
+	"media",
+	"settings",
+	"store",
+	"text",
+	"studio",
+	"gallery",
+	"wiki",
+	"browser",
+	"calculator"
+];
 
 async function initialiseOS() {
 	let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
