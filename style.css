@@ -7,7 +7,8 @@
 
 /* Track */
 ::-webkit-scrollbar-track {
-	background: transparent;
+	background: #818181;
+	border-radius: 5px;
 }
 
 /* Handle */
@@ -77,7 +78,7 @@ nav .flodiv {
 
 nav [navobj] {
 	padding: 1px;
-	margin: 1px;
+	margin: 3px;
 	border-radius: 5px;
 	background-color: #c4c4c429;
 	display: flex;
@@ -618,7 +619,7 @@ nav info {
 	background: #5d5d5d;
 	color: white;
 	border-radius: 7px;
-	box-shadow: 0px 3px 5px 0px black;
+	box-shadow: 0px 3px 5px 0px #0000002f;
 	overflow: hidden;
 	border: 1px solid #858585;
 	animation: pop3 .2s ease-out;
@@ -690,14 +691,57 @@ nav info {
 	position: absolute;
 	margin-bottom: 61px;
 	border: 0;
-	background: #292929a1;
-	backdrop-filter: blur(15px);
+	background: #1f1f1f;
 	padding: 10px;
 	border-radius: 15px;
 	width: 100vw;
 	height: calc(100vh - 90px);
 	transition: .3s;
 	color: white;
+	animation: pop .2s;
+}
+
+.dashhmm {
+	display: flex;
+	flex-direction: row;
+	height: 100%;
+}
+
+#dashboard .sideleft {
+	width: 0;
+	flex-grow: 4;
+	background: #2f2f2f;
+	height: calc(100% - 10px);
+	border-radius: 5px;
+	padding: 5px;
+	display: flex;
+	margin-right: 5px;
+	flex-direction: column;
+	justify-content: flex-start;
+}
+
+#dashboard .sideright {
+	width: 0;
+	flex-grow: 5;
+	background: #2f2f2f;
+	height: calc(100% - 10px);
+	border-radius: 5px;
+	padding: 5px;
+	display: inline-flex;
+	flex-direction: column;
+}
+
+#dashboard .sideright .rightsidesmadivs {
+	flex-grow: 1;
+	background: #212121;
+	margin-bottom: 5px;
+	border-radius: 5px;
+}
+
+#dashboard .sideright .rightsidesmadivs .bro div {
+	flex-grow: 1;
+	background: #181818;
+	margin: 2px;
 }
 
 #dashboard button {
@@ -720,10 +764,11 @@ nav info {
 
 .notifpan {
 	width: calc(100% - 20px);
-	background: #353535;
+	background: #1a1a1a;
 	border-radius: 10px;
 	color: #cdcdcd;
 	padding: 10px;
+	margin-bottom: 5px;
 }
 
 .notifpan b {
@@ -741,12 +786,15 @@ nav info {
 
 #dashnots {
 	margin-bottom: 10px;
-	max-height: 50vh;
+	height: 50%;
+	overflow: hidden;
+	overflow-y: scroll;
 }
 
 #quicsets {
 	position: absolute;
-	bottom: 10px;
+	bottom: 17px;
+	width: calc(100% - 17px);
 }
 
 .tooltip {
@@ -984,7 +1032,6 @@ logincard {
 	padding: 6px 7px;
 	border-radius: 6px;
 	cursor: pointer;
-	transform: translateY(2px);
 }
 
 .strtsearcont button span {
@@ -999,8 +1046,9 @@ logincard {
 	background: #1f1f1f;
 	transform: translate(8px,-40px);
 	border-radius: 8px;
-	padding: 3px;
+	padding: 1px 3px;
 	box-shadow: 0 4px 5px #00000045;
+	height: 34px;
 }
 
 #bobthedropdown button {
