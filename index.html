@@ -7,7 +7,7 @@
 	<meta name="viewport" content="width=device-width">
 	<title>Nova OS</title>
 	<link href="style.css" rel="stylesheet" type="text/css" />
-	<script src="system32.js" defer></script>
+	<script src="SuperNova/system32.js" defer></script>
 	<!-- Include pako library (CDN) -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.0.3/pako.min.js"></script>
 	</script>
@@ -23,7 +23,7 @@
 	<div class="container2">
 		<div id="bgimage" class="layer44"></div>
 		<dialog id="edison">
-			<img src="N.webp" alt="Nova">
+			<img src="/N.webp" alt="Nova">
 			<div class="loader5345"></div>
 			<h1 class="gradient-text">Platinum</h1>
 		</dialog>
@@ -58,7 +58,8 @@
 	</script>
 
 	<div id="notification">
-		<span class="material-icons wincl" onclick="document.getElementById('notification').style.display = 'none';">close</span>
+		<span class="material-icons wincl"
+			onclick="document.getElementById('notification').style.display = 'none';">close</span>
 		<span id="notifappName">App Name</span>
 		<h2 id="notifTitle">Title</h2>
 		<p id="notifappDesc">Description</p>
@@ -159,7 +160,7 @@
 						</span>
 					</button>
 				</div>
-				<button onclick="togglepowermenu()">
+				<button onclick="togglepowermenu()" id="strtsearcontbtn">
 					<span class="material-icons">
 						power_settings_new
 					</span>
@@ -200,30 +201,50 @@
 		</ul>
 	</div>
 	<dialog id="dashboard">
-		<div id="dashnots">
-			<div class="notifpan">
-				<span class="notifpan-appic"></span>
-				<b>Welcome Back To Nova OS!</b>
-				<small>Welcome to Nova OS! Thank you for using this OS, we believe that this OS is built efficient for
-					your daily usage. Don't forget that this OS is still under development! Enjoy!</small>
-			</div>
-		</div>
-		<div id="quicsets" title="comming soon">
-			<biv class="tooltip">
-				<button id="qksts-int">
-					<span class="material-icons">
-						language
-					</span>
-				</button>
-				<span class="tooltiptext">Internet</span>
-			</biv>
+		<div class="dashhmm">
+			<div class="sideleft">
+				<div id="dashnots">
 
-			<biv class="tooltip">
-				<button id="qksts-int">
-					<span class="material-icons">delete</span>
-				</button>
-				<span class="tooltiptext">Bin</span>
-			</biv>
+
+					<div class="notifpan">
+						<span class="notifpan-appic"></span>
+						<b>Welcome Back To Nova OS!</b>
+						<small>Welcome to Nova OS! Thank you for using this OS, we believe that this OS is built
+							efficient
+							for
+							your daily usage. Don't forget that this OS is still under development! Enjoy!</small>
+					</div>
+				</div>
+				<div id="quicsets" title="comming soon">
+					<biv class="tooltip">
+						<button id="qksts-int">
+							<span class="material-icons">
+								language
+							</span>
+						</button>
+						<span class="tooltiptext">Internet</span>
+					</biv>
+
+					<biv class="tooltip">
+						<button id="qksts-int">
+							<span class="material-icons">delete</span>
+						</button>
+						<span class="tooltiptext">Bin</span>
+					</biv>
+				</div>
+			</div>
+			<div class="sideright">
+				<div class="rightsidesmadivs">
+					<div id="chatts">
+						
+					</div>
+				</div>
+				<div class="rightsidesmadivs bro">
+					<div></div>
+					<div></div>
+				</div>
+				<div class="rightsidesmadivs"></div>
+			</div>
 		</div>
 	</dialog>
 	<dialog id="loginmod">
@@ -252,7 +273,8 @@
 				<button onclick="setMessage()">Display a message</button>
 				<br>
 			</div>
-			<span class="material-icons" onclick="document.getElementById('sleepwindow').close(); clearInterval(countdown);document.getElementById('sleeptimer').textContent = '00:00';document.getElementById('sleepbtns').style.display = 'block';">close</span>
+			<span class="material-icons"
+				onclick="document.getElementById('sleepwindow').close(); clearInterval(countdown);document.getElementById('sleeptimer').textContent = '00:00';document.getElementById('sleepbtns').style.display = 'block';">close</span>
 		</div>
 	</dialog>
 </body>
