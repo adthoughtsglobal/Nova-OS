@@ -1251,6 +1251,7 @@ drive_file_move
 			console.log("File removed successfully");
 
 			document.getElementById("fileinfobn").innerHTML = "File was moved to " + dest;
+			setTimout(1000, refresh());
 		}
 
 
