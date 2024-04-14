@@ -114,8 +114,10 @@
 					</span>
 				</div>
 				<div>
+					<hitbx class="hitbox" title="time">
 					<span id="time-display">time</span><br>
 					<span id="date-display">date</span>
+						</hitbx>
 				</div>
 			</info>
 			<info navobj onclick="dashtoggle()">
@@ -243,7 +245,16 @@
 					<div></div>
 					<div></div>
 				</div>
-				<div class="rightsidesmadivs"></div>
+				<div class="rightsidesmadivs">
+					<div id="chatcont">
+					</div>
+					<div class="messagecont">
+						<input placeholder="Send a message..." autocomplete="off" id="lisainput">
+						<button onclick="sendmlisa()"><span class="material-symbols-rounded">
+						send
+						</span></button>
+					</div>
+				</div>
 			</div>
 		</div>
 	</dialog>
