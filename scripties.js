@@ -6,6 +6,8 @@ const flodivElements = document.querySelectorAll('[navobj]');
 const appdmodElement = document.getElementById("appdmod");
 const novaicElement = document.getElementById('novaic');
 const searchinpe = document.getElementById('strtsear');
+const searchnbtn = document.getElementById('strtsearcontbtn');
+
 
 // dark mode
 function checkdmode() {
@@ -36,6 +38,8 @@ function switchtheme(x, y) {
 		appdmodElement.style.background = "#00000091";
 		searchinpe.style.color = "white";
 		searchinpe.style.backgroundColor = "#2a2929";
+		searchnbtn.style.background = "rgba(0, 0, 0, 0.13)"
+		searchnbtn.style.color = "#878787"
 	} else {
 		// bright mode
 		flodivElements.forEach(element => {
@@ -57,7 +61,7 @@ function switchtheme(x, y) {
 			} else {
 				// simple bright
 				element.style.background = "#f2f9ff";
-				element.style.color = "#2f2f2f";
+				element.style.color = "rgb(91 91 91)";
 			}
 		});
 		
@@ -66,11 +70,15 @@ function switchtheme(x, y) {
 			appdmodElement.style.backdropFilter = "none";
 			appdmodElement.style.background = "#333333";
 			appdmodElement.style.color = "white";
+			searchnbtn.style.background = "rgb(42, 41, 41)"
+			searchnbtn.style.color = "#878787"
 		} else {
-			novaicElement.setAttribute('fill', '#2f2f2f');
+			novaicElement.setAttribute('fill', 'rgb(91 91 91)');
 			appdmodElement.style.backdropFilter = "none";
 			appdmodElement.style.background = "#f2f9ff";
-			appdmodElement.style.color = "#2f2f2f";
+			appdmodElement.style.color = "rgb(91 91 91)";
+			searchnbtn.style.background = "rgb(229, 229, 229)"
+			searchnbtn.style.color = "#878787"
 		}
 	} else {
 		// non-simple
@@ -80,7 +88,11 @@ function switchtheme(x, y) {
 		});
 		novaicElement.setAttribute('fill', 'white');
 		appdmodElement.style.backdropFilter = "blur(14px)";
-		searchinpe.style.color = "white";
-		searchinpe.style.backgroundColor = "#2a2929";
+		appdmodElement.style.color = "white";
+		searchinpe.style.color = "rgb(255 255 255)";
+		searchinpe.style.backgroundColor = "rgba(0, 0, 0, 0.13)";
+			searchnbtn.style.color = "rgb(255 255 255)";
+			searchnbtn.style.backgroundColor = "rgba(0, 0, 0, 0.13)";
+		
 	}
 }
