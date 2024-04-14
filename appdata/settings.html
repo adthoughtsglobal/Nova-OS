@@ -53,12 +53,13 @@
 		}
 
 		.tab {
-			float: left;
-			width: 30%;
+			flex-grow: 2;
 			height: calc(100% - 10px);
 			color: white;
 			overflow-y: scroll;
 			border-right: 1px solid #2f2f2f;
+			max-width: 150px;
+			
 		}
 
 		.tab h3 {
@@ -109,10 +110,10 @@
 
 		/* Style the tab content */
 		.tabcontent {
-			float: left;
 			padding: 0px 12px;
 			border: 1px solid #1f1f1f;
-			width: calc(70% - 5px);
+			width: 0;
+			flex-grow: 3;
 			padding-bottom: 30vh;
 			background-color: #171717;
 			border-left: none;
@@ -134,8 +135,10 @@
 
 		container {
 			height: 100%;
-			display: block;
+			display: flex;
 			padding: 5px;
+			flex-direction: row;
+			flex-wrap: nowrap;
 		}
 
 		td {
@@ -183,12 +186,13 @@
 			transform: translate(3px, 3px);
 		}
 
-		#battery h1 {
-			display: block;
-			margin-top: 10vh;
-			font-size: 30vh;
-			text-align: center;
-			margin-bottom: 0px;
+		#battery #batperdisp {
+			font-size: 10vw;
+			display: inline-block;
+			width: fit-content;
+			margin: 0;
+			
+			overflow: hidden;
 		}
 
 		small {
@@ -505,6 +509,7 @@
 			border: 1px solid #434343;
 			box-shadow: 0 3px 5px #0C0C0C;
 			animation: drop .2s ease-out;
+			max-width: 500px;
 		}
 	</style>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -524,7 +529,7 @@
 				Performance</button>
 			<button class="tablinks" onclick="openCity(event, 'tbar')"><i class="material-icons">task</i>
 				Taskbar</button>
-			<button class="tablinks" onclick="openCity(event, 'exp'); defs();  "><i class="material-icons">monitor</i>
+			<button class="tablinks" onclick="openCity(event, 'exp'); defs(); gwall() "><i class="material-icons">monitor</i>
 				Display</button>
 			<button class="tablinks" onclick="openCity(event, 'defaults'); defs5(); defs2(); defs3()"><i
 					class="material-icons">settings</i> Preferances</button>
@@ -535,8 +540,9 @@
 
 		<div id="perform" class="tabcontent">
 			<h1>Performance</h1>
-			<h1 id="fpsprof">0</h1><button class="fpssidebtn">FPS</button>
+			<h1 id="fpsprof">0</h1>
 			<br>
+			<canvas id="fpsCanvas" width="400" height="200"></canvas>
 			<small>
 				<h3>What is FPS?</h3>
 				<p>Frames Per Second (FPS) is a measure of how many times your device updates the display per second.
@@ -547,39 +553,69 @@
 					charging, as this can impact performance.</p>
 			</small>
 			<style>
+				#fpscanvas {
+					width: 100%;
+					height: 100px;
+					margin-bottom: 15px;
+					background: #101010;
+					padding: 5px;
+					border-radius: 5px;
+				}
 				#fpsprof {
 					font-size: 10vw;
 					display: inline-block;
 					width: fit-content;
 					margin: 0;
-					margin-left: 1rem;
-					width: 15vw;
-					overflow: hidden;
+					
 				}
 
-				.fpssidebtn {
-					padding: 7px 10px;
-					font-size: 13px;
-					border-radius: 20px;
-					background-color: #384a57;
-					display: inline-block;
-					border: 1px solid #55879d;
-					margin-left: 10px;
-					transform: translate(5px, -31px);
+				#fpsprof::after {
+						content: 'FPS';
+						padding: 7px 10px;
+						font-size: 13px;
+						border-radius: 20px;
+						background-color: #384a57;
+						display: inline-block;
+						border: 1px solid #55879d;
+						margin-left: 10px;
+						transform: translate(5px, -24px);
 				}
 			</style>
 			<script>
+				var running;
+
 				function updateFPS() {
+					var canvas = document.getElementById('fpsCanvas');
+					var ctx = canvas.getContext('2d');
+
 					var startTime = Date.now();
 					var frameCount = 0;
+					var fpsValues = [];
 
 					function calculateFPS() {
 						var elapsedTime = Date.now() - startTime;
 						var fps = Math.round((frameCount * 1000) / elapsedTime);
+						fpsValues.push(fps);
 
+						// Clear canvas
+						ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+						// Draw FPS graph
+						ctx.beginPath();
+						ctx.moveTo(0, canvas.height);
+						var stepX = canvas.width / fpsValues.length;
+						var maxY = Math.max(...fpsValues);
+						var stepY = canvas.height / (maxY + 10); // Add 10 for padding
+						fpsValues.forEach(function (fps, index) {
+							var x = index * stepX;
+							var y = canvas.height - fps * stepY;
+							ctx.lineTo(x, y);
+						});
+						ctx.strokeStyle = 'dodgerblue';
+						ctx.lineWidth = 3;
+						ctx.stroke();
 						document.getElementById('fpsprof').innerText = fps;
 
-						// Reset the frame count and start time for the next interval
 						frameCount = 0;
 						startTime = Date.now();
 					}
@@ -589,11 +625,9 @@
 						requestAnimationFrame(render);
 					}
 
-					// Initial call to render function
 					render();
 
-					// Update FPS every 0.5 seconds
-					setInterval(calculateFPS, 500);
+					setInterval(calculateFPS, 1000);
 				}
 			</script>
 		</div>
@@ -666,7 +700,7 @@
 		</div>
 
 		<div id="defaults" class="tabcontent">
-			<h1>Preferences</h1>
+			<h1>Preferances</h1>
 			<segr>
 				<div setting>
 					<div class="checkbox-wrapper-51">
@@ -742,6 +776,8 @@
 					}
 
 					function defs5() {
+						console.log("defs5 loaded");
+						
 						// focus mode
 						document.getElementById("cbx-65").addEventListener("change", function () {
 							let newValue2 = document.getElementById("cbx-65").checked;
@@ -768,12 +804,12 @@
 						}
 
 						// save cam images as
-
+						console.log("CamImgFormat loaded " + JSON.parse(localStorage.getItem("qsets")).CamImgFormat)
 						let selinp;
 						selinp = document.getElementById("scapimas");
-						if (JSON.parse(localStorage.getItem("qsets")).svcpimas) {
-							console.log("what: " + JSON.parse(localStorage.getItem("qsets")).svcpimas)
-							selinp.value = JSON.parse(localStorage.getItem("qsets")).svcpimas;
+						if (JSON.parse(localStorage.getItem("qsets")).CamImgFormat) {
+							console.log("what3: " + JSON.parse(localStorage.getItem("qsets")).CamImgFormat)
+							selinp.value = JSON.parse(localStorage.getItem("qsets")).CamImgFormat;
 						}
 
 						document.getElementById("scapimas").addEventListener("change", function () {
@@ -808,24 +844,24 @@
 					}
 				</script>
 				<div class="inpbox">
-					<span>Default Text App Theme </span>
-					<select id="deftexappth">
-						<option>Bright</option>
-						<option>Dark</option>
+					<span>Time Format </span>
+					<select id="timefrmt">
+						<option>12 Hour</option>
+						<option>24 Hour</option>
 					</select>
 				</div>
 				<script>
 					function defs3() {
 						let selinp;
-						selinp = document.getElementById("deftexappth");
-						if (JSON.parse(localStorage.getItem("qsets")).deftexappth) {
-							console.log("what: " + JSON.parse(localStorage.getItem("qsets")).deftexappth)
-							selinp.value = JSON.parse(localStorage.getItem("qsets")).deftexappth;
+						selinp = document.getElementById("timefrmt");
+						if (JSON.parse(localStorage.getItem("qsets")).timefrmt) {
+							console.log("what: " + JSON.parse(localStorage.getItem("qsets")).timefrmt)
+							selinp.value = JSON.parse(localStorage.getItem("qsets")).timefrmt;
 						}
-						document.getElementById("deftexappth").addEventListener("change", function () {
-							let newValue = document.getElementById("deftexappth").value;
+						document.getElementById("timefrmt").addEventListener("change", function () {
+							let newValue = document.getElementById("timefrmt").value;
 							let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
-							qsets.deftexappth = newValue;
+							qsets.timefrmt = newValue;
 							localStorage.setItem("qsets", JSON.stringify(qsets));
 						});
 					}
@@ -859,7 +895,7 @@
 					<script>
 						async function dowserecp() {
 							var qsetsText = window.parent.localStorage.getItem('qsets');
-							await window.parent.createFile("Downloads", "settings", "txt", qsetsText);
+							await window.parent.createFile("Downloads", "settings", "application/json", jsonToDataURI(qsetsText));
 							window.parent.notify("File downloaded", "Open files app to view your file.", "Downloader")
 						}
 						
@@ -1013,6 +1049,7 @@
 		</div>
 
 		<div id="battery" class="tabcontent">
+			<h1>Battery</h1>
 			<h1 id="batperdisp">Here's lies battery %</h1>
 			<p id="batperrem"></p>
 			<small>Remarks may be innacurate or misleading.</small>
@@ -1043,7 +1080,13 @@
 				}
 
 				function getBatteryRemark(percentage) {
-					if (percentage < 20) {
+					if (percentage == 0) {
+						if (batchar) {
+							return "Critically low battery, seems like your device does not have a working battery."
+						} else {
+							return "Your battery feed is malfunctioning.";
+						}
+					} else if (percentage < 20) {
 						if (batchar) {
 							return "Your battery is still low, keep charging."
 						} else {
@@ -1072,15 +1115,14 @@
 		</div>
 		<div id="about" class="tabcontent">
 			<h2 style="margin-bottom: 3px;">Nova OS <span style="font-weight: normal;">Platinium</span></h2>
-			<p style="margin-top: 3px;">Version 1.55</p>
-			<div id="felix"></div>
+			<p style="margin-top: 3px;">Version 1.53</p>
 			<p>You are Using Nova OS Web. <br>Thank you for being in the Nova Ecosystem.</p>
 			<supportb>
 				<b>Join this adventure</b>
-				<p>With $10/month, get access to the newest app versions and also support us run this project and many
+				<p>Starting $5/month, get access to the newest app versions and also support us run this project and many
 					other perks:
 					<br>
-					<a href="https://www.patreon.com/adthoughtsglobal/membership">Membership</a> <a okay>Join
+					<a onclick="window.open('https://www.patreon.com/adthoughtsglobal/membership')">Membership</a> <a okay onclick="window.open('https://discord.gg/pGRscJ72D3')">Join
 						discord</a>
 				</p>
 			</supportb>
@@ -1092,7 +1134,7 @@
 						<td>Primary Developer</td>
 					</tr>
 					<tr>
-						<td><b>felix543</b></td>
+						<td><b>felix</b></td>
 						<td>Developer</td>
 					</tr>
 					<tr>
@@ -1306,6 +1348,59 @@
 					</p>
 				</div>
 			</segr>
+			<h1>Wallpaper</h1>
+			<segr>
+				<style>
+					#cwallimg {
+						display: block;
+						height: 120px;
+						object-fit: contain;
+						aspect-ratio: 9 / 6;
+						margin: 10px 0;
+						background: black;
+						border-radius: 5px;
+						box-shadow: 0 5px 10px black;
+					}
+				</style>
+				<script>
+					async function gwall() {
+						let x = await window.parent.getFileById(JSON.parse(localStorage.getItem("qsets")).wall);
+						x = window.parent.unshrinkbsf(x.content);
+
+						// Create a new HTML image element
+						var img = new Image();
+
+						// Set the image source
+						img.src = x;
+
+						// When the image is loaded
+						img.onload = function () {
+							// Create a canvas element
+							var canvas = document.createElement('canvas');
+							var ctx = canvas.getContext('2d');
+
+							// Set the canvas size to the original image dimensions
+							canvas.width = img.width;
+							canvas.height = img.height;
+
+							// Draw the image onto the canvas at original size
+							ctx.drawImage(img, 0, 0);
+
+							// Get the data URL of the canvas with reduced quality
+							var dataURL = canvas.toDataURL('image/jpeg', 0.1); // Adjust quality value as needed (0.1 is quite low)
+
+							// Set the src of the image element to the data URL
+							document.getElementById("cwallimg").src = dataURL;
+						};
+					}
+				</script>
+
+				<div setting>
+					<span>Current Wallpaper</span>
+					<img src="N.webp" id="cwallimg">
+				</div>
+
+			</segr>
 			<script defer>
 				function openCity(evt, cityName) {
 					var i, tabcontent, tablinks;
@@ -1323,44 +1418,30 @@
 
 				function greenflag() {
 
-					var currentDate = new Date();
-
-					// Check if the current date is 05-03-2024
-					if (
-						currentDate.getDate() === 5 && // Day
-						currentDate.getMonth() === 2 && // Month (Note: JavaScript months are zero-based)
-						currentDate.getFullYear() === 2024 // Year
-					) {
-						// Create the message
-						var message = "<supportb>" +
-							"<b>Happy Birthday Felix!</b>" +
-							"<p>Felix is a developer at Nova, wish him in our " +
-							"<a href='https://discord.gg/pGRscJ72D3'>Wish Felix!</a></p>" +
-							"</supportb>";
-
-						// Add the message to the element with id "felix"
-						document.getElementById("felix").innerHTML = message;
-					} else {
-						console.log("It's not Felix's birthday yet!");
-					}
-
 					var usedMemoryPercentage;
 					document.getElementById("defaultOpen").click();
 
 					if ('storage' in navigator && 'estimate' in navigator.storage) {
-						navigator.storage.estimate().then(({usage, quota}) => {
+						navigator.storage.estimate().then(({ usage, quota }) => {
 
 							const elem = document.getElementById("myBar2");
 							const storemarkElem = document.getElementById("storemark2");
+
+							// Calculate used memory percentage
+							const usedMemoryPercentage = (usage / quota) * 100;
 							elem.style.width = usedMemoryPercentage + "%";
 
-							const totalMemoryMB = (quota / (1024 * 1024)).toFixed(2);
-							const usedMemoryMB = (usage / (1024 * 1024)).toFixed(2);
+							// Convert total and used memory to GB and TB
+							const totalMemoryGB = (quota / (1024 * 1024 * 1024)).toFixed(2);
+							const usedMemoryGB = (usage / (1024 * 1024 * 1024)).toFixed(2);
+							const totalMemoryTB = (quota / (1024 * 1024 * 1024 * 1024)).toFixed(2);
+							const usedMemoryTB = (usage / (1024 * 1024 * 1024 * 1024)).toFixed(2);
 
-							storemarkElem.textContent = `Used ${usedMemoryMB} MB of available ${totalMemoryMB} MB`;
-
+							// Display memory usage
+							storemarkElem.textContent = `Used ${usedMemoryGB} GB (${usedMemoryTB} TB) of available ${totalMemoryGB} GB (${totalMemoryTB} TB)`;
 
 						});
+					}
 					}
 				}
 
