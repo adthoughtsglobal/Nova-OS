@@ -1,5 +1,13 @@
 var batteryLevel, winds = {}, rp, flwint = true, opentrigger, memory, nowapp, stx = gid("startuptx"), applogs = {}, fulsapp = false, nowappdo, appsHistory = [];
 
+// multi instance manager
+try {
+	var instances = localStorage.getItem("mil")
+	
+} catch (error) {
+	console.error(error)
+}
+
 // Check if the database 'trojencat' exists
 getdb('trojencat', 'rom')
 	.then(async (result) => {
@@ -84,24 +92,36 @@ getdb('trojencat', 'rom')
 		console.error('Error retrieving data from the database:', error);
 	});
 
-
+let timeFormat;
+var condition = true;
+try {
+	let qsets = localStorage.getItem("qsets")
+	if (localStorage.getItem("qsets")) {
+		condition = JSON.parse(qsets).timefrmt == '24 Hour' ? false : true;
+	}
+} catch (error) {
+	console.log("safe error: " + error)
+}
 
 function updateTime() {
 	const now = new Date();
-	const hours = now.getHours().toString().padStart(2, '0');
-	const minutes = now.getMinutes().toString().padStart(2, '0');
-	const seconds = now.getSeconds().toString().padStart(2, '0');
+	let hours = now.getHours();
+	
 
-	const timeString = `${hours}:${minutes}:${seconds}`;
-	gid('time-display').innerText = timeString;
+	if (condition) {
+		// 12-hour format
+		const ampm = hours >= 12 ? 'PM' : 'AM';
+		hours = (hours % 12) || 12;
+		timeFormat = `${hours}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')} ${ampm}`;
+	} else {
+		// 24-hour format
+		timeFormat = `${hours.toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+	}
 
-	const year = now.getFullYear();
-	const month = (now.getMonth() + 1).toString().padStart(2, '0');
-	const day = now.getDate().toString().padStart(2, '0');
+	const date = `${now.getDate().toString().padStart(2, '0')}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getFullYear()}`;
 
-	const dateString = `${day}-${month}-${year}`;
-	gid('date-display').innerText = dateString;
-
+	gid('time-display').innerText = timeFormat;
+	gid('date-display').innerText = date;
 }
 updateTime();
 setInterval(updateTime, 1000);
@@ -347,7 +367,15 @@ async function dod() {
 		});
 		closeElementedis()
 		let x = localStorage.getItem("qsets");
-		x = await getFileById(JSON.parse(x).wall);
+		try {
+			x = await getFileById(JSON.parse(x).wall);
+		} catch (error) {
+			console.error(error)
+			// reset wallpaper setting
+			let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
+			delete qsets.wall;
+			localStorage.setItem("qsets", JSON.stringify(qsets));
+		}
 
 		if (x) {
 			let unshrinkbsfX = unshrinkbsf(x.content);
@@ -400,6 +428,25 @@ function flwin(x) {
 
 }
 
+function getAppIcon(unshrunkContent) {
+	const tempElement = document.createElement('div');
+	tempElement.innerHTML = unshrunkContent;
+	const metaTags = tempElement.getElementsByTagName('meta');
+	let metaTagData = null;
+	Array.from(metaTags).forEach(tag => {
+		const tagName = tag.getAttribute('name');
+		const tagContent = tag.getAttribute('content');
+		if (tagName === 'nova-icon' && tagContent) {
+			metaTagData = tagContent;
+		}
+	});
+	if (typeof metaTagData === "string" && containsSmallSVGElement(metaTagData)) {
+		return metaTagData;
+	} else {
+		return null;
+	}
+}
+
 async function openapp(x, od) {
 	
 	dod()
@@ -424,7 +471,7 @@ async function openapp(x, od) {
 			}
 
 			// Assuming you have a predefined function openwindow
-			openwindow(x, y);
+			openwindow(x, y, getAppIcon(y));
 		} catch (error) {
 			console.error("Error fetching data:", error);
 		}
@@ -449,7 +496,7 @@ async function fetchData(url) {
 	}
 }
 var content
-function openwindow(title, cont) {
+function openwindow(title, cont, ic) {
 	content = cont
 	if (content == undefined) {
 		content = "<center><h1>Unavailable</h1>App Data cannot be read.</center>";
@@ -487,7 +534,8 @@ function openwindow(title, cont) {
 	var windowHeader = document.createElement("div");
 	windowHeader.id = "window" + winuid + "header"
 	windowHeader.classList += "windowheader";
-	windowHeader.textContent = toTitleCase(title);
+	windowHeader.innerHTML = ic != null ? ic : "";
+	windowHeader.innerHTML += toTitleCase(title)
 	windowHeader.setAttribute("title", title + winuid)
 	windowHeader.addEventListener("mouseup", function(event) {
 		checksnapping(windowDiv, event);
@@ -636,6 +684,17 @@ function openlaunchprotocol(x, y) {
 	}
 	localStorage.setItem("todo", JSON.stringify(x))
 	openapp(x.appname, 1)
+}
+
+function requestLocalFile() {
+	var requestID = genUID()
+	x = {
+		"appname": "files",
+		"type": "open",
+		"identifier": requestID
+	}
+	localStorage.setItem("todo", JSON.stringify(x))
+	openapp("files", 1)
 }
 
 function getMaxZIndex() {
@@ -887,7 +946,7 @@ function justConfirm(title, message, modal) {
 }
 
 
-function say(message) {
+function say(message, status) {
 	return new Promise((resolve) => {
 		const modal = document.createElement('dialog');
 		modal.classList.add('modal');
@@ -896,7 +955,18 @@ function say(message) {
 		modalContent.classList.add('modal-content');
 
 		const promptMessage = document.createElement('p');
-		promptMessage.innerHTML = message;
+		let ic = "warning"
+		if (status == "success") {
+			ic = "check_circle"
+		} else if (status == "warning") {
+			ic = "warning"
+		} else if (status == "failed") {
+			ic = "dangerous"
+		}
+
+		ic = `<span class="material-symbols-rounded">` + ic + `</span>`
+		
+		promptMessage.innerHTML = ic + message;
 		modalContent.appendChild(promptMessage);
 
 		const okButton = document.createElement('button');
@@ -969,9 +1039,8 @@ async function makewall(deid) {
 	let x = await getFileById(deid);
 	x = x.content
 	x = unshrinkbsf(x)
-	let y = {
-		"wall": deid
-	}
+	let y = localStorage.getItem("qsets")
+	y.wall = deid;
 	localStorage.setItem("qsets", JSON.stringify(y))
 	document.getElementById('bgimage').style.backgroundImage = `url("` + x + `")`;
 }
@@ -1160,6 +1229,7 @@ async function strtappse() {
 
 	// Get the input value
 	const searchValue = gid("strtsear").value.toLowerCase();
+	// search the folder 'Apps'
 	let arrayToSearch = await getFileNamesByFolder("Apps");
 
 	let elements = 0;
@@ -1267,6 +1337,8 @@ function hideMenu() {
 function rightClick(e) {
 	e.preventDefault();
 
+	console.log(e.target.closest('.hitbox'));
+
 	if (gid(
 		"contextMenu").style.display == "block")
 		hideMenu();
@@ -1324,8 +1396,10 @@ async function openfile(x, rt) {
 				openlaunchprotocol("text", { "lclfile": unid, "shrinkray": true });
 			} else if (mm.type.startsWith("text/html")) {
 				openlaunchprotocol("studio", { "lclfile": unid });
+			} else if (mm.type.startsWith("osl")) {
+				runAsOSL(mm.content)
 			} else {
-				openlaunchprotocol("text", { "lclfile": unid });
+				openlaunchprotocol("text", {"lclfile": unid});
 			}
 		}
 		refresh();
@@ -1532,4 +1606,93 @@ function notify(title, description, appname) {
 	} else {
 		console.error("One or more DOM elements not found.");
 	}
+}
+
+messageInChat("Hi, how can i help you?", "bot");
+
+function messageInChat(message, sender) {
+	const chatCont = document.getElementById("chatcont");
+	const messageDiv = document.createElement("div");
+
+	messageDiv.innerHTML = message;
+	messageDiv.classList.add("chmess");
+	if (sender === "user") {
+		messageDiv.classList.add("user");
+	}
+
+	const div = document.createElement("div");
+
+	div.classList.add("chmessdod");
+	div.appendChild(messageDiv);
+	chatCont.appendChild(div);
+
+	// Scroll to the bottom of the chatcont element
+	chatCont.scrollTop = chatCont.scrollHeight;
+}
+
+async function sendmlisa() {
+	
+  messageInChat(document.getElementById("lisainput").value, "user");
+	
+	let x = document.getElementById("lisainput").value.toLowerCase();
+
+	console.log(x);
+
+	if (x.startsWith("open")) {
+		console.log(x.substring(5, x.length));
+		
+    const searchValue = x.substring(5, x.length)
+
+      let arrayToSearch = await getFileNamesByFolder("Apps");
+		
+      let maxSimilarity = 0.5;
+      let appToOpen = null;
+
+      arrayToSearch.forEach(item => {
+        // Calculate similarity between item name and search value
+        const similarity = calculateSimilarity(item.name.toLowerCase(), searchValue);
+
+        // Update maxSimilarity and appToOpen if similarity is higher
+        if (similarity > maxSimilarity) {
+          maxSimilarity = similarity;
+          appToOpen = item;
+        }
+      });
+
+      // Open the app with the highest similarity (if found)
+      if (appToOpen) {
+        openapp(appToOpen.name, appToOpen.id);
+		  if (appToOpen.name == x.substring(5, x.length)) {
+			  messageInChat("I opened " + appToOpen.name, "bot");
+		  } else {
+		  messageInChat("I opened " + appToOpen.name + " because it was the most similar to " + x.substring(5, x.length) , "bot");
+		  }
+      } else {
+		  messageInChat("I opened " + x.substring(5, x.length), "bot");
+	  }
+		
+	} else {
+		messageInChat("I dunno what that is :(", "bot");
+	}
+	document.getElementById("lisainput").value = "";
+	
+}
+
+gid("lisainput").addEventListener("keydown", async function(event) {
+	if (event.key === "Enter") {
+		sendmlisa()
+	}
+});
+
+function runAsOSL(content) {
+	const cont = `<iframe class="oslframe" src="https://origin.mistium.com/Versions/originv4.9.2.html?embed=` + content + `"></iframe>
+	<style>
+.oslframe {
+	width: 100%;
+	height: 100%;
+	border: none;
+}
+	</style>
+	`
+	openwindow("Nova OSL Runner", cont)
 }
