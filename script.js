@@ -24,7 +24,7 @@ getdb('trojencat', 'rom')
           await createFile("System", "applications", "json", "currently nothing", "{}")
 				}
 			} else {
-				await say(`<h2>Terms of service and License</h2><p>By using Nova OS, you agree to the <a href="https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use">Adthoughtsglobal Nova Terms of Use</a>.`);
+				await say(`<h2>Terms of service and License</h2><p>By using Nova OS, you agree to the <a href="https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use">Adthoughtsglobal Nova Terms of Use</a>. <be><small>Your IP, personal data, or files are not shared or saved, We do not collect your personal information. <br> Read the terms clearly before use.</small>`);
 
 				gid("startup").showModal();
 				stx.innerHTML = "Preparing memory"
