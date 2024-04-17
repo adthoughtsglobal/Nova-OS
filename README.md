@@ -8,9 +8,8 @@ We are creating this for everyone, confident that no one will ever need to 'lear
 ## Introducing Nova OS
 ![image](https://github.com/adthoughtsglobal/Nova-OS/assets/123654929/4d4a994e-2704-441e-904c-d513b7eaec48)
 
-
-
 Nova is a web-based operating system that has an App Ecosystem powered by a community of Creators like you.
+# [Use Nova here](https://github.com/adthoughtsglobal/Nova-OS)
 
 # Includes
 1. Operating system written in HTML, JS and CSS. (JSON is included in JS. JQuery has been used for 1 feature.)
