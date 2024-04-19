@@ -198,12 +198,14 @@
 			<div class="dropup-content">
 
 				<a onclick="savetx('app')">App</a>
+				<a onclick="savetx('wasm')">Assembly</a>
+				<a onclick="savetx('osl')">OSL</a>
 			</div>
 		</div>
 		<script>
 			function savetx(x) {
 				sbtn.innerHTML = '* Saving';
-				window.parent.createFile("Documents", "Untitled", "text/html", document.getElementById("thedisplay").value)
+				window.parent.createFile("Documents", "Untitled", x, document.getElementById("thedisplay").value)
 				sbtn.innerHTML = 'Save';
 			}
 		</script>
