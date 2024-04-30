@@ -59,7 +59,7 @@
 			overflow-y: scroll;
 			border-right: 1px solid #2f2f2f;
 			max-width: 150px;
-			
+
 		}
 
 		.tab h3 {
@@ -128,6 +128,7 @@
 			0% {
 				opacity: 0.1;
 			}
+
 			100% {
 				opacity: 1;
 			}
@@ -191,7 +192,6 @@
 			display: inline-block;
 			width: fit-content;
 			margin: 0;
-			
 			overflow: hidden;
 		}
 
@@ -201,6 +201,12 @@
 			background: #1a1a1a;
 			border-radius: 5px;
 			color: #a1a1a1;
+		}
+
+		small b {
+			margin-top: 5px;
+			display: block;
+			font-size: 11px;
 		}
 
 		.checkbox-wrapper-51 input[type="checkbox"] {
@@ -285,7 +291,7 @@
 			padding: 10px;
 			margin: 0;
 			border-bottom: 1px solid #373737;
-			
+
 		}
 
 		@keyframes drop {
@@ -293,6 +299,7 @@
 				transform: translateY(10px);
 				opacity: 0;
 			}
+
 			100% {
 				opacity: 1;
 			}
@@ -524,12 +531,15 @@
 				Battery</button>
 			<button class="tablinks" onclick="openCity(event, 'devices')"><i class="material-icons">devices</i>
 				Devices</button>
+			<button class="tablinks" onclick="openCity(event, 'activity'); taskmg()"><i class="material-icons">poll</i>
+			Activity</button>
 			<button class="tablinks" onclick="openCity(event, 'perform'); updateFPS()"><i
 					class="material-icons">speed</i>
 				Performance</button>
 			<button class="tablinks" onclick="openCity(event, 'tbar')"><i class="material-icons">task</i>
 				Taskbar</button>
-			<button class="tablinks" onclick="openCity(event, 'exp'); defs(); gwall() "><i class="material-icons">monitor</i>
+			<button class="tablinks" onclick="openCity(event, 'exp'); defs(); gwall() "><i
+					class="material-icons">monitor</i>
 				Display</button>
 			<button class="tablinks" onclick="openCity(event, 'defaults'); defs5(); defs2(); defs3()"><i
 					class="material-icons">settings</i> Preferances</button>
@@ -561,24 +571,25 @@
 					padding: 5px;
 					border-radius: 5px;
 				}
+
 				#fpsprof {
 					font-size: 10vw;
 					display: inline-block;
 					width: fit-content;
 					margin: 0;
-					
+
 				}
 
 				#fpsprof::after {
-						content: 'FPS';
-						padding: 7px 10px;
-						font-size: 13px;
-						border-radius: 20px;
-						background-color: #384a57;
-						display: inline-block;
-						border: 1px solid #55879d;
-						margin-left: 10px;
-						transform: translate(5px, -24px);
+					content: 'FPS';
+					padding: 7px 10px;
+					font-size: 13px;
+					border-radius: 20px;
+					background-color: #384a57;
+					display: inline-block;
+					border: 1px solid #55879d;
+					margin-left: 10px;
+					transform: translate(5px, -24px);
 				}
 			</style>
 			<script>
@@ -642,7 +653,7 @@
 					</div>
 					<small id="storemark2">Your system has crashed. Please Update.</small>
 				</div>
-				<div settingn>
+				<div settingn id="storagesuggs">
 					<p style="margin-top: 0px;">Ran out of storage?<br>Get more storage by removing some files</p>
 					<button>Open Files</button>
 				</div>
@@ -650,7 +661,7 @@
 			<segr>
 				<div settingn>
 					<p style="margin-top: 0px;">Be careful while interacting with extremely dangerous settings.</p>
-					
+
 					<script>
 						async function erdbs() {
 							if (!confirm("Erase Device? \nThis will remove all your data, including your files, folders, apps, permissions, cache and everything.\n\nWould you like to Clear your OS?")) {
@@ -661,7 +672,7 @@
 							window.parent.localStorage.removeItem('sets');
 							window.parent.localStorage.removeItem('updver');
 							window.parent.localStorage.removeItem('qsets');
-						
+
 							let indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
 							let dbName = 'trojencat';
 							let storeName = 'store';
@@ -679,6 +690,8 @@
 
 								deleteRequest.onsuccess = function (event) {
 									console.log("Key 'rom' removed successfully");
+
+									localStorage.removeItem("qsets")
 									if (confirm("Reboot your OS?\nOS Cleared. Let us reboot the OS to prevent errors in future?")) {
 										window.parent.location.reload()
 									}
@@ -777,7 +790,7 @@
 
 					function defs5() {
 						console.log("defs5 loaded");
-						
+
 						// focus mode
 						document.getElementById("cbx-65").addEventListener("change", function () {
 							let newValue2 = document.getElementById("cbx-65").checked;
@@ -787,8 +800,12 @@
 							window.parent.dewallblur()
 						});
 
-						if (JSON.parse(localStorage.getItem("qsets")).focusMode) {
-							document.getElementById("cbx-65").checked = true;
+						try {
+							if (JSON.parse(localStorage.getItem("qsets")).focusMode) {
+								document.getElementById("cbx-65").checked = true;
+							}
+						} catch (error) {
+							console.error(error)
 						}
 
 						// window snapping
@@ -799,19 +816,26 @@
 							localStorage.setItem("qsets", JSON.stringify(qsets));
 						});
 
-						if (JSON.parse(localStorage.getItem("qsets")).wsnapping) {
-							document.getElementById("cbx-66").checked = true;
+						try {
+							if (JSON.parse(localStorage.getItem("qsets")).wsnapping) {
+								document.getElementById("cbx-66").checked = true;
+							}
+						} catch (error) {
+							console.error(error)
 						}
 
 						// save cam images as
 						console.log("CamImgFormat loaded " + JSON.parse(localStorage.getItem("qsets")).CamImgFormat)
 						let selinp;
 						selinp = document.getElementById("scapimas");
-						if (JSON.parse(localStorage.getItem("qsets")).CamImgFormat) {
-							console.log("what3: " + JSON.parse(localStorage.getItem("qsets")).CamImgFormat)
-							selinp.value = JSON.parse(localStorage.getItem("qsets")).CamImgFormat;
+						try {
+							if (JSON.parse(localStorage.getItem("qsets")).CamImgFormat) {
+								console.log("what3: " + JSON.parse(localStorage.getItem("qsets")).CamImgFormat)
+								selinp.value = JSON.parse(localStorage.getItem("qsets")).CamImgFormat;
+							}
+						} catch (error) {
+							console.error(error)
 						}
-
 						document.getElementById("scapimas").addEventListener("change", function () {
 							let newValue = document.getElementById("scapimas").value;
 							let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
@@ -831,9 +855,13 @@
 					function defs2() {
 						let selinp;
 						selinp = document.getElementById("defflvm");
-						if (JSON.parse(localStorage.getItem("qsets")).defflvm) {
-							console.log("what: " + JSON.parse(localStorage.getItem("qsets")).defflvm)
-							selinp.value = JSON.parse(localStorage.getItem("qsets")).defflvm;
+						try {
+							if (JSON.parse(localStorage.getItem("qsets")).defflvm) {
+								console.log("what: " + JSON.parse(localStorage.getItem("qsets")).defflvm)
+								selinp.value = JSON.parse(localStorage.getItem("qsets")).defflvm;
+							}
+						} catch (error) {
+							console.error(error)
 						}
 						document.getElementById("defflvm").addEventListener("change", function () {
 							let newValue = document.getElementById("defflvm").value;
@@ -898,7 +926,7 @@
 							await window.parent.createFile("Downloads", "settings", "application/json", jsonToDataURI(qsetsText));
 							window.parent.notify("File downloaded", "Open files app to view your file.", "Downloader")
 						}
-						
+
 						async function updefapps() {
 							document.getElementById("updefapplog").innerHTML = "Installing...";
 							try {
@@ -1082,7 +1110,7 @@
 				function getBatteryRemark(percentage) {
 					if (percentage == 0) {
 						if (batchar) {
-							return "Critically low battery, seems like your device does not have a working battery."
+							return "Your device does not have a working battery."
 						} else {
 							return "Your battery feed is malfunctioning.";
 						}
@@ -1104,25 +1132,27 @@
 						} else {
 							return "Your battery is in good condition. No need to worry.";
 						}
+					} else if (batchar) {
+						return "Overcharging your device is not reccomended. You may unplug the charger now."
+					} else if (batchar && percentage == 100) {
+						return "Your device works without a battery. Remember to constantly save your files, you may lose progress otherwise."
 					} else {
-						if (batchar) {
-							return "Overcharging your device is not reccomended. You may unplug the charger now."
-						} else {
-							return "Very high battery, keep it up.";
-						}
+						return "Very high battery, keep it up.";
 					}
 				}</script>
 		</div>
 		<div id="about" class="tabcontent">
 			<h2 style="margin-bottom: 3px;">Nova OS <span style="font-weight: normal;">Platinium</span></h2>
-			<p style="margin-top: 3px;">Version 1.53</p>
+			<p style="margin-top: 3px;">Version 1.57</p>
 			<p>You are Using Nova OS Web. <br>Thank you for being in the Nova Ecosystem.</p>
 			<supportb>
 				<b>Join this adventure</b>
-				<p>Starting $5/month, get access to the newest app versions and also support us run this project and many
+				<p>Starting $5/month, get access to the newest app versions and also support us run this project and
+					many
 					other perks:
 					<br>
-					<a onclick="window.open('https://www.patreon.com/adthoughtsglobal/membership')">Membership</a> <a okay onclick="window.open('https://discord.gg/pGRscJ72D3')">Join
+					<a onclick="window.open('https://www.patreon.com/adthoughtsglobal/membership')">Membership</a> <a
+						okay onclick="window.open('https://discord.gg/pGRscJ72D3')">Join
 						discord</a>
 				</p>
 			</supportb>
@@ -1149,6 +1179,105 @@
 				Credits to all those who we didn't mention here.
 			</small>
 			<br>
+		</div>
+		<div id="activity" class="tabcontent">
+			<h1>Activity</h1>
+			<style>
+				.task {
+					padding: 10px;
+					background: #2b2b2b;
+					border-radius: 5px;
+					margin: 5px 0;
+				}
+
+				.task .stpicn {
+					float: right;
+					font-size: 13px;
+					transform: translateY(1px);
+					cursor: pointer;
+					padding: 2px;
+					background: #4d4d4d;
+					border-radius: 50%;
+					color: #ff7373;
+				}
+
+				.task small {
+					display: inline-block;
+					background-color: transparent;
+					opacity: 0.5;
+					margin: 0;
+					padding: 0;
+					padding-left: 5px;
+				}
+
+				@keyframes wooboo {
+					0% {
+						transform: scale(1);
+					}
+					50% {
+						transform: scale(1.1);
+						filter: brightness(120%);
+					}
+					100% {
+						transform: scale(1);
+					}
+				}
+
+				.wooboo-animation {
+					animation: wooboo .5s infinite;
+				}
+			</style>
+			<div id="taskslist">
+				<div class="task">
+					<span>Settings</span>
+					<span class="material-icons stpicn">
+					do_disturb
+					</span>
+				</div>
+			</div>
+			<script>
+				function taskmg() {
+					const winds = window.parent.winds;
+					const tasksList = document.getElementById("taskslist");
+					tasksList.innerHTML = "";
+
+					Object.keys(winds).forEach(key => {
+						const taskId = key.slice(-6); // Extract the last 6 characters as the task ID
+
+						const taskName = key.slice(0, -6); // Remove the last 6 characters from the key
+
+						const taskDiv = document.createElement("div");
+						taskDiv.classList.add("task");
+
+						const spanSettings = document.createElement("span");
+						spanSettings.textContent = taskName;
+
+						const smallId = document.createElement("small");
+						smallId.textContent = taskId;
+
+						const spanIcon = document.createElement("span");
+						spanIcon.classList.add("material-icons", "stpicn");
+						spanIcon.textContent = "do_disturb";
+						spanIcon.onclick = function () {
+							spanIcon.classList.add('wooboo-animation');
+							delete window.parent.winds[taskName + taskId];
+				window.parent.clwin("window"+taskId);
+							
+						}
+
+						taskDiv.appendChild(spanSettings);
+						taskDiv.appendChild(smallId);
+						
+						taskDiv.appendChild(spanIcon);
+
+						tasksList.appendChild(taskDiv);
+					});
+
+					// Call taskmg again after 3 seconds
+					setTimeout(taskmg, 3000);
+				}
+
+			</script>
 		</div>
 		<div id="devices" class="tabcontent">
 			<h1>Devices</h1>
@@ -1422,7 +1551,7 @@
 					document.getElementById("defaultOpen").click();
 
 					if ('storage' in navigator && 'estimate' in navigator.storage) {
-						navigator.storage.estimate().then(({ usage, quota }) => {
+						navigator.storage.estimate().then(({usage, quota}) => {
 
 							const elem = document.getElementById("myBar2");
 							const storemarkElem = document.getElementById("storemark2");
@@ -1431,15 +1560,18 @@
 							const usedMemoryPercentage = (usage / quota) * 100;
 							elem.style.width = usedMemoryPercentage + "%";
 
-							// Convert total and used memory to GB and TB
+							// Convert total and used memory to GB and MB
 							const totalMemoryGB = (quota / (1024 * 1024 * 1024)).toFixed(2);
 							const usedMemoryGB = (usage / (1024 * 1024 * 1024)).toFixed(2);
-							const totalMemoryTB = (quota / (1024 * 1024 * 1024 * 1024)).toFixed(2);
-							const usedMemoryTB = (usage / (1024 * 1024 * 1024 * 1024)).toFixed(2);
+							const totalMemoryMB = (quota / (1024 * 1024)).toFixed(2);
+							const usedMemoryMB = (usage / (1024 * 1024)).toFixed(2);
 
 							// Display memory usage
-							storemarkElem.textContent = `Used ${usedMemoryGB} GB (${usedMemoryTB} TB) of available ${totalMemoryGB} GB (${totalMemoryTB} TB)`;
-
+							storemarkElem.textContent = `Used ${usedMemoryGB} GB (${usedMemoryMB} MB) of available ${totalMemoryGB} GB (${totalMemoryMB} MB)`;
+							let strgsugs = document.getElementById("storagesuggs");
+							if (usedMemoryPercentage < 20) {
+								strgsugs.innerHTML = `<small><b>You have a lot of storage left!</b><p>You can import files in files app or install apps from store to use it!</p></small>`
+							}
 						});
 					}
 				}

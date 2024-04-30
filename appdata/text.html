@@ -155,6 +155,52 @@
     <textarea id="thedisplay" spellcheck="true" onkeyup="sbtn.innerHTML = '* Save'"></textarea>
 
     <script>
+
+		function jsonFromDataURI(dataURI) {
+			// Split the Data URI into the MIME type and the data
+			const splitDataURI = dataURI.split(',');
+
+			// Ensure that the Data URI contains JSON data
+			if (splitDataURI.length !== 2 || splitDataURI[0].indexOf('application/json') === -1) {
+				throw new Error('Invalid Data URI. Expected a Data URI containing JSON data.');
+			}
+
+			// Extract the JSON data
+			const jsonData = splitDataURI[1];
+
+			// Decode the JSON data
+			const decodedData = decodeURIComponent(window.atob(jsonData));
+
+			// Parse the decoded JSON data into a JavaScript object
+			const jsonObject = JSON.parse(decodedData);
+
+			return jsonObject;
+		}
+
+		function formatJS(code) {
+			let formattedCode = '';
+
+			// Add indentation and line breaks
+			let level = 0;
+			for (let i = 0; i < code.length; i++) {
+				const char = code[i];
+				if (char === '{' || char === '[') {
+					level++;
+					formattedCode += char + '\n' + ' '.repeat(level * 4);
+				} else if (char === '}' || char === ']') {
+					level--;
+					formattedCode = formattedCode.trimEnd() + '\n' + ' '.repeat(level * 4) + char;
+				} else if (char === ',') {
+					formattedCode += char + '\n' + ' '.repeat(level * 4);
+				} else {
+					formattedCode += char;
+				}
+			}
+
+			return formattedCode;
+		}
+
+		
         async function greenflag() {
             var sbtn = document.getElementById("sbtn");
 			var disp = document.getElementById("thedisplay")
@@ -169,6 +215,10 @@
                     const theID = parsedTodo.data.lclfile;
                     defile = theID;
                     const file = await window.parent.getFileById(theID);
+
+					if (file.type == "application/json") {
+						file.content = formatJS(JSON.stringify(jsonFromDataURI(file.content)))
+					}
 
                     if (file && file.content) {
                         if (parsedTodo.data.shrinkray) {

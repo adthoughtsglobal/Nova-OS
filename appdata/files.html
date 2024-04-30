@@ -162,11 +162,12 @@
 		}
 
 		[flap-files] {
-			overflow: scroll;
+			overflow-y: scroll;
 			flex-grow: 8;
-			padding-bottom: 50px;
+			padding-bottom: 50px !important;
 			padding: 10px;
 			padding-top: 5px;
+			width: calc(100% - 28px);
 		}
 
 		.file {
@@ -191,6 +192,18 @@
 			margin: 5px;
 			transition: .3s;
 			padding: 1rem;
+			max-width: 100px;
+		}
+
+		.file[grid] .flfrname {
+			max-width: 66px;
+			text-overflow: ellipsis;
+			overflow: hidden;
+		}
+
+		.file[list] small {
+			width: auto;
+			transform: none;
 		}
 
 		@keyframes poprs {
@@ -468,6 +481,27 @@
 			border: none;
 		}
 
+		.dropbtn {
+			background-color: #2d2d2d;
+			color: white;
+			padding: 2px 10px;
+			margin-right: 10px;
+			font-size: 11px;
+			border: none;
+		}
+		
+		.notdropbtn {
+			background-color: #2d2d2d;
+			color: white;
+			font-size: 11px;
+			border: none;
+			padding: 5px;
+			transform: translate(-5px, 2px);
+		}
+		.notdropbtn span {
+			font-size: 11px !important;
+		}
+
 		/* The container <div> - needed to position the dropup content */
 		.dropup {
 			position: relative;
@@ -572,6 +606,12 @@
 			transform: translateY(-2px) scale(1.3);
 			cursor: pointer;
 		}
+
+		.im {
+				font-size: 10px !important;
+				margin-right: 5px;
+				transform: scale(1.2) translate(1px, 1px);
+		}
 	</style>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	<link rel="stylesheet"
@@ -630,7 +670,7 @@
 			opacity: 0.7;
 			margin-bottom: 13px;
 		">Import your files</span>
-			<small cv>Files won't leave your device.</small>
+			<small cv><span class="material-symbols-rounded im">lock</span>Files won't leave your device.</small>
 			<input type="file" id="filupin" /><br>
 			<button onclick="fupit()" id="fupibu">
 				Import This File
@@ -736,13 +776,19 @@
 					<div flap-fl-topnav><span id="pathdisp">
 							device://*
 						</span>
+						
 						<div class="nvbtns">
-							<button class="flarrbtn" onclick="changeview('list')">
+							<button class="flarrbtn" title="Sorting">
+								<span class="material-symbols-rounded">
+									sort
+								</span>
+							</button>
+							<button class="flarrbtn" onclick="changeview('list')" title="Change View to List">
 								<span class="material-symbols-rounded">
 									view_list
 								</span>
 							</button>
-							<button class="flarrbtn" onclick="changeview('grid')">
+							<button class="flarrbtn" onclick="changeview('grid')" title="Change View to Grid">
 								<span class="material-symbols-rounded">
 									grid_view
 								</span>
@@ -875,16 +921,25 @@
 	</dialog>
 	<script>
 		async function createit() {
-			let [fname, ftype, fmetadata, fcontent, fwhere] = [document.getElementById("makflname").value, document.getElementById("makfltyp").value, document.getElementById("makflmedat").value,
-				document.getElementById("makflcontent").value,
-													  document.getElementById("makflatw").value];
+			let fname = document.getElementById("makflname").value;
+			let ftype = document.getElementById("makfltyp").value;
+			let fmetadata = document.getElementById("makflmedat").value;
+			let fcontent = document.getElementById("makflcontent").value;
+			let fwhere = document.getElementById("makflatw").value;
+
+			if (fname.length === 0 || ftype.length === 0 || fmetadata.length === 0 || fcontent.length === 0 || fwhere.length === 0) {
+				window.parent.say("Complete all fields to proceed.", "failed")
+				return;
+			}
+
 			await window.parent.createFile(fwhere, fname, ftype, fcontent, fmetadata)
-			.then(function() {
-				document.getElementById('makefiledia').close();
-				window.parent.say("File Created <br><small>" + fname + " created at " + fwhere + '</small', "success");
-			});
-			
+				.then(function() {
+					document.getElementById('makefiledia').close();
+					window.parent.say("File <br><small>" + fname + " created at " + fwhere + '</small', "success");
+				});
 		}
+
+
 		var currentPath, nowfile, flmode = 'grid';
 
 		var memory;
@@ -909,6 +964,15 @@
 			fllist = document.getElementById("filelist");
 			fdlist = document.getElementById("folders");
 
+			try {
+				if (localStorage.getItem('qsets')) {
+					if (JSON.parse(localStorage.getItem('qsets')).defFileLayout) {
+						changeview(JSON.parse(localStorage.getItem('qsets')).defFileLayout)
+					}
+				}
+			} catch (error) {
+				console.error(error)
+			}
 
 			getdb('trojencat', 'rom')
 				.then((result) => {
@@ -938,8 +1002,12 @@
 
 		}
 
-		function Allowdrop(ev) {
+		function Allowdrop(ev, obj) {
 			ev.preventDefault();
+			obj.style.backgroundColor = "#414e59";
+			setTimeout(function () {
+				obj.style.backgroundColor = "#151515";
+			}, 500)
 		}
 
 		function dropfl(ev, dat) {
@@ -954,7 +1022,7 @@
 				memory.forEach(obj => {
 					let element = document.createElement('div');
 					element.classList.add("sdfld");
-					element.setAttribute("ondragover", "Allowdrop(event)")
+					element.setAttribute("ondragover", "Allowdrop(event, this)")
 					element.setAttribute("ondrop", "dropfl(event, '"+obj.folderName+"')")
 					element.innerHTML = '<span class="material-icons"> folder </span>' + obj.folderName;
 					element.setAttribute('onclick', "listFiles('" + obj.folderName + "', true)")
@@ -996,6 +1064,9 @@
 
 				// Display files in the folder
 				if (folder.content && folder.content.length > 0) {
+					// Sort files by file name
+					folder.content.sort((a, b) => a.fileName.localeCompare(b.fileName));
+
 					// Define a map to store day divs
 					const dayDivs = {};
 
@@ -1006,14 +1077,14 @@
 							fileElement.setAttribute(flmode, '');
 							fileElement.setAttribute("unid", file.uid);
 							fileElement.setAttribute("draggable", true);
-							
+
 							fileElement.setAttribute("onclick", "slfile(this);");
 							fileElement.setAttribute("ondragstart", "dragfl(event, this)");
 
 							fileElement.innerHTML = `<span>` + geticon(file.type) + `</span><span flname><span class='flfrname'> ${file.fileName}</span> <small>${file.type}</small></span>`;
 							fllist.appendChild(fileElement);
 						} catch (error) {
-							console.error("Error processing file:", error);
+							console.error("Safe Error processing file:", error);
 							console.log("This file caused error: " + file.name)
 							// error files
 							let fileElement = document.createElement('div');
@@ -1028,7 +1099,7 @@
 								try {
 									metadata = JSON.parse(file.metadata);
 								} catch (error) {
-									console.error("Error parsing metadata:", error);
+									console.error("Safe Error parsing metadata:", error);
 								}
 							}
 
@@ -1060,29 +1131,40 @@
 			} else {
 				if (document.getElementById("slfile")) {document.getElementById("slfile").id = null;}
 				nowfile = x;
+				var fileSize
 				x.id = "slfile";
 				let fileData
 				try {
 					fileData = await window.parent.getFileById(x.getAttribute("unid"));
 
 					if (fileData && fileData.content) {
-						var fileSize = fileData.content.length;
+						fileSize = fileData.content.length;
 
 					} else {
-						console.error("Error: Unable to retrieve file content.");
+						console.error("Safe Error: Unable to retrieve file content.");
 					}
 				} catch (error) {
-					console.error("Error:", error);
+					console.error("Safe Error:", error);
 				}
 
-				var units = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
 
-				var unitIndex = 0;
-
-				while (fileSize > 1024 && unitIndex < units.length - 1) {
-					fileSize /= 1024;
-					unitIndex++;
+				if (fileSize !== 0) {
+					try {
+						var units = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+						var unitIndex = 0;
+	
+						while (fileSize > 1024 && unitIndex < units.length - 1) {
+							fileSize /= 1024;
+							unitIndex++;
+						}
+	
+						fileSize = fileSize.toFixed(2);
+					} catch (error) {
+						console.error(error)
+						fileSize = 0
+					}
 				}
+				
 
 				if (sessiontype == "opener") {
 					return;
@@ -1114,9 +1196,9 @@ save_as
 drive_file_move
 </span> Move</a>
 								  </div>
-								</div>`+ fileSize.toFixed(2) + ' ' + units[unitIndex];
+								</div><button class="notdropbtn"><span class="material-symbols-rounded">info</span></button> `+ fileSize + ' ' + units[unitIndex]
 				} catch (error) {
-					document.getElementById("fileinfobn").innerHTML += "Error 0006";
+					document.getElementById("fileinfobn").innerHTML += "Safe Error 0006";
 					window.parent.say(`<h1>File Error</h1><p>Nova files couldn't process that file</p><small>(Error 0006)</small>`, "warning")
 					refresh()
 // i did sjdfhsdkfhsdfj file type 
@@ -1158,7 +1240,7 @@ drive_file_move
 				// If the loop completes without finding the file
 				console.error(`File with ID "${ID}" not found.`);
 			} catch (error) {
-				console.error("Error fetching or updating data:", error);
+				console.error("Safe Error fetching or updating data:", error);
 			}
 		}
 
@@ -1170,13 +1252,13 @@ drive_file_move
 			try {
 				let unid = x.getAttribute("unid");
 				if (!unid) {
-					console.error("Error: 'unid' attribute not found");
+					console.error("Safe Error: 'unid' attribute not found");
 					return;
 				}
 
 				let mm = await window.parent.getFileById(unid);
 				if (!mm) {
-					console.error("Error: File not found");
+					console.error("Safe Error: File not found");
 					return;
 				}
 
@@ -1213,7 +1295,7 @@ drive_file_move
 				}
 				refresh();
 			} catch (error) {
-				console.error(":( Error:", error);
+				console.error(":( Safe Error:", error);
 			}
 		}
 
@@ -1230,10 +1312,8 @@ drive_file_move
 
 				refresh()
 			} catch (error) {
-				// Handle any errors that may occur during the renaming process
-				console.error("Error renaming file:", error);
-				// Optionally, provide feedback to the user about the error
-				document.getElementById("fileinfobn").innerHTML = "Failed to rename file.";
+				console.error("Safe Error renaming file:", error);
+			document.getElementById("fileinfobn").innerHTML = "Failed to rename file.";
 			}
 		}
 
@@ -1251,7 +1331,6 @@ drive_file_move
 			console.log("File removed successfully");
 
 			document.getElementById("fileinfobn").innerHTML = "File was moved to " + dest;
-			setTimout(1000, refresh());
 		}
 
 
@@ -1371,6 +1450,8 @@ drive_file_move
 				i = "graphic_eq"
 			} else if (x.startsWith("json")) {
 				i = "data_object"
+			} else if (x.startsWith("lnk")) {
+				i = "reply"
 			} else {
 				i = "bug_report"
 			}

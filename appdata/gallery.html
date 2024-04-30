@@ -135,6 +135,15 @@
 		#cont b {
 			font-weight: normal;
 		}
+
+		nav {
+			display: block;
+			width: calc(100% - 20px);
+			position: absolute;
+			top: 0px;
+			padding: 5px 10px;
+			background: #101010;
+		}
 	</style>
 	<link rel="stylesheet"
 		href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
@@ -219,19 +228,26 @@
 						const canvas = document.createElement("canvas");
 						const ctx = canvas.getContext("2d");
 
-						// Set canvas dimensions to desired compressed size
-						canvas.width = img.width / 8; // Adjust this value as needed for desired compression
-						canvas.height = img.height / 8; // Adjust this value as needed for desired compression
+						// Set canvas dimensions to match the original image
+						canvas.width = img.width;
+						canvas.height = img.height;
 
-						// Draw the image onto the canvas with the desired dimensions
-						ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+						// Draw the image onto the canvas
+						ctx.drawImage(img, 0, 0);
 
-						// Convert canvas content back to base64
-						const compressedContent = canvas.toDataURL("image/png");
+						// Convert canvas content to Blob with reduced quality
+						const quality = 0.5; // Adjust quality (0.0 - 1.0) as needed
+						canvas.toBlob((blob) => {
+							const reader = new FileReader();
+							reader.readAsDataURL(blob);
+							reader.onloadend = () => {
+								const compressedContent = reader.result;
 
-						// Create an img element to display the compressed image
-						const compressedImg = document.createElement("img");
-						compressedImg.src = compressedContent;
+								// Create an img element to display the compressed image
+								const compressedImg = document.createElement("img");
+								compressedImg.src = compressedContent;
+
+								
 
 						compressedImg.onclick = async function () {
 							const image = document.getElementById("bigshowcase");
@@ -247,6 +263,9 @@
 
 						// Append the compressed image to the dayDiv
 						dayDivs[dateIdentifier].appendChild(compressedImg);
+
+									};
+								}, "image/jpeg", quality);
 					}
 				}
 			} catch (error) {

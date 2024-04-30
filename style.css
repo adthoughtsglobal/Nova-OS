@@ -85,6 +85,8 @@ nav [navobj] {
 	justify-content: center;
 	align-items: center;
 	flex-direction: row;
+	height: 35px;
+	animation: pop .2s;
 }
 
 nav [navobj] div {
@@ -194,11 +196,11 @@ nav info {
 	box-shadow: 0px 4px 6px 0px #0000003b inset;
 	color: white;
 	margin: 2px;
-	transform: translate(2px, -2px);
 	cursor: pointer;
 	border-radius: 5px;
 	padding: 2px 2px 2px 3px;
 	font-size: 12px !important;
+	transform: scale(1.2) translate(2px, -2px);
 }
 
 .wincl:hover {
@@ -227,10 +229,10 @@ nav info {
 	bottom: 9% !important;
 	opacity: 1;
 	transform: scale(0.9) translateX(-4px);
-	transition: .2s;
 }
 
 .app-shortcut.tooltip:hover .tooltiptext {
+	transition: .2s;
 	transform: scale(1) translateX(-4px);
 }
 
@@ -299,6 +301,7 @@ nav info {
 	text-align: center;
 	padding: 1px 5px;
 	background: #1f1f1fa1;
+	max-width: 46px;
 }
 
 #installer {
@@ -381,17 +384,32 @@ nav info {
 	}
 }
 
-@media only screen and (max-height: 450px) {
-	#appdmod {
-		max-height: 100%;
-	}
-
-	
-}
-
 @media only screen and (max-width: 600px) {
 	#appdmod {
-		width: 90%;
+		width: 100%;
+		max-height: none;
+		height: calc(100vh - 86px);
+		padding: 22px;
+		bottom: -15px;
+		box-shadow: none;
+		border-radius: 0;
+	}
+
+	nav {
+		background-color: #313131;
+		bottom: 0;
+	}
+
+	nav [navobj] {
+		background-color: transparent;
+	}
+
+	#appsindeck {
+		height: calc(100vh - 13rem);
+		max-height: none !important;
+		justify-content: flex-start;
+		align-items: flex-start;
+		align-content: flex-start;
 	}
 
 	#dashboard {
@@ -480,6 +498,10 @@ nav info {
 	border-radius: 7px;
 	margin: 10px 4px;
 	width: 100%;
+}
+
+.modal .notbn {
+	background: transparent;
 }
 
 .modal a {
@@ -805,8 +827,12 @@ nav info {
 }
 
 .tooltip {
-  position: relative;
-  display: inline-block;
+  position: relative;   
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	flex-wrap: wrap;
+	align-content: center;
 }
 
 .tooltip .tooltiptext {
@@ -978,16 +1004,17 @@ nav info {
 	border: none;
 	backdrop-filter: blur(32px);
 	box-shadow: 0 0 55px black;
-	border-radius: 0;
 	color: white;
 	width: 50%;
-	height: 100%;
+	height: 70%;
 	padding: 21px;
-	margin-right: 0px;
+	margin: auto;
+	border-radius: 5px;
 }
 
 #loginmod::backdrop {
 	backdrop-filter: blur(3px);
+	background-color: transparent;
 }
 
 logincard {
@@ -1003,6 +1030,7 @@ logincard {
 	margin: 10px;
 	font-size: 1rem;
 	width: fit-content;
+	width: -moz-fit-content;
 	float: left;
 }
 
@@ -1065,6 +1093,8 @@ logincard {
 	padding: 6px 7px;
 	border-radius: 6px;
 	cursor: pointer;
+	display: inline-block;
+	transform: translateY(2px);
 }
 
 #bobthedropdown button:hover {
@@ -1240,6 +1270,7 @@ logincard {
 	border-radius: 10px;
 	display: block;
 	width: fit-content;
+	width: -moz-fit-content;
 	animation: lisamess .2s ease-out;
 }
 
@@ -1258,4 +1289,70 @@ logincard {
 	100% {
 		transform: none;
 	}
+}
+
+[zz21] {
+	padding: 3px;
+}
+
+.adock {
+	padding: 0;
+	margin: 3px 3px;
+	width: fit-content;
+	width: -moz-fit-content;
+}
+
+.adock .tooltiptext {
+	transform: translateY(-25px) scale(0.9) translateX(-4px) !important;
+}
+
+.adock svg {
+	width: 19px !important;
+	height: 19px !important;
+}
+
+dialog#terminal {
+	width: 100%;
+	height: 100%;
+	border: none;
+	background: black;
+	color: white;
+	padding: 20px;
+	
+	
+}
+
+#terminal .containerterm {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+#terminal input, #terminal textarea, #terminal button {
+	font-family: monospace;
+	background: #101010;
+	color: white;
+	font-size: 1rem;
+	padding: 1rem;
+	margin: 1px;
+	border: none;
+}
+
+#terminal *:hover {
+	filter: brightness(120%);
+}
+
+#terminput {
+	display: block;
+	flex-grow: 1;
+}
+
+#terminal .btnc {
+	flex-direction: row;
+	display: flex;
+}
+
+#termoutput {
+	display: block;
+	flex-grow: 1;
 }

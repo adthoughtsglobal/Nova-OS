@@ -5,7 +5,8 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Media Viewer</title>
-	<meta name="nova-icon" content="<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='98.86818' height='98.86818' viewBox='0,0,98.86818,98.86818'><g transform='translate(-190.56591,-130.56591)'><g data-paper-data='{&quot;isPaintingLayer&quot;:true}' fill-rule='nonzero' stroke-linecap='butt' stroke-linejoin='miter' stroke-miterlimit='10' stroke-dasharray='' stroke-dashoffset='0' style='mix-blend-mode: normal'><path d='M193.06591,180c0,-25.92098 21.01311,-46.93409 46.93409,-46.93409c25.92098,0 46.93409,21.01311 46.93409,46.93409c0,25.92098 -21.01311,46.93409 -46.93409,46.93409c-25.92098,0 -46.93409,-21.01311 -46.93409,-46.93409z' fill='#e7f4ff' stroke='#4f92c8' stroke-width='5'/><path d='M229.36872,160.64825c4.15023,1.93988 18.10692,8.46344 25.52527,11.93089c2.84482,1.32971 3.40205,3.30243 1.33456,5.00567c-6.30331,5.19279 -19.49818,16.06297 -23.01686,18.96173c-1.68819,1.39076 -3.72218,0.66723 -4.1395,-2.62914c-1.1217,-8.86034 -3.27126,-25.83983 -3.87019,-30.57075c-0.30418,-2.40273 1.88158,-3.76651 4.16672,-2.6984z' fill='#496787' stroke='none' stroke-width='0'/></g></g></svg>">
+	<meta name="nova-icon"
+		content="<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='98.86818' height='98.86818' viewBox='0,0,98.86818,98.86818'><g transform='translate(-190.56591,-130.56591)'><g data-paper-data='{&quot;isPaintingLayer&quot;:true}' fill-rule='nonzero' stroke-linecap='butt' stroke-linejoin='miter' stroke-miterlimit='10' stroke-dasharray='' stroke-dashoffset='0' style='mix-blend-mode: normal'><path d='M193.06591,180c0,-25.92098 21.01311,-46.93409 46.93409,-46.93409c25.92098,0 46.93409,21.01311 46.93409,46.93409c0,25.92098 -21.01311,46.93409 -46.93409,46.93409c-25.92098,0 -46.93409,-21.01311 -46.93409,-46.93409z' fill='#e7f4ff' stroke='#4f92c8' stroke-width='5'/><path d='M229.36872,160.64825c4.15023,1.93988 18.10692,8.46344 25.52527,11.93089c2.84482,1.32971 3.40205,3.30243 1.33456,5.00567c-6.30331,5.19279 -19.49818,16.06297 -23.01686,18.96173c-1.68819,1.39076 -3.72218,0.66723 -4.1395,-2.62914c-1.1217,-8.86034 -3.27126,-25.83983 -3.87019,-30.57075c-0.30418,-2.40273 1.88158,-3.76651 4.16672,-2.6984z' fill='#496787' stroke='none' stroke-width='0'/></g></g></svg>">
 	<style>
 		body {
 			justify-content: center;
@@ -78,7 +79,7 @@
 		var disp;
 		async function greenflag() {
 			var todo = localStorage.getItem("todo");
-			var disp = document.getElementById("displays")
+			disp = document.getElementById("displays"); // Fix variable scope
 			try {
 				const parsedTodo = JSON.parse(todo);
 
@@ -87,41 +88,110 @@
 					const file = await window.parent.getFileById(theID);
 
 					if (file && file.content) {
-						file.content = window.parent.unshrinkbsf(file.content)	
+						file.content = window.parent.unshrinkbsf(file.content);
 						const type = file.type || 'application/octet-stream';
 						const base64Content = file.content;
-						
+
 						if (file.type.startsWith("image")) {
-						disp.innerHTML = `<img id="thedisplay" alt="Nova" src="">`;
-						document.getElementById("thedisplay").src = `${base64Content}`;
+							disp.innerHTML = `<img id="thedisplay" alt="Nova" src="">`;
+							document.getElementById("thedisplay").src = `${base64Content}`;
 						} else if (file.type.startsWith("audio")) {
 							disp.innerHTML = `<audio controls>
-  <source src="" type="audio/mp3" id="thedisplay">
-  Your browser does not support the audio tag.
-</audio>
-`;
+									<source src="" type="audio/mp3" id="thedisplay">
+									Your browser does not support the audio tag.
+								</audio>`;
 							document.getElementById("thedisplay").src = `${base64Content}`;
 						} else if (file.type.startsWith("video")) {
-							disp.innerHTML = `<video controls width="400" height="300">
-								<source src="" type="video/mp4" id="thedisplay">
-								Your browser does not support the video tag.
-							</video>`;
-							document.getElementById("thedisplay").src = `${base64Content}`;
-						}
+							disp.innerHTML = `<video controls width="400" height="300" id="thedisplay">
+												<source src="" type="video/mp4" id="thesource">
+												Your browser does not support the video tag.
+											  </video>`;
 
-						document.getElementById("tils").innerHTML = file.type+ ": " +file.fileName
-						localStorage.setItem("todo", "");
-					} else {
-						console.error("Error: Unable to retrieve file content.");
+							// Convert base64 content to Blob
+							var blob = dataURItoBlob(base64Content);
+							var videoFile = new File([blob], "video.mp4", {type: "video/mp4"});
+
+							// Create a video element to get the duration
+							var videoElement = document.createElement('video');
+							videoElement.src = URL.createObjectURL(videoFile);
+							videoElement.addEventListener('loadedmetadata', async function () {
+								console.log("Video metadata loaded");
+								var duration = videoElement.duration;
+								var chunkSize = 5; // Seconds
+								var currentTime = 0;
+								var videoChunks = [];
+
+								// Slice the video into chunks
+								while (currentTime < duration) {
+									var chunkEnd = Math.min(currentTime + chunkSize, duration);
+									var chunkBlob = await sliceVideo(currentTime, chunkEnd, videoFile);
+									var chunkUrl = URL.createObjectURL(chunkBlob);
+									videoChunks.push(chunkUrl);
+									console.log("Chunk created:", chunkUrl); // Log the created chunk URL
+									currentTime = chunkEnd;
+								}
+
+								// Display first chunk of the video
+								if (videoChunks.length > 0) {
+									console.log("Displaying first chunk:", videoChunks[0]); // Log the URL of the first chunk
+									document.getElementById("thesource").src = videoChunks.shift();
+									document.getElementById("thedisplay").load();
+									document.getElementById("thedisplay").play();
+								}
+
+								// Play next chunk when the current one ends
+								document.getElementById("thedisplay").addEventListener('ended', function () {
+									if (videoChunks.length > 0) {
+										var nextChunkUrl = videoChunks.shift();
+										console.log("Playing next chunk:", nextChunkUrl); // Log the URL of the next chunk to play
+										document.getElementById("thesource").src = nextChunkUrl;
+										document.getElementById("thedisplay").load();
+										document.getElementById("thedisplay").play();
+										// Revoke the previous URL to avoid memory leaks
+										URL.revokeObjectURL(chunkUrl); // Revoking the previous Blob URL
+									}
+								});
+
+							});
+						} else {
+							document.getElementById("thedisplay").alt = "Please open the files app to read a file from your system memory.";
+						}
 					}
-				} else {
-					document.getElementById("thedisplay").alt = "Please open the files app to read a file from your system memory.";
 				}
 			} catch (error) {
 				console.error("Error parsing todo JSON:", error);
 			}
-
 		}
+
+		function dataURItoBlob(dataURI) {
+			var byteString = atob(dataURI.split(',')[1]);
+			var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+			var ab = new ArrayBuffer(byteString.length);
+			var ia = new Uint8Array(ab);
+			for (var i = 0; i < byteString.length; i++) {
+				ia[i] = byteString.charCodeAt(i);
+			}
+			return new Blob([ab], {type: mimeString});
+		}
+
+		// Function to slice video into chunks
+		async function sliceVideo(startTime, endTime, videoFile) {
+			return new Promise((resolve, reject) => {
+				var slicedBlob = videoFile.slice(startTime, endTime);
+				var fileReader = new FileReader();
+				fileReader.onload = function (event) {
+					console.log('Blob created successfully');
+					var blob = new Blob([event.target.result], {type: 'video/mp4'});
+					resolve(blob);
+				};
+				fileReader.onerror = function (event) {
+					console.error('Error reading Blob:', event);
+					reject(event);
+				};
+				fileReader.readAsArrayBuffer(slicedBlob);
+			});
+		}
+
 	</script>
 </body>
 

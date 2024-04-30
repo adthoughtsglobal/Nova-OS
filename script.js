@@ -1,30 +1,19 @@
-var batteryLevel, winds = {}, rp, flwint = true, opentrigger, memory, nowapp, stx = gid("startuptx"), applogs = {}, fulsapp = false, nowappdo, appsHistory = [];
+var batteryLevel, winds = {}, rp, flwint = true, opentrigger, memory, nowapp, stx = gid("startuptx"), applogs = {}, fulsapp = false, nowappdo, appsHistory = [], nowwindow, appicns = {};
+var really = false;
 
-// multi instance manager
-try {
-	var instances = localStorage.getItem("mil")
-	
-} catch (error) {
-	console.error(error)
-}
+gid("nowrunninapps").style.display = "none";
 
 // Check if the database 'trojencat' exists
 getdb('trojencat', 'rom')
 	.then(async (result) => {
+		
 		try {
 			if (result !== null) {
 				memory = result;
-				let folders = await getFolderNames();
-				if (!folders.includes("Desktop")) {
-					createFolder("Desktop")
-				}
-				if (!folders.includes("System")) {
-					await createFolder("System")
-          			await createFile("System", "settings", "application/json", jsonToDataURI(localStorage.getItem('qsets')), "{}")
-          await createFile("System", "applications", "json", "currently nothing", "{}")
-				}
+
 			} else {
 				await say(`<h2>Terms of service and License</h2><p>By using Nova OS, you agree to the <a href="https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use">Adthoughtsglobal Nova Terms of Use</a>. <be><small>Your IP, personal data, or files are not shared or saved, We do not collect your personal information. <br> Read the terms clearly before use.</small>`);
+
 
 				gid("startup").showModal();
 				stx.innerHTML = "Preparing memory"
@@ -72,7 +61,7 @@ getdb('trojencat', 'rom')
 					let fetchupdatedataver = (await fetchupdatedata.json()).osver;
 
 					if (localupdatedataver !== fetchupdatedataver) {
-						if (await justConfirm("Update default apps?", "Your default apps are old. Update them to access new features and fixes.", 1)) {
+						if (await justConfirm("Update default apps?", "Your default apps are old. Update them to access new features and fixes.")) {
 							await installdefaultapps();
 						} else {
 							say("You can always update app on settings app/Preferances")
@@ -87,10 +76,24 @@ getdb('trojencat', 'rom')
 		} catch (error) {
 			console.error('Error in database operations:', error);
 		}
+		let folders = await getFolderNames();
+		if (!folders.includes("Desktop")) {
+			createFolder("Desktop")
+		}
+		if (!folders.includes("System")) {
+			await createFolder("System")
+			await createFile("System", "settings", "application/json", jsonToDataURI(localStorage.getItem('qsets')), "{}")
+			await createFile("System", "applications", "json", "currently nothing", "{}")
+		}
+		if (!folders.includes("Dock")) {
+			await createFolder("Dock")
+		}
 	})
 	.catch((error) => {
 		console.error('Error retrieving data from the database:', error);
 	});
+
+
 
 let timeFormat;
 var condition = true;
@@ -106,7 +109,7 @@ try {
 function updateTime() {
 	const now = new Date();
 	let hours = now.getHours();
-	
+
 
 	if (condition) {
 		// 12-hour format
@@ -126,12 +129,14 @@ function updateTime() {
 updateTime();
 setInterval(updateTime, 1000);
 checkdmode()
+genTaskBar()
 
 const jsonToDataURI = json => `data:application/json,${encodeURIComponent(JSON.stringify(json))}`;
 
 async function openn() {
 	gid("appsindeck").innerHTML = ""
 	gid("strtsear").value = ""
+	gid("strtappsugs").style.visibility = "hidden"
 	let x = await getFileNamesByFolder("Apps");
 	x.forEach(async function(app) {
 		// Create a div element for the app shortcut
@@ -141,44 +146,49 @@ async function openn() {
 
 		// Create a span element for the app icon
 		var iconSpan = document.createElement("span");
+		if (!appicns[app.name]) {
 
-		// Fetch the content asynchronously using getFileById
-		const content = await getFileById(app.id);
 
-		// Unshrink the content
-		const unshrunkContent = unshrinkbsf(content.content);
+			// Fetch the content asynchronously using getFileById
+			const content = await getFileById(app.id);
 
-		// Create a temporary div to parse the content
-		const tempElement = document.createElement('div');
-		tempElement.innerHTML = unshrunkContent;
+			// Unshrink the content
+			const unshrunkContent = unshrinkbsf(content.content);
 
-		// Get all meta tags
-		const metaTags = tempElement.getElementsByTagName('meta');
+			// Create a temporary div to parse the content
+			const tempElement = document.createElement('div');
+			tempElement.innerHTML = unshrunkContent;
 
-		// Create an object to store meta tag data
-		let metaTagData = null;
+			// Get all meta tags
+			const metaTags = tempElement.getElementsByTagName('meta');
 
-		// Iterate through meta tags and extract data
-		Array.from(metaTags).forEach(tag => {
-			const tagName = tag.getAttribute('name');
-			const tagContent = tag.getAttribute('content');
-			if (tagName === 'nova-icon' && tagContent) {
-				metaTagData = tagContent;
-			}
-		});
+			// Create an object to store meta tag data
+			let metaTagData = null;
 
-		if (typeof metaTagData === "string") {
-			if (containsSmallSVGElement(metaTagData)) {
-				iconSpan.innerHTML = metaTagData;
+			// Iterate through meta tags and extract data
+			Array.from(metaTags).forEach(tag => {
+				const tagName = tag.getAttribute('name');
+				const tagContent = tag.getAttribute('content');
+				if (tagName === 'nova-icon' && tagContent) {
+					metaTagData = tagContent;
+				}
+			});
+
+			if (typeof metaTagData === "string") {
+				if (containsSmallSVGElement(metaTagData)) {
+					iconSpan.innerHTML = metaTagData;
+				} else {
+
+					iconSpan.innerHTML = `<?xml version="1.0" encoding="UTF-8"?> <svg version="1.1" viewBox="0 0 76.805 112.36" xmlns="http://www.w3.org/2000/svg"> <g transform="translate(-201.6 -123.82)"> <g stroke-dasharray="" stroke-miterlimit="10" style="mix-blend-mode:normal" data-paper-data='{"isPaintingLayer":true}'> <path d="m201.6 236.18v-111.56h49.097l27.707 31.512v80.051z" fill="#3f7ef6" stroke-width="NaN"/> <path d="m250.82 155.02 0.12178-31.202 27.301 31.982z" fill="#054fff" stroke-width="0"/> <path d="m216.73 180.4h46.531" fill="none" stroke="#9dbaff" stroke-linecap="round" stroke-width="7.5"/> <path d="m216.73 194.37h36.44" fill="none" stroke="#9dbaff" stroke-linecap="round" stroke-width="7.5"/> <path d="m216.73 207.78h42.046" fill="none" stroke="#9dbaff" stroke-linecap="round" stroke-width="7.5"/> </g> </g> </svg>`;
+				}
 			} else {
-
-				iconSpan.innerHTML = `<span class="app-icon">` + makedefic(app.name) + `</span>`;
+				iconSpan.innerHTML = `<?xml version="1.0" encoding="UTF-8"?> <svg version="1.1" viewBox="0 0 76.805 112.36" xmlns="http://www.w3.org/2000/svg"> <g transform="translate(-201.6 -123.82)"> <g stroke-dasharray="" stroke-miterlimit="10" style="mix-blend-mode:normal" data-paper-data='{"isPaintingLayer":true}'> <path d="m201.6 236.18v-111.56h49.097l27.707 31.512v80.051z" fill="#3f7ef6" stroke-width="NaN"/> <path d="m250.82 155.02 0.12178-31.202 27.301 31.982z" fill="#054fff" stroke-width="0"/> <path d="m216.73 180.4h46.531" fill="none" stroke="#9dbaff" stroke-linecap="round" stroke-width="7.5"/> <path d="m216.73 194.37h36.44" fill="none" stroke="#9dbaff" stroke-linecap="round" stroke-width="7.5"/> <path d="m216.73 207.78h42.046" fill="none" stroke="#9dbaff" stroke-linecap="round" stroke-width="7.5"/> </g> </g> </svg>`;
 			}
+			appicns[app.name] = iconSpan.innerHTML
+
 		} else {
-			iconSpan.innerHTML = `<span class="app-icon">` + makedefic(app.name) + `</span>`;
+			iconSpan.innerHTML = appicns[app.name]
 		}
-
-
 
 		// Create a span element for the app name
 		var nameSpan = document.createElement("span");
@@ -186,8 +196,8 @@ async function openn() {
 		nameSpan.textContent = app.name;
 
 		var tooltisp = document.createElement("span");
-			tooltisp.className = "tooltiptext";
-			tooltisp.textContent = app.name;
+		tooltisp.className = "tooltiptext";
+		tooltisp.textContent = app.name;
 
 		// Append both spans to the app shortcut container
 		appShortcutDiv.appendChild(iconSpan);
@@ -197,6 +207,16 @@ async function openn() {
 		gid("appsindeck").appendChild(appShortcutDiv);
 	})
 	gid('appdmod').showModal()
+	gid("strtsear").focus()
+}
+
+
+
+function focusFirstElement() {
+	var firstElement = document.querySelector('#appsindeck :first-child');
+	if (firstElement) {
+		firstElement.focus();
+	}
 }
 
 function makedefic(str) {
@@ -229,7 +249,13 @@ function updateBattery() {
 	navigator.getBattery().then(function(battery) {
 		// Get the battery level
 		batteryLevel = Math.floor(battery.level * 100);
+		var isCharging = battery.charging;
 
+		if (batteryLevel == 100 && isCharging || batteryLevel == 0 && isCharging) {
+			document.getElementById("batterydisdiv").style.display = "none";
+		} else {
+			document.getElementById("batterydisdiv").style.display = "block";
+		}
 		// Determine the appropriate icon based on battery level
 		let iconClass;
 		if (batteryLevel >= 75) {
@@ -296,8 +322,6 @@ function dragElement(elmnt) {
 		document.onmousemove = null;
 	}
 }
-
-
 
 dod()
 async function dod() {
@@ -397,11 +421,11 @@ function closeElementedis() {
 
 
 function clwin(x) {
-	x.parentElement.parentElement.classList.add("transp3")
+	document.getElementById(x).classList.add("transp3")
 
 	setTimeout(() => {
-		x.parentElement.parentElement.classList.remove("transp3")
-		x.parentElement.parentElement.remove();
+		document.getElementById(x).classList.remove("transp3")
+		document.getElementById(x).remove();
 	}, 700);
 }
 
@@ -412,8 +436,8 @@ function flwin(x) {
 		x.innerHTML = "filter_none";
 		fulsapp = true;
 	} else {
-
-		x.parentElement.parentElement.style = "left: calc(50vw - 200px);top: calc(50vh - 135px); width: 381px; height: 227px;"
+		// minimise window
+		x.parentElement.parentElement.style = 'left: calc(50vw - 33.5vw); top: calc(50vh - 35vh); width: 65vw; height: 70vh; z-index: 0;';
 		nowapp = ""
 		dewallblur();
 		x.innerHTML = "web_asset"
@@ -428,7 +452,33 @@ function flwin(x) {
 
 }
 
-function getAppIcon(unshrunkContent) {
+function getAppIcon(unshrunkContent, appname) {
+	if (!appicns[appname]) {
+		const tempElement = document.createElement('div');
+		tempElement.innerHTML = unshrunkContent;
+		const metaTags = tempElement.getElementsByTagName('meta');
+		let metaTagData = null;
+		Array.from(metaTags).forEach(tag => {
+			const tagName = tag.getAttribute('name');
+			const tagContent = tag.getAttribute('content');
+			if (tagName === 'nova-icon' && tagContent) {
+				metaTagData = tagContent;
+			}
+		});
+		if (typeof metaTagData === "string" && containsSmallSVGElement(metaTagData)) {
+			appicns[appname] = metaTagData;
+			return metaTagData;
+		} else {
+			return null;
+		}
+
+	} else {
+		metaTagData = appicns[appname];
+	}
+
+}
+
+function getAppTheme(unshrunkContent) {
 	const tempElement = document.createElement('div');
 	tempElement.innerHTML = unshrunkContent;
 	const metaTags = tempElement.getElementsByTagName('meta');
@@ -436,20 +486,16 @@ function getAppIcon(unshrunkContent) {
 	Array.from(metaTags).forEach(tag => {
 		const tagName = tag.getAttribute('name');
 		const tagContent = tag.getAttribute('content');
-		if (tagName === 'nova-icon' && tagContent) {
+		if (tagName === 'theme-color' && tagContent) {
 			metaTagData = tagContent;
 		}
 	});
-	if (typeof metaTagData === "string" && containsSmallSVGElement(metaTagData)) {
-		return metaTagData;
-	} else {
-		return null;
-	}
+
+	return metaTagData;
 }
 
 async function openapp(x, od) {
-	
-	dod()
+
 	if (gid('appdmod').open) {
 		gid('appdmod').close()
 	}
@@ -471,7 +517,7 @@ async function openapp(x, od) {
 			}
 
 			// Assuming you have a predefined function openwindow
-			openwindow(x, y, getAppIcon(y));
+			openwindow(x, y, getAppIcon(y, x), getAppTheme(y));
 		} catch (error) {
 			console.error("Error fetching data:", error);
 		}
@@ -496,7 +542,13 @@ async function fetchData(url) {
 	}
 }
 var content
-function openwindow(title, cont, ic) {
+function openwindow(title, cont, ic, theme) {
+	appsHistory.push(title)
+
+	if (winds.length > 100) {
+		notify("Over 100 tabs is open.", "Even if your pc can handle it - this is cringe.")
+	}
+
 	content = cont
 	if (content == undefined) {
 		content = "<center><h1>Unavailable</h1>App Data cannot be read.</center>";
@@ -518,16 +570,13 @@ function openwindow(title, cont, ic) {
 
 	let isitmob = window.innerWidth <= 500;
 
-	// Set the style of windowDiv
-	if (isitmob) {
+	if (!isitmob) {
+		windowDiv.style = 'left: calc(50vw - 33.5vw); top: calc(50vh - 35vh); width: 65vw; height: 70vh; z-index: 0;';
+	} else {
 		windowDiv.style.left = 0;
 		windowDiv.style.top = 0;
-	}
-	if (!isitmob) {
-		windowDiv.style = 'left: calc(-225px + 50vw);top: calc(-150px + 50vh);width: 450px;height: 300px;z-index: 0;';
-	} else {
-		windowDiv.style.width = 'calc(100% - 5px)';
-		windowDiv.style.height = 'calc(100% - 63px)';
+		windowDiv.style.width = 'calc(100% - 0px)';
+		windowDiv.style.height = 'calc(100% - 42px)';
 	}
 
 	// Create the window header
@@ -536,6 +585,14 @@ function openwindow(title, cont, ic) {
 	windowHeader.classList += "windowheader";
 	windowHeader.innerHTML = ic != null ? ic : "";
 	windowHeader.innerHTML += toTitleCase(title)
+	if (theme != null) {
+		windowHeader.style.backgroundColor = theme;
+		if (isDark(theme)) {
+			windowHeader.style.color = "white";
+		} else {
+			windowHeader.style.color = "black";
+		}
+	}
 	windowHeader.setAttribute("title", title + winuid)
 	windowHeader.addEventListener("mouseup", function(event) {
 		checksnapping(windowDiv, event);
@@ -544,9 +601,9 @@ function openwindow(title, cont, ic) {
 	windowHeader.addEventListener("mousedown", function(event) {
 		putwinontop('window' + winuid);
 		winds[title + winuid] = windowDiv.style.zIndex;
-		
+
 	});
-	
+
 	var flButton = document.createElement("span");
 	flButton.classList.add("material-icons", "wincl", "flbtn");
 	flButton.style = "right: 20px;font-size: 10px !important;padding: 3px;";
@@ -564,8 +621,9 @@ function openwindow(title, cont, ic) {
 			nowapp = '';
 			dewallblur();
 		}, 500);
-		clwin(closeButton, title);
+		clwin("window" + winuid);
 		delete winds[title + winuid];
+		loadtaskspanel()
 	};
 
 	// Append the close button to the header
@@ -581,10 +639,11 @@ function openwindow(title, cont, ic) {
 
 	// Attach onload event handler to iframe
 	iframe.onload = function() {
+		var contentString = content.toString();
 		// Check if content includes script tags
-		if (content.includes("<script")) {
+		if (contentString.includes("<script")) {
 			// Extract script tags from content
-			var scriptTags = content.match(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi);
+			var scriptTags = contentString.match(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi);
 
 			// Loop through each script tag
 			scriptTags.forEach(function(scriptTag) {
@@ -599,28 +658,28 @@ function openwindow(title, cont, ic) {
 
 					// Fetch the script content
 					fetch(src)
-					.then(response => response.text())
-					.then(scriptContent => {
+						.then(response => response.text())
+						.then(scriptContent => {
 
-						// Set the script content
-						script.innerHTML = scriptContent
-						script.onload = function() {
-							// Execute greenflag function after script is loaded
-							iframe.contentWindow.greenflag().catch(error => {
-										console.error('Error loading script:', error);
-									});
-						};
-						
-					})
-					.catch(error => {
-						console.error('Error loading script:', error);
-					});
+							// Set the script content
+							script.innerHTML = scriptContent
+							script.onload = function() {
+								// Execute greenflag function after script is loaded
+								iframe.contentWindow.greenflag().catch(error => {
+									console.error('Error loading script:', error);
+								});
+							};
+
+						})
+						.catch(error => {
+							console.error('Error loading script:', error);
+						});
 				} else {
 					// If src attribute doesn't exist, extract script content and set innerHTML of script element
 					var scriptContent = scriptTag.replace(/<script\b[^>]*>([\s\S]*?)<\/script>/i, "$1");
 					script.innerHTML = scriptContent;
 					// Attach onload event listener to handle script loading completion
-					
+
 				}
 
 				// Append script element to iframe's head
@@ -630,7 +689,7 @@ function openwindow(title, cont, ic) {
 		}
 
 		// Remove script tags from content
-		var contentWithoutScripts = content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+		var contentWithoutScripts = contentString.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
 
 		// Set the innerHTML of iframe's body with content without scripts
 		iframe.contentDocument.body.innerHTML = contentWithoutScripts;
@@ -639,8 +698,7 @@ function openwindow(title, cont, ic) {
 		iframe.contentWindow.greenflag();
 	};
 
-
-
+	nowwindow = 'window' + winuid;
 	// Append the header and content to the window
 	windowDiv.appendChild(windowHeader);
 	windowDiv.appendChild(windowContent);
@@ -649,6 +707,7 @@ function openwindow(title, cont, ic) {
 	document.body.appendChild(windowDiv);
 	dragElement(windowDiv);
 	putwinontop('window' + winuid);
+	loadtaskspanel();
 }
 
 function putwinontop(x) {
@@ -931,6 +990,7 @@ function justConfirm(title, message, modal) {
 
 		const noButton = document.createElement('button');
 		noButton.textContent = 'No';
+		noButton.classList += "notbn"
 		noButton.addEventListener('click', () => {
 			modal.close();
 			resolve(false);
@@ -965,7 +1025,7 @@ function say(message, status) {
 		}
 
 		ic = `<span class="material-symbols-rounded">` + ic + `</span>`
-		
+
 		promptMessage.innerHTML = ic + message;
 		modalContent.appendChild(promptMessage);
 
@@ -982,6 +1042,47 @@ function say(message, status) {
 
 		modal.showModal();
 	});
+}
+
+function loadtaskspanel() {
+	let appbarelement = gid("nowrunninapps")
+
+	appbarelement.innerHTML = ""
+	let x = Object.keys(winds).map(key => key.slice(0, -6));
+	let wid = Object.keys(winds).map(key => key.slice(-6));
+
+	console.log(x);
+	if (x.length == 0) {
+		appbarelement.style.display = "none"
+	} else {
+		appbarelement.style.display = "flex"
+	}
+	x.forEach(async function(app, index) {
+		console.log("app is here: " + app)
+		// Create a div element for the app shortcut
+		var appShortcutDiv = document.createElement("biv");
+		appShortcutDiv.className = "app-shortcut tooltip adock";
+
+		appShortcutDiv.addEventListener("click", function () {
+			putwinontop('window' + wid[index]);
+			console.log(gid("window" + wid[index]))
+			winds[app + wid[index]] = Number(gid("window" + wid[index]).style.zIndex);
+		})
+
+		// Create a span element for the app icon
+		var iconSpan = document.createElement("span");
+		iconSpan.innerHTML = appicns[app]
+
+		var tooltisp = document.createElement("span");
+		tooltisp.className = "tooltiptext";
+		tooltisp.innerHTML = app;
+
+		// Append both spans to the app shortcut container
+		appShortcutDiv.appendChild(iconSpan);
+		appShortcutDiv.appendChild(tooltisp);
+
+		appbarelement.appendChild(appShortcutDiv);
+	})
 }
 
 function ask(question, preset) {
@@ -1039,15 +1140,10 @@ async function makewall(deid) {
 	let x = await getFileById(deid);
 	x = x.content
 	x = unshrinkbsf(x)
-	let y = localStorage.getItem("qsets")
+	let y = JSON.parse(localStorage.getItem("qsets"))
 	y.wall = deid;
 	localStorage.setItem("qsets", JSON.stringify(y))
 	document.getElementById('bgimage').style.backgroundImage = `url("` + x + `")`;
-}
-
-function reloadTaskbar() {
-	let x = localStorage.getItem("sets");
-	gid("dock").innerHTML = x;
 }
 
 async function remfile(ID) {
@@ -1118,14 +1214,17 @@ var defAppsList = [
 ];
 
 async function initialiseOS() {
-	let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
-	qsets.focusMode = true;
-	localStorage.setItem("qsets", JSON.stringify(qsets));
+	let qsets = `{"focusMode":false,"darkMode":false,"wsnapping":true}`
+	localStorage.setItem("qsets", qsets);
 	await installdefaultapps();
 	let x = await getFileNamesByFolder("Apps")
 	if (defAppsList.length = x.length) {
 		stx.innerHTML = "Nova is updating..."
-		setTimeout(installdefaultapps, 1000)
+		await installdefaultapps(1)
+		stx.innerHTML = "Restarting...";
+		setTimeout(() => {
+			location.reload()
+		}, 500);
 	}
 }
 
@@ -1155,6 +1254,7 @@ async function installdefaultapps() {
 				console.error("Max retries reached for " + appName + ". Skipping update.");
 			}
 		}
+
 	}
 
 	// Update each app sequentially
@@ -1170,14 +1270,7 @@ async function installdefaultapps() {
 	} else {
 		console.error("Failed to fetch data from the server.");
 	}
-
-	stx.innerHTML = "Restarting...";
-	// Close the element after all files are fetched and created with fade-out animation
-	let modal = gid("startup");
-	modal.classList.add("fade-out");
-	setTimeout(() => {
-		location.reload()
-	}, 500);
+	gid("startup").close();
 }
 
 async function getFileByPath(filePath) {
@@ -1224,13 +1317,112 @@ function getfourthdimension() {
 	};
 }
 
-async function strtappse() {
-	gid("strtappsugs").innerHTML = "";
-
-	// Get the input value
+async function strtappse(event) {
+	var arrayToSearch = await getFileNamesByFolder("Apps");
 	const searchValue = gid("strtsear").value.toLowerCase();
-	// search the folder 'Apps'
-	let arrayToSearch = await getFileNamesByFolder("Apps");
+	if (event.key === "Enter") {
+		event.preventDefault();
+		if (really) {
+			if (searchValue == "yeah" || searchValue == "yes") {
+				notify("oh uh- but im a machine...", "like, i can't love yk.. uh- im not programmed for this... But wait, let me think...", "Nova's Heart");
+				setTimeout(function() {
+					notify("Yeah, i got an idea!", "What about some better performance? Im sure i'll do it for you, my love!", "Nova's Heart");
+				}, 6000)
+			}
+		}
+		if (searchValue == "i love nova") {
+			gid("appdmod").close();
+
+			notify("uh, really?", "like, i like you, uhm, is that true?", "Nova's Heart");
+			really = true
+		}
+
+		if (searchValue == "i hate nova") {
+			function addGravityToElements() {
+				// Check if Matter.js library is already loaded
+				if (typeof Matter !== 'undefined') {
+					createGravityWorld();
+				} else {
+					// Dynamically add the Matter.js script tag
+					var script = document.createElement('script');
+					script.onload = function() {
+						createGravityWorld();
+					};
+					script.src = 'https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.18.0/matter.min.js';
+					document.head.appendChild(script);
+				}
+
+				function createGravityWorld() {
+					// Initialize Matter.js
+					var Engine = Matter.Engine,
+						Render = Matter.Render,
+						World = Matter.World,
+						Bodies = Matter.Bodies;
+
+					// Create an engine
+					var engine = Engine.create();
+
+					// Create a renderer
+					var render = Render.create({
+						element: document.body,
+						engine: engine
+					});
+
+					// Add gravity to all elements with class 'app-shortcut' and 'navobj' attribute
+					var elements = document.querySelectorAll('.app-shortcut[navobj]');
+					for (var i = 0; i < elements.length; i++) {
+						var element = elements[i];
+						var bounds = element.getBoundingClientRect();
+						var body = Bodies.rectangle(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2, bounds.width, bounds.height);
+						World.add(engine.world, body);
+					}
+
+					// Create borders around the body
+					var bodyBounds = document.body.getBoundingClientRect();
+					var offset = 25; // Offset for borders
+					var borders = [
+						Bodies.rectangle(bodyBounds.width / 2, -offset / 2, bodyBounds.width + 2 * offset, offset, { isStatic: true }), // Top
+						Bodies.rectangle(bodyBounds.width / 2, bodyBounds.height + offset / 2, bodyBounds.width + 2 * offset, offset, { isStatic: true }), // Bottom
+						Bodies.rectangle(-offset / 2, bodyBounds.height / 2, offset, bodyBounds.height + 2 * offset, { isStatic: true }), // Left
+						Bodies.rectangle(bodyBounds.width + offset / 2, bodyBounds.height / 2, offset, bodyBounds.height + 2 * offset, { isStatic: true }) // Right
+					];
+
+					// Add borders to the world
+					World.add(engine.world, borders);
+
+					// Start the engine
+					Engine.run(engine);
+
+					// Start the renderer
+					Render.run(render);
+				}
+			}
+
+			addGravityToElements();
+		}
+
+		let maxSimilarity = 0.5;
+		let appToOpen = null;
+
+		arrayToSearch.forEach(item => {
+			// Calculate similarity between item name and search value
+			const similarity = calculateSimilarity(item.name.toLowerCase(), searchValue);
+
+			// Update maxSimilarity and appToOpen if similarity is higher
+			if (similarity > maxSimilarity) {
+				maxSimilarity = similarity;
+				appToOpen = item;
+			}
+		});
+
+		// Open the app with the highest similarity (if found)
+		if (appToOpen) {
+			openapp(appToOpen.name, appToOpen.id)
+		}
+		return;
+	}
+
+	gid("strtappsugs").innerHTML = "";
 
 	let elements = 0;
 
@@ -1239,7 +1431,7 @@ async function strtappse() {
 		const similarity = calculateSimilarity(item.name.toLowerCase(), searchValue);
 
 		// Set threshold for similarity (adjust as needed)
-		const similarityThreshold = 0.5;
+		const similarityThreshold = 0.2;
 
 		if (similarity >= similarityThreshold) {
 			const newElement = document.createElement("div");
@@ -1255,6 +1447,9 @@ async function strtappse() {
 	} else {
 		gid("strtappsugs").style.visibility = "hidden";
 	}
+
+	// no display
+
 }
 
 function calculateSimilarity(string1, string2) {
@@ -1276,34 +1471,6 @@ function calculateSimilarity(string1, string2) {
 
 	return 1 - dp[m][n] / Math.max(m, n);
 }
-
-gid("strtsear").addEventListener("keydown", async function(event) {
-	if (event.key === "Enter") {
-		event.preventDefault();
-		const searchValue = this.value.toLowerCase();
-
-		let arrayToSearch = await getFileNamesByFolder("Apps");
-
-		let maxSimilarity = 0.5;
-		let appToOpen = null;
-
-		arrayToSearch.forEach(item => {
-			// Calculate similarity between item name and search value
-			const similarity = calculateSimilarity(item.name.toLowerCase(), searchValue);
-
-			// Update maxSimilarity and appToOpen if similarity is higher
-			if (similarity > maxSimilarity) {
-				maxSimilarity = similarity;
-				appToOpen = item;
-			}
-		});
-
-		// Open the app with the highest similarity (if found)
-		if (appToOpen) {
-			openapp(appToOpen.name, appToOpen.id)
-		}
-	}
-});
 
 async function getFolderNames() {
 	try {
@@ -1330,8 +1497,49 @@ document.onclick = hideMenu;
 document.oncontextmenu = rightClick;
 
 function hideMenu() {
-	gid(
-		"contextMenu").style.display = "none"
+	gid("contextMenu").style.display = "none"
+}
+
+async function moveFileToFolder(flid, dest) {
+	console.log("Moving file with id: " + flid + " to folder: " + dest);
+
+	let fileToMove = await getFileById(flid);
+	console.log("Got file: " + JSON.stringify(fileToMove));
+
+	await createFile(dest, fileToMove.fileName, fileToMove.type, fileToMove.content, fileToMove.metadata);
+	console.log("File created in folder: " + dest);
+
+	console.log("Removing file: " + flid);
+	await remfile(flid);
+	console.log("File removed successfully");
+}
+
+async function remfile(ID) {
+	try {
+		let memory = await getdb('trojencat', 'rom');
+
+		for (let folder of memory) {
+			let fileIndex = folder.content.findIndex(file => file.uid === ID);
+
+			if (fileIndex !== -1) {
+				let removedFile = folder.content.splice(fileIndex, 1)[0];
+				console.log(`0004`);
+				await setdb('trojencat', 'rom', memory);
+
+				if (!folder.content.includes(removedFile)) {
+					console.log("File successfully removed.");
+				} else {
+					console.log("File removal failed.");
+				}
+				return;
+			}
+		}
+
+		// If the loop completes without finding the file
+		console.error(`File with ID "${ID}" not found.`);
+	} catch (error) {
+		console.error("Safe Error fetching or updating data:", error);
+	}
 }
 
 function rightClick(e) {
@@ -1372,7 +1580,13 @@ document.addEventListener('click', (event) => {
 
 async function openfile(x, rt) {
 	try {
-		let unid = x.getAttribute("unid");
+		let unid;
+		if (x instanceof Element || (x.nodeType && x.nodeType === 1)) {
+			unid = x.getAttribute("unid");
+		} else {
+			unid = x;
+		}
+
 		if (!unid) {
 			console.error("Error: 'unid' attribute not found");
 			return;
@@ -1398,13 +1612,19 @@ async function openfile(x, rt) {
 				openlaunchprotocol("studio", { "lclfile": unid });
 			} else if (mm.type.startsWith("osl")) {
 				runAsOSL(mm.content)
+			} else if (mm.type.startsWith("lnk")) {
+				console.log("lnk")
+				let z = JSON.parse(mm.content);
+				openfile(z.open)
+			} else if (mm.type.startsWith("wasm")) {
+				runAsWasm(mm.content)
 			} else {
-				openlaunchprotocol("text", {"lclfile": unid});
+				openlaunchprotocol("text", { "lclfile": unid });
 			}
 		}
-		refresh();
 	} catch (error) {
 		console.error(":( Error:", error);
+		say("<h1>Unable to open file</h1>File Error: " + error, "failed")
 	}
 }
 
@@ -1457,8 +1677,7 @@ function checksnapping(x, event) {
 	if (fulsapp) {
 		x.classList.add("transp2");
 		x.getElementsByClassName("flbtn")[0].innerHTML = "web_asset";
-		x.style = "left: calc(50vw - 200px);top: calc(50vh - 135px); width: 381px; height: 227px;";
-		checktaskbar();
+		x.style = 'left: calc(50vw - 33.5vw); top: calc(50vh - 35vh); width: 65vw; height: 70vh; z-index: 0;';
 		fulsapp = false;
 		setTimeout(() => {
 			x.classList.remove("transp2");
@@ -1532,19 +1751,19 @@ function startTimer(minutes) {
 }
 
 function playBeeps() {
-  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+	const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-  for (let i = 0; i < 6; i++) {
-	const oscillator = audioCtx.createOscillator();
-	oscillator.type = 'sine';
-	oscillator.frequency.value = 1000;
-	oscillator.connect(audioCtx.destination);
+	for (let i = 0; i < 6; i++) {
+		const oscillator = audioCtx.createOscillator();
+		oscillator.type = 'sine';
+		oscillator.frequency.value = 1000;
+		oscillator.connect(audioCtx.destination);
 
-	setTimeout(() => {
-	  oscillator.start();
-	  setTimeout(() => oscillator.stop(), 100);
-	}, i * 200);
-  }
+		setTimeout(() => {
+			oscillator.start();
+			setTimeout(() => oscillator.stop(), 100);
+		}, i * 200);
+	}
 }
 
 async function setMessage() {
@@ -1583,7 +1802,7 @@ function notify(title, description, appname) {
 		document.getElementById("notification").style.display = "none";
 		setTimeout(notify(title, description, appname), 500)
 	}
-	
+
 	var appnameb = document.getElementById('notifappName');
 	var descb = document.getElementById('notifappDesc');
 	var titleb = document.getElementById('notifTitle');
@@ -1631,51 +1850,51 @@ function messageInChat(message, sender) {
 }
 
 async function sendmlisa() {
-	
-  messageInChat(document.getElementById("lisainput").value, "user");
-	
+
+	messageInChat(document.getElementById("lisainput").value, "user");
+
 	let x = document.getElementById("lisainput").value.toLowerCase();
 
 	console.log(x);
 
 	if (x.startsWith("open")) {
 		console.log(x.substring(5, x.length));
-		
-    const searchValue = x.substring(5, x.length)
 
-      let arrayToSearch = await getFileNamesByFolder("Apps");
-		
-      let maxSimilarity = 0.5;
-      let appToOpen = null;
+		const searchValue = x.substring(5, x.length)
 
-      arrayToSearch.forEach(item => {
-        // Calculate similarity between item name and search value
-        const similarity = calculateSimilarity(item.name.toLowerCase(), searchValue);
+		let arrayToSearch = await getFileNamesByFolder("Apps");
 
-        // Update maxSimilarity and appToOpen if similarity is higher
-        if (similarity > maxSimilarity) {
-          maxSimilarity = similarity;
-          appToOpen = item;
-        }
-      });
+		let maxSimilarity = 0.5;
+		let appToOpen = null;
 
-      // Open the app with the highest similarity (if found)
-      if (appToOpen) {
-        openapp(appToOpen.name, appToOpen.id);
-		  if (appToOpen.name == x.substring(5, x.length)) {
-			  messageInChat("I opened " + appToOpen.name, "bot");
-		  } else {
-		  messageInChat("I opened " + appToOpen.name + " because it was the most similar to " + x.substring(5, x.length) , "bot");
-		  }
-      } else {
-		  messageInChat("I opened " + x.substring(5, x.length), "bot");
-	  }
-		
+		arrayToSearch.forEach(item => {
+			// Calculate similarity between item name and search value
+			const similarity = calculateSimilarity(item.name.toLowerCase(), searchValue);
+
+			// Update maxSimilarity and appToOpen if similarity is higher
+			if (similarity > maxSimilarity) {
+				maxSimilarity = similarity;
+				appToOpen = item;
+			}
+		});
+
+		// Open the app with the highest similarity (if found)
+		if (appToOpen) {
+			openapp(appToOpen.name, appToOpen.id);
+			if (appToOpen.name == x.substring(5, x.length)) {
+				messageInChat("I opened " + appToOpen.name, "bot");
+			} else {
+				messageInChat("I opened " + appToOpen.name + " because it was the most similar to " + x.substring(5, x.length), "bot");
+			}
+		} else {
+			messageInChat("I opened " + x.substring(5, x.length), "bot");
+		}
+
 	} else {
 		messageInChat("I dunno what that is :(", "bot");
 	}
 	document.getElementById("lisainput").value = "";
-	
+
 }
 
 gid("lisainput").addEventListener("keydown", async function(event) {
@@ -1695,4 +1914,152 @@ function runAsOSL(content) {
 	</style>
 	`
 	openwindow("Nova OSL Runner", cont)
+}
+
+function runAsWasm(content) {
+	const wasmBytes = new Uint8Array(content);
+
+	const div = document.createElement('div');
+	const script = document.createElement('script');
+	script.innerHTML = `
+		function greenflag() {
+			const memory = new WebAssembly.Memory({ initial: 1 });
+			const imports = { env: { memory: memory } };
+			const wasmCode = new Uint8Array([${Array.from(wasmBytes)}]);
+
+			WebAssembly.instantiate(wasmCode, imports)
+				.then(obj => {
+					console.log(obj.instance.exports.memory);
+					// Additional code to execute the WebAssembly module as needed
+				})
+				.catch(err => console.error(err));
+		}
+	`;
+	div.appendChild(script);
+	console.log("2321: " + div.innerHTML);
+	openwindow("Nova Wasm Runner", div.innerHTML);
+}
+
+
+// hotkeys
+document.addEventListener('keydown', function(event) {
+	if (event.shiftKey && event.key === "Escape") {
+		event.preventDefault();
+		clwin(nowwindow);
+	}
+});
+
+
+document.addEventListener('keydown', function(event) {
+	if (event.ctrlKey && (event.key === 'f' || event.keyCode === 70)) {
+		event.preventDefault();
+		openapp('files', 1);
+	}
+});
+
+
+document.addEventListener('keydown', function(event) {
+	if (event.key === 'Escape') {
+		var appdmod = document.getElementById('appdmod');
+		if (appdmod && appdmod.open) {
+			appdmod.close();
+		}
+	}
+});
+
+document.addEventListener('keydown', function(event) {
+	if (event.shiftKey && event.key === 'Tab') {
+		event.preventDefault();
+		openn();
+	}
+});
+
+async function genTaskBar() {
+	var appbarelement = document.getElementById("dock")
+	appbarelement.innerHTML = ""
+	if (appbarelement) {
+		let x = await getFileNamesByFolder("Dock");
+		console.log(x)
+		if (x.length == 0) {
+			let y = await getFileNamesByFolder("Apps");
+
+			x = await Promise.all(y.map(async (item) => {
+				if (item.name === "files" || item.name === "settings" || item.name === "store") {
+					console.log(`Found ${item.name}`);
+					return item;
+				}
+			}));
+
+			x = x.filter(item => item);
+		}
+		console.log(x)
+		x.forEach(async function(app) {
+			var islnk = false;
+			// Create a div element for the app shortcut
+			var appShortcutDiv = document.createElement("biv");
+			appShortcutDiv.className = "app-shortcut tooltip adock";
+			app = await getFileById(app.id)
+
+
+			console.log("before: " + JSON.stringify(app));
+			if (app.type == "lnk") {
+				let z = JSON.parse(app.content);
+				app = await getFileById(z.open)
+				console.log("after: " + JSON.stringify(app));
+				islnk = true;
+			}
+
+			console.log("after: " + app.uid);
+			appShortcutDiv.setAttribute("onclick", "openfile('" + app.uid + "')");
+			// Create a span element for the app icon
+			var iconSpan = document.createElement("span");
+
+			// Fetch the content asynchronously using getFileById
+			const content = app;
+
+			// Unshrink the content
+			const unshrunkContent = unshrinkbsf(content.content);
+
+			// Create a temporary div to parse the content
+			const tempElement = document.createElement('div');
+			tempElement.innerHTML = unshrunkContent;
+
+			// Get all meta tags
+			const metaTags = tempElement.getElementsByTagName('meta');
+
+			// Create an object to store meta tag data
+			let metaTagData = null;
+
+			// Iterate through meta tags and extract data
+			Array.from(metaTags).forEach(tag => {
+				const tagName = tag.getAttribute('name');
+				const tagContent = tag.getAttribute('content');
+				if (tagName === 'nova-icon' && tagContent) {
+					metaTagData = tagContent;
+				}
+			});
+
+			if (typeof metaTagData === "string") {
+				if (containsSmallSVGElement(metaTagData)) {
+					iconSpan.innerHTML = metaTagData;
+				} else {
+
+					iconSpan.innerHTML = `<?xml version="1.0" encoding="UTF-8"?> <svg version="1.1" viewBox="0 0 76.805 112.36" xmlns="http://www.w3.org/2000/svg"> <g transform="translate(-201.6 -123.82)"> <g stroke-dasharray="" stroke-miterlimit="10" style="mix-blend-mode:normal" data-paper-data='{"isPaintingLayer":true}'> <path d="m201.6 236.18v-111.56h49.097l27.707 31.512v80.051z" fill="#3f7ef6" stroke-width="NaN"/> <path d="m250.82 155.02 0.12178-31.202 27.301 31.982z" fill="#054fff" stroke-width="0"/> <path d="m216.73 180.4h46.531" fill="none" stroke="#9dbaff" stroke-linecap="round" stroke-width="7.5"/> <path d="m216.73 194.37h36.44" fill="none" stroke="#9dbaff" stroke-linecap="round" stroke-width="7.5"/> <path d="m216.73 207.78h42.046" fill="none" stroke="#9dbaff" stroke-linecap="round" stroke-width="7.5"/> </g> </g> </svg>`;
+				}
+			} else {
+				iconSpan.innerHTML = `<?xml version="1.0" encoding="UTF-8"?> <svg version="1.1" viewBox="0 0 76.805 112.36" xmlns="http://www.w3.org/2000/svg"> <g transform="translate(-201.6 -123.82)"> <g stroke-dasharray="" stroke-miterlimit="10" style="mix-blend-mode:normal" data-paper-data='{"isPaintingLayer":true}'> <path d="m201.6 236.18v-111.56h49.097l27.707 31.512v80.051z" fill="#3f7ef6" stroke-width="NaN"/> <path d="m250.82 155.02 0.12178-31.202 27.301 31.982z" fill="#054fff" stroke-width="0"/> <path d="m216.73 180.4h46.531" fill="none" stroke="#9dbaff" stroke-linecap="round" stroke-width="7.5"/> <path d="m216.73 194.37h36.44" fill="none" stroke="#9dbaff" stroke-linecap="round" stroke-width="7.5"/> <path d="m216.73 207.78h42.046" fill="none" stroke="#9dbaff" stroke-linecap="round" stroke-width="7.5"/> </g> </g> </svg>`;
+			}
+
+
+			var tooltisp = document.createElement("span");
+			tooltisp.className = "tooltiptext";
+			tooltisp.innerHTML = islnk ? app.fileName + `*` : app.fileName;
+
+			// Append both spans to the app shortcut container
+			appShortcutDiv.appendChild(iconSpan);
+			appShortcutDiv.appendChild(tooltisp);
+
+			appbarelement.appendChild(appShortcutDiv);
+		})
+	}
 }

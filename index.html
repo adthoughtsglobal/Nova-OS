@@ -1,28 +1,18 @@
-<!---Code Licensed under Nova license and Adthoughtsglobal Nova Terms of use https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use--->
+<!---Code Licensed under https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use--->
 <!DOCTYPE html>
-<html>
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
 	<title>Nova OS</title>
-	<link rel="manifest" href="M.json" />
 	<link href="style.css" rel="stylesheet" type="text/css" />
 	<script src="system32.js" defer></script>
 	<!-- Include pako library (CDN) -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.0.3/pako.min.js"></script>
 	</script>
 
-	<!-- Google tag (gtag.js) -->
-	<script async src="https://www.googletagmanager.com/gtag/js?id=G-MSQVF245Z2"></script>
-	<script>
-	  window.dataLayer = window.dataLayer || [];
-	  function gtag(){dataLayer.push(arguments);}
-	  gtag('js', new Date());
-	
-	  gtag('config', 'G-MSQVF245Z2');
-	</script>
-	
+	<script src="edgecases.js" defer></script>
 	<script src="scripties.js" defer></script>
 	<script src="script.js" defer></script>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -79,32 +69,7 @@
 	<nav id="novanav">
 		<div class="flodiv">
 			<quicks navobj id="dock">
-				<biv class="tooltip">
-					<div app-shortcut onclick="openapp('files', 1)">
-
-						<span ic class="material-icons">
-							folder
-						</span>
-						<span class="tooltiptext">Files</span>
-					</div>
-				</biv>
-				<biv class="tooltip">
-					<div app-shortcut onclick="openapp('camera', 1)">
-
-						<span ic class="material-icons">
-							photo_camera
-						</span>
-						<span class="tooltiptext">Camera</span>
-					</div>
-				</biv>
-				<biv class="tooltip">
-					<div app-shortcut onclick="openapp('settings', 1)">
-						<span ic class="material-icons">
-							settings
-						</span>
-						<span class="tooltiptext">Settings</span>
-					</div>
-				</biv>
+				
 			</quicks>
 			<your navobj>
 				<div app-shortcut>
@@ -112,11 +77,10 @@
 					</span>
 				</div>
 				<g id="your-apps">
-
 				</g>
 			</your>
 			<info navobj>
-				<div>
+				<div id="batterydisdiv">
 					<span id="battery-p-display">
 						%
 					</span>
@@ -131,13 +95,17 @@
 						</hitbx>
 				</div>
 			</info>
-			<info navobj onclick="dashtoggle()">
+			<info navobj id="nowrunninapps">
+				<div>
+				</div>
+			</info>
+			<!--<info navobj onclick="dashtoggle()">
 				<div>
 					<span class="material-icons">
 						dashboard
 					</span>
 				</div>
-			</info>
+			</info>-->
 		</div>
 	</nav>
 	<dialog id="appdmod">
@@ -178,7 +146,7 @@
 						power_settings_new
 					</span>
 				</button>
-				<input placeholder="Search an app..." autocomplete="off" id="strtsear" onkeyup="strtappse()">
+				<input placeholder="Search an app..." autocomplete="off" id="strtsear" onkeyup="strtappse(event)">
 			</div>
 		</div>
 	</dialog>
@@ -187,7 +155,7 @@
 		<p>Welcome to Nova Setup. This page deals with critical choices that may affect your data and the os itself.
 			remember, clicking on any buttons here might cause damage to your data.</p>
 		<button class="gudbtn" onclick="gid('bios').close()">Exit Setup</button>
-		<button onclick="">Remove Existance (IDB)</button>
+		<button onclick="gid('terminal').showModal()">Terminal</button>
 		<button onclick="location.reload()">Hard Refresh (ReBoot)</button>
 		<button onclick="window.location.href = 'platiniumloader.html'">Switch to other versions of Nova OS</button>
 
@@ -201,7 +169,7 @@
 
 	<div id="contextMenu" class="context-menu" style="display:none">
 		<ul>
-			<li><a onclick="dod()">
+			<li><a onclick="dod();genTaskBar()">
 					<span ic="" class="material-icons">
 						refresh
 					</span>
@@ -298,6 +266,35 @@
 			<span class="material-icons"
 				onclick="document.getElementById('sleepwindow').close(); clearInterval(countdown);document.getElementById('sleeptimer').textContent = '00:00';document.getElementById('sleepbtns').style.display = 'block';">close</span>
 		</div>
+	</dialog>
+	<dialog id="terminal">
+		<div class="containerterm">
+		<textarea id="termoutput"></textarea>
+			<script>
+				async function termrun() {
+					const inputValue = gid("terminput").value;
+					let result;
+
+
+					try {
+						result = await eval(inputValue);
+					} catch (error) {
+						result = error.message;
+					}
+
+					const outputElement = gid("termoutput");
+					if (typeof result === "object") {
+						outputElement.value += ">>> " + inputValue + "\n";
+						outputElement.value += JSON.stringify(result) + "\n";
+					} else {
+						outputElement.value += result + "\n";
+					}
+				}
+			</script>
+			<div class="btnc">
+		<input placeholder=">>>" id="terminput"> <button onclick="termrun()">run</button></div>
+			</div>
+		
 	</dialog>
 </body>
 

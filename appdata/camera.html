@@ -164,8 +164,20 @@
 		  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
 		  // Convert canvas content to base64-encoded PNG
-		  
-		  const dataUrl = canvas.toDataURL('image/png');
+		  var dataUrl;
+		  var condition = true;
+		  try {
+			  let qsets = localStorage.getItem("qsets");
+			  if (qsets) {
+				  let qsetsObj = JSON.parse(qsets);
+				  if (qsetsObj.CamImgFormat) {
+					  dataUrl = canvas.toDataURL('image/' + qsetsObj.CamImgFormat.toLowerCase());
+				  }
+			  }
+		  } catch (error) {
+			  console.log("safe error: " + error);
+		  }
+			
 
 		  return dataUrl;
 	  }
@@ -180,7 +192,21 @@
 		  let y = {
 			  "via":"camera"
 		  }
-		  window.parent.createFile("Media", "captured", "image/png", x, y)
+
+		  let FileFormat;
+			var condition = true;
+			try {
+				let qsets = localStorage.getItem("qsets");
+				if (qsets) {
+					let qsetsObj = JSON.parse(qsets);
+					if (qsetsObj.CamImgFormat) {
+							FileFormat = qsetsObj.CamImgFormat.toLowerCase()
+					}
+				}
+			} catch (error) {
+				console.log("safe error: " + error);
+			}
+		  window.parent.createFile("Media", "captured", "image/" + FileFormat, x, y)
 		  obj.innerHTML = cakebuff;
 		  setTimeout(() => {
 			  video.style.filter = "none";
