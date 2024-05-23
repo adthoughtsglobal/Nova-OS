@@ -62,3 +62,9 @@ function detectIE() {
 		return false;
 	}
 }
+
+const exit = function () {
+	if (gid("terminal").open) {
+		gid("terminal").close()
+	}
+}

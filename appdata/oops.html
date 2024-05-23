@@ -1,198 +1,258 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-	<meta charset="UTF-8">
+<html><head>
+	<title>Nova New Tab</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Media Viewer</title>
-	<meta name="nova-icon"
-		content="<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='98.86818' height='98.86818' viewBox='0,0,98.86818,98.86818'><g transform='translate(-190.56591,-130.56591)'><g data-paper-data='{&quot;isPaintingLayer&quot;:true}' fill-rule='nonzero' stroke-linecap='butt' stroke-linejoin='miter' stroke-miterlimit='10' stroke-dasharray='' stroke-dashoffset='0' style='mix-blend-mode: normal'><path d='M193.06591,180c0,-25.92098 21.01311,-46.93409 46.93409,-46.93409c25.92098,0 46.93409,21.01311 46.93409,46.93409c0,25.92098 -21.01311,46.93409 -46.93409,46.93409c-25.92098,0 -46.93409,-21.01311 -46.93409,-46.93409z' fill='#e7f4ff' stroke='#4f92c8' stroke-width='5'/><path d='M229.36872,160.64825c4.15023,1.93988 18.10692,8.46344 25.52527,11.93089c2.84482,1.32971 3.40205,3.30243 1.33456,5.00567c-6.30331,5.19279 -19.49818,16.06297 -23.01686,18.96173c-1.68819,1.39076 -3.72218,0.66723 -4.1395,-2.62914c-1.1217,-8.86034 -3.27126,-25.83983 -3.87019,-30.57075c-0.30418,-2.40273 1.88158,-3.76651 4.16672,-2.6984z' fill='#496787' stroke='none' stroke-width='0'/></g></g></svg>">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Seaweed+Script&display=swap');
+
+		/* width */
+		::-webkit-scrollbar {
+			width: 5px;
+		}
+
+		/* Track */
+		::-webkit-scrollbar-track {
+			background: #818181;
+			border-radius: 5px;
+		}
+
+		/* Handle */
+		::-webkit-scrollbar-thumb {
+			background: #2b2b2b;
+			border-radius: 5px;
+		}
+
+		/* Handle on hover */
+		::-webkit-scrollbar-thumb:hover {
+			background: #555;
+		}
+
+		html {
+			height: 100%;
+			width: 100%;
+		}
+
+		button,
+		input,
+		textarea {
+			outline: none;
+		}
+
 		body {
+			margin: 0;
+			height: 100vh;
+			width: 100%;
+			background-color: #181a1b;
+			overflow: hidden;
+			background-image: url('https://tab.sli.ce.it/static/media/tobiasRademacher.7c48d501f5cd4031ca0f.webp');
+			background-repeat: no-repeat;
+			background-size: cover;
+			color: white;
+			font-family: 'Poppins', sans-serif;
+			transition: 2s;
+			background-repeat: no-repeat;
+		}
+
+		.logo {
+			font-family: "poppins", sans-serif;
+			text-shadow: 0 0 1rem black;
+			font-size: 1.5rem;
+			margin: 10px;
+		}
+
+		.mains {
+			display: grid;
+			align-content: center;
 			justify-content: center;
 			align-items: center;
-			margin: 0;
-			font-size: 12px;
-			color: white;
-			font-family: Arial, Helvetica, sans-serif;
-			box-sizing: border-box;
-			background: linear-gradient(to top, #000000 0%, #1b1b1b 100%);
+			min-height: 214px;
+			height: 40vh;
+			justify-items: center;
 		}
 
-		img {
+		#news-section {
+			overflow: hidden;
+			overflow-y: scroll;
+			height: calc(50vh + 49px);
 			border-radius: 10px;
-			font-size: 14px;
-			display: block;
-			padding: 10px;
-			width: calc(100% - 41px);
-			margin: auto;
-			object-fit: contain;
-			background: #1f1f1f;
-			outline: none;
-			height: calc(100vh - 62px);
-			resize: none;
-			background-image: radial-gradient(#181818 50%, transparent 50%);
-			background-size: 10px 10px;
+			margin: 0 1rem;
+		}
+
+		.news-item {
+			background: white;
+			color: #1f1f1f;
+			padding: 5px 27px;
+			border-radius: 10px;
+			margin-bottom: 10px;
+		}
+
+		form {
+			margin: 0;
+		}
+
+		.searchbr {
+			overflow: hidden;
+			border-radius: 25px;
+			padding: 0;
+			background: white;
+			box-shadow: 0 5px 10px #00000054;
+		}
+
+		.searchbr input {
+			width: 30vw;
+			min-width: 180px;
+			padding: 5px;
+			font-size: 1rem;
 			border: none;
+			margin: 0;
+			display: inline-block;
+			transform: translateY(-8px);
+			padding-left: 15px;
 		}
 
-
-		video {
-			width: 100%;
-			height: calc(100% - 32px);
-			object-fit: contain;
-			background-image: radial-gradient(#181818 50%, transparent 50%);
-			background-size: 10px 10px;
+		.searchbr button {
+			color: white;
+			background: dodgerblue;
+			border: 0;
+			margin: 5px;
+			border-radius: 50%;
+			aspect-ratio: 1 / 1;
+			padding: 3px 4px 0px 5px;
 		}
 
-		audio {
-			margin: auto;
-			display: block;
-			margin-top: 20vh;
-		}
-
-		nav {
-			padding: 5px 10px;
-		}
-
-		nav button {
-			background: #161616;
-			border: 1px solid #282f39;
+		[subb] {
+			height: fit-content;
+			background-color: grey;
+			border: none;
+			padding: 7px 10px;
+			color: white;
+			margin: 1rem;
 			border-radius: 5px;
-			color: #858585;
-			font-size: 10px;
-			padding: 2px 10px;
 		}
 	</style>
 </head>
 
 <body>
-
-	<nav>
-		<button><span id="tils"></span></button>
-	</nav>
-	<div id="displays">
-		<img id="thedisplay" alt="Nova" src="">
+	<div class="mains">
+		<h1 class="logo" id="titlet">Good afternoon!</h1>
+		<div class="searchbr">
+			<form action="https://www.bing.com/search">
+			<input placeholder="Search Bing..." name="q" id="q">
+			<button><span class="material-icons">search</span></button>
+			</form>
+			
+		</div>
+		<button subb onclick="nwpsearch()">
+			 Search Nwp
+		</button>
 	</div>
+	<div id="news-section">
 
+	  </div>
 	<script>
-		var disp;
-		async function greenflag() {
-			var todo = localStorage.getItem("todo");
-			disp = document.getElementById("displays"); // Fix variable scope
-			try {
-				const parsedTodo = JSON.parse(todo);
 
-				if (parsedTodo.appname === "media" && parsedTodo.data && parsedTodo.data.lclfile) {
-					const theID = parsedTodo.data.lclfile;
-					const file = await window.parent.getFileById(theID);
+		function nwpsearch() {
+			location.href = "https://adthoughtsglobal.github.io/Search?q=" + document.getElementById("q").value
+		}
+		
+		var titlet = document.getElementById("titlet");
+		var now = new Date();
+		var hour = now.getHours();
+		var greeting;
 
-					if (file && file.content) {
-						file.content = window.parent.unshrinkbsf(file.content);
-						const type = file.type || 'application/octet-stream';
-						const base64Content = file.content;
+		var holidays = {
+			"01-01": "Happy New Year!",
+			"02-14": "Happy Valentine's Day!",
+			"03-17": "Happy St. Patrick's Day!",
+			"04-01": "Happy April Fools' Day!",
+			"05-01": "Happy Labor Day!",
+			"07-04": "Happy Independence Day!",
+			"10-31": "Happy Halloween!",
+			"11-11": "Happy Veterans Day!",
+			"12-24": "Merry Christmas Eve!",
+			"12-25": "Merry Christmas!",
+			"01-20": "Happy Martin Luther King Jr. Day!",
+			"02-12": "Happy Abraham Lincoln's Birthday!",
+			"03-08": "Happy International Women's Day!",
+			"04-22": "Happy Earth Day!",
+			"05-05": "Happy Cinco de Mayo!",
+			"06-14": "Happy Flag Day!",
+			"08-15": "Happy Assumption of Mary!",
+			"09-06": "Happy Labor Day!",
+			"10-12": "Happy Columbus Day!",
+			"11-28": "Happy Thanksgiving!",
+			"12-31": "Happy New Year's Eve!",
+			"03-20": "Happy International Day of Happiness!",
+			"06-21": "Happy International Yoga Day!",
+			"08-26": "Happy Women's Equality Day!",
+			"09-19": "Happy Talk Like a Pirate Day!",
+			"10-16": "Happy World Food Day!",
+			"11-01": "Happy Day of the Dead!",
+			"12-07": "Happy Pearl Harbor Remembrance Day!",
+			"12-26": "Happy Boxing Day!"
+		};
 
-						if (file.type.startsWith("image")) {
-							disp.innerHTML = `<img id="thedisplay" alt="Nova" src="">`;
-							document.getElementById("thedisplay").src = `${base64Content}`;
-						} else if (file.type.startsWith("audio")) {
-							disp.innerHTML = `<audio controls>
-									<source src="" type="audio/mp3" id="thedisplay">
-									Your browser does not support the audio tag.
-								</audio>`;
-							document.getElementById("thedisplay").src = `${base64Content}`;
-						} else if (file.type.startsWith("video")) {
-							disp.innerHTML = `<video controls width="400" height="300" id="thedisplay">
-												<source src="" type="video/mp4" id="thesource">
-												Your browser does not support the video tag.
-											  </video>`;
+		var currentDate = now.toISOString().slice(5,10).replace("-", "");
 
-							// Convert base64 content to Blob
-							var blob = dataURItoBlob(base64Content);
-							var videoFile = new File([blob], "video.mp4", {type: "video/mp4"});
+		if (holidays[currentDate]) {
+			greeting = holidays[currentDate];
+		} else {
+			if (hour < 12) {
+				greeting = "Good morning!";
+			} else if (hour < 18) {
+				greeting = "Good afternoon!";
+			} else {
+				greeting = "Good evening!";
+			}
+		}
 
-							// Create a video element to get the duration
-							var videoElement = document.createElement('video');
-							videoElement.src = URL.createObjectURL(videoFile);
-							videoElement.addEventListener('loadedmetadata', async function () {
-								console.log("Video metadata loaded");
-								var duration = videoElement.duration;
-								var chunkSize = 5; // Seconds
-								var currentTime = 0;
-								var videoChunks = [];
+		titlet.textContent = greeting;
 
-								// Slice the video into chunks
-								while (currentTime < duration) {
-									var chunkEnd = Math.min(currentTime + chunkSize, duration);
-									var chunkBlob = await sliceVideo(currentTime, chunkEnd, videoFile);
-									var chunkUrl = URL.createObjectURL(chunkBlob);
-									videoChunks.push(chunkUrl);
-									console.log("Chunk created:", chunkUrl); // Log the created chunk URL
-									currentTime = chunkEnd;
-								}
+		async function fetchWikinews(callback) {
+			const script = document.createElement('script');
+			const callbackName = 'wikinewsCallback';
 
-								// Display first chunk of the video
-								if (videoChunks.length > 0) {
-									console.log("Displaying first chunk:", videoChunks[0]); // Log the URL of the first chunk
-									document.getElementById("thesource").src = videoChunks.shift();
-									document.getElementById("thedisplay").load();
-									document.getElementById("thedisplay").play();
-								}
+			window[callbackName] = function(data) {
+				callback(data);
+				delete window[callbackName];
+				document.body.removeChild(script);
+			};
 
-								// Play next chunk when the current one ends
-								document.getElementById("thedisplay").addEventListener('ended', function () {
-									if (videoChunks.length > 0) {
-										var nextChunkUrl = videoChunks.shift();
-										console.log("Playing next chunk:", nextChunkUrl); // Log the URL of the next chunk to play
-										document.getElementById("thesource").src = nextChunkUrl;
-										document.getElementById("thedisplay").load();
-										document.getElementById("thedisplay").play();
-										// Revoke the previous URL to avoid memory leaks
-										URL.revokeObjectURL(chunkUrl); // Revoking the previous Blob URL
-									}
-								});
+			script.src = 'https://en.wikinews.org/w/api.php?action=query&cmdir=desc&cmlimit=5&cmprop=ids%7Ctitle%7Ctimestamp&cmsort=timestamp&cmtitle=Category%3APolitics_and_conflicts&list=categorymembers&format=json&callback=' + callbackName;
+			document.body.appendChild(script);
+		}
 
-							});
-						} else {
-							document.getElementById("thedisplay").alt = "Please open the files app to read a file from your system memory.";
-						}
+		async function news() {
+			fetchWikinews(function(data) {
+				const newsContainer = document.getElementById('news-section');
+				const newsItems = data.query.categorymembers;
+				console.log(newsItems)
+
+				newsItems.forEach(function(newsItem) {
+					const div = document.createElement('div');
+					div.classList.add('news-item');
+					div.onclick = function (){
+						window.parent.newtab("https://en.wikinews.org/wiki/"+newsItem.title+"?dpl_id=" + newsItem.pageid)
 					}
-				}
-			} catch (error) {
-				console.error("Error parsing todo JSON:", error);
-			}
-		}
 
-		function dataURItoBlob(dataURI) {
-			var byteString = atob(dataURI.split(',')[1]);
-			var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-			var ab = new ArrayBuffer(byteString.length);
-			var ia = new Uint8Array(ab);
-			for (var i = 0; i < byteString.length; i++) {
-				ia[i] = byteString.charCodeAt(i);
-			}
-			return new Blob([ab], {type: mimeString});
-		}
+					const title = document.createElement('h3');
+					title.textContent = newsItem.title;
 
-		// Function to slice video into chunks
-		async function sliceVideo(startTime, endTime, videoFile) {
-			return new Promise((resolve, reject) => {
-				var slicedBlob = videoFile.slice(startTime, endTime);
-				var fileReader = new FileReader();
-				fileReader.onload = function (event) {
-					console.log('Blob created successfully');
-					var blob = new Blob([event.target.result], {type: 'video/mp4'});
-					resolve(blob);
-				};
-				fileReader.onerror = function (event) {
-					console.error('Error reading Blob:', event);
-					reject(event);
-				};
-				fileReader.readAsArrayBuffer(slicedBlob);
+					const timestamp = document.createElement('p');
+					timestamp.textContent = new Date(newsItem.timestamp).toDateString();
+
+					div.appendChild(title);
+					div.appendChild(timestamp);
+
+					newsContainer.appendChild(div);
+				});
 			});
 		}
 
+		news();
 	</script>
-</body>
 
+
+</body>
 </html>
+

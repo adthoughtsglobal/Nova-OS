@@ -16,7 +16,7 @@
 
 		/* width */
 		::-webkit-scrollbar {
-			width: 5px;
+			width: 0.5em;
 		}
 
 		/* Track */
@@ -195,6 +195,61 @@
 			transform: translateY(2px);
 			white-space: nowrap;
 		}
+
+		#History {
+			width: 50vw;
+			max-width: 390px;
+			border: none;
+			border-radius: 5px;
+			background: #363636;
+			padding: 10px;
+			max-height: calc(100vh - 135px);
+			color: white;
+			margin-right: 10px;
+			margin-top: 84px;
+			box-shadow: 0 3px 5px #0000007d;
+		}
+
+		#History .bigt {
+			border-bottom: 1px solid grey;
+			display: block;
+			margin-bottom: 5px;
+			padding-bottom: 3px;
+			font-size: 0.7rem;
+		}
+		
+		.historyitem {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: nowrap;
+			align-items: center;
+			padding: 5px 10px;
+			cursor: pointer;
+			border-radius: 5px;
+		}
+
+		.historyitem:hover {
+			background: #616161;
+		}
+
+		.historyitem span {
+			flex: 1;
+			overflow: hidden;
+			font-size: 1rem;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+
+		.historyitem button {
+			padding: 1px;
+			border: none;
+			background: transparent;
+			color: white;
+		}
+
+		.historyitem button span {
+			font-size: 1rem !important;
+		}
 	</style>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
@@ -207,9 +262,9 @@
 
 			</script>
 			<div class="tabs" id="tabs">
-				<div class="tab active" id="tabndefaultOpen">
-					<b onclick="openCity('tabndefaultOpen', 'wincdefaultOpen')">Explore</b>
-					<span class="material-icons clbtn" onclick="remtab('defaultOpen')">
+				<div class="tab active" id="tabnnewTab">
+					<b onclick="openCity('tabnnewTab', 'wincnewTab')">Explore</b>
+					<span class="material-icons clbtn" onclick="remtab('newTab')">
 						close
 					</span>
 				</div>
@@ -220,7 +275,7 @@
 		</div>
 		<div class="urlnav">
 			<div class="btngrp">
-				<button>
+				<button onclick="homebtn()">
 					<span class="material-icons">
 						home
 					</span>
@@ -251,7 +306,7 @@
 				</button>
 			</div>
 			<div class="btngrp">
-				<button>
+				<button onclick="historytabopen()">
 					<span class="material-icons">
 						history
 					</span>
@@ -264,9 +319,20 @@
 			</div>
 		</div>
 	</nav>
+	<dialog id="History">
+		<span class="bigt">History</span>
+		<div id="historyitems">	
+			<div class="historyitem">
+				<span>URL appears here</span>
+				<button><span class="material-icons">
+					close
+				</span></button>
+			</div>
+		</div>
+	</dialog>
 	<div id="tabconts">
-		<div class="tabcontent" id="wincdefaultOpen">
-			<iframe src="appdata/oops.html" frameborder="0" id="ifrdefaultOpen"></iframe>
+		<div class="tabcontent" id="wincnewTab">
+			<iframe src="appdata/oops.html" frameborder="0" id="ifrnewTab"></iframe>
 
 		</div>
 	</div>
@@ -274,15 +340,56 @@
 	<script>
 		var tabhistory = [];
 		var tabsnow = [];
-		var lasttab = 'defaultOpen';
+		var lasttab = 'newTab';
 		var nowtab = 'closable';
 		var deftab;
-		greenflag();
-	</script>
-	<script>
-
+		
 		function reloadp() {
+			document.getElementById("ifr" + nowtab).contentDocument.location.reload(true);
+		}
 
+		function homebtn() {
+			document.getElementById("ifr" + nowtab).src = "appdata/oops.html";
+		}
+
+		var myDialog = document.getElementById('History');
+
+		document.addEventListener('click', (event) => {
+			if (event.target === myDialog) {
+				myDialog.close();
+			}
+		});
+		
+		function historytabopen() {
+			let historyitemsele = document.getElementById("historyitems");
+			historyitemsele.innerHTML = "";
+			document.getElementById("History").showModal()
+			tabhistory = [...new Set(tabhistory)];
+			tabhistory.forEach(item => {
+				const historyItemDiv = document.createElement('div');
+				historyItemDiv.className = 'historyitem';
+
+				historyItemDiv.onclick = function () {
+					newtab(item);
+					document.getElementById("History").close()
+				}
+
+				const urlSpan = document.createElement('span');
+				urlSpan.textContent = item;
+
+				const closeButton = document.createElement('button');
+				const closeIcon = document.createElement('span');
+				closeIcon.className = 'material-icons';
+				closeIcon.textContent = 'close';
+				closeButton.appendChild(closeIcon);
+
+				// Append elements to history item div
+				historyItemDiv.appendChild(urlSpan);
+				historyItemDiv.appendChild(closeButton);
+
+				// Append history item div to the history items container
+				document.getElementById('historyitems').appendChild(historyItemDiv);
+			})
 		}
 
 		function openCity(evt, cityName) {
@@ -334,7 +441,6 @@
 		function newtab(src) {
 			let nowid = genID();
 			tabsnow.push(nowid)
-			tabhistory.push(nowid)
 			console.log("Opens new tab with id: " + nowid)
 			var df = document.createElement("div");
 			df.setAttribute("class", "tabcontent");
@@ -369,6 +475,8 @@
 			} else {
 				bf.src = "appdata/oops.html";
 			}
+
+			tabhistory.push(bf.src)
 			bf.id = "ifr" + nowid;
 			bf.setAttribute("frameborder", 0)
 			bf.setAttribute("sandbox", "allow-same-origin allow-forms allow-scripts allow-top-navigation-by-user-activation allow-storage-access-by-user-activation allow-popups allow-popups-to-escape-sandbox allow-downloads allow-modals allow-pointer-lock")
@@ -408,18 +516,51 @@
 			if (eve.key === "Enter") {
 				eve.preventDefault();
 				let input = document.getElementById("deinput").value;
-				if (isValidURL(input)) {
+				if (isValidURL(input)[0]) {
+					input = isValidURL(input)[1]
 					document.getElementById("ifr" + nowtab).src = input;
+					tabhistory.push(input)
 				} else {
-					let searchQuery = "https://www.bing.com/search?q=" + encodeURIComponent(input);
+					let searchQuery = "https://adthoughtsglobal.github.io/Search?q=" + encodeURIComponent(input);
+					try {
+						  let qsets = localStorage.getItem("qsets");
+						  if (qsets) {
+							  let qsetsObj = JSON.parse(qsets);
+							  if (qsetsObj.defSearchEngine == "Bing") {
+								searchQuery = "https://www.bing.com/search?q=" + encodeURIComponent(input);
+							  }
+						  }
+					  } catch (error) {
+						  console.log("safe error: " + error);
+					  }
+					
 					document.getElementById("ifr" + nowtab).src = searchQuery;
+					tabhistory.push(searchQuery)
 				}
 			}
 		}
 
+		function truncateMiddle(str, frontChars, backChars, maxLength) {
+		  if (str.length <= maxLength) {
+			return str;
+		  }
+		  return str.substring(0, frontChars) + '...' + str.substring(str.length - backChars);
+		}
+
 		function isValidURL(str) {
+			let url = str;
 			let urlPattern = /^(ftp|http|https):\/\/[^ "]+$/;
-			return urlPattern.test(str);
+
+			if (!str.includes(" ") && str.includes(".")) {
+				isvalid = true;
+				if (!urlPattern.test(url)) {
+					url = "https://" + str;
+				}
+			} else {
+				isvalid = false;
+			}
+			
+			return [isvalid, url];
 		}
 
 
@@ -466,12 +607,13 @@
 		}
 
 		function greenflag() {
-			tabhistory = ["defaultOpen"]
-			tabsnow = ["defaultOpen"];
-			nowtab = "defaultOpen";
+			
+			tabsnow = ["newTab"];
+			nowtab = "newTab";
 			deftab = "appdata/oops.html";
-			document.getElementById("tabndefaultOpen").click();
-			console.log(":3")
+			tabhistory.push(document.getElementById("ifrnewTab").src)
+			document.getElementById("tabnnewTab").click();
+
 			const dropArea = document.getElementById('tabs');
 			dropArea.addEventListener('dragover', function (e) {
 				e.preventDefault();

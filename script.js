@@ -1,12 +1,20 @@
-var batteryLevel, winds = {}, rp, flwint = true, opentrigger, memory, nowapp, stx = gid("startuptx"), applogs = {}, fulsapp = false, nowappdo, appsHistory = [], nowwindow, appicns = {};
+var batteryLevel, winds = {}, rp, flwint = true, opentrigger, memory, nowapp, stx = gid("startuptx"), applogs = {}, fulsapp = false, nowappdo, appsHistory = [], nowwindow, appicns = {}, dev = false;
 var really = false;
 
 gid("nowrunninapps").style.display = "none";
 
+const rllog = console.log;
+
+console.log = function() {
+	if (dev) {
+		rllog(...arguments)
+	}
+}
+
 // Check if the database 'trojencat' exists
 getdb('trojencat', 'rom')
 	.then(async (result) => {
-		
+
 		try {
 			if (result !== null) {
 				memory = result;
@@ -76,18 +84,6 @@ getdb('trojencat', 'rom')
 		} catch (error) {
 			console.error('Error in database operations:', error);
 		}
-		let folders = await getFolderNames();
-		if (!folders.includes("Desktop")) {
-			createFolder("Desktop")
-		}
-		if (!folders.includes("System")) {
-			await createFolder("System")
-			await createFile("System", "settings", "application/json", jsonToDataURI(localStorage.getItem('qsets')), "{}")
-			await createFile("System", "applications", "json", "currently nothing", "{}")
-		}
-		if (!folders.includes("Dock")) {
-			await createFolder("Dock")
-		}
 	})
 	.catch((error) => {
 		console.error('Error retrieving data from the database:', error);
@@ -138,6 +134,7 @@ async function openn() {
 	gid("strtsear").value = ""
 	gid("strtappsugs").style.visibility = "hidden"
 	let x = await getFileNamesByFolder("Apps");
+	x.sort((a, b) => a.name.localeCompare(b.name));
 	x.forEach(async function(app) {
 		// Create a div element for the app shortcut
 		var appShortcutDiv = document.createElement("div");
@@ -405,7 +402,7 @@ async function dod() {
 			let unshrinkbsfX = unshrinkbsf(x.content);
 			document.getElementById('bgimage').style.backgroundImage = `url("` + unshrinkbsfX + `")`;
 		} else {
-			gid("bgimage").style.backgroundImage = `url("wallpaper.png")`;
+			gid("bgimage").style.backgroundImage = `url("https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")`;
 		}
 	}, 1000);
 
@@ -430,30 +427,41 @@ function clwin(x) {
 }
 
 function flwin(x) {
-	x.parentElement.parentElement.classList.add("transp2")
-	if (x.innerHTML == "web_asset") {
-		x.parentElement.parentElement.style = "left: 0;top: 0;width: calc(100% - 0px);height: calc(100% - 57px);";
-		x.innerHTML = "filter_none";
+	x.parentElement.parentElement.parentElement.classList.add("transp2")
+	if (x.innerHTML == "open_in_full") {
+		let oke = x.parentElement.parentElement.parentElement;
+
+		oke.style.left = "0";
+		oke.style.top = "0";
+		oke.style.width = "calc(100% - 0px)";
+		oke.style.height = "calc(100% - 57px)";
+
+		x.innerHTML = "close_fullscreen";
 		fulsapp = true;
 	} else {
 		// minimise window
-		x.parentElement.parentElement.style = 'left: calc(50vw - 33.5vw); top: calc(50vh - 35vh); width: 65vw; height: 70vh; z-index: 0;';
+		let oke = x.parentElement.parentElement.parentElement;
+
+		oke.style.left = "calc(50vw - 33.5vw)";
+		oke.style.top = "calc(50vh - 35vh)";
+		oke.style.width = "65vw";
+		oke.style.height = "70vh";
+
 		nowapp = ""
 		dewallblur();
-		x.innerHTML = "web_asset"
+		x.innerHTML = "open_in_full"
 		fulsapp = false;
 	}
 	checktaskbar()
 	setTimeout(() => {
-		x.parentElement.parentElement.classList.remove("transp2")
+		x.parentElement.parentElement.parentElement.classList.remove("transp2")
 
 	}, 1000);
-
-
 }
 
 function getAppIcon(unshrunkContent, appname) {
 	if (!appicns[appname]) {
+		console.log("Fetching icon")
 		const tempElement = document.createElement('div');
 		tempElement.innerHTML = unshrunkContent;
 		const metaTags = tempElement.getElementsByTagName('meta');
@@ -505,7 +513,7 @@ async function openapp(x, od) {
 	const fetchDataAndSave = async (x) => {
 		try {
 
-
+			console.log("bob, " + y)
 			var y;
 			if (od != 1) {
 				y = await getFileById(od)
@@ -572,6 +580,21 @@ function openwindow(title, cont, ic, theme) {
 
 	if (!isitmob) {
 		windowDiv.style = 'left: calc(50vw - 33.5vw); top: calc(50vh - 35vh); width: 65vw; height: 70vh; z-index: 0;';
+
+		// Get the computed style of the windowDiv
+		let computedStyle = getComputedStyle(windowDiv);
+
+		// Get the current positions calculated by the browser
+		let currentLeft = parseFloat(computedStyle.left);
+		let currentTop = parseFloat(computedStyle.top);
+
+		// Update the positions
+		let newLeft = `calc(50vw - 33.5vw + ${15 * Object.keys(winds).length}px)`;
+		let newTop = `calc(50vh - 35vh + ${10 * Object.keys(winds).length}px)`;
+
+		windowDiv.style.left = newLeft;
+		windowDiv.style.top = newTop;
+
 	} else {
 		windowDiv.style.left = 0;
 		windowDiv.style.top = 0;
@@ -587,6 +610,7 @@ function openwindow(title, cont, ic, theme) {
 	windowHeader.innerHTML += toTitleCase(title)
 	if (theme != null) {
 		windowHeader.style.backgroundColor = theme;
+		windowDiv.style.border = `1px solid ` + theme;
 		if (isDark(theme)) {
 			windowHeader.style.color = "white";
 		} else {
@@ -604,17 +628,21 @@ function openwindow(title, cont, ic, theme) {
 
 	});
 
+	var ibtnsside = document.createElement("div");
+	ibtnsside.classList += "ibtnsside"
+
 	var flButton = document.createElement("span");
-	flButton.classList.add("material-icons", "wincl", "flbtn");
-	flButton.style = "right: 20px;font-size: 10px !important;padding: 3px;";
-	flButton.textContent = "web_asset";
+	flButton.classList.add("material-symbols-rounded", "wincl", "flbtn");
+	flButton.style = `    padding: 4px 5px;
+    font-size: 8px !important;`;
+	flButton.textContent = "open_in_full";
 	flButton.onclick = function() {
 		flwin(flButton);
 	};
 
 	// Create the close button in the header
 	var closeButton = document.createElement("span");
-	closeButton.classList.add("material-icons", "wincl");
+	closeButton.classList.add("material-symbols-rounded", "wincl");
 	closeButton.textContent = "close";
 	closeButton.onclick = function() {
 		setTimeout(function() {
@@ -627,81 +655,80 @@ function openwindow(title, cont, ic, theme) {
 	};
 
 	// Append the close button to the header
-	windowHeader.appendChild(closeButton);
-	if (!isitmob) { windowHeader.appendChild(flButton); }
+	ibtnsside.appendChild(closeButton);
+	if (!isitmob) { ibtnsside.appendChild(flButton); }
+
+	windowHeader.appendChild(ibtnsside);
 
 	var windowContent = document.createElement("div");
 	windowContent.classList += "windowcontent";
+	
+	var windowLoader = document.createElement("div");
+	windowLoader.classList += "windowloader";
 
-	var iframe = document.createElement("iframe");
-
-	windowContent.appendChild(iframe);
-
-	// Attach onload event handler to iframe
-	iframe.onload = function() {
+	function loadIframeContent(windowLoader, windowContent, iframe) {
+		var iframe = document.createElement("iframe");
 		var contentString = content.toString();
-		// Check if content includes script tags
-		if (contentString.includes("<script")) {
-			// Extract script tags from content
-			var scriptTags = contentString.match(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi);
 
-			// Loop through each script tag
-			scriptTags.forEach(function(scriptTag) {
-				var script = iframe.contentDocument.createElement('script');
+		iframe.onload = function() {
+			iframe.src = "about:blank";
+			var doc = iframe.contentDocument || iframe.contentWindow.document;
+			doc.open();
+			doc.write(contentString);
+			doc.close();
+			if (contentString.includes(`function greenflag()`)) {
+				attemptGreenFlag(windowLoader, windowContent, iframe);
+			} else {
+				windowLoader.remove();
+			}
+		};
+		windowContent.appendChild(iframe);
+	}
 
-				// Check if the script tag has a src attribute
-				var srcMatch = scriptTag.match(/script src="([^"]+)"/);
-				if (srcMatch) {
-					// If src attribute exists, set src attribute of script element
-					var src = srcMatch[1];
-					console.log("src : " + src)
-
-					// Fetch the script content
-					fetch(src)
-						.then(response => response.text())
-						.then(scriptContent => {
-
-							// Set the script content
-							script.innerHTML = scriptContent
-							script.onload = function() {
-								// Execute greenflag function after script is loaded
-								iframe.contentWindow.greenflag().catch(error => {
-									console.error('Error loading script:', error);
-								});
-							};
-
-						})
-						.catch(error => {
-							console.error('Error loading script:', error);
-						});
-				} else {
-					// If src attribute doesn't exist, extract script content and set innerHTML of script element
-					var scriptContent = scriptTag.replace(/<script\b[^>]*>([\s\S]*?)<\/script>/i, "$1");
-					script.innerHTML = scriptContent;
-					// Attach onload event listener to handle script loading completion
-
+	function attemptGreenFlag(windowLoader, windowContent, iframe) {
+		try {
+			iframe.contentWindow.greenflag();
+			windowLoader.style.display = "none";
+			windowLoader.remove();
+		} catch (error) {
+			console.log(error)
+			if (!String(error.message).includes('greenflag')) {
+				windowLoader.style.display = "none";
+				return;
+			}
+			
+			setTimeout(function() {
+				try {
+					iframe.contentWindow.greenflag();
+					windowLoader.remove();
+				} catch (error) {
+					
+					if (!String(error.message).includes('greenflag')) {
+						windowLoader.style.display = "none";
+					}
+					console.log('App failed to launch', error);
+					windowLoader.innerHTML = "<h2>App Failed to launch</h2><p>Click to retry</p>";
+					windowLoader.style.backgroundColor = "#ffffffba"
+					windowLoader.onclick = function() {
+						// Remove the previous iframe before retrying
+						var oldIframe = document.querySelector("iframe");
+						if (oldIframe) oldIframe.remove();
+						loadIframeContent(windowLoader, windowContent);
+					};
 				}
-
-				// Append script element to iframe's head
-				iframe.contentDocument.body.appendChild(script);
-				nowappdo = iframe.contentDocument
-			});
+			}, 500);
 		}
+	}
 
-		// Remove script tags from content
-		var contentWithoutScripts = contentString.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
-
-		// Set the innerHTML of iframe's body with content without scripts
-		iframe.contentDocument.body.innerHTML = contentWithoutScripts;
-
-		// Call greenflag function in iframe's window context
-		iframe.contentWindow.greenflag();
-	};
+	// Initial load
+	loadIframeContent(windowLoader, windowContent);
+	
 
 	nowwindow = 'window' + winuid;
 	// Append the header and content to the window
 	windowDiv.appendChild(windowHeader);
 	windowDiv.appendChild(windowContent);
+	windowDiv.appendChild(windowLoader);
 
 	// Append the window to the document body
 	document.body.appendChild(windowDiv);
@@ -720,10 +747,6 @@ function putwinontop(x) {
 
 		// Set the zIndex
 		document.getElementById(x).style.zIndex = maxWindValue + 1;
-
-		// Output the values for debugging
-		console.log("from: " + maxWindValue + " to: " + (maxWindValue + 1));
-
 	} else {
 		document.getElementById(x).style.zIndex = 0;
 	}
@@ -792,7 +815,7 @@ async function createFolder(folderName) {
 				folderName,
 				content: []
 			});
-			console.log(`We proudly proclaim that the folder "${folderName}" created and have created a new chapter in the history of modern mankind.`);
+			console.log(`We proudly proclaim that the folder "${folderName}" `);
 			setdb('trojencat', 'rom', memory);
 		} else {
 			console.log(`Folder "${folderName}" says that im not dead! what de hail!`);
@@ -812,10 +835,8 @@ async function createFile(folderName, fileName, type, content, metadata) {
 	try {
 		if (type === "app") {
 			let appdataquacks = await getFileByPath(folderName + "/" + fileName);
-			console.log("NO NO NO:", appdataquacks);
 			appdataquacks = appdataquacks[0];
-			console.log("Filesbepath:", fileName);
-			console.log("YES YES YES:", appdataquacks);
+			console.log("idk, Filesbepath:", fileName);
 
 			if (appdataquacks != null) {
 				const newData = {
@@ -843,7 +864,7 @@ async function createFile(folderName, fileName, type, content, metadata) {
 				content,
 				metadata
 			});
-			console.log(`File "${fileName}" created in folder "${folderName}".`);
+			console.log(`File "${fileName}" created in folder "${folderName}" for some reason.`);
 			setdb('trojencat', 'rom', memory2);
 		} else {
 			console.log("Creating a folder anyway...");
@@ -863,7 +884,7 @@ async function updateFile(folderName, fileId, newData) {
 
 	try {
 		if (folderIndex === -1) {
-			console.log(`Folder "${folderName}" not found. Creating folder...`);
+			console.log(`Folder "${folderName}" isnt born yet. guess what...`);
 			await createFolder(folderName);
 			memory = await getdb('trojencat', 'rom');
 			folderIndex = memory.findIndex(folder => folder.folderName === folderName);
@@ -882,9 +903,9 @@ async function updateFile(folderName, fileId, newData) {
 			// Update the file in memory
 			memory[folderIndex].content[fileIndex] = fileToUpdate;
 			setdb('trojencat', 'rom', memory);
-			console.log(`File "${fileToUpdate.fileName}" updated.`);
+			console.log(`File "${fileToUpdate.fileName}" is no more the old file.`);
 		} else {
-			console.log(`File with ID "${fileId}" not found in folder "${folderName}". Creating new file...`);
+			console.log(`File with ID "${fileId}" is missing lol,  "${folderName}". Gonna make a new one now...`);
 			await createFile(folderName, fileId, newData.type, newData.content, newData.metadata);
 		}
 	} catch (error) {
@@ -1058,12 +1079,12 @@ function loadtaskspanel() {
 		appbarelement.style.display = "flex"
 	}
 	x.forEach(async function(app, index) {
-		console.log("app is here: " + app)
+		console.log("she's here: " + app)
 		// Create a div element for the app shortcut
 		var appShortcutDiv = document.createElement("biv");
 		appShortcutDiv.className = "app-shortcut tooltip adock";
 
-		appShortcutDiv.addEventListener("click", function () {
+		appShortcutDiv.addEventListener("click", function() {
 			putwinontop('window' + wid[index]);
 			console.log(gid("window" + wid[index]))
 			winds[app + wid[index]] = Number(gid("window" + wid[index]).style.zIndex);
@@ -1136,7 +1157,7 @@ function unshrinkbsf(compressedStr) {
 }
 
 async function makewall(deid) {
-	console.log("dod just quacks. He then says: " + deid)
+	console.log("the wallpaper lol: " + deid)
 	let x = await getFileById(deid);
 	x = x.content
 	x = unshrinkbsf(x)
@@ -1157,14 +1178,14 @@ async function remfile(ID) {
 			if (fileIndex !== -1) {
 				// Remove the file from the folder's content array
 				let removedFile = folder.content.splice(fileIndex, 1)[0];
-				console.log(`0004`);
+				console.log(`its an error bro: 0004`);
 				await setdb('trojencat', 'rom', memory);
 
 				// Check if the file was successfully removed
 				if (!folder.content.includes(removedFile)) {
-					console.log("File successfully removed.");
+					console.log("The file have been eliminated.");
 				} else {
-					console.log("File removal failed.");
+					console.log("The file resisted elimination somehow.");
 				}
 
 				return;
@@ -1177,22 +1198,30 @@ async function remfile(ID) {
 		console.error("Error fetching or updating data:", error);
 	}
 }
-async function remFilesByFolder(folderName) {
-	try {
-		let memory2 = await getdb('trojencat', 'rom');
 
-		// Find the folder with the specified name
-		let folderIndex = memory2.findIndex(folder => folder.name === folderName);
+async function remfolder(folderName) {
+	try {
+		const memory = await getdb('trojencat', 'rom');
+
+		// Find the index of the folder with the specified name
+		const folderIndex = memory.findIndex(folder => folder.folderName === folderName);
 
 		if (folderIndex !== -1) {
-			// Remove all files in the folder
-			memory2[folderIndex].content = [];
-			console.log(`All files removed from folder "${folderName}".`);
-		} else {
-			console.error(`Folder "${folderName}" not found.`);
-		}
+			// Remove the folder from the memory array
+			const removedFolder = memory.splice(folderIndex, 1)[0];
+			console.log(`its an error bro: 0004`);
+			await setdb('trojencat', 'rom', memory);
 
-		await setdb('trojencat', 'rom', memory2);
+			// Check if the folder was successfully removed
+			if (!memory.some(folder => folder.folderName === folderName)) {
+				console.log("The folder has been eliminated.");
+			} else {
+				console.log("The folder resisted elimination somehow.");
+			}
+		} else {
+			// If the folder with the specified name is not found
+			console.error(`Folder with name "${folderName}" not found.`);
+		}
 	} catch (error) {
 		console.error("Error fetching or updating data:", error);
 	}
@@ -1244,7 +1273,7 @@ async function installdefaultapps() {
 			const fileContent = await response.text();
 
 			createFile("Apps", appName, "app", fileContent);
-			console.log(appName + " updated successfully.");
+			console.log(appName + " has been updated to genZ.");
 		} catch (error) {
 			console.error("Error updating " + appName + ":", error.message);
 			if (attempt < maxRetries) {
@@ -1501,17 +1530,17 @@ function hideMenu() {
 }
 
 async function moveFileToFolder(flid, dest) {
-	console.log("Moving file with id: " + flid + " to folder: " + dest);
+	console.log("Moving file id: " + flid + " to folder: " + dest);
 
 	let fileToMove = await getFileById(flid);
-	console.log("Got file: " + JSON.stringify(fileToMove));
+	console.log("Got them: " + JSON.stringify(fileToMove));
 
 	await createFile(dest, fileToMove.fileName, fileToMove.type, fileToMove.content, fileToMove.metadata);
-	console.log("File created in folder: " + dest);
+	console.log("File born in folder: " + dest);
 
-	console.log("Removing file: " + flid);
+	console.log("Eliminating file: " + flid);
 	await remfile(flid);
-	console.log("File removed successfully");
+	console.log("File eleminated successfully");
 }
 
 async function remfile(ID) {
@@ -1527,9 +1556,9 @@ async function remfile(ID) {
 				await setdb('trojencat', 'rom', memory);
 
 				if (!folder.content.includes(removedFile)) {
-					console.log("File successfully removed.");
+					console.log("File successfully eleminated.");
 				} else {
-					console.log("File removal failed.");
+					console.log("File proved resistance.");
 				}
 				return;
 			}
@@ -1676,7 +1705,7 @@ function checksnapping(x, event) {
 
 	if (fulsapp) {
 		x.classList.add("transp2");
-		x.getElementsByClassName("flbtn")[0].innerHTML = "web_asset";
+		x.getElementsByClassName("flbtn")[0].innerHTML = "open_in_full";
 		x.style = 'left: calc(50vw - 33.5vw); top: calc(50vh - 35vh); width: 65vw; height: 70vh; z-index: 0;';
 		fulsapp = false;
 		setTimeout(() => {
@@ -1688,7 +1717,7 @@ function checksnapping(x, event) {
 		x.classList.add("transp2");
 		x.style = "left: 3px; top: 3px; width: calc(100% - 7px); height: calc(100% - 63px);";
 		fulsapp = true;
-		x.getElementsByClassName("flbtn")[0].innerHTML = "filter_none";
+		x.getElementsByClassName("flbtn")[0].innerHTML = "close_fullscreen";
 		checktaskbar();
 		setTimeout(() => {
 			x.classList.remove("transp2");
@@ -1700,7 +1729,7 @@ function checksnapping(x, event) {
 		x.classList.add("transp2");
 		x.style = "left: 3px; top: 3px; width: calc(50% - 5px); height: calc(100% - 63px);";
 		fulsapp = true;
-		x.getElementsByClassName("flbtn")[0].innerHTML = "filter_none";
+		x.getElementsByClassName("flbtn")[0].innerHTML = "open_in_full";
 		checktaskbar();
 		setTimeout(() => {
 			x.classList.remove("transp2");
@@ -1712,7 +1741,7 @@ function checksnapping(x, event) {
 		x.classList.add("transp2");
 		x.style = "right: 3px; top: 3px; width: calc(50% - 5px); height: calc(100% - 63px);";
 		fulsapp = true;
-		x.getElementsByClassName("flbtn")[0].innerHTML = "filter_none";
+		x.getElementsByClassName("flbtn")[0].innerHTML = "open_in_full";
 		checktaskbar();
 		setTimeout(() => {
 			x.classList.remove("transp2");
@@ -1729,11 +1758,23 @@ function togglepowermenu() {
 	}
 }
 
-let countdown;
+let countdown, countdown2;
+var sleepQuotes = [
+	"A quick nap is all you need.",
+	"Sweet dreams",
+	"Just let it dissolve.",
+	"You are empty",
+	"Nothing disturbs you",
+	"Stay Calm",
+	"Breath In",
+	"Breath out",
+	"Slowly relax your body"
+]
 
 function startTimer(minutes) {
 	document.getElementById("sleepbtns").style.display = "none";
 	clearInterval(countdown);
+	clearInterval(countdown2);
 	const now = Date.now();
 	const then = now + minutes * 60 * 1000;
 	displayTimeLeft(minutes * 60);
@@ -1746,8 +1787,14 @@ function startTimer(minutes) {
 			document.getElementById('sleepwindow').close()
 			return;
 		}
+
 		displayTimeLeft(secondsLeft);
 	}, 1000);
+	countdown2 = setInterval(() => {
+		const randomIndex = Math.floor(Math.random() * sleepQuotes.length);
+
+		gid("sleepquote").innerHTML = sleepQuotes[randomIndex];
+	}, 3000);
 }
 
 function playBeeps() {
@@ -1778,24 +1825,6 @@ function displayTimeLeft(seconds) {
 	document.getElementById('sleeptimer').textContent = display;
 }
 
-
-async function updateFile(file) {
-	try {
-		let data = await getdb('trojencat', 'rom');
-		for (let folder of data) {
-			let index = folder.content.findIndex(f => f.uid === file.uid);
-			if (index !== -1) {
-				folder.content[index] = file;
-				await setdb('trojencat', 'rom', data);
-				return;
-			}
-		}
-		console.error(`Failed to update file "${file.name}" in the database.`);
-	} catch (error) {
-		console.error("Error updating file in the database:", error);
-		throw error;
-	}
-}
 
 function notify(title, description, appname) {
 	if (document.getElementById("notification").style.display == "block") {
@@ -1904,17 +1933,18 @@ gid("lisainput").addEventListener("keydown", async function(event) {
 });
 
 function runAsOSL(content) {
-	const cont = `<iframe class="oslframe" src="https://origin.mistium.com/Versions/originv4.9.2.html?embed=` + content + `"></iframe>
+	const encodedContent = encodeURIComponent(content).replace(/'/g, "%27").replace(/"/g, "%22");
+	const cont = `<iframe class="oslframe" src="https://origin.mistium.com/Versions/originv4.9.2.html?embed=${encodedContent}"></iframe>
 	<style>
-.oslframe {
-	width: 100%;
-	height: 100%;
-	border: none;
+		.oslframe {
+			width: 100%;
+			height: 100%;
+			border: none;
+		}
+	</style>`;
+	openwindow("Nova OSL Runner", cont);
 }
-	</style>
-	`
-	openwindow("Nova OSL Runner", cont)
-}
+
 
 function runAsWasm(content) {
 	const wasmBytes = new Uint8Array(content);

@@ -129,3 +129,8 @@ function isDark(hexColor) {
 	// Return true if luminance is less than or equal to 0.5 (considered dark), false otherwise
 	return luminance <= 0.5;
 }
+
+
+function terminal() {
+	gid("terminal").showModal()
+}

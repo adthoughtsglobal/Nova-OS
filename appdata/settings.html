@@ -17,7 +17,7 @@
 
 		/* width */
 		::-webkit-scrollbar {
-			width: 5px;
+			width: 0.5em;
 		}
 
 		/* Track */
@@ -59,7 +59,7 @@
 			overflow-y: scroll;
 			border-right: 1px solid #2f2f2f;
 			max-width: 150px;
-
+			min-width: 100px;
 		}
 
 		.tab h3 {
@@ -78,13 +78,22 @@
 			background-color: #282828;
 		}
 
+		button:focus {
+			border: 2px solid #3d3d3d;
+			outline: none;
+		}
+		
+		.tab button:focus {
+			border: 2px solid #3d3d3d;
+		}
+
 		.tab button {
 			color: white;
 			display: block;
+			border: 2px solid transparent;
 			background-color: transparent;
 			padding: 7px 7px;
 			width: calc(100% - 5px);
-			border: none;
 			margin: 2px;
 			border-radius: 5px;
 			outline: none;
@@ -114,6 +123,7 @@
 			border: 1px solid #1f1f1f;
 			width: 0;
 			flex-grow: 3;
+			min-width: 300px;
 			padding-bottom: 30vh;
 			background-color: #171717;
 			border-left: none;
@@ -487,13 +497,16 @@
 		}
 
 		.inpbox select {
-			background: #2f2f2f;
+			background: #434343;
 			color: white;
-			border: 1px solid #1a1a1a;
+			border: 1px solid #292929;
 			border-radius: 5px;
-			padding: 3px 1px !important;
+			font-size: 0.8rem;
+			padding: 3px 1px 3px 9px !important;
 			float: right;
-			transform: translate(2px, -3px);
+			display: inline-block;
+			outline: none;
+			transform: translate(3px, -2px);
 		}
 
 		@media only screen and (max-width: 100px) {
@@ -878,6 +891,20 @@
 						<option>24 Hour</option>
 					</select>
 				</div>
+				<div class="inpbox">
+					<span>Default Search Engine </span>
+					<select id="defSearchEngine">
+						<option>NWP</option>
+						<option>Bing</option>
+					</select>
+				</div>
+				<div class="inpbox">
+					<span>Sort app menu by</span>
+					<select id="defSearchEngine">
+						<option>Usage</option>
+						<option>A-Z</option>
+					</select>
+				</div>
 				<script>
 					function defs3() {
 						let selinp;
@@ -890,6 +917,17 @@
 							let newValue = document.getElementById("timefrmt").value;
 							let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
 							qsets.timefrmt = newValue;
+							localStorage.setItem("qsets", JSON.stringify(qsets));
+						});
+
+						let selinp2 = document.getElementById("defSearchEngine");
+						if (JSON.parse(localStorage.getItem("qsets")).defSearchEngine) {
+								selinp2.value = JSON.parse(localStorage.getItem("qsets")).defSearchEngine;
+						}
+						document.getElementById("defSearchEngine").addEventListener("change", function () {
+							let newValue = document.getElementById("defSearchEngine").value;
+							let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
+							qsets.defSearchEngine = newValue;
 							localStorage.setItem("qsets", JSON.stringify(qsets));
 						});
 					}
@@ -1545,8 +1583,6 @@
 					evt.currentTarget.className += " active";
 				}
 
-				function greenflag() {
-
 					var usedMemoryPercentage;
 					document.getElementById("defaultOpen").click();
 
@@ -1574,7 +1610,6 @@
 							}
 						});
 					}
-				}
 
 				generateDeviceDivs()
 

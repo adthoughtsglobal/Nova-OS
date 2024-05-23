@@ -1,8 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
 
+:root {
+	--font-size-small: 0.8em;
+	--font-size-normal: 1em;
+	--font-size-big: 2em;
+}
+
 /* width */
 ::-webkit-scrollbar {
-	width: 5px;
+	width: 0.5em;
 }
 
 /* Track */
@@ -19,7 +25,7 @@
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-	background: #555;
+	background: #434343;
 }
 
 html {
@@ -145,8 +151,7 @@ nav info {
 	padding: 0px;
 	overflow: hidden;
 	box-shadow: 0px 5px 1rem 1px #000000b0;
-	resize: both;
-	animation: appshow 0.3s 1;
+	animation: appshow 0.5s 1;
 }
 
 @media only screen and (max-width: 500px) {
@@ -157,14 +162,12 @@ nav info {
 
 @keyframes appshow {
 	0% {
-		transform: translateY(0px) scale(0.5);
-		filter: blur(10px);
+		transform: translateY(5px);
 		opacity: 0%;
 	}
 
 	100% {
-		transform: translateY(0px) scale(1);
-		filter: blur(0px);
+		transform: translateY(0px);
 		opacity: 100%;
 	}
 }
@@ -185,6 +188,26 @@ nav info {
 	height: calc(100% - 7px);
 }
 
+.windowloader {
+	position: absolute;
+	top: 25px;
+	width: 100%;
+	height: calc(100% - 26px);
+	display: grid;
+	transition: .5s;
+	background: transparent;
+	justify-content: center;
+	align-content: center;
+	color: #3a3a3a;
+	font-size: 1rem;
+	align-items: center;
+	justify-items: center;
+}
+
+.windowloader h2 {
+	margin: 0;
+}
+
 .windowcontent iframe {
 	border: none;
 	width: 100%;
@@ -193,20 +216,20 @@ nav info {
 
 .wincl {
 	float: right;
-	box-shadow: 0px 4px 6px 0px #0000003b inset;
-	color: white;
 	margin: 2px;
 	cursor: pointer;
 	border-radius: 5px;
 	padding: 2px 2px 2px 3px;
 	font-size: 12px !important;
 	transform: scale(1.2) translate(2px, -2px);
+	opacity: 0.6;
 }
 
 .wincl:hover {
-	background: #292929;
+	background: #29292952;
 	color: #cfcfcf;
-}
+	opacity: 1;
+} 
 
 .app-shortcut {
 	background-color: transparent;
@@ -378,6 +401,10 @@ nav info {
 	outline: none;
 }
 
+#appdmod::backdrop {
+	background: transparent;
+}
+
 @media only screen and (max-width: 800px) {
 	#appdmod {
 		width: 70%;
@@ -388,15 +415,16 @@ nav info {
 	#appdmod {
 		width: 100%;
 		max-height: none;
-		height: calc(100vh - 86px);
+		height: calc(100vh - 90px);
 		padding: 22px;
-		bottom: -15px;
+		bottom: -4px;
 		box-shadow: none;
 		border-radius: 0;
 	}
 
 	nav {
 		background-color: #313131;
+		padding: 6px;
 		bottom: 0;
 	}
 
@@ -1355,4 +1383,12 @@ dialog#terminal {
 #termoutput {
 	display: block;
 	flex-grow: 1;
+}
+
+.ibtnsside {
+	display: inline-flex;
+	float: inline-end;
+	flex-wrap: nowrap;
+	flex-direction: row-reverse;
+	align-items: center;
 }

@@ -1,4 +1,3 @@
-<!---Code Licensed under https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use--->
 <!DOCTYPE html>
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
 
@@ -8,11 +7,15 @@
 	<title>Nova OS</title>
 	<link href="style.css" rel="stylesheet" type="text/css" />
 	<script src="system32.js" defer></script>
-	<link rel="manifest" href="webmanifest.json" />
 	<!-- Include pako library (CDN) -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.0.3/pako.min.js"></script>
 	</script>
-
+	
+	<link rel="manifest" href="webmanifest.json" />
+	
+	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css">
 	<script src="edgecases.js" defer></script>
 	<script src="scripties.js" defer></script>
 	<script src="script.js" defer></script>
@@ -50,8 +53,7 @@
 			<span class="deskloadspan">Desktop Is loading...</span>
 		</div>
 	</div>
-	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	
 
 	<script>
 		$(function () {
@@ -250,6 +252,7 @@
 	</dialog>
 	<dialog id="sleepwindow">
 		<div class="sleepwincon">
+			<p>"<span id="sleepquote"></span>"</p>
 			<h1 id="sleeptimer">00:00</h1>
 			<p id="sleepmessage"></p>
 			<div id="sleepbtns">
@@ -265,7 +268,7 @@
 				<br>
 			</div>
 			<span class="material-icons"
-				onclick="document.getElementById('sleepwindow').close(); clearInterval(countdown);document.getElementById('sleeptimer').textContent = '00:00';document.getElementById('sleepbtns').style.display = 'block';">close</span>
+				onclick="document.getElementById('sleepwindow').close(); clearInterval(countdown);clearInterval(countdown2);document.getElementById('sleeptimer').textContent = '00:00';document.getElementById('sleepbtns').style.display = 'block';">close</span>
 		</div>
 	</dialog>
 	<dialog id="terminal">

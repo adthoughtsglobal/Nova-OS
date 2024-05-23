@@ -11,7 +11,7 @@
 
 		/* width */
 		::-webkit-scrollbar {
-			width: 5px;
+			width: 0.5em;
 		}
 
 		/* Track */
@@ -94,7 +94,7 @@
 			background-color: #222222;
 			border-radius: 50%;
 			padding: 1px;
-			transform: translate(2px, 5px);
+			transform: translate(2px, 11px);
 			transisiton: .3s;
 		}
 
@@ -128,9 +128,9 @@
 
 		.sdfld span {
 			font-size: 15px;
-			transform: translate(1px, 2px);
+			transform: translate(1px, 3px);
 			margin-right: 6px;
-			color: #dcba37;
+			color: #fff996;
 		}
 
 		[flap-sidenav] {
@@ -224,6 +224,7 @@
 
 		.file small {
 			float: right;
+			flex-basis: max-content;
 			display: inline-block;
 			transform: translate(-3px, 4px);
 			opacity: 0.5;
@@ -489,7 +490,7 @@
 			font-size: 11px;
 			border: none;
 		}
-		
+
 		.notdropbtn {
 			background-color: #2d2d2d;
 			color: white;
@@ -498,6 +499,7 @@
 			padding: 5px;
 			transform: translate(-5px, 2px);
 		}
+
 		.notdropbtn span {
 			font-size: 11px !important;
 		}
@@ -575,6 +577,7 @@
 
 		.flarrbtn {
 			padding: 1px 2px;
+			height: 15px;
 		}
 
 		.nvbtns {
@@ -587,11 +590,11 @@
 
 		.newfilebtn {
 			position: absolute;
-			bottom: 70px;
-			right: 10px;
-			padding: 10px;
-			border-radius: 50%;
-			box-shadow: 0 2px 10px black;
+			bottom: 55px;
+			right: 15px;
+			padding: 0.5em;
+			border-radius: 1em;
+			height: 37px;
 		}
 
 		.newfilebtn:hover {
@@ -608,9 +611,14 @@
 		}
 
 		.im {
-				font-size: 10px !important;
-				margin-right: 5px;
-				transform: scale(1.2) translate(1px, 1px);
+			font-size: 10px !important;
+			margin-right: 5px;
+			transform: scale(1.2) translate(1px, 1px);
+		}
+
+		[flap-files] svg {
+			margin-bottom: 1rem;
+			height: 50px;
 		}
 	</style>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -677,6 +685,11 @@
 			</button>
 		</div>
 		<script>
+			const dbChangeEvent = new Event('dbchange');
+			function triggerDBChange() {
+				document.dispatchEvent(dbChangeEvent);
+			}
+			
 			var out;
 			function fupit() {
 				document.getElementById("fupibu").innerHTML = "Importing..."
@@ -735,10 +748,9 @@
 				return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) => String.fromCharCode('0x' + p1)));
 			}
 
-			async function makefolderhuh(){
+			async function makefolderhuh() {
 				let x = await window.parent.ask("Enter your Folder Name:", 'FolderName');
 				window.parent.createFolder(x);
-				setTimeout(refresh, 3000);
 			}
 		</script>
 	</dialog>
@@ -753,10 +765,10 @@
 				Files App 2.1
 			</div>
 			<div style="flex-grow: 1;" class="nowid"><span class="material-symbols-rounded setbtn" style="
-					transform: translate(-7px, 3px); cursor: pointer;
+														 transform: translate(-3px, 11px); cursor: pointer;
 				" onclick="upmd()">upload</span></div>
 		</div>
-		<div style="height: calc(100% - 58px);">
+		<div style="height: calc(100% - 43px);">
 			<div class="themainstuff">
 				<div flap-sidenav style="flex-grow: 1;
 		height: 100%;">
@@ -776,7 +788,7 @@
 					<div flap-fl-topnav><span id="pathdisp">
 							device://*
 						</span>
-						
+
 						<div class="nvbtns">
 							<button class="flarrbtn" title="Sorting">
 								<span class="material-symbols-rounded">
@@ -793,6 +805,11 @@
 									grid_view
 								</span>
 							</button>
+							<button class="flarrbtn" onclick="remfold()" id="remfoldbtn" title="Remove Folder" style="background-color: #7f4040;">
+								<span class="material-symbols-rounded">
+									delete_forever
+								</span>
+							</button>
 						</div>
 					</div>
 					<div flap-files style="flex-grow: 8; padding-bottom: 50px;padding: 10px;    padding-top: 5px;"
@@ -801,7 +818,7 @@
 					</div>
 					<div flap-fl-bottomnav id="fileinfobn">Click on a file to select it.
 					</div>
-					<button class="newfilebtn" onclick="document.getElementById('makefiledia').showModal()">
+					<button class="newfilebtn" onclick="document.getElementById('makefiledia').showModal(); document.getElementById('makflatw').value = currentPath">
 						<span class="material-symbols-rounded">
 							add
 						</span>
@@ -821,6 +838,7 @@
 		#makefiledia {
 			max-width: 80%;
 			min-height: 300px;
+			max-height: 80vh;
 			min-width: 300px;
 			padding: 20px;
 			border: none;
@@ -933,21 +951,68 @@
 			}
 
 			await window.parent.createFile(fwhere, fname, ftype, fcontent, fmetadata)
-				.then(function() {
+				.then(function () {
 					document.getElementById('makefiledia').close();
 					window.parent.say("File <br><small>" + fname + " created at " + fwhere + '</small', "success");
 				});
 		}
 
+		var dropZone = document.getElementById("flap-mot");
+		dropZone.addEventListener('dragover', (event) => {
+			event.preventDefault();
+		});
+
+		dropZone.addEventListener('drop', (event) => {
+			event.preventDefault();
+
+			const files = event.dataTransfer.files;
+
+			for (let i = 0; i < files.length; i++) {
+				const file = files[i];
+				const reader = new FileReader();
+
+				reader.onload = (e) => {
+					const fileContent = e.target.result;
+					if (file.type.startsWith('video') || file.type.startsWith('audio') || file.type.startsWith('image')) {
+						folderName = 'Media';
+
+						out = window.parent.shrinkbsf(fileContent)
+
+					} else if (file.type.startsWith('text') || file.type.endsWith('md') || file.type.endsWith('rtf')) {
+						folderName = 'Documents';
+					} else if (file.type.startsWith('html')) {
+						folderName = 'Apps';
+					} else {
+						folderName = 'Other';
+					}
+
+					let md = {
+						"via": "imported"
+					}
+					window.parent.createFile(folderName, file.name, file.type, out, md).then(() => {
+					listFiles(folderName, true)
+		});
+				};
+
+				reader.readAsText(file);
+			}
+		});
+
+
+		dropZone.addEventListener('dragend', (event) => {
+			event.preventDefault();
+		});
 
 		var currentPath, nowfile, flmode = 'grid';
-
 		var memory;
 		var fllist;
 		var fdlist;
 		var binmode = false;
 		var sessiontype = "normal"
 		function greenflag() {
+			
+			
+			
 			var todo = localStorage.getItem("todo");
 
 			var defile
@@ -958,9 +1023,9 @@
 					// file opener session
 					sessiontype = "opener"
 				}
-				} catch (error) {
-					console.log(error)
-				}
+			} catch (error) {
+				console.log(error)
+			}
 			fllist = document.getElementById("filelist");
 			fdlist = document.getElementById("folders");
 
@@ -1023,8 +1088,8 @@
 					let element = document.createElement('div');
 					element.classList.add("sdfld");
 					element.setAttribute("ondragover", "Allowdrop(event, this)")
-					element.setAttribute("ondrop", "dropfl(event, '"+obj.folderName+"')")
-					element.innerHTML = '<span class="material-icons"> folder </span>' + obj.folderName;
+					element.setAttribute("ondrop", "dropfl(event, '" + obj.folderName + "')")
+					element.innerHTML = '<span class="material-icons"> ' + getfolicon(obj.folderName) + ' </span>' + obj.folderName;
 					element.setAttribute('onclick', "listFiles('" + obj.folderName + "', true)")
 					fdlist.appendChild(element);
 				});
@@ -1044,6 +1109,7 @@
 				liststuff();
 				listFiles(currentPath);
 			}, 1000);
+			liststuff();
 		}
 
 		function dragfl(ev, obj) {
@@ -1053,6 +1119,12 @@
 		async function listFiles(folderName, gen) {
 			if (currentPath == folderName && gen) {
 				return;
+			}
+			if (folderName == "System") {
+				document.getElementById("remfoldbtn").style.display = "none";
+				
+			} else {
+				document.getElementById("remfoldbtn").style.display = ""
 			}
 			fllist.innerText = "";
 
@@ -1082,6 +1154,7 @@
 							fileElement.setAttribute("ondragstart", "dragfl(event, this)");
 
 							fileElement.innerHTML = `<span>` + geticon(file.type) + `</span><span flname><span class='flfrname'> ${file.fileName}</span> <small>${file.type}</small></span>`;
+							fileElement.setAttribute("title", file.fileName + "\nID: " + file.uid);
 							fllist.appendChild(fileElement);
 						} catch (error) {
 							console.error("Safe Error processing file:", error);
@@ -1109,7 +1182,7 @@
 					});
 
 				} else {
-					fllist.innerHTML = "<center style='padding-top: 30px'>This folder is empty.</center>"
+					fllist.innerHTML = `<center style='padding-top: 30px'><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="74.20199" height="94.1023" viewBox="0,0,74.20199,94.1023"><g transform="translate(-224.61774,-142.87893)"><g data-paper-data="{&quot;isPaintingLayer&quot;:true}" fill-rule="nonzero" stroke="#ffffff" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" style="mix-blend-mode: normal"><path d="M227.11774,158.26119c0,-7.11468 5.76758,-12.88226 12.88226,-12.88226c7.11468,0 12.88226,5.76758 12.88226,12.88226c0,7.11468 -5.76758,12.88226 -12.88226,12.88226c-7.11468,0 -12.88226,-5.76758 -12.88226,-12.88226z" fill="none" stroke-width="5" stroke-linecap="butt"/><path d="M244.56247,233.94447l9.12493,-32.20565l-8.58817,-28.98508" fill="none" stroke-width="5" stroke-linecap="round"/><path d="M253.6874,202.81234l17.71311,31.66888" fill="none" stroke-width="5" stroke-linecap="round"/><path d="M246.17275,178.6581l-7.51465,27.37481" fill="none" stroke-width="5" stroke-linecap="round"/><path d="M250.46684,179.73163l28.44833,-12.3455" fill="none" stroke-width="5" stroke-linecap="round"/><path d="M260.82196,192.96703l-1.81137,-23.54791l37.99776,-2.9229l1.81138,23.54791z" fill="#aa8b00" stroke-width="0" stroke-linecap="butt"/><path d="M256.80524,189.29958l2.20535,-19.88046l37.99776,-2.9229l-2.20535,19.53118z" fill="#ffcf00" stroke-width="0" stroke-linecap="butt"/><path d="M279.06646,168.81576l-0.1513,-1.42964" fill="none" stroke-width="5" stroke-linecap="round"/></g></g></svg><br>This folder is empty.</center>`
 				}
 			} else {
 				console.log("0003");
@@ -1124,7 +1197,7 @@
 
 		async function slfile(y) {
 
-			
+
 			let x = y;
 			if (x.id === "slfile") {
 				openfile(x);
@@ -1152,19 +1225,19 @@
 					try {
 						var units = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
 						var unitIndex = 0;
-	
+
 						while (fileSize > 1024 && unitIndex < units.length - 1) {
 							fileSize /= 1024;
 							unitIndex++;
 						}
-	
+
 						fileSize = fileSize.toFixed(2);
 					} catch (error) {
 						console.error(error)
 						fileSize = 0
 					}
 				}
-				
+
 
 				if (sessiontype == "opener") {
 					return;
@@ -1201,7 +1274,7 @@ drive_file_move
 					document.getElementById("fileinfobn").innerHTML += "Safe Error 0006";
 					window.parent.say(`<h1>File Error</h1><p>Nova files couldn't process that file</p><small>(Error 0006)</small>`, "warning")
 					refresh()
-// i did sjdfhsdkfhsdfj file type 
+					// i did sjdfhsdkfhsdfj file type 
 					console.error("An error occurred:", error);
 
 				}
@@ -1230,7 +1303,6 @@ drive_file_move
 						}
 						document.getElementById("fileinfobn").innerHTML = "Deleting file..."
 						await setdb('trojencat', 'rom', memory).then(() => {
-							refresh()
 							document.getElementById("fileinfobn").innerHTML = "File Deleted";
 						});
 						return;
@@ -1293,7 +1365,6 @@ drive_file_move
 						window.parent.openlaunchprotocol("text", {"lclfile": unid});
 					}
 				}
-				refresh();
 			} catch (error) {
 				console.error(":( Safe Error:", error);
 			}
@@ -1310,10 +1381,9 @@ drive_file_move
 
 				document.getElementById("fileinfobn").innerHTML = "File renamed successfully.";
 
-				refresh()
 			} catch (error) {
 				console.error("Safe Error renaming file:", error);
-			document.getElementById("fileinfobn").innerHTML = "Failed to rename file.";
+				document.getElementById("fileinfobn").innerHTML = "Failed to rename file.";
 			}
 		}
 
@@ -1380,11 +1450,6 @@ drive_file_move
 				request.onsuccess = (event) => {
 					const db = event.target.result;
 
-					// Listen for the 'versionchange' event and call refresh() when it occurs
-					db.onversionchange = () => {
-						refresh();
-					};
-
 					resolve(db);
 				};
 
@@ -1404,6 +1469,7 @@ drive_file_move
 					const request = store.put({key, value});
 
 					request.onsuccess = () => {
+						triggerDBChange();
 						resolve();
 					};
 
@@ -1460,6 +1526,29 @@ drive_file_move
 		</span>`
 		}
 
+		function getfolicon(x) {
+			if (x == "Downloads") {
+				i = "download"
+			} else if (x == "Desktop") {
+				i = "computer"
+			} else if (x == "Apps") {
+				i = "apps"
+			} else if (x == "System") {
+				i = "settings_suggest"
+			} else if (x == "Dock") {
+				i = "dashboard"
+			} else if (x == "Media") {
+				i = "play_circle"
+			} else if (x == "Documents") {
+				i = "article"
+			} else if (x == "Favorites") {
+				i = "favorite"
+			} else {
+				i = "folder"
+			}
+			return i;
+		}
+
 		function upmd() {
 			document.getElementById("fupibu").innerHTML = "Import";
 
@@ -1467,9 +1556,25 @@ drive_file_move
 			document.getElementById("upmod").showModal();
 		}
 
+		document.addEventListener('dbchange', () => {
+			// Handle database change, e.g., refresh data
+			refresh();
+		});
+
 		function changeview(how) {
 			flmode = how;
 			listFiles(currentPath)
+		}
+
+		async function remfold() {
+			if (currentPath == "System") {
+				window.parent.say("You cannot remove system folder through files app.")
+			}
+			let x = await window.parent.justConfirm("Remove folder?", "Remove '" + currentPath + "' permanently from your device?")
+			if (x) {
+				await window.parent.remfolder(currentPath);
+				listFiles('System', true)
+			}
 		}
 	</script>
 </body>
