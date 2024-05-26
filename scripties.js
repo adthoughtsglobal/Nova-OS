@@ -134,3 +134,31 @@ function isDark(hexColor) {
 function terminal() {
 	gid("terminal").showModal()
 }
+
+function cuteee() {
+	let stylelement = document.createElement('style')
+	stylelement.innerHTML = `.windowheader {
+	background-color: #121212;
+	backdrop-filter: blur(5px) brightness(0.5);
+	position: absolute;
+	padding: 0.3rem 0.8rem;
+	border-radius: 0px 0 0 15px;
+	padding-bottom: 0.2rem;
+	padding-right: 0.3rem;
+	right: 0;
+	cursor: drag;
+	}
+	
+	.windowcontent iframe {
+    border: none;
+    width: 100%;
+    height: calc(100% - 0px);
+}
+
+.windowcontent {
+	box-sizing: border-box;
+	height: calc(100% - 0px);
+}
+`
+	document.body.appendChild(stylelement)
+}
