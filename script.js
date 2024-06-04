@@ -1568,7 +1568,6 @@ arrayToSearch.forEach(item => {
 
 // Sort the items by similarity in descending order
 itemsWithSimilarity.sort((a, b) => b.similarity - a.similarity);
-
 var mostRelevantItem;
 itemsWithSimilarity.forEach((entry, index) => {
 	const { item, similarity } = entry;
