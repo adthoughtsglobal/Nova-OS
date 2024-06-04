@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>Nova OS</title>
+	<link href="style.css" rel="stylesheet" type="text/css" />
+	<script src="system32.js" defer></script>
+	<!-- Include pako library (CDN) -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.0.3/pako.min.js"></script>
+	</script>
+
+	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css">
+	<script src="edgecases.js" defer></script>
+	<script src="scripties.js" defer></script>
+	<script src="script.js" defer></script>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+</head>
+
+<body>
+	<div class="container2">
+		<img id="bgimage" class="layer44" onerror="this.innerHTML = 'ok'">
+		<dialog id="edison">
+			<div id="startupterms">
+				Fetching local databases...
+				<span>Initialising...</span>
+			</div>
+			<img src="N.webp" alt="Nova">
+			<div class="loader5345"></div>
+			<h1 class="gradient-text">Platinum</h1>
+		</dialog>
+		<script>
+			function gid(x) {
+				return document.getElementById(x);
+			}
+			gid("edison").showModal()
+		</script>
+
+		<noscript>
+			<h1>I don't even know what time is it now. Who to say? your browser...</h1>
+			<p>Well your browser seems to be messing around turning off some JS...</p>
+			<b>If you have set JS to be desabled:</b>
+			<p>Nova OS require JS to run.
+				<li>You can always <b><a href="https://www.larimer.gov/it/enable-javascript"> turn JS on</a>.</b></li>
+				</ul>
+			</p>
+		</noscript>
+
+		<div class="container layer44" id="desktop">
+			<span class="deskloadspan">Desktop Is loading...</span>
+		</div>
+	</div>
+
+
+	<script>
+		$(function () {
+			$(".container").sortable();
+		});
+	</script>
+
+	<div id="notification">
+		<span class="material-icons wincl"
+			onclick="document.getElementById('notification').style.display = 'none';">close</span>
+		<span id="notifappName">App Name</span>
+		<h2 id="notifTitle">Title</h2>
+		<p id="notifappDesc">Description</p>
+	</div>
+
+	<nav id="novanav">
+		<div class="flodiv">
+			<quicks navobj id="dock">
+
+			</quicks>
+			<your navobj onclick="openn()">
+				<div app-shortcut>
+					<span ic class="material-icons" id="mm">N
+					</span>
+				</div>
+				<g id="your-apps">
+				</g>
+			</your>
+			<your navobj onclick="opensearchpanel()">
+				<span ic class="material-icons searchbtnac">
+					search
+				</span>
+			</your>
+			<info navobj>
+				<div id="batterydisdiv">
+					<span id="battery-p-display">
+						%
+					</span>
+					<span id="battery-display" class="material-icons">
+						p ic
+					</span>
+				</div>
+				<div>
+					<hitbx class="hitbox" title="time">
+						<span id="time-display">time</span><br>
+						<span id="date-display">date</span>
+					</hitbx>
+				</div>
+			</info>
+			<info navobj id="nowrunninapps">
+				<div>
+				</div>
+			</info>
+			<!--<info navobj onclick="dashtoggle()">
+				<div>
+					<span class="material-icons">
+						dashboard
+					</span>
+				</div>
+			</info>-->
+		</div>
+	</nav>
+	<dialog id="appdmod">
+		<div>
+			<h1>Apps</h1>
+		</div>
+		<div id="appdeck">
+			<div id="appsindeck">
+
+			</div>
+			
+			<div class="strtsearcont">
+				<div class="neweles" id="bobthedropdown" style="visibility: hidden;">
+					<button class="tooltip" onclick="location.reload()">
+						<span class="tooltiptext">Restart</span>
+						<span class="material-symbols-rounded">
+							restart_alt
+						</span>
+					</button>
+					<button class="tooltip" onclick="document.getElementById('sleepwindow').showModal()">
+						<span class="tooltiptext">Sleep</span>
+						<span class="material-symbols-rounded">
+							bedtime
+						</span>
+					</button>
+					<button class="tooltip" onclick="location.href = 'platiniumloader.html'">
+						<span class="tooltiptext">Close Nova</span>
+						<span class="material-symbols-rounded">
+							power
+
+						</span>
+					</button>
+				</div>
+				<button onclick="togglepowermenu()" id="strtsearcontbtn">
+					<span class="material-icons">
+						power_settings_new
+					</span>
+				</button>
+			</div>
+		</div>
+	</dialog>
+	<dialog id="bios">
+		<h1>Nova Setup</h1>
+		<p>Welcome to Nova Setup. This page deals with critical choices that may affect your data and the os itself.
+			remember, clicking on any buttons here might cause damage to your data.</p>
+		<button class="gudbtn" onclick="gid('bios').close()">Exit Setup</button>
+		<button onclick="gid('terminal').showModal()">Terminal</button>
+		<button onclick="location.reload()">Hard Refresh (ReBoot)</button>
+		<button onclick="window.location.href = 'platiniumloader.html'">Switch to other versions of Nova OS</button>
+
+	</dialog>
+	<dialog id="startup">
+		<div class="content">
+			<div class="custom-loader2"></div>
+			<h1 id="startuptx">Setting up your OS</h1>
+		</div>
+	</dialog>
+
+	<div id="contextMenu" class="context-menu" style="display:none">
+		<ul>
+			<li><a onclick="dod();genTaskBar()">
+					<span ic="" class="material-icons">
+						refresh
+					</span>
+					Refresh</a></li>
+			<li><a onclick="document.getElementById('bios').showModal()">
+					<span ic="" class="material-icons">
+						account_circle
+					</span>
+					Launch BIOS</a></li>
+		</ul>
+	</div>
+	<dialog id="loginmod">
+		<div class="logincard">
+			<span class="logincardwelt">Welcome!</span>
+			<div id="accountsdisp">
+				<button>
+					<img
+						src="https://images-ext-1.discordapp.net/external/XMGOfzl5L0eU_vlluht5mEJ_INYz_lU1EFCFe4iJjE8/%3Fsize%3D4096/https/cdn.discordapp.com/avatars/1223856996227219466/c99c92a9e00b748f485440f5e35c80f0.png?format=webp&quality=lossless&width=279&height=279">
+					<span hi>Dark Dot</span>
+					<span class="material-icons">navigate_next</span>
+				</button>
+				<button>
+					<img
+						src="https://images-ext-1.discordapp.net/external/Ke6Bx9Z1WmhAwHDoeW8-NbmO4CPcz4yt2gO3Vm1gQO0/%3Fsize%3D4096/https/cdn.discordapp.com/avatars/603952506330021898/5f696cc7068473feb3605c2f0a1e8539.png?format=webp&quality=lossless&width=424&height=424">
+					<span hi>Mist</span>
+					<span class="material-icons">navigate_next</span>
+				</button>
+			</div>
+		</div>
+	</dialog>
+	<dialog id="sleepwindow">
+		<div class="sleepwincon">
+			<p>"<span id="sleepquote"></span>"</p>
+			<h1 id="sleeptimer">00:00</h1>
+			<p id="sleepmessage"></p>
+			<div id="sleepbtns">
+				<div>
+					<button onclick="startTimer(1)">60s</button>
+					<button onclick="startTimer(5)">5m</button>
+					<button onclick="startTimer(10)">10m</button>
+					<button onclick="startTimer(60)">1h</button>
+				</div>
+
+				<br>
+				<button onclick="setMessage()">Display a message</button>
+				<br>
+			</div>
+			<span class="material-icons"
+				onclick="document.getElementById('sleepwindow').close(); clearInterval(countdown);clearInterval(countdown2);document.getElementById('sleeptimer').textContent = '00:00';document.getElementById('sleepbtns').style.display = 'block';">close</span>
+		</div>
+	</dialog>
+	<dialog id="terminal">
+		<div class="containerterm">
+			<textarea id="termoutput"></textarea>
+			<script>
+				async function termrun() {
+					const inputValue = gid("terminput").value;
+					let result;
+
+
+					try {
+						result = await eval(inputValue);
+					} catch (error) {
+						result = error.message;
+					}
+
+					const outputElement = gid("termoutput");
+					if (typeof result === "object") {
+						outputElement.value += ">>> " + inputValue + "\n";
+						outputElement.value += JSON.stringify(result) + "\n";
+					} else {
+						outputElement.value += result + "\n";
+					}
+				}
+			</script>
+			<div class="btnc">
+				<input placeholder=">>>" id="terminput"> <button onclick="termrun()">run</button>
+			</div>
+		</div>
+
+	</dialog>
+	<dialog id="searchwindow">
+		<div class="searchwincont">
+			<div class="searchside">
+				<div class="searchinputcont">
+					<span class="material-icons">search</span>
+					<input placeholder="Search files..." id="strtsear" onkeyup="strtappse(event)">
+				</div>
+				<div class="strtappsugs" id="strtappsugs">
+					apps appear here
+				</div>
+				<span class="smalltitl">Recently opened</span>
+				<div id="serrecentapps">
+					
+				</div>
+				<div id="notiflist">
+					No new notifications.
+				</div>
+			</div>
+			<div class="previewsside">
+				<div id="seprw-icon"></div>
+				<a id="seprw-appname">App Name</a>
+				<button id="seprw-openb">Open</button>
+			</div>
+		</div>
+	</dialog>
+</body>
+
+</html>

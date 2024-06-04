@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Browser</title>
+	<meta name="nova-icon"
+		content="<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='120.36668' height='120.7679' viewBox='0,0,120.36668,120.7679'><defs><radialGradient cx='241.80522' cy='209.08933' r='60.18334' gradientUnits='userSpaceOnUse' id='color-1'><stop offset='0' stop-color='#4a58b2'/><stop offset='1' stop-color='#1d77b7'/></radialGradient></defs><g transform='translate(-179.81666,-119.81666)'><g data-paper-data='{&quot;isPaintingLayer&quot;:true}' fill-rule='nonzero' stroke='none' stroke-width='0' stroke-linecap='butt' stroke-linejoin='miter' stroke-miterlimit='10' stroke-dasharray='' stroke-dashoffset='0' style='mix-blend-mode: normal'><path d='M179.81666,240.18334v-120.36668h120.36668v120.36668z' fill='url(#1f1f1f)'/><path d='M179.81666,240.58456v-46.14056c0,0 21.78095,-5.93635 48.74822,-6.41956c32.79542,-0.58763 71.61845,6.41956 71.61845,6.41956v46.14056z' fill='#ffffff'/><path d='M209.30621,198.85816v-60.21904h5.61712v60.21904z' fill='#e06600'/><path d='M213.71966,163.34999v-23.67211c0,0 7.03785,2.40733 11.63545,2.40733c2.00514,0 7.44587,-2.66172 10.6271,-3.0051c6.60505,-0.71295 11.44012,2.60388 11.44012,2.60388v25.277c0,0 -6.91141,-3.64209 -11.07509,-2.8124c-4.84508,0.96548 -7.2481,2.8124 -10.59092,2.8124c-4.27781,0 -12.03667,-3.611 -12.03667,-3.611z' fill='#ffffff'/><path d='M233.78077,211.09544c0,3.9886 -7.90387,7.222 -17.65378,7.222c-9.74991,0 -17.65378,-3.2334 -17.65378,-7.222c0,-3.9886 7.90387,-7.222 17.65378,-7.222c9.74991,0 17.65378,3.2334 17.65378,7.222z' fill='#a2a2a2'/><path d='M274.30422,198.85816c0,1.44033 -4.58065,2.60794 -10.23117,2.60794c-5.65052,0 -10.23117,-1.16762 -10.23117,-2.60794c0,-1.44033 4.58065,-2.60794 10.23117,-2.60794c5.65052,0 10.23117,1.16762 10.23117,2.60794z' fill='#a2a2a2'/><path d='M283.53234,231.959c0,3.32383 -7.99368,6.01833 -17.85439,6.01833c-9.86071,0 -17.85439,-2.6945 -17.85439,-6.01833c0,-3.32383 7.99368,-6.01833 17.85439,-6.01833c9.86071,0 17.85439,2.6945 17.85439,6.01833z' fill='#a2a2a2'/><path d='M197.26955,229.35105c0,1.88351 -2.60468,3.41039 -5.81772,3.41039c-3.21304,0 -5.81772,-1.52688 -5.81772,-3.41039c0,-1.88351 2.60468,-3.41039 5.81772,-3.41039c3.21304,0 5.81772,1.52688 5.81772,3.41039z' fill='#a2a2a2'/></g></g></svg>">
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
+
+		* {
+			box-sizing: border-box;
+		}
+
+		/* width */
+		::-webkit-scrollbar {
+			width: 0.5em;
+		}
+
+		/* Track */
+		::-webkit-scrollbar-track {
+			background: transparent;
+		}
+
+		/* Handle */
+		::-webkit-scrollbar-thumb {
+			background: #2b2b2b;
+			border-radius: 5px;
+		}
+
+		/* Handle on hover */
+		::-webkit-scrollbar-thumb:hover {
+			background: #555;
+		}
+
+
+		html {
+			height: 100%;
+			width: 100%;
+			scroll-behavior: smooth;
+		}
+
+		body {
+			color: white;
+			height: 100%;
+			margin: 0px;
+			font-size: 12px;
+			font-family: 'Poppins', sans-serif;
+			background-color: #101010;
+		}
+
+		input,
+		button {
+			font-family: 'Poppins', sans-serif;
+		}
+
+		nav {
+			user-select: none;
+		}
+
+		span.material-icons {
+			transform: translateY(2px);
+		}
+
+		iframe {
+			height: calc(100vh - 90px);
+			width: calc(100vw - 6px);
+			margin: 3px;
+			border-radius: 5px;
+			background-color: white;
+			color: #1f1f1f;
+		}
+
+		nav .tab {
+			display: inline-block;
+			width: 200px;
+			padding: 5px 7px;
+			background: transparent;
+			margin: 3px;
+			margin-bottom: 2px;
+			border: none;
+			transition: .3s;
+			border-radius: 5px;
+		}
+
+		nav .active {
+			padding: 5px 7px;
+			background: #1f1f1f;
+			margin: 3px;
+			margin-bottom: 2px;
+			border: none;
+			border-radius: 5px;
+		}
+
+		.urlnav {
+			margin: 3px;
+			margin-top: 0;
+			display: block;
+			background: #1f1f1f;
+			border-radius: 0 5px 5px 5px;
+		}
+
+		.urlnav .inpgrp {
+			width: calc(100% - 135px);
+			background: #181818;
+			border-radius: 25px;
+			padding: 1px 4px;
+			margin: 3px 0;
+		}
+
+		.urlnav .inpgrp input {
+			background: transparent;
+			border: none;
+			font-size: 13px;
+			color: white;
+			outline: none;
+			transform: translateY(-2px);
+		}
+
+		.urlnav .inpgrp input {
+			width: calc(100% - 100px);
+			text-overflow: ellipsis;
+			overflow: hidden;
+		}
+
+		.btngrp button {
+			background: transparent;
+			color: lightgrey;
+			border: none;
+		}
+
+		.urlnav * {
+			display: inline-block;
+		}
+
+		.btngrp button span {
+			font-size: 18px;
+		}
+
+		.inpgrp button {
+			background: transparent;
+			border: none;
+			color: lightgray;
+		}
+
+		.inpgrp [right] {
+			float: right;
+		}
+
+		.inpgrp button span {
+			font-size: 18px;
+		}
+
+		.tabs {
+			max-width: calc(100vw - 50px);
+			display: inline-block;
+		}
+
+		.newtbtn {
+			font-size: 15px !important;
+			padding: 5px;
+			background: transparent;
+			border-radius: 50%;
+			transform: translate(-0px, 2px) !important;
+			cursor: pointer;
+		}
+
+		.newtbtn:hover {
+			background: #1f1f1f;
+		}
+
+		.clbtn {
+			font-size: 13px !important;
+			padding: 5px;
+			background: transparent;
+			border-radius: 50%;
+			transform: translate(4px, 1px) !important;
+			cursor: pointer;
+			float: right;
+			opacity: 0.5;
+		}
+
+		.clbtn:hover {
+			opacity: 1;
+		}
+
+		.tab b {
+			font-weight: normal;
+			display: inline-block;
+			width: calc(100% - 25px);
+			overflow: hidden;
+			text-overflow: ellipsis;
+			transform: translateY(2px);
+			white-space: nowrap;
+		}
+
+		#History {
+			width: 50vw;
+			max-width: 390px;
+			border: none;
+			border-radius: 5px;
+			background: #363636;
+			padding: 10px;
+			max-height: calc(100vh - 135px);
+			color: white;
+			margin-right: 10px;
+			margin-top: 84px;
+			box-shadow: 0 3px 5px #0000007d;
+		}
+
+		#History .bigt {
+			border-bottom: 1px solid grey;
+			display: block;
+			margin-bottom: 5px;
+			padding-bottom: 3px;
+			font-size: 0.7rem;
+		}
+		
+		.historyitem {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: nowrap;
+			align-items: center;
+			padding: 5px 10px;
+			cursor: pointer;
+			border-radius: 5px;
+		}
+
+		.historyitem:hover {
+			background: #616161;
+		}
+
+		.historyitem span {
+			flex: 1;
+			overflow: hidden;
+			font-size: 1rem;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+
+		.historyitem button {
+			padding: 1px;
+			border: none;
+			background: transparent;
+			color: white;
+		}
+
+		.historyitem button span {
+			font-size: 1rem !important;
+		}
+	</style>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
+<body>
+
+	<nav>
+		<div class="tabsnav">
+			<script>
+
+			</script>
+			<div class="tabs" id="tabs">
+				<div class="tab active" id="tabnnewTab">
+					<b onclick="openCity('tabnnewTab', 'wincnewTab')">Explore</b>
+					<span class="material-icons clbtn" onclick="remtab('newTab')">
+						close
+					</span>
+				</div>
+			</div>
+			<span class="material-icons newtbtn" onclick="newtab()">
+				add
+			</span>
+		</div>
+		<div class="urlnav">
+			<div class="btngrp">
+				<button onclick="homebtn()">
+					<span class="material-icons">
+						home
+					</span>
+				</button>
+				<button>
+					<span class="material-icons" onclick="reloadp()">
+						refresh
+					</span>
+				</button>
+			</div>
+			<div class="inpgrp">
+				<button>
+					<span class="material-icons">
+						https
+					</span>
+				</button>
+				<input placeholder="Search or enter web address" autocapitalize="off" autocomplete="off"
+					onkeyup="isitago(event)" id="deinput" onclick="this.select()">
+				<button right onclick="readnfa()">
+					<span class="material-icons">
+						record_voice_over
+					</span>
+				</button>
+				<button right>
+					<span class="material-icons">
+						star_border
+					</span>
+				</button>
+			</div>
+			<div class="btngrp">
+				<button onclick="historytabopen()">
+					<span class="material-icons">
+						history
+					</span>
+				</button>
+				<button>
+					<span class="material-icons">
+						hotel_class
+					</span>
+				</button>
+			</div>
+		</div>
+	</nav>
+	<dialog id="History">
+		<span class="bigt">History</span>
+		<div id="historyitems">	
+			<div class="historyitem">
+				<span>URL appears here</span>
+				<button><span class="material-icons">
+					close
+				</span></button>
+			</div>
+		</div>
+	</dialog>
+	<div id="tabconts">
+		<div class="tabcontent" id="wincnewTab">
+			<iframe src="appdata/oops.html" frameborder="0" id="ifrnewTab"></iframe>
+
+		</div>
+	</div>
+
+	<script>
+		var tabhistory = [];
+		var tabsnow = [];
+		var lasttab = 'newTab';
+		var nowtab = 'closable';
+		var deftab;
+		
+		function reloadp() {
+			document.getElementById("ifr" + nowtab).contentDocument.location.reload(true);
+		}
+
+		function homebtn() {
+			document.getElementById("ifr" + nowtab).src = "appdata/oops.html";
+		}
+
+		var myDialog = document.getElementById('History');
+
+		document.addEventListener('click', (event) => {
+			if (event.target === myDialog) {
+				myDialog.close();
+			}
+		});
+		
+		function historytabopen() {
+			let historyitemsele = document.getElementById("historyitems");
+			historyitemsele.innerHTML = "";
+			document.getElementById("History").showModal()
+			tabhistory = [...new Set(tabhistory)];
+			tabhistory.forEach(item => {
+				const historyItemDiv = document.createElement('div');
+				historyItemDiv.className = 'historyitem';
+
+				historyItemDiv.onclick = function () {
+					newtab(item);
+					document.getElementById("History").close()
+				}
+
+				const urlSpan = document.createElement('span');
+				urlSpan.textContent = item;
+
+				const closeButton = document.createElement('button');
+				const closeIcon = document.createElement('span');
+				closeIcon.className = 'material-icons';
+				closeIcon.textContent = 'close';
+				closeButton.appendChild(closeIcon);
+
+				// Append elements to history item div
+				historyItemDiv.appendChild(urlSpan);
+				historyItemDiv.appendChild(closeButton);
+
+				// Append history item div to the history items container
+				document.getElementById('historyitems').appendChild(historyItemDiv);
+			})
+		}
+
+		function openCity(evt, cityName) {
+			lasttab = nowtab
+			nowtab = evt.substring(4);
+			console.log("Opens " + evt);
+			var i, tabcontent, tablinks;
+			tabcontent = document.getElementsByClassName("tabcontent");
+			for (i = 0; i < tabcontent.length; i++) {
+				if (tabcontent[i]) {
+					tabcontent[i].style.display = "none";
+				}
+			}
+			tablinks = document.getElementsByClassName("tab");
+			for (i = 0; i < tablinks.length; i++) {
+				tablinks[i].className = tablinks[i].className.replace(" active", "");
+			}
+			try {
+				var iframe = document.querySelector("#ifr" + nowtab + "");
+				if (iframe && iframe.contentWindow && iframe.contentWindow.location && iframe.contentWindow.location.href) {
+
+					const originalOpen = window.open;
+					window.open = function (url, target, features) {
+						alert(url);
+					};
+
+					iframe.contentWindow.window.open = window.open;
+					document.getElementById("deinput").value = iframe.contentWindow.location.href;
+
+				}
+			} catch (error) {
+				console.log(`safe error: ${error.message.includes("cross-origin ") ? "CORS error" : error}`);
+
+				document.getElementById("deinput").value = "#cors-enabled"
+			}
+
+			document.getElementById(cityName).style.display = "block";
+			document.getElementById(evt).className += " active";
+		}
+
+		function remtab(obj) {
+			console.log("ok? " + obj)
+			document.getElementById('tabn' + obj).remove()
+			document.getElementById('wincs' + obj).remove()
+			let index = tabsnow.indexOf(obj);
+			if (index !== -1) {
+				tabsnow.splice(index, 1);
+			}
+			openCity(lasttab, 'wincs' + nowtab)
+		}
+
+		function newtab(src) {
+			let nowid = genID();
+			tabsnow.push(nowid)
+			console.log("Opens new tab with id: " + nowid)
+			var df = document.createElement("div");
+			df.setAttribute("class", "tabcontent");
+			df.id = "wincs" + nowid;
+			var bf = document.createElement("iframe");
+
+			bf.onerror = function(error) {
+			  console.error("An error occurred while loading the iframe due to CORS restrictions." + error);
+			};
+
+			const SANDBOX = [
+				"allow-same-origin",
+				"allow-scripts",
+				"allow-forms",
+				"allow-modals",
+				"allow-popups",
+				"allow-presentation",
+				"allow-pointer-lock"
+			  ];
+
+			  const featurePolicy = {};
+			bf.setAttribute("sandbox", SANDBOX.join(" "));
+			  bf.setAttribute(
+				"allow",
+				Object.entries(featurePolicy)
+				  .map(([name, permission]) => `${name} ${permission}`)
+				  .join("; ")
+			  );
+			  bf.setAttribute("allowtransparency", "true");
+			if (src) {
+				bf.src = src;
+			} else {
+				bf.src = "appdata/oops.html";
+			}
+
+			tabhistory.push(bf.src)
+			bf.id = "ifr" + nowid;
+			bf.setAttribute("frameborder", 0)
+			bf.setAttribute("sandbox", "allow-same-origin allow-forms allow-scripts allow-top-navigation-by-user-activation allow-storage-access-by-user-activation allow-popups allow-popups-to-escape-sandbox allow-downloads allow-modals allow-pointer-lock")
+			df.appendChild(bf);
+			document.getElementById("tabconts").appendChild(df);
+
+
+			var d = document.createElement("div");
+			d.setAttribute("class", "tab");
+			let olo = nowid;
+			d.id = 'tabn' + olo
+
+			var b = document.createElement("b");
+			b.textContent = 'Explore';
+			b.setAttribute("onclick", "openCity('" + d.id + "','wincs" + nowid + "')");
+			d.appendChild(b);
+			var s = document.createElement("span");
+			s.setAttribute("class", "material-icons clbtn");
+			s.textContent = "close";
+			s.setAttribute("onclick", "remtab('" + olo + "')");
+			d.appendChild(s);
+			document.getElementById("tabs").appendChild(d);
+			let cff = 'wincs' + nowid;
+			openCity(d.id, cff)
+		}
+
+		function genID() {
+			const characters = 'abcdefghijklmnopqrstuvwxyz';
+			let result = '';
+			for (let i = 0; i < 8; i++) {
+				result += characters.charAt(Math.floor(Math.random() * characters.length));
+			}
+			return result;
+		}
+
+		function isitago(eve) {
+			if (eve.key === "Enter") {
+				eve.preventDefault();
+				let input = document.getElementById("deinput").value;
+				if (isValidURL(input)[0]) {
+					input = isValidURL(input)[1]
+					document.getElementById("ifr" + nowtab).src = input;
+					tabhistory.push(input)
+				} else {
+					let searchQuery = "https://adthoughtsglobal.github.io/Search?q=" + encodeURIComponent(input);
+					try {
+						  let qsets = localStorage.getItem("qsets");
+						  if (qsets) {
+							  let qsetsObj = JSON.parse(qsets);
+							  if (qsetsObj.defSearchEngine == "Bing") {
+								searchQuery = "https://www.bing.com/search?q=" + encodeURIComponent(input);
+							  }
+						  }
+					} catch (error) {
+						console.log(`safe error: ${error.message.includes("cross-origin ") ? "CORS error" : error}`);
+					}
+
+					
+					document.getElementById("ifr" + nowtab).src = searchQuery;
+					tabhistory.push(searchQuery)
+				}
+			}
+		}
+
+		function truncateMiddle(str, frontChars, backChars, maxLength) {
+		  if (str.length <= maxLength) {
+			return str;
+		  }
+		  return str.substring(0, frontChars) + '...' + str.substring(str.length - backChars);
+		}
+
+		function isValidURL(str) {
+			let url = str;
+			let urlPattern = /^(ftp|http|https):\/\/[^ "]+$/;
+
+			if (!str.includes(" ") && str.includes(".")) {
+				isvalid = true;
+				if (!urlPattern.test(url)) {
+					url = "https://" + str;
+				}
+			} else {
+				isvalid = false;
+			}
+			
+			return [isvalid, url];
+		}
+
+
+		function readnfa() {
+			// Access the iframe document
+			var iframeDocument;
+			try {
+				iframeDocument = document.getElementById('ifr' + nowtab).contentWindow.document;
+			} catch (error) {
+				alert("Can't read this document\n\n Unable to access the document due to CORS (Cross-Origin Resource Sharing) policy.");
+				return;
+			}
+
+			// Get all text nodes within the iframe
+			var walker = document.createTreeWalker(
+				iframeDocument.body,
+				NodeFilter.SHOW_TEXT,
+				null,
+				false
+			);
+
+			// Initialize an empty string to store the text content
+			var iframeTextContent = '';
+
+			// Iterate over each text node and append its text content
+			while (walker.nextNode()) {
+				var node = walker.currentNode;
+				// Skip empty or whitespace-only text nodes
+				if (node.textContent.trim() !== '') {
+					iframeTextContent += node.textContent.trim() + ' ';
+				}
+			}
+
+			// If there is nothing to read, show an alert
+			if (iframeTextContent === '') {
+				alert("Error: There is nothing to read.");
+				return;
+			}
+
+			// Speak the text content aloud
+			var synth = window.speechSynthesis;
+			var utterance = new SpeechSynthesisUtterance(iframeTextContent);
+			synth.speak(utterance);
+		}
+
+		function greenflag() {
+			
+			tabsnow = ["newTab"];
+			nowtab = "newTab";
+			deftab = "appdata/oops.html";
+			tabhistory.push(document.getElementById("ifrnewTab").src)
+			document.getElementById("tabnnewTab").click();
+
+			const dropArea = document.getElementById('tabs');
+			dropArea.addEventListener('dragover', function (e) {
+				e.preventDefault();
+			});
+
+			// Handle drop event
+			dropArea.addEventListener('drop', function (e) {
+				e.preventDefault();
+				if (e.dataTransfer.items) {
+					for (let i = 0; i < e.dataTransfer.items.length; i++) {
+						if (e.dataTransfer.items[i].kind === 'string' && e.dataTransfer.items[i].type === 'text/plain') {
+							const droppedLink = e.dataTransfer.getData('text/plain');
+							console.log('Link dropped:', droppedLink);
+							newtab(droppedLink)
+						}
+					}
+				}
+			});
+		}
+	</script>
+</body>
+
+</html>

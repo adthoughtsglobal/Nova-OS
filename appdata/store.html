@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<meta name="nova-icon"
+		content="<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='31.91668' height='31.91668' viewBox='0,0,31.91668,31.91668'><g transform='translate(-224.04166,-164.04166)'><g data-paper-data='{&quot;isPaintingLayer&quot;:true}' fill-rule='nonzero' stroke='none' stroke-linecap='butt' stroke-linejoin='miter' stroke-miterlimit='10' stroke-dasharray='' stroke-dashoffset='0' style='mix-blend-mode: normal'><path d='M224.04166,192c0,-6.80976 0,-20.37172 0,-24.11111c0,-1.87183 2.04092,-3.84723 3.95834,-3.84723c3.74381,0 17.07715,0 23.88889,0c2.46001,0 4.06945,2.04092 4.06945,3.95834c0,3.80587 0,17.52187 0,24.22222c0,2.27105 -1.56108,3.73612 -3.95834,3.73612c-6.7768,0 -20.23574,0 -24,0c-1.91742,0 -3.95834,-1.56062 -3.95834,-3.95834z' fill='#ffffff' stroke-width='NaN'/><path d='M228.75317,177.39085l1.21587,-4.42302h20.06191l1.21587,4.42302z' fill='##1f1f1f' stroke-width='0'/><path d='M229.96905,173.11069v-1.36786h20.06191v1.36786z' fill='##1f1f1f' stroke-width='0'/><path d='M229.96905,188.40003v-10.38226h20.06191v10.38226c0,0 -8.25342,0 -13.6544,0c-0.23641,0 -0.03639,-6.41414 -0.26267,-6.41414c-1.16272,0 -2.18029,0 -2.93619,0c-0.30373,0 0.03929,6.41414 -0.17238,6.41414c-1.18213,0 -3.03627,0 -3.03627,0z' fill='##1f1f1f' stroke-width='0'/><path d='M239.26143,184.2452v-2.0726h7.59955v2.0726z' fill='#ffffff' stroke-width='0'/></g></g></svg>">
+	<title>store</title>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
+
+		html {
+			height: 100%;
+			width: 100%;
+		}
+
+		/* width */
+		::-webkit-scrollbar {
+			width: 5px;
+		}
+
+		/* Track */
+		::-webkit-scrollbar-track {
+			background: #111;
+		}
+
+		/* Handle */
+		::-webkit-scrollbar-thumb {
+			background: #2b2b2b;
+			border-radius: 5px;
+		}
+
+		/* Handle on hover */
+		::-webkit-scrollbar-thumb:hover {
+			background: #555;
+		}
+
+		body {
+			font-family: 'Poppins', sans-serif;
+			margin: 0;
+			background: #101010;
+			color: white;
+			padding-bottom: 10px;
+			font-size: 12px;
+		}
+
+		.mains {
+			padding-top: 0;
+		}
+
+		div,
+		dialog {
+			animation: up .2s;
+		}
+
+		.containdiv {
+			animation: up2 .5s;
+		}
+
+		@keyframes up {
+			from {
+				opacity: 0;
+			}
+
+			to {
+				opacity: 1;
+			}
+		}
+
+		@keyframes up2 {
+			from {
+				opacity: 0;
+				transform: translateY(5px);
+			}
+
+			to {
+				opacity: 1;
+				transform: none;
+			}
+		}
+
+		#topse {
+			display: flex;
+			border-radius: 10px;
+			padding: 5px;
+			background: #171717;
+			margin: auto 10px;
+			margin-top: 5px;
+			margin-bottom: 10px;
+		}
+
+		#topse input {
+			flex-grow: 5;
+			border: none;
+			font-size: 15px;
+			outline: none;
+			padding: 5px 0;
+			margin-left: 5px;
+			background-color: transparent;
+			color: white;
+			border-radius: 15px;
+		}
+
+		#topse button {
+			border-radius: 7px;
+			flex-grow: 1;
+			border: none;
+			margin-left: 5px;
+			padding: 7px;
+			cursor: pointer;
+			transition: .2s;
+			background: #49ac49;
+			color: #dce9fc;
+		}
+
+		.installbtnicn {
+			font-size: 10px !important;
+			transform: translateY(0px) scale(1.5);
+			margin-left: 3px;
+		}
+
+		#topse button:hover {
+			background-color:#397939;
+		}
+
+		small {
+			margin-left: 13px;
+			display: inline-block;
+		}
+
+		.app {
+			padding: 4px 9px;
+			animation: fa 0.5s;
+			border-radius: 11px;
+			background: linear-gradient(45deg, #131313, #1e1e1e);
+			color: white;
+			border: 2px solid transparent;
+			display: flex;
+			margin: 10px;
+			flex: 1;
+			min-width: 118px;
+			transition: .2s;
+			user-select: none;
+			cursor: pointer;
+			margin-left: 0px;
+			padding-bottom: 16px;
+			flex-direction: column;
+			flex-wrap: wrap;
+		}
+
+		.app:hover {
+			box-shadow: 0 0 10px #121212;
+			filter: brightness(110%);
+		}
+
+		.app h3 {
+			margin: 10px 0px;
+			margin-bottom: 1px;
+			font-weight: normal;
+			font-size: 1rem;
+		}
+
+		.app .appfes {
+			display: inline-block;
+		}
+
+		.app .appfes div {
+			display: inline-block;
+			font-size: smaller;
+			border: none;
+			opacity: 0.5;
+			max-width: 81px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		@media only screen and (max-width: 400px) {
+			.featured img {
+				height: 155px;
+				object-position: center;
+				object-fit: cover;
+				display: block;
+				transform: translateY(0);
+				border-radius: 10px;
+				width: 100%;
+				margin: 10px 0;
+			}
+		}
+
+		.dostuffwithit {
+			display: inline-flex;
+			width: fit-content;
+			float: right;
+			transform: translateY(-45px);
+			align-items: center;
+			justify-content: center;
+		}
+
+		.insbtn {
+			flex: 1;
+			width: 100%;
+			margin: 3px 0px;
+			border-radius: 5px;
+			padding: 5px;
+			transition: .5s;
+			cursor: pointer;
+			background: #43A047;
+			border: none;
+			color: #ffffff;
+		}
+
+		#sugapps {
+			margin: 10px 10px;
+			padding: 0;
+			padding-left: 10px;
+			display: flex;
+			flex-wrap: wrap;
+			align-items: stretch;
+			justify-content: flex-start;
+		}
+
+		#defapppack {
+			margin: 10px 10px;
+			white-space: normal;
+			padding: 0;
+			padding-left: 10px;
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: flex-start;
+		}
+
+		.jdstsa {
+			text-align: center;
+			display: block;
+			width: fit-content;
+			margin: 15px auto;
+			background: #2a2d2f;
+			color: white;
+			border: 1px solid #5b6268;
+			padding: 9px 16px;
+			border-radius: 25px;
+		}
+
+		.jdstsa button {
+			padding: 5px 10px;
+			border: none;
+			background: #668aad;
+			color: white;
+			border-radius: 21px;
+			cursor: pointer;
+		}
+
+		nav {
+			padding: 10px;
+			margin-bottom: 18px;
+			background-color: #232424;
+			display: block;
+			text-align: left;
+			opacity: 80%;
+		}
+
+		.srca {
+			opacity: 0.5;
+			margin-top: 1em;
+			display: block;
+			font-size: 0.8em;
+		}
+
+		.catonappdiv {
+			display: inline-block;
+			font-size: 13px !important;
+			opacity: 0.5;
+			transform: translateY(-2px);
+			margin-left: 3px;
+		}
+
+		.app p {
+			height: 28px;
+			width: 80%;
+			overflow: hidden;
+			word-wrap: break-word;
+			line-height: 1.25;
+			font-size: 11px;
+			border-radius: 5px;
+			white-space: normal;
+			text-overflow: ellipsis;
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
+		}
+
+		.loader {
+			width: 80px;
+			height: 42px;
+			display: block;
+			margin: auto;
+			padding: 0 8px;
+			box-sizing: border-box;
+			background: linear-gradient(#323232 0 0) 10% 0/4px 20px, linear-gradient(#323232 0 0) 70% 0/4px 20px, radial-gradient(farthest-side, #83ff8c 90%, #0000) 7% 5px/8px 8px content-box, #0000;
+			background-repeat: no-repeat;
+			animation: l3 2s infinite cubic-bezier(0, 0, 0.26, 0.65);
+		}
+
+		@keyframes l3 {
+			25% {
+				background-position: 0 0, 100% 100%, 100% calc(100% - 5px)
+			}
+
+			50% {
+				background-position: 0 100%, 100% 100%, 0 calc(100% - 5px)
+			}
+
+			75% {
+				background-position: 0 100%, 100% 0, 100% 5px
+			}
+		}
+
+		@keyframes fa {
+			0% {
+				opacity: 0;
+				transform: translateY(-10px);
+			}
+
+			75% {
+				opacity: 0.7;
+				transform: translateY(5px);
+			}
+
+			75% {
+				opacity: 1;
+				transform: translateY(0px);
+			}
+		}
+
+		.quote {
+			padding: 10px;
+			border-radius: 7px;
+			width: calc(100% - 22px);
+			word-wrap: break-word;
+			margin-top: 5px;
+			border: 1px solid #414141;
+			text-align: center;
+		}
+
+		.featured {
+			padding: 1rem;
+			background: radial-gradient(circle at left top, #3a2557, #263f67);
+			border-radius: 10px;
+			margin: 10px;
+			box-shadow: 0 3px 10px 5px #121212;
+			border: 1px solid #304864;
+		}
+
+		.featured small {
+			margin: 0;
+			padding: 3px 8px;
+			background: #39393959;
+			background: linear-gradient(45deg, #4d4cc6, #4a90bd);
+			border-radius: 20px;
+		}
+
+		.featured small.by {
+			opacity: 0.7;
+			margin: 0;
+			padding: 0;
+			background: transparent;
+			border-radius: none;
+		}
+
+		.featured h1 {
+			margin: 10px 0;
+			background: linear-gradient(45deg, #ff2875, #fff19b);
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+		}
+
+		.featured p {
+			width: 60%;
+		}
+
+		.featured img {
+			width: 27vw;
+			height: 117px;
+			object-position: center;
+			object-fit: cover;
+			position: absolute;
+			right: 2rem;
+			transform: translateY(-4rem);
+			border-radius: 10px;
+		}
+
+		.featured img::before {
+			width: 200px;
+			height: 100px;
+			background-color: grey;
+			transform: translate(-50px, -50px);
+			display: inline-block;
+			position: absolute;
+		}
+
+		.featured button {
+			background: #62778b;
+			border: none;
+			color: white;
+			padding: 7px 10px;
+			border-radius: 5px;
+			width: 50%;
+		}
+
+		#installer {
+			width: 100%;
+			height: 100%;
+			border: none;
+			padding: 16px;
+			background: #1f1f1f;
+			color: white;
+		}
+
+		.containdiv {
+			max-width: 500px;
+			margin: auto;
+		}
+
+		#installer nav {
+			background: none;
+			padding: 0;
+		}
+
+		#installer h1 {
+			display: inline-block;
+			margin-bottom: 6px;
+			width: calc(100% - 110px);
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		#installer button {
+			float: right;
+			padding: 5px 15px;
+			border: none;
+			background: #49ac49;
+			color: white;
+			outline: 0;
+			border-radius: 4px;
+			width: fit-content;
+			cursor: pointer;
+			font-family: inherit;
+		}
+
+		#installer button:hover {
+			background-color: #2f2f2f;
+		}
+
+		.dostuffwithit button {
+			background-color: #49ac49 !important;
+			margin-right: 5px;
+		}
+
+		.dostuffwithit button:hover {
+			background-color: #3c933c;
+		}
+
+		.insbtn:hover {
+			background-color: #378537;
+		}
+
+		#apptheme {
+			display: grid;
+			width: 100%;
+			justify-content: center;
+			align-items: center;
+			justify-items: center;
+			padding: 1rem 0;
+			font-size: 1.5rem;
+			background: #141414;
+			border-radius: 5px;
+			text-shadow: 0 0 10px BLACK;
+		}
+
+		#installer #installerappby {
+			display: block;
+			opacity: 0.7;
+			margin-bottom: 10px;
+			font-weight: normal;
+		}
+
+		#installer p button {
+			float: none;
+			background: #2f2f2f;
+		}
+
+		nav .material-icons {
+			width: 21px;
+			transform: translate(-2px, 7px) scale(0.8);
+			display: inline-block;
+
+		}
+
+		nav b {
+			cursor: pointer;
+		}
+
+		#installerappdesc {
+			margin: 2px 0;
+		}
+
+		.deapp {
+			display: inline-block;
+			padding: 7px 11px;
+			background: #1f1f1f;
+			margin: 5px;
+			transition: .2s;
+			cursor: pointer;
+			border-radius: 25px;
+		}
+
+		.deapp:hover {
+			filter: brightness(110%);
+			transform: scale(1.05);
+		}
+	</style>
+</head>
+
+<body>
+	<div class="featured">
+	  <small>New</small>
+	  <h1>WCanvas</h1>
+	  <img src="https://i.ibb.co/T0hvCVv/a60013d0-9d77-4c5c-8b2d-b2527f8deb1c.jpg">
+	  <small class="by">Nova MoonShot</small>
+
+	  <p>An HTML code editor with hotkeys, syntax highlighting, same screen previews, help and much more! Built officially for making Nova Apps!
+	  </p>
+	</div>
+	<div class="mains">
+		<small>Install through app link</small>
+		<div id="topse">
+
+			<input placeholder="Paste an App Link..." id="fesinp">
+			<button onclick="installappfes(this)">
+				Install
+				<div class="material-icons installbtnicn">download</div>
+			</button>
+			
+		</div>
+		<div>
+			<small>Newest Apps</small>
+			<div id="sugapps">
+				:( unexpected error
+			</div>
+
+		</div>
+
+		<div>
+			<small>Default Apps: click to update</small>
+			<div id="defapppack">
+			</div>
+
+		</div>
+	</div>
+	<script src="https://cdn.jsdelivr.net/npm/tinycolor2"></script>
+
+	
+	<dialog id="installer">
+		<div class="containdiv">
+			<nav>
+				<b onclick="document.getElementById('installer').close()"><i class="material-icons">arrow_backward</i>
+					Back</b>
+			</nav>
+			<div id="apptheme">
+				Theme
+			</div>
+			<h1 id="installerappname">Loading...</h1>
+			<div class="dostuffwithit">
+			<button id="openbtn">Open</button>
+			<button id="installButton">...</button>
+			</div>
+			<b id="installerappby">...</b>
+			<b>Overview</b>
+			<p id="installerappdesc">...</p>
+		</div>
+	</dialog>
+	<script defer>
+
+		function greenflag() {
+			// Fetch JSON data from the URL
+			document.getElementById("sugapps").innerHTML = `<div class="loader"></div>`;
+
+			fetch('https://adthoughtsglobal.github.io/Nova-Store/database.json')
+				.then(response => response.json()).catch(error => {
+					console.error('Error fetching JSON:', error);
+					document.getElementById("sugapps").innerHTML = "Failed to fetch data. Please try again later.";
+				})
+				.then(data => {
+					var vdevs = data.vdevs;
+					data.data.sort((a, b) => {
+						const appNameA = Object.keys(a)[0];
+						const appNameB = Object.keys(b)[0];
+						return appNameA.localeCompare(appNameB);
+					});
+					document.getElementById("sugapps").innerHTML = ``
+					// Iterate through the 'data' array
+					data.data.forEach(app => {
+						// Extract app details
+						const appName = Object.keys(app)[0];
+						const appDetails = JSON.parse(JSON.stringify(app[appName]));
+
+						// Create HTML elements
+						const appDiv = document.createElement('div');
+						appDiv.className = 'app';
+						appDiv.setAttribute("onclick", `openappinstr('${appName}', ${JSON.stringify(appDetails)})`);
+						try {
+							const boxShadowStyle = "1px solid ";
+
+							function rotateHue(color, degrees) {
+								const hslColor = tinycolor(color).toHsl();
+								hslColor.h += degrees;
+								return tinycolor(hslColor).toRgbString();
+							}
+
+							// Event listeners
+							appDiv.addEventListener('mouseenter', () => {
+								const shadowColor = appDetails.find(item => item.th).th;
+								const rotatedColor = rotateHue(shadowColor, 25); // Rotate by 25 degrees
+
+								appDiv.style.borderRight = `2px solid ${rotatedColor}`;
+								appDiv.style.borderBottom = `2px solid ${rotatedColor}`;
+								appDiv.style.borderTop = `2px solid ${shadowColor}`;
+								appDiv.style.borderLeft = `2px solid ${shadowColor}`;
+
+								
+							});
+
+							appDiv.addEventListener('mouseleave', () => {
+								appDiv.style.border = '2px solid transparent';
+
+							});
+
+						} catch (error) {
+							console.log("yap, " + error)
+						}
+
+						const appfesDiv = document.createElement('div');
+						appfesDiv.className = 'appfes';
+						const appInfoDiv = document.createElement('div');
+
+						const h3 = document.createElement('h3');
+						h3.textContent = appName;
+						appfesDiv.appendChild(h3);
+						appInfoDiv.textContent = "" + appDetails.find(item => item.by).by;
+						appfesDiv.appendChild(appInfoDiv);
+
+						appDiv.appendChild(appfesDiv);
+
+						const cat = document.createElement('div');
+
+						console.log(vdevs, appDetails.find(item => item.by).by, vdevs.includes(appDetails.find(item => item.by).by))
+						if (vdevs.includes(appDetails.find(item => item.by).by)) {
+							cat.textContent += "verified "
+						}
+
+						cat.setAttribute("class", "material-icons catonappdiv");
+						if (appDetails.find(item => item.cat).cat == "game") {
+							cat.textContent += "sports_esports"
+						} else {
+							cat.textContent += "widgets"
+						}
+
+						appfesDiv.appendChild(cat);
+
+
+					const p = document.createElement('p');
+					const appDescItem = appDetails.find(item => item.desc);
+
+					if (appDescItem) {
+						p.textContent = appDescItem.desc;
+					} else {
+						p.textContent = 'Description not available.';
+					}
+
+					appDiv.appendChild(p);
+
+					// Append the appDiv to the document body or any desired container
+					document.getElementById("sugapps").appendChild(appDiv);
+				});
+		})
+				.catch (error => console.error('Error fetching JSON:', error));
+
+		// add default apps.
+		// Iterate through the 'data' array
+		console.log(window.parent.defAppsList)
+		let data = window.parent.defAppsList;
+		data.forEach(appName => {
+			// Create HTML elements
+			const appDiv = document.createElement('div');
+			appDiv.id = "appdiv" + window.parent.genUID();
+			appDiv.className = 'deapp';
+			appDiv.textContent = appName;
+			appDiv.setAttribute("onclick", `upddefap('${appName}', '` + appDiv.id + `')`);
+
+			// Append the appDiv to the desired container
+			document.getElementById("defapppack").appendChild(appDiv);
+		});
+
+		}
+
+		async function upddefap(appName, div) {
+			div = document.getElementById(div);
+			div.style.backgroundColor = "grey";
+			var response
+			const filePath = "appdata/" + appName + ".html";
+			try {
+				response = await fetch(filePath);
+				if (!response.ok) {
+					// Set background color to red
+					div.style.backgroundColor = "red";
+
+					// Check the HTTP status code and throw an error accordingly
+					if (response.status === 404) {
+						throw new Error("File not found for " + appName);
+					} else if (response.status === 403) {
+						throw new Error("Forbidden access for " + appName);
+					} else {
+						throw new Error("Failed to fetch file for " + appName + ". Status: " + response.status);
+					}
+				}
+			} catch (error) {
+				// Handle network errors
+				if (error instanceof TypeError || error.name === 'FetchError') {
+					// Set background color to red or handle as desired
+					div.style.backgroundColor = "red";
+					console.error("Network error:", error.message);
+					// You can also display a message to the user indicating a network error occurred
+				} else {
+					// Re-throw other errors
+					throw error;
+				}
+			}
+
+			const fileContent = await response.text();
+
+			await window.parent.createFile("Apps", appName, "app", fileContent);
+			console.log(appName + " updated successfully.");
+			div.style.backgroundColor = "#1f1f1f";
+			div.style.color = "#60ff2f";
+		}
+
+		function rotateHue(color, degrees) {
+			const dummyElement = document.createElement('div');
+			dummyElement.style.color = color;
+			dummyElement.style.filter = `hue-rotate(${degrees}deg)`;
+			document.body.appendChild(dummyElement);
+			const rotatedColor = window.getComputedStyle(dummyElement).color;
+			document.body.removeChild(dummyElement);
+			return rotatedColor;
+		}
+		
+		function openappinstr(appName, appDetails) {
+			const installButton = document.getElementById("installButton");
+
+			installButton.className = 'insbtn';
+			let appald = window.parent.getFileNamesByFolder("Apps")
+				.then(appald => {
+					try {
+						const h3 = document.getElementById("installerappname");
+						h3.textContent = appName;
+						document.getElementById("installerappby").textContent = "" + appDetails.find(item => item.by).by;
+						const p = document.getElementById("installerappdesc");
+						const appDescItem = appDetails.find(item => item.desc);
+						const appcatitem = appDetails.find(item => item.cat).cat;
+						const applditem = appDetails.find(item => item.ldesc)?.ldesc;
+						const appthitem = appDetails.find(item => item.th)?.th;
+						console.log("9344: " + appthitem)
+						const appqtitem = appDetails.find(item => item.qt)?.qt;
+
+						document.getElementById("apptheme").innerHTML = ((appqtitem) ? appqtitem : appcatitem);
+						document.getElementById("apptheme").style.background = ((appthitem) ? appthitem : "#141414");
+
+						p.innerHTML = appDescItem.desc + '<br> <br><b>Description</b> <br>';
+						if (applditem !== undefined) {
+							p.innerHTML += applditem;
+						} else {
+							p.innerHTML += `Overview not available yet.`;
+						}
+
+						let sourceurl = appDetails.find(item => item.src).src
+						if (sourceurl.startsWith("/Nova-Store")) {
+							sourceurl = "Nova Store"
+						}
+						
+						p.innerHTML += `<br><a class="srca">Hosted on: ` + sourceurl + `</a>`;
+
+						p.innerHTML += `<br><button>#` + appcatitem + `</button>`
+						document.getElementById('openbtn').style.display = "none"
+						if (appald.some(app => app.name === appName)) {
+							document.getElementById('openbtn').style.display = "block"
+							installButton.textContent = 'Update';
+							installButton.style.backgroundColor = "#2f2f2f";
+
+							installButton.onclick = function () {
+								installapp(appDetails.find(item => item.src), appName, this);
+							};
+						} else {
+							installButton.textContent = 'Install';
+							installButton.style.backgroundColor = "#49ac49";
+							installButton.onclick = function () {
+								installapp(appDetails.find(item => item.src), appName, this);
+							};
+						}
+						document.getElementById("installer").showModal()
+					} catch (error) {
+						console.error(error);
+					};
+				});
+
+		}
+
+		async function installappfes(that) {
+			that.innerHTML = "Installing..."
+			that.style.backgroundColor = "grey"
+			const response = await fetch(document.getElementById("fesinp").value);
+			const content = await response.text();
+			let mmmm = await window.parent.ask("Enter the App Name:", document.getElementById("fesinp").value);
+			if (mmmm && mmmm != null) {
+				await window.parent.createFile("Apps", mmmm, "app", content);
+				setTimeout(() => {
+					that.innerHTML = "Install"
+					document.getElementById("fesinp").value = "";
+					that.style.backgroundColor = "#343c3f"
+				}, 1000)
+
+			}
+		}
+		async function installapp(x, appName, obj) {
+			obj.innerHTML = `Installing...`
+			obj.style.backgroundColor = "#2f2f2f"
+			console.log(x)
+			let prefixurl = ""
+			if (!x.src.startsWith("http")) {
+				prefixurl = "https://adthoughtsglobal.github.io/"
+			}
+			const response = await fetch(prefixurl + x.src);
+			const content = await response.text();
+			await window.parent.createFile("Apps", appName, "app", content);
+			obj.innerHTML = `Checking...`
+			setTimeout(() => {
+				obj.innerHTML = "Update"
+			}, 1000)
+
+		}
+	</script>
+</body>
+
+</html>

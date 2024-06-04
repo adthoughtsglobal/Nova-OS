@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en" ok>
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="nova-icon"
+		content="<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='163.17529' height='127.21232' viewBox='0,0,163.17529,127.21232'><g transform='translate(-158.41236,-116.39385)'><g data-paper-data='{&quot;isPaintingLayer&quot;:true}' fill-rule='nonzero' stroke='none' stroke-linecap='butt' stroke-linejoin='miter' stroke-miterlimit='10' stroke-dasharray='' stroke-dashoffset='0' style='mix-blend-mode: normal'><path d='M158.41236,230.7239c0,-27.23223 0,-66.61583 0,-81.05088c0,-6.65115 6.83086,-13.41902 13.95578,-13.41902c4.91501,0 14.39739,0 26.30128,0c6.54386,0 13.8195,-19.86015 21.47043,-19.86015c13.61584,0 26.81,0 40.79382,0c6.11749,0 15.83525,19.86015 21.47043,19.86015c10.14999,0 17.09769,0 24.15424,0c9.27542,0 15.02931,6.15439 15.02931,12.3455c0,14.49323 0,55.50463 0,82.12441c0,7.90348 -5.94603,12.88225 -12.3455,12.88226c-18.21058,0 -104.59234,0 -136.874,0c-7.37038,0 -13.95578,-3.74802 -13.95578,-12.88226z' fill='#647a94' stroke-width='NaN'/><path d='M158.41236,175.43753c0,0 0,-11.32947 0,-25.76452c0,-6.65115 6.83086,-13.41902 13.95578,-13.41902c4.91501,0 14.39739,0 26.30128,0c6.54386,0 13.81949,-19.86015 21.47043,-19.86015c13.61584,0 26.81,0 40.79382,0c6.11749,0 15.83525,19.86015 21.47043,19.86015c10.14999,0 17.0977,0 24.15423,0c9.27542,0 15.02931,6.15439 15.02931,12.3455c0,14.49323 0,26.83805 0,26.83805z' fill='#6ca5c1' stroke-width='NaN'/><path d='M196.25399,188.58817c0,-24.30847 19.70591,-44.01439 44.01439,-44.01439c24.30847,0 44.01439,19.70591 44.01439,44.01439c0,24.30847 -19.70591,44.01439 -44.01439,44.01439c-24.30847,0 -44.01439,-19.70591 -44.01439,-44.01439z' fill='#e3e3e3' stroke-width='0'/><path d='M207.52597,188.58817c0,-18.08313 14.65927,-32.74241 32.74241,-32.74241c18.08313,0 32.74241,14.65927 32.74241,32.74241c0,18.08313 -14.65927,32.74241 -32.74241,32.74241c-18.08313,0 -32.74241,-14.65927 -32.74241,-32.74241z' fill='#6d7e91' stroke-width='0'/><path d='M167.26891,155.57739c0,-5.03956 4.08537,-9.12493 9.12493,-9.12493c5.03956,0 9.12493,4.08537 9.12493,9.12493c0,5.03956 -4.08537,9.12493 -9.12493,9.12493c-5.03956,0 -9.12493,-4.08537 -9.12493,-9.12493z' fill='#ffffff' stroke-width='0'/></g></g></svg>">
+	<title>Camera App</title>
+	<style>
+		body {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			margin: 0;
+			height: 100vh;
+			background-color: black;
+		}
+
+		#video-container {
+			position: relative;
+		}
+
+		#video {
+			height: 100%;
+			max-width: 95vw;
+			max-height: 95vh;
+			border-radius:0.5rem;
+			transform: scaleX(1);
+			/* Initial scaling without mirroring */
+			transition: 0.3s ease-in-out;
+		}
+
+		.floattopnav {
+			position: absolute;
+			top: 10px;
+			right: 10px;
+			border-radius: 7px;
+			padding: 4px;
+			display: flex;
+			background-color: #101010;
+		}
+
+		#camera-select {
+			max-width: 130px;
+			background-color: #1f1f1f;
+			color: grey;
+			border: none;
+			padding: 5px;
+			overflow: hidden;
+			border-radius: 5px;
+			text-overflow: ellipsis;
+			display: inline-flex;
+		}
+
+		#mirror-btn {
+			padding: 4px 7px;
+			aspect-ratio: 1 / 1;
+			display: inline-grid;
+			margin-left: 3px;
+			background-color: #1f1f1f;
+			color: #fff;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+			justify-items: center;
+			align-items: center;
+		}
+
+		#mirror-btn span {
+			font-size: 1rem !important;
+			opacity: 0.6;
+		}
+
+		#photo-btn {
+			position: fixed;
+			bottom: 5%;
+			border: cornsilk;
+			height: 15%;
+			aspect-ratio: 1 / 1;
+			display: grid;
+			border-radius: 50%;
+			opacity: 75%;
+			align-items: center;
+			justify-items: center;
+		}
+
+		#photo-btn:active {
+			transform: scale(0.9);
+		}
+	</style>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
+<body>
+	<div id="video-container">
+		<video id="video" playsinline autoplay></video>
+	</div>
+	<div id="timer">
+		3
+	</div>
+	<div class="floattopnav">
+	<select id="camera-select"></select>
+	<button id="mirror-btn" onclick="toggleMirror()"><span class="material-icons">
+			360
+		</span></button>
+		</div>
+	<button id="photo-btn" onclick="capture(this)"><span class="material-icons">
+			camera
+		</span></button>
+
+	<script>
+		let isMirrored = false;
+
+		async function getVideoSources() {
+			const devices = await navigator.mediaDevices.enumerateDevices();
+			const cameras = devices.filter(device => device.kind === 'videoinput');
+			return cameras;
+		}
+
+		async function startCamera() {
+			const video = document.getElementById('video');
+			const cameras = await getVideoSources();
+			const cameraSelect = document.getElementById('camera-select');
+
+			if (cameras.length === 0) {
+				console.error('No cameras found.');
+				return;
+			}
+
+			cameras.forEach(camera => {
+				const option = document.createElement('option');
+				option.value = camera.deviceId;
+				option.text = camera.label || `Camera ${cameraSelect.length + 1}`;
+				cameraSelect.appendChild(option);
+			});
+
+			cameraSelect.addEventListener('change', async () => {
+				const selectedCameraId = cameraSelect.value;
+				try {
+					const stream = await navigator.mediaDevices.getUserMedia({video: {deviceId: selectedCameraId}});
+					video.srcObject = stream;
+					resetMirror();
+				} catch (error) {
+					console.error('Error accessing camera:', error);
+				}
+			});
+
+			const defaultCameraId = cameras[0].deviceId;
+			try {
+				const stream = await navigator.mediaDevices.getUserMedia({video: {deviceId: defaultCameraId}});
+				video.srcObject = stream;
+			} catch (error) {
+				console.error('Error accessing default camera:', error);
+				let x = await window.parent.justConfirm("Can't Get Camera", "Your device seem to say that there's no camera, Should we try again harder?");
+				if (x) {
+					startCamera();
+				}
+			}
+		}
+
+		function toggleMirror() {
+			const video = document.getElementById('video');
+			isMirrored = !isMirrored;
+			video.style.transform = `scaleX(${isMirrored ? -1 : 1})`;
+		}
+
+		function resetMirror() {
+			const video = document.getElementById('video');
+			isMirrored = false;
+			video.style.transform = 'scaleX(1)';
+		}
+
+		function greenflag() {
+			startCamera()
+		}
+
+		function captureCameraImage() {
+			const video = document.getElementById('video');
+			const canvas = document.createElement('canvas');
+			const ctx = canvas.getContext('2d');
+
+			// Set canvas dimensions to match video dimensions
+			canvas.width = video.videoWidth;
+			canvas.height = video.videoHeight;
+
+			// Apply mirror effect if needed
+			if (isMirrored) {
+				ctx.translate(canvas.width, 0);
+				ctx.scale(-1, 1);
+			}
+
+			// Draw video frame onto canvas
+			ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+			// Convert canvas content to base64-encoded PNG
+			var dataUrl;
+			var condition = true;
+			try {
+				let qsets = localStorage.getItem("qsets");
+				if (qsets) {
+					let qsetsObj = JSON.parse(qsets);
+					if (qsetsObj.CamImgFormat) {
+						dataUrl = canvas.toDataURL('image/' + qsetsObj.CamImgFormat.toLowerCase());
+					}
+				}
+			} catch (error) {
+				console.log("safe error: " + error);
+			}
+
+
+			return dataUrl;
+		}
+
+		function capture(obj) {
+			const video = document.getElementById('video');
+			video.style.filter = "brightness(5)"
+			let cakebuff = obj.innerHTML;
+			obj.innerHTML = "..."
+			let x = captureCameraImage();
+			x = window.parent.shrinkbsf(x);
+			let y = {
+				"via": "camera"
+			}
+
+			let FileFormat;
+			var condition = true;
+			try {
+				let qsets = localStorage.getItem("qsets");
+				if (qsets) {
+					let qsetsObj = JSON.parse(qsets);
+					if (qsetsObj.CamImgFormat) {
+						FileFormat = qsetsObj.CamImgFormat.toLowerCase()
+					}
+				}
+			} catch (error) {
+				console.log("safe error: " + error);
+			}
+			window.parent.createFile("Media", "captured", "image/" + FileFormat, x, y)
+			obj.innerHTML = cakebuff;
+			setTimeout(() => {
+				video.style.filter = "none";
+			}, 500);
+
+		}
+	</script>
+</body>
+
+</html>

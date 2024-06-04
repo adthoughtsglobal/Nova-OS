@@ -1,0 +1,1585 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Files app</title>
+	<meta name="description" content="Default Files app for Nova OS">
+	<meta name="nova-icon"
+		content="<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='115.79063' height='79.42629' viewBox='0,0,115.79063,79.42629'><g transform='translate(-182.26576,-138.78469)'><g data-paper-data='{&quot;isPaintingLayer&quot;:true}' fill-rule='nonzero' stroke-linecap='butt' stroke-linejoin='miter' stroke-miterlimit='10' stroke-dasharray='' stroke-dashoffset='0' style='mix-blend-mode: normal'><path d='M192.5,211v-70.66666h96.33333v70.66666z' fill='#5e511c' stroke='none' stroke-width='0'/><path d='M214.94361,194.01973l7.87476,-55.19191l75.23803,10.73494l-7.87476,55.19191z' fill='#cbcbcb' stroke='none' stroke-width='0'/><path d='M215.52729,204.79778l-7.94546,-55.18178l75.22422,-10.83131l7.94545,55.18177z' fill='#ffffff' stroke='none' stroke-width='0'/><path d='M191.80875,211.01003l-9.54298,-67.4916c0,0 17.94997,0 29.05001,0c1.75099,0 3.83004,5.47155 6.1555,5.47155c21.27569,0 63.17701,0 63.17701,0l7.54298,62.02005z' fill='#ffe166' stroke='none' stroke-width='0'/><path d='M217.66762,213.21099c-0.25148,-4.40441 -2.40197,-12.90365 1.84715,-16.36796c3.99005,-3.25308 24.23976,-3.39012 28.02687,0.40735c3.79805,3.80844 6.43466,11.61379 6.49657,16.10718' fill='none' stroke='#00b8ff' stroke-width='10'/></g></g></svg>">
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
+
+		/* width */
+		::-webkit-scrollbar {
+			width: 0.5em;
+		}
+
+		/* Track */
+		::-webkit-scrollbar-track {
+			background: #101010;
+		}
+
+		/* Handle */
+		::-webkit-scrollbar-thumb {
+			background: #2b2b2b;
+			border-radius: 5px;
+		}
+
+		/* Handle on hover */
+		::-webkit-scrollbar-thumb:hover {
+			background: #555;
+		}
+
+		html {
+			height: 100%;
+		}
+
+		body {
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			font-family: 'Poppins', sans-serif;
+			color: white;
+			user-select: none;
+		}
+
+		#flap-mot {
+			display: block;
+			box-sizing: border-box;
+			overflow: hidden;
+			background-color: #0e0e0e;
+			height: calc(100% - 2px);
+		}
+
+		[flap-nav] y {
+			displa: flex;
+			background-color: #151515;
+			width: 100%;
+			flex-direction: row;
+			flex-wrap: nowrap;
+			align-items: center;
+		}
+
+		[flap-nav] {
+			display: flex;
+			height: 29px;
+			flex-direction: row;
+			flex-wrap: nowrap;
+			margin-top: 2px;
+		}
+
+		.flappsearch {
+			flex-grow: 10 !important;
+			text-align: center !important;
+			background: #191919;
+			border-radius: 5px;
+			font-size: 11px;
+			padding: 2px !important;
+			color: #b8b8b8;
+			border: 1px solid #414141;
+			display: grid;
+			align-items: center;
+		}
+
+		.nowid {
+			width: 0px;
+			padding: 5px;
+			flex-grow: 1;
+			align-self: flex-end;
+			text-align: center;
+		}
+
+		.navbfobtns {
+			font-size: 17px;
+			background-color: #222222;
+			border-radius: 50%;
+			padding: 1px;
+			transform: translate(2px, 11px);
+			transisiton: .3s;
+		}
+
+		.navinfobtns:active {
+			transform: rotate(360deg);
+		}
+
+		.setbtn {
+			font-size: 17px;
+			transform: translate(5px, 0px);
+		}
+
+		.sdfld {
+			width: 90%;
+			margin: auto;
+			margin-bottom: 3px;
+			background: #151515;
+			border-radius: 5px;
+			text-align: left;
+			overflow: hidden;
+			transition: 0.3s;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			padding: 3px;
+			cursor: pointer;
+		}
+
+		.sdfld:hover {
+			background-color: #2f2f2f;
+		}
+
+		.sdfld span {
+			font-size: 15px;
+			transform: translate(1px, 3px);
+			margin-right: 6px;
+			color: #fff996;
+		}
+
+		[flap-sidenav] {
+			width: 0;
+			overflow-y: scroll;
+			font-size: 11px !important;
+			min-width: 120px;
+			border-right: 1px solid #2a2a2a;
+			padding-bottom: 50px;
+		}
+
+		[flap-sidenav] small {
+			padding-left: 5px;
+		}
+
+		.themainstuff {
+			margin: 10px 5px;
+			display: flex;
+			width: 100%;
+			height: 100%;
+		}
+
+		[flap-fl-topnav] {
+			display: block;
+			padding: 3px 10px;
+			font-size: 9px;
+			opacity: 70%;
+			transform: translateY(3px);
+		}
+
+		[flap-files] {
+			overflow-y: scroll;
+			flex-grow: 8;
+			padding-bottom: 50px !important;
+			padding: 10px;
+			padding-top: 5px;
+			width: calc(100% - 28px);
+		}
+
+		.file {
+			background: #1c1c1c;
+			user-select: none;
+			border-radius: 7px;
+			transition: .3s;
+			animation: poprs .2s ease-out;
+		}
+
+		.file[list] {
+			display: block;
+			padding: 3px 5px;
+			margin-bottom: 2px;
+		}
+
+		.file[grid] {
+			display: inline-block;
+			height: 83px;
+			width: calc(50% - 42px);
+			min-width: 80px;
+			margin: 5px;
+			transition: .3s;
+			padding: 1rem;
+			max-width: 100px;
+		}
+
+		.file[grid] .flfrname {
+			max-width: 66px;
+			text-overflow: ellipsis;
+			overflow: hidden;
+		}
+
+		.file[list] small {
+			width: auto;
+			transform: none;
+		}
+
+		@keyframes poprs {
+			from {
+				opacity: 0;
+				transform: translateY(-10px);
+			}
+
+			to {
+				opacity: 1;
+				transform: translateY(0px);
+			}
+		}
+
+		.file:hover {
+			background: #373737;
+		}
+
+		.file small {
+			float: right;
+			flex-basis: max-content;
+			display: inline-block;
+			transform: translate(-3px, 4px);
+			opacity: 0.5;
+			font-size: 11px;
+			width: 0;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			flex-grow: 5;
+			text-align: end;
+		}
+
+		.file[grid]>[flname] {
+			font-size: 14px;
+			display: flex;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			margin: 0;
+			position: relative;
+			width: 100%;
+			background: #252525;
+			padding: 10px;
+			border-radius: 5px;
+			transform: translate(-10px, 10px);
+			transition: 0.2s;
+			flex-direction: row;
+			flex-wrap: nowrap;
+			justify-content: flex-start;
+		}
+
+		.file[grid]>[flname] [flfrname] {
+			width: 0;
+			display: inline-block;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			flex-grow: 8;
+			margin-right: 10px;
+		}
+
+		.file[list]>[flname] {
+			font-size: 14px;
+			display: inline-block;
+			width: calc(100% - 30px);
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			margin: 0;
+		}
+
+		.file span .material-symbols-rounded {
+			color: #7193ff;
+		}
+
+		.file[list] span .material-symbols-rounded {
+			width: fit-content;
+			margin-right: 3px;
+			margin-left: 0;
+			transform: translate(-1px, 0px) scale(0.8);
+		}
+
+		.file[grid] span .material-symbols-rounded {
+			font-size: 41px;
+			display: block;
+		}
+
+		#slfile {
+			background: #414e59;
+			transform: scale(1.01);
+		}
+
+		#slfile[grid] [flname] {
+			background: #566877;
+		}
+
+		[bottomnav] {
+			width: 100%;
+			text-align: left;
+			border: 1px solid;
+			padding: 3px 5px;
+			font-size: 14px;
+		}
+
+		[flap-fl-bottomnav] {
+			padding: 5px 7px;
+			background: #161616;
+			font-size: 12px;
+		}
+
+		.delbtn {
+			background: #1f1f1f;
+			border: none;
+			border-radius: 10px;
+			color: #ff7c7c;
+			margin: 0px 10px;
+			float: right;
+			transition: .2s;
+			padding: 2px 8px;
+			cursor: pointer;
+		}
+
+		.delbtn:hover {
+			background-color: #442a2a;
+		}
+
+		.delbtn span {
+			font-size: 10px;
+			transform: translate(0px, 1px) scale(1.3);
+		}
+
+		input[type="file"] {
+			outline: none;
+			width: 252px;
+			margin: auto;
+			display: block;
+			position: relative;
+			overflow: scroll;
+		}
+
+		input[type="file"]::file-selector-button {
+			width: 135px;
+			color: transparent;
+		}
+
+		/* Faked label styles and icon */
+		input[type="file"]::before {
+			position: absolute;
+			pointer-events: none;
+			top: 7px;
+			left: 16px;
+			filter: brightness(200%);
+			height: 20px;
+			width: 20px;
+			content: "";
+			background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230964B0'%3E%3Cpath d='M18 15v3H6v-3H4v3c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-3h-2zM7 9l1.41 1.41L11 7.83V16h2V7.83l2.59 2.58L17 9l-5-5-5 5z'/%3E%3C/svg%3E");
+		}
+
+		button {
+			border-radius: 5px;
+			border: none;
+			padding: 7px 15px;
+			background: #2e363d;
+			color: white;
+			font-family: 'Poppins';
+			font-size: 11px;
+			cursor: pointer;
+		}
+
+		input[type="file"]::after {
+			position: absolute;
+			pointer-events: none;
+			top: 11px;
+			left: 40px;
+			color: white;
+			content: "Upload File";
+		}
+
+		/* file upload button */
+		input[type="file"]::file-selector-button {
+			border-radius: 4px;
+			padding: 0 16px;
+			height: 40px;
+			cursor: pointer;
+			border-radius: 5px;
+			background-color: #2f2f2f;
+			border: 1px solid rgba(0, 0, 0, 0.16);
+			box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.05);
+			margin-right: 16px;
+			transition: background-color 200ms;
+		}
+
+		/* file upload button hover state */
+		input[type="file"]::file-selector-button:hover {
+			background-color: #3f3f3f;
+		}
+
+		/* file upload button active state */
+		input[type="file"]::file-selector-button:active {
+			background-color: grey;
+		}
+
+		dialog::backdrop {
+			backdrop-filter: blur(13px);
+		}
+
+		#upmod {
+			border: 1px solid grey;
+			background: #1f1f1f;
+			color: white;
+			border-radius: 10px;
+			padding: 25px;
+			min-margin-top: 10px;
+			animation: pop .2s;
+			text-align: center;
+		}
+
+		#upmod [cv] {
+			display: block;
+			padding: 5px 10px;
+			background: #282828;
+			width: fit-content;
+			border-radius: 10px;
+			opacity: 0.5;
+			font-size: 11px;
+			margin: 5px auto;
+			margin-bottom: 10px;
+		}
+
+		@keyframes pop {
+			0% {
+				opacity: 0;
+				transform: translate(10px, -10px) scale(0.9);
+			}
+
+			100% {
+				transform: none;
+				opacity: 1;
+			}
+		}
+
+		#upmod svg {
+			height: 69px;
+			margin-bottom: 13px;
+		}
+
+		.custom-loader {
+			width: 40px;
+			height: 40px;
+			border-radius: 50%;
+			background: #92D8F4;
+			clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+			animation: sh1 2s infinite cubic-bezier(0.3, 1, 0, 1);
+		}
+
+		@keyframes sh1 {
+			33% {
+				border-radius: 0;
+				background: #ED8850;
+				clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%)
+			}
+
+			66% {
+				border-radius: 0;
+				background: #89CB91;
+				clip-path: polygon(50% 0, 50% 0, 100% 100%, 0 100%)
+			}
+		}
+
+		/* Dropup Button */
+		.dropbtn {
+			background-color: #2d2d2d;
+			color: white;
+			padding: 2px 10px;
+			margin-right: 10px;
+			font-size: 11px;
+			border: none;
+		}
+
+		.dropbtn {
+			background-color: #2d2d2d;
+			color: white;
+			padding: 2px 10px;
+			margin-right: 10px;
+			font-size: 11px;
+			border: none;
+		}
+
+		.notdropbtn {
+			background-color: #2d2d2d;
+			color: white;
+			font-size: 11px;
+			border: none;
+			padding: 5px;
+			transform: translate(-5px, 2px);
+		}
+
+		.notdropbtn span {
+			font-size: 11px !important;
+		}
+
+		/* The container <div> - needed to position the dropup content */
+		.dropup {
+			position: relative;
+			display: inline-block;
+		}
+
+		@keyframes bop {
+			0% {
+				transform: scaleY(0.5) translateY(35px);
+				opacity: 0%;
+			}
+
+			100% {
+				opacity: 100%;
+			}
+		}
+
+		/* Dropup content (Hidden by Default) */
+		.dropup-content {
+			display: none;
+			position: absolute;
+			animation: bop 0.2s;
+			bottom: 21px;
+			border-bottom: 5px solid #161616;
+			border-radius: 5px;
+			background-color: #282828;
+			min-width: 160px;
+			z-index: 1;
+			overflow: hidden;
+		}
+
+		/* Links inside the dropup */
+		.dropup-content a {
+			color: white;
+			padding: 3px 6px;
+			text-decoration: none;
+			display: block;
+			cursor: pointer;
+		}
+
+		.dropup-content a span {
+			font-size: 10px;
+			transform: scale(1.5);
+			margin-right: 5px;
+			padding: 1px;
+			background: #3d3d3d;
+			border-radius: 2px;
+			color: #eaeaea;
+		}
+
+		/* Change color of dropup links on hover */
+		.dropup-content a:hover {
+			color: #cbcbcb;
+			background: #1f1f1f;
+		}
+
+		/* Show the dropup menu on hover */
+		.dropup:hover .dropup-content {
+			display: block;
+		}
+
+		/* Change the background color of the dropup button when the dropup content is shown */
+		.dropup:hover .dropbtn {
+			background-color: #393939;
+		}
+
+		[flap-fl-topnav] div {
+			display: inline-block;
+			transform: translate(-5px, -2px);
+		}
+
+		.flarrbtn {
+			padding: 1px 2px;
+			height: 15px;
+		}
+
+		.nvbtns {
+			float: right;
+		}
+
+		.nvbtns span {
+			font-size: 13px;
+		}
+
+		.newfilebtn {
+			position: absolute;
+			bottom: 55px;
+			right: 15px;
+			padding: 0.5em;
+			border-radius: 1em;
+			height: 37px;
+		}
+
+		.newfilebtn:hover {
+			background-color: #465969;
+		}
+
+		.newfoldbtn {
+			float: right;
+			margin: 1px;
+			margin-right: 6px;
+			font-size: 10px;
+			transform: translateY(-2px) scale(1.3);
+			cursor: pointer;
+		}
+
+		.im {
+			font-size: 10px !important;
+			margin-right: 5px;
+			transform: scale(1.2) translate(1px, 1px);
+		}
+
+		[flap-files] svg {
+			margin-bottom: 1rem;
+			height: 50px;
+		}
+	</style>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+</head>
+
+<body>
+	<dialog id="ld">
+		<div class="custom-loader"></div>
+	</dialog>
+	<dialog id="upmod">
+		<div>
+			<svg style="height: 50px;" version="1.1" xmlns="http://www.w3.org/2000/svg"
+				xmlns:xlink="http://www.w3.org/1999/xlink" width="209.43806" height="162.25"
+				viewBox="0,0,209.43806,162.25">
+				<g transform="translate(-140.68755,-116.25)">
+					<g data-paper-data="{&quot;isPaintingLayer&quot;:true}" fill-rule="nonzero" stroke-linejoin="miter"
+						stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" style="mix-blend-mode: normal">
+						<path
+							d="M159.5,198c0,-44.45892 36.04108,-80.5 80.5,-80.5c44.45893,0 80.5,36.04108 80.5,80.5c0,44.45892 -36.04107,80.5 -80.5,80.5c-44.45892,0 -80.5,-36.04108 -80.5,-80.5z"
+							fill-opacity="0.20784" fill="#66bfff" stroke="none" stroke-width="0"
+							stroke-linecap="butt" />
+						<g fill="none" stroke="none" stroke-width="1" stroke-linecap="butt" font-family="sans-serif"
+							font-weight="normal" font-size="12" text-anchor="start" />
+						<g fill="#b5e0ff" stroke="none" stroke-width="0" stroke-linecap="butt">
+							<path
+								d="M283.87771,241.79302c-4.02173,-8.33081 -0.52853,-18.34453 7.80228,-22.36626c8.33081,-4.02173 18.34453,-0.52853 22.36626,7.80228c4.02173,8.33081 0.52853,18.34453 -7.80228,22.36625c-8.33081,4.02173 -18.34453,0.52853 -22.36626,-7.80228z" />
+							<path
+								d="M273.25718,259.24412c-4.98215,-10.32026 -0.65475,-22.72531 9.66551,-27.70745c10.32026,-4.98215 22.72531,-0.65475 27.70745,9.66551c4.98215,10.32026 0.65475,22.7253 -9.66551,27.70745c-10.32026,4.98215 -22.72531,0.65475 -27.70745,-9.66551z" />
+							<path
+								d="M321.85231,245.54072c-3.57143,-7.39803 -0.46935,-16.29055 6.92869,-19.86197c7.39803,-3.57143 16.29054,-0.46935 19.86197,6.92868c3.57143,7.39803 0.46935,16.29055 -6.92868,19.86198c-7.39803,3.57143 -16.29055,0.46935 -19.86198,-6.92869z" />
+							<path
+								d="M303.83054,248.09589c-3.57143,-7.39803 -0.46936,-16.29055 6.92868,-19.86198c7.39803,-3.57143 16.29055,-0.46935 19.86198,6.92869c3.57143,7.39803 0.46935,16.29055 -6.92868,19.86198c-7.39803,3.57143 -16.29055,0.46936 -19.86198,-6.92868z" />
+							<path
+								d="M306.87771,258.29302c-4.02173,-8.33081 -0.52853,-18.34453 7.80228,-22.36626c8.33081,-4.02173 18.34453,-0.52853 22.36626,7.80228c4.02173,8.33081 0.52853,18.34453 -7.80228,22.36625c-8.33081,4.02173 -18.34453,0.52853 -22.36626,-7.80228z" />
+						</g>
+						<g fill="#b5e0ff" stroke="none" stroke-width="0" stroke-linecap="butt">
+							<path
+								d="M140.68756,140c0,-9.25077 7.49923,-16.75 16.75,-16.75c9.25077,0 16.75,7.49923 16.75,16.75c0,9.25077 -7.49923,16.75 -16.75,16.75c-9.25077,0 -16.75,-7.49923 -16.75,-16.75z" />
+							<path
+								d="M184.063,149c0,-8.21499 6.65957,-14.87455 14.87456,-14.87455c8.21499,0 14.87455,6.65956 14.87455,14.87455c0,8.21499 -6.65956,14.87455 -14.87455,14.87455c-8.21499,0 -14.87456,-6.65956 -14.87456,-14.87455z" />
+							<path
+								d="M162.313,148c0,-8.21499 6.65957,-14.87455 14.87456,-14.87455c8.21499,0 14.87455,6.65956 14.87455,14.87455c0,8.21499 -6.65956,14.87455 -14.87455,14.87455c-8.21499,0 -14.87456,-6.65956 -14.87456,-14.87455z" />
+							<path
+								d="M156.43756,137c0,-11.45991 9.29009,-20.75 20.75,-20.75c11.45991,0 20.75,9.29009 20.75,20.75c0,11.45991 -9.29009,20.75 -20.75,20.75c-11.45991,0 -20.75,-9.29009 -20.75,-20.75z" />
+						</g>
+						<g fill="none" stroke="#56b8ff" stroke-width="10" stroke-linecap="round">
+							<path d="M239.21771,168.1191v74.73533" />
+							<path d="M211.45887,188.04852l27.40295,-27.40295l28.82648,28.82648" />
+						</g>
+					</g>
+				</g>
+			</svg><br>
+			<span style="display: block;
+			opacity: 0.7;
+			margin-bottom: 13px;
+		">Import your files</span>
+			<small cv><span class="material-symbols-rounded im">lock</span>Files won't leave your device.</small>
+			<input type="file" id="filupin" /><br>
+			<button onclick="fupit()" id="fupibu">
+				Import This File
+			</button>
+		</div>
+		<script>
+			const dbChangeEvent = new Event('dbchange');
+			function triggerDBChange() {
+				document.dispatchEvent(dbChangeEvent);
+			}
+			
+			var out;
+			function fupit() {
+				document.getElementById("fupibu").innerHTML = "Importing..."
+				const fileInput = document.getElementById('filupin');
+				const file = fileInput.files[0];
+
+				if (file) {
+
+					const type = file.type || 'application/octet-stream';
+					let folderName;
+
+					getBase64(file)
+					setTimeout(function () {
+						if (file.type.startsWith('video') || file.type.startsWith('audio') || file.type.startsWith('image')) {
+							folderName = 'Media';
+
+							out = window.parent.shrinkbsf(out)
+
+						} else if (file.type.startsWith('text') || file.type.endsWith('md') || file.type.endsWith('rtf')) {
+							folderName = 'Documents';
+						} else if (file.type.startsWith('html')) {
+							folderName = 'Apps';
+						} else {
+							folderName = 'Other';
+						}
+
+						let md = {
+							"via": "imported"
+						}
+						window.parent.createFile(folderName, file.name, type, out, md)
+							.then(function () {
+								document.getElementById("fupibu").innerHTML = "File Saved, Close";
+								document.getElementById("fupibu").onclick = function () {
+									document.getElementById("upmod").close();
+								};
+
+							});
+					}, 1000)
+
+				};
+			}
+
+			function getBase64(file) {
+				var reader = new FileReader();
+				reader.readAsDataURL(file);
+				reader.onload = function () {
+					out = reader.result;
+					document.getElementById("fupibu").innerHTML = "Saving..."
+				};
+				reader.onerror = function (error) {
+					console.log('Error: ', error);
+				};
+			}
+
+			function b64EncodeUnicode(str) {
+				return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) => String.fromCharCode('0x' + p1)));
+			}
+
+			async function makefolderhuh() {
+				let x = await window.parent.ask("Enter your Folder Name:", 'FolderName');
+				window.parent.createFolder(x);
+			}
+		</script>
+	</dialog>
+	<div id="flap-mot">
+		<div flap-nav>
+			<div style="" class="nowid">
+				<span class="material-symbols-rounded navbfobtns" onclick="refresh()">
+					refresh
+				</span>
+			</div>
+			<div class="nowid flappsearch" id="fileapptitledis">
+				Files App 2.1
+			</div>
+			<div style="flex-grow: 1;" class="nowid"><span class="material-symbols-rounded setbtn" style="
+														 transform: translate(-3px, 11px); cursor: pointer;
+				" onclick="upmd()">upload</span></div>
+		</div>
+		<div style="height: calc(100% - 43px);">
+			<div class="themainstuff">
+				<div flap-sidenav style="flex-grow: 1;
+		height: 100%;">
+					<small>This Device</small>
+					<small class="newfoldbtn" onclick="makefolderhuh()">+</small>
+					<div id="folders">
+						loading...
+					</div>
+					<div flap-sidenav-mems>
+
+					</div>
+				</div>
+				<div flap-mains style="flex-grow: 3;
+		display: flex;
+		flex-direction: column;
+		height: 100%;width: 0;">
+					<div flap-fl-topnav><span id="pathdisp">
+							device://*
+						</span>
+
+						<div class="nvbtns">
+							<button class="flarrbtn" title="Sorting">
+								<span class="material-symbols-rounded">
+									sort
+								</span>
+							</button>
+							<button class="flarrbtn" onclick="changeview('list')" title="Change View to List">
+								<span class="material-symbols-rounded">
+									view_list
+								</span>
+							</button>
+							<button class="flarrbtn" onclick="changeview('grid')" title="Change View to Grid">
+								<span class="material-symbols-rounded">
+									grid_view
+								</span>
+							</button>
+							<button class="flarrbtn" onclick="remfold()" id="remfoldbtn" title="Remove Folder" style="background-color: #7f4040;">
+								<span class="material-symbols-rounded">
+									delete_forever
+								</span>
+							</button>
+						</div>
+					</div>
+					<div flap-files style="flex-grow: 8; padding-bottom: 50px;padding: 10px;    padding-top: 5px;"
+						id="filelist">
+
+					</div>
+					<div flap-fl-bottomnav id="fileinfobn">Click on a file to select it.
+					</div>
+					<button class="newfilebtn" onclick="document.getElementById('makefiledia').showModal(); document.getElementById('makflatw').value = currentPath">
+						<span class="material-symbols-rounded">
+							add
+						</span>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<style>
+		inpg {
+			display: block;
+			max-width: calc(100% - 30px);
+			width: 300px;
+			margin: auto;
+		}
+
+		#makefiledia {
+			max-width: 80%;
+			min-height: 300px;
+			max-height: 80vh;
+			min-width: 300px;
+			padding: 20px;
+			border: none;
+			background: #1c1c1c;
+			color: white;
+			border-radius: 10px;
+			box-shadow: 0 0 10px black;
+		}
+
+		#makefiledia a.closbtn {
+			right: 20px;
+			position: absolute;
+			top: 20px;
+			opacity: 0.5;
+			cursor: pointer;
+		}
+
+		#makefiledia a.closbtn:hover {
+			opacity: 1;
+		}
+
+		#makefiledia input,
+		#makefiledia textarea {
+			display: block;
+			width: calc(100% - 20px);
+			background: #101010;
+			color: white;
+			padding: 7px 10px;
+			border: 1px solid #2f2f2f;
+			border-radius: 5px;
+			outline: none;
+			resize: none;
+		}
+
+		#makefiledia label {
+			text-transform: capitalize;
+			font-size: 14px;
+			font-weight: normal;
+			opacity: 0.8;
+		}
+
+		.makefilediv {
+			height: 100%;
+			padding-bottom: 20px;
+		}
+
+		.makefilediv h1 {
+			text-align: center;
+			margin-bottom: 4px;
+		}
+
+		.makefilediv p {
+			font-size: 14px;
+			text-align: center;
+			opacity: 0.5;
+			margin: auto;
+			width: 70%;
+		}
+
+		.makefilediv button {
+			width: calc(100% - 28px);
+			margin: auto;
+			display: block;
+			margin-top: 10px;
+			background: #4d7297;
+		}
+	</style>
+	<dialog id="makefiledia">
+		<div class="makefilediv">
+			<a class="closbtn" onclick="document.getElementById('makefiledia').close()"><span
+					class="material-icons">close</span></a>
+			<h1>Create your file</h1>
+			<p>From a text file to an app - anything you'd like.</p>
+			<inpg>
+				<label>File Name: </label>
+				<input id="makflname" value="unnamed" placeholder="">
+			</inpg>
+			<inpg>
+				<label>File Type: </label>
+				<input id="makfltyp" value="txt" placeholder="">
+			</inpg>
+			<inpg>
+				<label>File Metadata: </label>
+				<input id="makflmedat" value="{'createdWith':'files'}" placeholder='{"in JSON":"true"}'>
+
+			</inpg>
+			<inpg>
+				<label>At: (makes folder if not exists)</label>
+				<input id="makflatw" value="Desktop" placeholder='Apps'>
+
+			</inpg>
+			<inpg>
+				<label>File Content: </label>
+				<textarea id="makflcontent" placeholder="Your File Content Here..."></textarea>
+			</inpg>
+			<button onclick="createit()">Create</button>
+		</div>
+	</dialog>
+	<script>
+		async function createit() {
+			let fname = document.getElementById("makflname").value;
+			let ftype = document.getElementById("makfltyp").value;
+			let fmetadata = document.getElementById("makflmedat").value;
+			let fcontent = document.getElementById("makflcontent").value;
+			let fwhere = document.getElementById("makflatw").value;
+
+			if (fname.length === 0 || ftype.length === 0 || fmetadata.length === 0 || fcontent.length === 0 || fwhere.length === 0) {
+				window.parent.say("Complete all fields to proceed.", "failed")
+				return;
+			}
+
+			await window.parent.createFile(fwhere, fname, ftype, fcontent, fmetadata)
+				.then(function () {
+					document.getElementById('makefiledia').close();
+					window.parent.say("File <br><small>" + fname + " created at " + fwhere + '</small', "success");
+				});
+		}
+
+		var dropZone = document.getElementById("flap-mot");
+		dropZone.addEventListener('dragover', (event) => {
+			event.preventDefault();
+		});
+
+		dropZone.addEventListener('drop', (event) => {
+			event.preventDefault();
+
+			const files = event.dataTransfer.files;
+
+			for (let i = 0; i < files.length; i++) {
+				const file = files[i];
+				const reader = new FileReader();
+
+				reader.onload = (e) => {
+					const fileContent = e.target.result;
+					if (file.type.startsWith('video') || file.type.startsWith('audio') || file.type.startsWith('image')) {
+						folderName = 'Media';
+
+						out = window.parent.shrinkbsf(fileContent)
+
+					} else if (file.type.startsWith('text') || file.type.endsWith('md') || file.type.endsWith('rtf')) {
+						folderName = 'Documents';
+					} else if (file.type.startsWith('html')) {
+						folderName = 'Apps';
+					} else {
+						folderName = 'Other';
+					}
+
+					let md = {
+						"via": "imported"
+					}
+					window.parent.createFile(folderName, file.name, file.type, out, md).then(() => {
+					listFiles(folderName, true)
+		});
+				};
+
+				reader.readAsText(file);
+			}
+		});
+
+
+		dropZone.addEventListener('dragend', (event) => {
+			event.preventDefault();
+		});
+
+		var currentPath, nowfile, flmode = 'grid';
+		var memory;
+		var fllist;
+		var fdlist;
+		var binmode = false;
+		var sessiontype = "normal"
+		function greenflag() {
+			
+			
+			
+			var todo = localStorage.getItem("todo");
+
+			var defile
+			try {
+				let parsedTodo = JSON.parse(todo);
+
+				if (parsedTodo.appname === "files" && parsedTodo.data.type == "open") {
+					sessiontype = "opener";
+					document.getElementById("fileapptitledis").innerText = "Open File"
+					localStorage.setItem("todo", "");
+				}
+			} catch (error) {
+				console.log(error)
+			}
+			fllist = document.getElementById("filelist");
+			fdlist = document.getElementById("folders");
+
+			try {
+				if (localStorage.getItem('qsets')) {
+					if (JSON.parse(localStorage.getItem('qsets')).defFileLayout) {
+						changeview(JSON.parse(localStorage.getItem('qsets')).defFileLayout)
+					}
+				}
+			} catch (error) {
+				console.error(error)
+			}
+
+			getdb('trojencat', 'rom')
+				.then((result) => {
+					try {
+						if (result !== null) {
+							memory = result;
+							liststuff()
+							listFiles("Downloads")
+
+						} else {
+							console.log('0003');
+						}
+					} catch (error) {
+						console.error('Error:', error);
+					}
+				})
+				.catch((error) => {
+					console.error('Database operation failed:', error);
+				});
+			const backdrop = document.getElementById('upmod');
+
+			backdrop.addEventListener('click', (event) => {
+				if (event.target === backdrop) {
+					backdrop.close();
+				}
+			});
+
+		}
+
+		function Allowdrop(ev, obj) {
+			ev.preventDefault();
+			obj.style.backgroundColor = "#414e59";
+			setTimeout(function () {
+				obj.style.backgroundColor = "#151515";
+			}, 500)
+		}
+
+		function dropfl(ev, dat) {
+			let data = ev.dataTransfer.getData("Text");
+			console.log("moving " + data + " to " + dat)
+			moveFileToFolder(data, dat)
+		}
+
+		function liststuff() {
+			if (fdlist) {
+				fdlist.innerText = "";
+				memory.forEach(obj => {
+					let element = document.createElement('div');
+					element.classList.add("sdfld");
+					element.setAttribute("ondragover", "Allowdrop(event, this)")
+					element.setAttribute("ondrop", "dropfl(event, '" + obj.folderName + "')")
+					element.innerHTML = '<span class="material-icons"> ' + getfolicon(obj.folderName) + ' </span>' + obj.folderName;
+					element.setAttribute('onclick', "listFiles('" + obj.folderName + "', true)")
+					fdlist.appendChild(element);
+				});
+			} else {
+				console.error("Element with id 'folders' not found.");
+			}
+		}
+
+		function refresh() {
+			setTimeout(() => {
+				getdb('trojencat', 'rom')
+					.then((result) => {
+						if (result !== null) {
+							memory = result;
+						}
+					});
+				liststuff();
+				listFiles(currentPath);
+			}, 1000);
+			liststuff();
+		}
+
+		function dragfl(ev, obj) {
+			ev.dataTransfer.setData("Text", obj.getAttribute('unid'));
+		}
+
+		async function listFiles(folderName, gen) {
+			if (currentPath == folderName && gen) {
+				return;
+			}
+			if (folderName == "System") {
+				document.getElementById("remfoldbtn").style.display = "none";
+				
+			} else {
+				document.getElementById("remfoldbtn").style.display = ""
+			}
+			fllist.innerText = "";
+
+			// Find the folder with the given name
+			const folder = memory.find(folder => folder.folderName === folderName);
+			if (folder) {
+				currentPath = folderName;
+				updpth();
+
+				// Display files in the folder
+				if (folder.content && folder.content.length > 0) {
+					// Sort files by file name
+					folder.content.sort((a, b) => a.fileName.localeCompare(b.fileName));
+
+					// Define a map to store day divs
+					const dayDivs = {};
+
+					folder.content.forEach(async file => {
+						try {
+							let fileElement = document.createElement('div');
+							fileElement.classList.add("file");
+							fileElement.setAttribute(flmode, '');
+							fileElement.setAttribute("unid", file.uid);
+							fileElement.setAttribute("draggable", true);
+
+							fileElement.setAttribute("onclick", "slfile(this);");
+							fileElement.setAttribute("ondragstart", "dragfl(event, this)");
+
+							fileElement.innerHTML = `<span>` + geticon(file.type) + `</span><span flname><span class='flfrname'> ${file.fileName}</span> <small>${file.type}</small></span>`;
+							fileElement.setAttribute("title", file.fileName + "\nID: " + file.uid);
+							fllist.appendChild(fileElement);
+						} catch (error) {
+							console.error("Safe Error processing file:", error);
+							console.log("This file caused error: " + file.name)
+							// error files
+							let fileElement = document.createElement('div');
+							fileElement.classList.add("file");
+							fileElement.setAttribute(flmode, '');
+							fileElement.setAttribute("unid", file.uid);
+							fileElement.setAttribute("onclick", "slfile(this)");
+
+							// Assuming metadata is stored as a JSON object within the file
+							let metadata = {};
+							if (file.metadata) {
+								try {
+									metadata = JSON.parse(file.metadata);
+								} catch (error) {
+									console.error("Safe Error parsing metadata:", error);
+								}
+							}
+
+							fileElement.innerHTML = `<span>` + geticon(file.type) + `</span><span flname><span class='flfrname'> ${file.fileName}</span> <small>${file.type}</small></span>`;
+							fllist.appendChild(fileElement);
+						}
+					});
+
+				} else {
+					fllist.innerHTML = `<center style='padding-top: 30px'><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="74.20199" height="94.1023" viewBox="0,0,74.20199,94.1023"><g transform="translate(-224.61774,-142.87893)"><g data-paper-data="{&quot;isPaintingLayer&quot;:true}" fill-rule="nonzero" stroke="#ffffff" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" style="mix-blend-mode: normal"><path d="M227.11774,158.26119c0,-7.11468 5.76758,-12.88226 12.88226,-12.88226c7.11468,0 12.88226,5.76758 12.88226,12.88226c0,7.11468 -5.76758,12.88226 -12.88226,12.88226c-7.11468,0 -12.88226,-5.76758 -12.88226,-12.88226z" fill="none" stroke-width="5" stroke-linecap="butt"/><path d="M244.56247,233.94447l9.12493,-32.20565l-8.58817,-28.98508" fill="none" stroke-width="5" stroke-linecap="round"/><path d="M253.6874,202.81234l17.71311,31.66888" fill="none" stroke-width="5" stroke-linecap="round"/><path d="M246.17275,178.6581l-7.51465,27.37481" fill="none" stroke-width="5" stroke-linecap="round"/><path d="M250.46684,179.73163l28.44833,-12.3455" fill="none" stroke-width="5" stroke-linecap="round"/><path d="M260.82196,192.96703l-1.81137,-23.54791l37.99776,-2.9229l1.81138,23.54791z" fill="#aa8b00" stroke-width="0" stroke-linecap="butt"/><path d="M256.80524,189.29958l2.20535,-19.88046l37.99776,-2.9229l-2.20535,19.53118z" fill="#ffcf00" stroke-width="0" stroke-linecap="butt"/><path d="M279.06646,168.81576l-0.1513,-1.42964" fill="none" stroke-width="5" stroke-linecap="round"/></g></g></svg><br>This folder is empty.</center>`
+				}
+			} else {
+				console.log("0003");
+			}
+		}
+
+
+
+		function updpth() {
+			document.getElementById("pathdisp").innerHTML = "device://" + currentPath;
+		}
+
+		async function slfile(y) {
+
+
+			let x = y;
+			if (x.id === "slfile") {
+				openfile(x);
+			} else {
+				if (document.getElementById("slfile")) {document.getElementById("slfile").id = null;}
+				nowfile = x;
+				var fileSize
+				x.id = "slfile";
+				let fileData
+				try {
+					fileData = await window.parent.getFileById(x.getAttribute("unid"));
+
+					if (fileData && fileData.content) {
+						fileSize = fileData.content.length;
+
+					} else {
+						console.error("Safe Error: Unable to retrieve file content.");
+					}
+				} catch (error) {
+					console.error("Safe Error:", error);
+				}
+
+
+				if (fileSize !== 0) {
+					try {
+						var units = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+						var unitIndex = 0;
+
+						while (fileSize > 1024 && unitIndex < units.length - 1) {
+							fileSize /= 1024;
+							unitIndex++;
+						}
+
+						fileSize = fileSize.toFixed(2);
+					} catch (error) {
+						console.error(error)
+						fileSize = 0
+					}
+				}
+
+
+				if (sessiontype == "opener") {
+					return;
+				}
+
+				if (binmode) {
+					document.getElementById("fileinfobn").innerHTML = `<button class="delbtn" onclick="remfile('` + x.getAttribute("unid") + `')">Delete</button>`;
+				} else {
+					document.getElementById("fileinfobn").innerHTML = `<button class="delbtn" onclick="remfile('` + x.getAttribute("unid") + `')"><span class="material-symbols-rounded">
+delete
+</span> Delete</button>`;
+				}
+				try {
+					document.getElementById("fileinfobn").innerHTML += `<div class="dropup">
+								  <button class="dropbtn">More</button>
+								  <div class="dropup-content">
+									${fileData.type.startsWith("image") ? '<a onclick="window.parent.makewall(\'' + x.getAttribute("unid") + '\')"><span class="material-symbols-rounded">wallpaper</span> Set As Wallpaper</a>' : ''}
+									${fileData.type.startsWith("app") || fileData.type.startsWith("osl") || fileData.type.startsWith("wasm") ? `<a onclick="openfile(document.getElementById('` + x.id + `'), 'text/html')"><span class="material-symbols-rounded">
+									construction
+									</span> Open in studio</a>` : ''}
+									
+									<a onclick="openfile(document.getElementById('`+ x.id + `'), 'text')"><span class="material-symbols-rounded">
+open_in_new
+</span> Open as text</a>
+									<a onclick="renamef(document.getElementById('`+ x.id + `'))"><span class="material-symbols-rounded">
+save_as
+</span> Rename</a>
+									<a onclick="movefile(document.getElementById('`+ x.id + `'))"><span class="material-symbols-rounded">
+drive_file_move
+</span> Move</a>
+								  </div>
+								</div><button class="notdropbtn"><span class="material-symbols-rounded">info</span></button> `+ fileSize + ' ' + units[unitIndex]
+				} catch (error) {
+					document.getElementById("fileinfobn").innerHTML += "Safe Error 0006";
+					window.parent.say(`<h1>File Error</h1><p>Nova files couldn't process that file</p><small>(Error 0006)</small>`, "warning")
+					refresh()
+					// i did sjdfhsdkfhsdfj file type 
+					console.error("An error occurred:", error);
+
+				}
+			}
+		}
+
+		async function remfile(ID) {
+			try {
+				let memory = await getdb('trojencat', 'rom');
+
+				// Iterate through folders to find the file with the specified ID
+				for (let folder of memory) {
+					let fileIndex = folder.content.findIndex(file => file.uid === ID);
+
+					if (fileIndex !== -1) {
+						// Remove the file from the folder's content array
+						let removedFile = folder.content.splice(fileIndex, 1)[0];
+						console.log(`0004`);
+						await setdb('trojencat', 'rom', memory);
+
+						// Check if the file was successfully removed
+						if (!folder.content.includes(removedFile)) {
+							console.log("File successfully removed.");
+						} else {
+							console.log("File removal failed.");
+						}
+						document.getElementById("fileinfobn").innerHTML = "Deleting file..."
+						await setdb('trojencat', 'rom', memory).then(() => {
+							document.getElementById("fileinfobn").innerHTML = "File Deleted";
+						});
+						return;
+					}
+				}
+
+				// If the loop completes without finding the file
+				console.error(`File with ID "${ID}" not found.`);
+			} catch (error) {
+				console.error("Safe Error fetching or updating data:", error);
+			}
+		}
+
+		async function openfile(x, rt) {
+			if (sessiontype == "opener") {
+				localStorage.setItem("todo", JSON.stringify({"type":"opentotext","lclfile":x.getAttribute("unid")}));
+				window.parent.clwin(myWindow)
+				return;
+			}
+			document.getElementById("fileinfobn").innerHTML = "";
+			try {
+				let unid = x.getAttribute("unid");
+				if (!unid) {
+					console.error("Safe Error: 'unid' attribute not found");
+					return;
+				}
+
+				let mm = await window.parent.getFileById(unid);
+				if (!mm) {
+					console.error("Safe Error: File not found");
+					return;
+				}
+
+				let realtype = mm.type;
+				if (rt && realtype != "txt") {
+					mm.type = rt;
+					if (!(await window.parent.justConfirm("Are you sure?", "The file you are about to open is meant to be not opened."))) {
+						return;
+					}
+				}
+				if (mm.type == "app") {
+					console.log("donald duck quack");
+					if (rt) {
+						console.log("ducks quack");
+						window.parent.openlaunchprotocol("studio", {"lclfile": mm.id});
+						return;
+					}
+					await window.parent.openapp(mm.fileName, unid);
+				} else if (mm.type.startsWith("image") || mm.type.startsWith("audio") || mm.type.startsWith("video")) {
+					await window.parent.openlaunchprotocol("media", {"lclfile": unid});
+				} else {
+					if ((realtype == "app" || realtype.startsWith("image") || realtype.startsWith("video") || realtype.startsWith("audio")) && !rt) {
+
+						// if it's compressed
+						console.log("passed test");
+						window.parent.openlaunchprotocol("text", {"lclfile": unid, "shrinkray": true});
+					} else if (mm.type.startsWith("text/html")) {
+						window.parent.openlaunchprotocol("studio", {"lclfile": unid});
+					} else if (mm.type.startsWith("osl")) {
+						window.parent.runAsOSL(mm.content);
+					} else {
+						window.parent.openlaunchprotocol("text", {"lclfile": unid});
+					}
+				}
+			} catch (error) {
+				console.error(":( Safe Error:", error);
+			}
+		}
+
+		async function renamef(x) {
+			try {
+				const fileId = x.getAttribute("unid");
+
+				let file = await window.parent.getFileById(fileId);
+
+				file.fileName = await window.parent.ask("New Name:");
+				await window.parent.updateFile(currentPath, fileId, file);
+
+				document.getElementById("fileinfobn").innerHTML = "File renamed successfully.";
+
+			} catch (error) {
+				console.error("Safe Error renaming file:", error);
+				document.getElementById("fileinfobn").innerHTML = "Failed to rename file.";
+			}
+		}
+
+		async function moveFileToFolder(flid, dest) {
+			console.log("Moving file with id: " + flid + " to folder: " + dest);
+
+			let fileToMove = await window.parent.getFileById(flid);
+			console.log("Got file: " + JSON.stringify(fileToMove));
+
+			await window.parent.createFile(dest, fileToMove.fileName, fileToMove.type, fileToMove.content, fileToMove.metadata);
+			console.log("File created in folder: " + dest);
+
+			console.log("Removing file: " + flid);
+			await remfile(flid);
+			console.log("File removed successfully");
+
+			document.getElementById("fileinfobn").innerHTML = "File was moved to " + dest;
+		}
+
+
+		async function movefile(flid) {
+			flid = flid.getAttribute("unid")
+			console.log("NAV MOVE file with id: " + flid)
+			// Get folder names array
+			let folders = await window.parent.getFolderNames();
+
+			let filteredFolders = folders.filter(folder => folder !== currentPath);
+
+			// Create select element
+			let selectOptions = filteredFolders.map(folder => `<option>${folder}</option>`).join('');
+			let selectElement = `<select id="filesappselecttomovedest">${selectOptions}</select>`;
+
+			// Ask user to select a folder
+			let confpromise = await window.parent.justConfirm("Select a folder", `Move to ${selectElement}`);
+
+			console.log("promise result: " + confpromise)
+			if (confpromise) {
+				let x = window.parent.document.getElementById("filesappselecttomovedest").value;
+				console.log("Moving to: " + x)
+				let y = await window.parent.getFileById(flid);
+				console.log("got file: " + JSON.stringify(y))
+				await window.parent.createFile(x, y.fileName, y.type, y.content, y.metadata)
+				console.log("file made, " + JSON.stringify(y))
+				console.log("removing: " + flid)
+				await remfile(flid)
+				document.getElementById("fileinfobn").innerHTML = "File was moved to " + x;
+			}
+		}
+
+
+		const databaseName = 'trojencat';
+		// Function to open or create an IndexedDB database
+		function openDB(databaseName, version) {
+			return new Promise((resolve, reject) => {
+				const request = indexedDB.open(databaseName, version);
+
+				request.onupgradeneeded = (event) => {
+					const db = event.target.result;
+					if (!db.objectStoreNames.contains('store')) {
+						db.createObjectStore('store', {keyPath: 'key'});
+					}
+				};
+
+				request.onsuccess = (event) => {
+					const db = event.target.result;
+
+					resolve(db);
+				};
+
+				request.onerror = () => {
+					reject(request.error);
+				};
+			});
+		}
+
+
+		// Function to set a key-value pair in the database
+		function setdb(databaseName, key, value) {
+			return openDB(databaseName, 1).then((db) => {
+				return new Promise((resolve, reject) => {
+					const transaction = db.transaction(['store'], 'readwrite');
+					const store = transaction.objectStore('store');
+					const request = store.put({key, value});
+
+					request.onsuccess = () => {
+						triggerDBChange();
+						resolve();
+					};
+
+					request.onerror = () => {
+						reject(request.error);
+					};
+				});
+			});
+		}
+
+		// Function to get a value by key from the database
+		function getdb(databaseName, key) {
+			return openDB(databaseName, 1).then((db) => {
+				return new Promise((resolve, reject) => {
+					const transaction = db.transaction(['store'], 'readonly');
+					const store = transaction.objectStore('store');
+					const request = store.get(key);
+
+					request.onsuccess = () => {
+						const result = request.result;
+						if (result) {
+							resolve(result.value);
+						} else {
+							resolve(null); // Key not found
+						}
+					};
+
+					request.onerror = () => {
+						reject(request.error);
+					};
+				});
+			});
+		}
+
+		function geticon(x) {
+			let i;
+			if (x == "txt") {
+				i = "description"
+			} else if (x == "app") {
+				i = "rocket_launch"
+			} else if (x.startsWith("image")) {
+				i = "image"
+			} else if (x.startsWith("audio")) {
+				i = "graphic_eq"
+			} else if (x.startsWith("json")) {
+				i = "data_object"
+			} else if (x.startsWith("lnk")) {
+				i = "reply"
+			} else {
+				i = "bug_report"
+			}
+			return `<span class="material-symbols-rounded">
+		`+ i + `
+		</span>`
+		}
+
+		function getfolicon(x) {
+			if (x == "Downloads") {
+				i = "download"
+			} else if (x == "Desktop") {
+				i = "computer"
+			} else if (x == "Apps") {
+				i = "apps"
+			} else if (x == "System") {
+				i = "settings_suggest"
+			} else if (x == "Dock") {
+				i = "dashboard"
+			} else if (x == "Media") {
+				i = "play_circle"
+			} else if (x == "Documents") {
+				i = "article"
+			} else if (x == "Favorites") {
+				i = "favorite"
+			} else {
+				i = "folder"
+			}
+			return i;
+		}
+
+		function upmd() {
+			document.getElementById("fupibu").innerHTML = "Import";
+
+			document.getElementById("fupibu").onclick = fupit;
+			document.getElementById("upmod").showModal();
+		}
+
+		document.addEventListener('dbchange', () => {
+			// Handle database change, e.g., refresh data
+			refresh();
+		});
+
+		function changeview(how) {
+			flmode = how;
+			listFiles(currentPath)
+		}
+
+		async function remfold() {
+			if (currentPath == "System") {
+				window.parent.say("You cannot remove system folder through files app.")
+			}
+			let x = await window.parent.justConfirm("Remove folder?", "Remove '" + currentPath + "' permanently from your device?")
+			if (x) {
+				await window.parent.remfolder(currentPath);
+				listFiles('System', true)
+			}
+		}
+	</script>
+</body>
+
+</html>

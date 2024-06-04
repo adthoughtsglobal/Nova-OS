@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Local Music Player</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #121212;
+      color: #ffffff;
+      text-align: center;
+      padding-top: 50px;
+    }
+    #player {
+      margin: 20px auto;
+      width: 300px;
+    }
+    audio {
+      width: 100%;
+    }
+    input[type="file"] {
+      margin-top: 10px;
+      background-color: #363636;
+      color: #ffffff;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    input[type="file"]:hover {
+      background-color: #555;
+    }
+    #saveBtn {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    #saveBtn:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <div id="player">
+    <audio controls id="audioPlayer">
+      Your browser does not support the audio element.
+    </audio>
+    <input type="file" id="audioFile" accept="audio/*">
+    <button id="saveBtn">Save Audio</button>
+  </div>
+
+  <script>
+    var db;
+    var request = window.indexedDB.open("data", 1);
+
+    request.onerror = function(event) {
+      console.log("Database error: " + event.target.errorCode);
+    };
+
+    request.onsuccess = function(event) {
+      db = event.target.result;
+    };
+
+    request.onupgradeneeded = function(event) {
+      var db = event.target.result;
+      var objectStore = db.createObjectStore("audioFiles", { autoIncrement : true });
+    };
+
+    document.getElementById('audioFile').addEventListener('change', function() {
+      var file = this.files[0];
+      var audioPlayer = document.getElementById('audioPlayer');
+      var reader = new FileReader();
+
+      reader.onload = function(e) {
+        audioPlayer.src = e.target.result;
+      };
+
+      reader.readAsDataURL(file);
+    });
+
+    document.getElementById('saveBtn').addEventListener('click', function() {
+      var file = document.getElementById('audioFile').files[0];
+      if (file) {
+        saveAudioFile(file);
+      } else {
+        alert("Please select an audio file to save.");
+      }
+    });
+
+    function saveAudioFile(file) {
+      var transaction = db.transaction(["audioFiles"], "readwrite");
+      var objectStore = transaction.objectStore("audioFiles");
+      var request = objectStore.add(file);
+
+      request.onsuccess = function(event) {
+        console.log("Audio file saved successfully.");
+      };
+
+      request.onerror = function(event) {
+        console.log("Error saving audio file: " + event.target.errorCode);
+      };
+    }
+  </script>
+</body>
+</html>

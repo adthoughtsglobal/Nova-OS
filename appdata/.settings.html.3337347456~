@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Settings App</title>
+	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+	<meta name="nova-icon"
+		content="<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='40.8208' height='40.94891' viewBox='0,0,40.8208,40.94891'><g transform='translate(-219.51359,-159.63806)'><g data-paper-data='{&quot;isPaintingLayer&quot;:true}' fill-rule='nonzero' stroke-linecap='butt' stroke-linejoin='miter' stroke-miterlimit='10' stroke-dasharray='' stroke-dashoffset='0' style='mix-blend-mode: normal'><path d='M224.49728,191.97943c0,-6.51609 0,-20.12167 0,-23.80086c0,-1.79525 1.27743,-3.6813 3.28885,-3.6813c6.47459,0 20.55435,0 24.11403,0c1.56415,0 3.60258,1.44253 3.60258,3.6813c0,6.76316 0,20.4796 0,23.95744c0,1.53 -1.83996,3.36671 -3.60258,3.36671c-3.67444,0 -17.45008,0 -23.95744,0c-2.10186,0 -3.44544,-1.37709 -3.44544,-3.52329zM239.52997,189.92242c5.52285,0 10,-4.47715 10,-10c0,-5.52285 -4.47715,-10 -10,-10c-5.52285,0 -10,4.47715 -10,10c0,5.52285 4.47715,10 10,10z' fill='#ffffff' stroke='none' stroke-width='0'/><path d='M237.50865,199.43282c-4.60757,-4.60757 -14.22817,-14.22817 -16.82975,-16.82975c-1.26943,-1.26943 -1.69979,-3.50635 -0.2775,-4.92864c4.57823,-4.57823 14.53412,-14.53412 17.05119,-17.05119c1.10602,-1.10602 3.56743,-1.52738 5.15048,0.05567c4.78228,4.78228 14.48126,14.48126 16.94047,16.94047c1.08187,1.08187 1.07958,3.68167 -0.16678,4.92803c-2.59822,2.59822 -12.33907,12.33907 -16.94047,16.94047c-1.48624,1.48624 -3.41004,1.46254 -4.92764,-0.05506zM239.52997,189.92242c5.52285,0 10,-4.47715 10,-10c0,-5.52285 -4.47715,-10 -10,-10c-5.52285,0 -10,4.47715 -10,10c0,5.52285 4.47715,10 10,10z' fill='#ffffff' stroke='none' stroke-width='0'/><path d='M235.7745,180.11252c0,-2.2917 1.85779,-4.14949 4.14949,-4.14949c2.2917,0 4.14949,1.85779 4.14949,4.14949c0,2.2917 -1.85779,4.14949 -4.14949,4.14949c-2.2917,0 -4.14949,-1.85779 -4.14949,-4.14949z' fill='none' stroke='#ffffff' stroke-width='2.5'/></g></g></svg>">
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
+
+		* {
+			box-sizing: border-box;
+		}
+
+		/* width */
+		::-webkit-scrollbar {
+			width: 5px;
+		}
+
+		/* Track */
+		::-webkit-scrollbar-track {
+			background: #101010;
+		}
+
+		/* Handle */
+		::-webkit-scrollbar-thumb {
+			background: #2b2b2b;
+			border-radius: 5px;
+		}
+
+		/* Handle on hover */
+		::-webkit-scrollbar-thumb:hover {
+			background: #555;
+		}
+
+
+		html {
+			height: 100%;
+			width: 100%;
+			scroll-behavior: smooth;
+		}
+
+		body {
+			color: white;
+			height: 100%;
+			margin: 0px;
+			background: #171717;
+			font-size: 12px;
+			font-family: 'Poppins', sans-serif;
+		}
+
+		.tab {
+			float: left;
+			width: 30%;
+			height: calc(100% - 10px);
+			color: white;
+			overflow-y: scroll;
+			border-right: 1px solid #2f2f2f;
+		}
+
+		.tab h3 {
+			padding-left: 5px;
+			margin: 5px 0px;
+			font-weight: normal;
+			font-size: 12px;
+		}
+
+		/* Style the buttons inside the tab */
+		.tab button.active {
+			background-color: #272727;
+		}
+
+		.tab button.active:hover {
+			background-color: #282828;
+		}
+
+		.tab button {
+			color: white;
+			display: block;
+			background-color: transparent;
+			padding: 7px 7px;
+			width: calc(100% - 5px);
+			border: none;
+			margin: 2px;
+			border-radius: 5px;
+			outline: none;
+			text-align: left;
+			cursor: pointer;
+			transition: 0.3s;
+			font-size: 13px;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+
+		/* Change background color of buttons on hover */
+		.tab button:hover {
+			background-color: #1f1f1f;
+		}
+
+		.tab button i {
+			font-size: 10px;
+			transform: translate(-6px, 0px) scale(1.5);
+			margin-left: 10px;
+		}
+
+		/* Style the tab content */
+		.tabcontent {
+			float: left;
+			padding: 0px 12px;
+			border: 1px solid #1f1f1f;
+			width: calc(70% - 5px);
+			padding-bottom: 30vh;
+			background-color: #171717;
+			border-left: none;
+			border-radius: 6px;
+			height: 100%;
+			animation: tab .2s;
+			overflow-y: scroll;
+			margin-left: 5px;
+		}
+
+		@keyframes tab {
+			0% {
+				transform: brightness(0);
+			}
+
+			100% {
+				transform: brightness(1)
+			}
+		}
+
+		container {
+			height: 100%;
+			display: block;
+			padding: 5px;
+		}
+
+		td {
+			padding: 0px 5px;
+			font-size: 10px;
+			padding-top: 2px;
+		}
+
+		supportb {
+			border-radius: 10px;
+			background: radial-gradient(circle at 0% 0%, #373737, #1a1a1a);
+			display: block;
+			padding: 1rem;
+			box-shadow: 0 5px 10px black;
+		}
+
+		supportb b {
+			font-size: 1rem;
+		}
+
+		supportb p {
+			margin-top: 7px;
+		}
+
+		supportb a {
+			display: inline-block;
+			border-radius: 5px;
+			background: #ffffff;
+			width: fit-content;
+			padding: 5px 10px;
+			color: black;
+			text-decoration: none;
+			margin: 10px 0px;
+			box-shadow: 5px 5px black;
+			transition: .3s;
+		}
+
+		supportb a[okay] {
+			background: #1e1e1e;
+			color: white;
+		}
+
+		supportb a:hover {
+			box-shadow: 2px 2px black;
+			transform: translate(3px, 3px);
+		}
+
+		#battery h1 {
+			display: block;
+			margin-top: 10vh;
+			font-size: 30vh;
+			text-align: center;
+			margin-bottom: 0px;
+		}
+
+		small {
+			display: block;
+			padding: 5px 7px;
+			background: #1a1a1a;
+			border-radius: 5px;
+			color: #a1a1a1;
+		}
+
+		.checkbox-wrapper-51 input[type="checkbox"] {
+			visibility: hidden;
+			display: none;
+		}
+
+		.checkbox-wrapper-51 .toggle {
+			position: relative;
+			display: block;
+			width: 42px;
+			height: 24px;
+			cursor: pointer;
+			-webkit-tap-highlight-color: transparent;
+			transform: translate3d(0, 0, 0);
+		}
+
+		.checkbox-wrapper-51 .toggle:before {
+			content: "";
+			position: relative;
+			top: 1px;
+			left: 1px;
+			width: 40px;
+			height: 22px;
+			display: block;
+			background: #c8ccd4;
+			border-radius: 12px;
+			transition: background 0.2s ease;
+		}
+
+		.checkbox-wrapper-51 .toggle span {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 24px;
+			height: 24px;
+			display: block;
+			background: #fff;
+			border-radius: 50%;
+			box-shadow: 0 2px 6px rgba(154, 153, 153, 0.75);
+			transition: all 0.2s ease;
+		}
+
+		.checkbox-wrapper-51 .toggle span svg {
+			margin: 7px;
+			fill: none;
+		}
+
+		.checkbox-wrapper-51 .toggle span svg path {
+			stroke: #c8ccd4;
+			stroke-width: 2;
+			stroke-linecap: round;
+			stroke-linejoin: round;
+			stroke-dasharray: 24;
+			stroke-dashoffset: 0;
+			transition: all 0.5s linear;
+		}
+
+		.checkbox-wrapper-51 input[type="checkbox"]:checked+.toggle:before {
+			background: #52d66b;
+		}
+
+		.checkbox-wrapper-51 input[type="checkbox"]:checked+.toggle span {
+			transform: translateX(18px);
+		}
+
+		.checkbox-wrapper-51 input[type="checkbox"]:checked+.toggle span path {
+			stroke: #52d66b;
+			stroke-dasharray: 25;
+			stroke-dashoffset: 25;
+		}
+
+		[settingn] {
+			background: #292929;
+			padding: 10px;
+			margin: 0;
+			border-bottom: 1px solid #373737;
+		}
+
+		[setting] {
+			background: #292929;
+			padding: 10px;
+			margin: 0;
+			border-bottom: 1px solid #373737;
+		}
+
+		[setting] div {
+			float: right;
+			transform: scale(0.7);
+		}
+
+		[setting] p {
+			width: 80%;
+			opacity: 0.5;
+			margin: 0;
+			font-size: 10px;
+		}
+
+		#chargingIcon {
+			transform: translateY(2px) scale(0.8);
+			padding: 5px 1px 7px 1px;
+			background: #054305;
+			color: #4fb64f;
+			display: inline-block;
+			margin-left: 5px;
+			border-radius: 10px;
+		}
+
+		.nocss {
+			width: 29px;
+			padding: 0;
+			display: inline;
+			outline: none;
+			font-size: 10px;
+			color: white;
+			background: none;
+			margin: 0 3px;
+			text-align: center;
+			border: none;
+		}
+
+
+		.appli {
+			background-color: #252525;
+			padding: 9px;
+			margin-bottom: 0;
+			border-radius: 0;
+			border-bottom: 1px solid #4d4d4d;
+		}
+
+		#appdi {
+			margin: 5px 0;
+			border-radius: 5px;
+			overflow: hidden;
+			border: 1px solid #4d4d4d;
+		}
+
+		.checkbox-wrapper-46 input[type="checkbox"] {
+			display: none;
+			visibility: hidden;
+		}
+
+		.checkbox-wrapper-46 .cbx {
+			margin: auto;
+			-webkit-user-select: none;
+			user-select: none;
+			cursor: pointer;
+		}
+
+		.checkbox-wrapper-46 .cbx span {
+			display: inline-block;
+			vertical-align: middle;
+			transform: translate3d(0, 0, 0);
+		}
+
+		.checkbox-wrapper-46 .cbx span:first-child {
+			position: relative;
+			width: 18px;
+			height: 18px;
+			border-radius: 3px;
+			transform: scale(1);
+			vertical-align: middle;
+			border: 1px solid #9098A9;
+			transition: all 0.2s ease;
+		}
+
+		.checkbox-wrapper-46 .cbx span:first-child svg {
+			position: absolute;
+			top: 3px;
+			left: 2px;
+			fill: none;
+			stroke: #FFFFFF;
+			stroke-width: 2;
+			stroke-linecap: round;
+			stroke-linejoin: round;
+			stroke-dasharray: 16px;
+			stroke-dashoffset: 16px;
+			transition: all 0.3s ease;
+			transition-delay: 0.1s;
+			transform: translate3d(0, 0, 0);
+		}
+
+		.checkbox-wrapper-46 .cbx span:first-child:before {
+			content: "";
+			width: 100%;
+			height: 100%;
+			background: #506EEC;
+			display: block;
+			transform: scale(0);
+			opacity: 1;
+			border-radius: 50%;
+		}
+
+		.checkbox-wrapper-46 .cbx span:last-child {
+			padding-left: 8px;
+		}
+
+		.checkbox-wrapper-46 .cbx:hover span:first-child {
+			border-color: #506EEC;
+		}
+
+		.checkbox-wrapper-46 .inp-cbx:checked+.cbx span:first-child {
+			background: #506EEC;
+			border-color: #506EEC;
+			animation: wave-46 0.4s ease;
+		}
+
+		.checkbox-wrapper-46 .inp-cbx:checked+.cbx span:first-child svg {
+			stroke-dashoffset: 0;
+		}
+
+		.checkbox-wrapper-46 .inp-cbx:checked+.cbx span:first-child:before {
+			transform: scale(3.5);
+			opacity: 0;
+			transition: all 0.6s ease;
+		}
+
+		@keyframes wave-46 {
+			50% {
+				transform: scale(0.9);
+			}
+		}
+
+
+
+		.progbarma {
+			width: 100%;
+			background-color: #1d1d1d;
+			height: 20px;
+			border-radius: 20px;
+			overflow: hidden;
+			margin: 10px 0px;
+		}
+
+		.appli:hover {
+			background-color: #434343;
+		}
+
+		.progbar {
+			width: 1%;
+			height: 30px;
+			min-width: 2px;
+			background-color: #04AA6D;
+		}
+
+		button {
+			border-radius: 5px;
+			border: none;
+			padding: 7px 15px;
+			background: #2e363d;
+			color: white;
+			font-size: 11px;
+			cursor: pointer;
+		}
+
+		[danger] {
+			background: #653939;
+			color: #ff6262;
+		}
+
+		.inpbox {
+			background: #292929;
+			padding: 6px;
+			outline: none;
+			border-bottom: 1px solid #373737;
+		}
+
+		.inpbox select {
+			background: #2f2f2f;
+			color: white;
+			border: 1px solid #1a1a1a;
+			border-radius: 5px;
+			padding: 3px 1px !important;
+			float: right;
+			transform: translate(2px, -3px);
+		}
+
+		@media only screen and (max-width: 100px) {
+			.tab button i {
+				margin-bottom: 8px;
+				display: block;
+			}
+		}
+
+		h1 {
+			font-weight: normal;
+			font-size: 1rem;
+		}
+
+		segr {
+			margin: 10px 0;
+			overflow: hidden;
+			border-radius: 5px;
+			display: block;
+			border: 1px solid #434343;
+			box-shadow: 0 3px 5px #0C0C0C;
+		}
+	</style>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
+<body>
+	<container>
+		<div class="tab">
+			<button class="tablinks" onclick="openCity(event, 'storage')" id="defaultOpen"><i
+					class="material-icons">storage</i> Storage</button>
+			<button class="tablinks" onclick="openCity(event, 'battery')"><i class="material-icons">battery_full</i>
+				Battery</button>
+			<button class="tablinks" onclick="openCity(event, 'devices')"><i class="material-icons">devices</i>
+				Devices</button>
+			<button class="tablinks" onclick="openCity(event, 'perform'); updateFPS()"><i
+					class="material-icons">speed</i>
+				Performance</button>
+			<button class="tablinks" onclick="openCity(event, 'tbar')"><i class="material-icons">task</i>
+				Taskbar</button>
+			<button class="tablinks" onclick="openCity(event, 'exp'); defs();  "><i class="material-icons">monitor</i>
+				Display</button>
+			<button class="tablinks" onclick="openCity(event, 'defaults'); defs5(); defs2(); defs3()"><i
+					class="material-icons">settings</i> Preferances</button>
+			<button class="tablinks" onclick="openCity(event, 'about')"><i class="material-icons">info</i>
+				About</button>
+
+		</div>
+
+		<div id="perform" class="tabcontent">
+			<h1>Performance</h1>
+			<h1 id="fpsprof">0</h1><button class="fpssidebtn">FPS</button>
+			<br>
+			<small>
+				<h3>What is FPS?</h3>
+				<p>Frames Per Second (FPS) is a measure of how many times your device updates the display per second.
+					This value is closely tied to both the processing power of the system and the demands of the
+					software running on it.</p>
+				<h3>How to increase FPS?</h3>
+				<p>To boost your FPS, consider closing resource-heavy apps and avoid using your device while it's
+					charging, as this can impact performance.</p>
+			</small>
+			<style>
+				#fpsprof {
+					font-size: 10vw;
+					display: inline-block;
+					width: fit-content;
+					margin: 0;
+					margin-left: 1rem;
+					width: 15vw;
+					overflow: hidden;
+				}
+
+				.fpssidebtn {
+					padding: 7px 10px;
+					font-size: 13px;
+					border-radius: 20px;
+					background-color: #384a57;
+					display: inline-block;
+					border: 1px solid #55879d;
+					margin-left: 10px;
+					transform: translate(5px, -31px);
+				}
+			</style>
+			<script>
+				function updateFPS() {
+					var startTime = Date.now();
+					var frameCount = 0;
+
+					function calculateFPS() {
+						var elapsedTime = Date.now() - startTime;
+						var fps = Math.round((frameCount * 1000) / elapsedTime);
+
+						document.getElementById('fpsprof').innerText = fps;
+
+						// Reset the frame count and start time for the next interval
+						frameCount = 0;
+						startTime = Date.now();
+					}
+
+					function render() {
+						frameCount++;
+						requestAnimationFrame(render);
+					}
+
+					// Initial call to render function
+					render();
+
+					// Update FPS every 0.5 seconds
+					setInterval(calculateFPS, 500);
+				}
+			</script>
+		</div>
+
+		<div id="storage" class="tabcontent">
+			<h1>Storage</h1>
+			<segr>
+				<div settingn>
+					<b>IndexedDB</b><br>
+					<div class="progbarma" id="myProgress2">
+						<div id="myBar2" class="progbar"></div>
+					</div>
+					<small id="storemark2">Your system has crashed. Please Update.</small>
+				</div>
+				<div settingn>
+					<p style="margin-top: 0px;">Ran out of storage?<br>Get more storage by removing some files</p>
+					<button>Open Files</button>
+				</div>
+			</segr>
+			<segr>
+				<div settingn>
+					<p style="margin-top: 0px;">Be careful while interacting with extremely dangerous settings.</p>
+					
+					<script>
+						async function erdbs() {
+							if (!await window.parent.justConfirm("Erase Device?", "This will remove all your data, including your files, folders, apps, permissions, cache and everything.\n\nWould you like to Clear your OS?")) {
+								return;
+							}
+
+							
+						
+							let indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
+							let dbName = 'trojencat';
+							let storeName = 'store';
+							let keyToRemove = 'rom';
+
+							let request = indexedDB.open(dbName);
+
+							request.onsuccess = function (event) {
+								let db = event.target.result;
+
+								let transaction = db.transaction(storeName, 'readwrite');
+								let objectStore = transaction.objectStore(storeName);
+
+								let deleteRequest = objectStore.delete(keyToRemove);
+
+								deleteRequest.onsuccess = function (event) {
+									console.log("Key 'rom' removed successfully");
+									if (await window.parent.justConfirm("Reboot your OS?", "OS Cleared. Let us reboot the OS to prevent errors in future?")) {
+										window.parent.location.reload()
+									}
+								};
+
+								deleteRequest.onerror = function (event) {
+									console.error("Error removing key 'rom':", event.target.errorCode);
+								};
+							};
+
+							request.onerror = function (event) {
+								console.error("Error opening database:", event.target.errorCode);
+							};
+						}
+					</script>
+					<button danger onclick="erdbs()">Erase Device</button>
+				</div>
+			</segr>
+		</div>
+
+		<div id="defaults" class="tabcontent">
+			<h1>Preferences</h1>
+			<segr>
+				<div setting>
+					<div class="checkbox-wrapper-51">
+						<input type="checkbox" id="cbx-65" role="submit">
+						<label for="cbx-65" class="toggle">
+							<span>
+								<svg width="10px" height="10px" viewBox="0 0 10 10">
+									<path
+										d="M5,1 L5,1 C2.790861,1 1,2.790861 1,5 L1,5 C1,7.209139 2.790861,9 5,9 L5,9 C7.209139,9 9,7.209139 9,5 L9,5 C9,2.790861 7.209139,1 5,1 L5,9 L5,1 Z">
+									</path>
+								</svg>
+							</span>
+						</label>
+					</div>
+					<b>Focus Mode</b>
+					<p>Blur the background image slowly while you use apps.
+					</p>
+				</div>
+				<div setting>
+					<div class="checkbox-wrapper-51">
+						<input type="checkbox" id="cbx-66" role="submit">
+						<label for="cbx-66" class="toggle">
+							<span>
+								<svg width="10px" height="10px" viewBox="0 0 10 10">
+									<path
+										d="M5,1 L5,1 C2.790861,1 1,2.790861 1,5 L1,5 C1,7.209139 2.790861,9 5,9 L5,9 C7.209139,9 9,7.209139 9,5 L9,5 C9,2.790861 7.209139,1 5,1 L5,9 L5,1 Z">
+									</path>
+								</svg>
+							</span>
+						</label>
+					</div>
+					<b>Window Snapping</b>
+					<p>Drag a window to the sides of your screen to snap it in place.
+					</p>
+				</div>
+				<div class="inpbox">
+					<span>Save Camera images as </span>
+					<select id="scapimas">
+						<option>PNG</option>
+						<option>JPEG</option>
+					</select>
+				</div>
+				<small>Retain quality while compression using PNG.</small>
+				<script>
+					function defs() {
+
+
+						// dark mode 
+						document.getElementById("cbx-67").addEventListener("change", function () {
+							let newValue2 = document.getElementById("cbx-67").checked;
+							let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
+							qsets.darkMode = newValue2;
+							localStorage.setItem("qsets", JSON.stringify(qsets));
+							window.parent.checkdmode();
+						});
+
+						if (JSON.parse(localStorage.getItem("qsets")).darkMode) {
+							document.getElementById("cbx-67").checked = true;
+						}
+
+						// simple mode 
+						document.getElementById("cbx-68").addEventListener("change", function () {
+							let newValue2 = document.getElementById("cbx-68").checked;
+							let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
+							qsets.simpleMode = newValue2;
+							localStorage.setItem("qsets", JSON.stringify(qsets));
+							window.parent.checkdmode();
+						});
+
+						if (JSON.parse(localStorage.getItem("qsets")).simpleMode) {
+							document.getElementById("cbx-68").checked = true;
+						}
+					}
+
+					function defs5() {
+						// focus mode
+						document.getElementById("cbx-65").addEventListener("change", function () {
+							let newValue2 = document.getElementById("cbx-65").checked;
+							let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
+							qsets.focusMode = newValue2;
+							localStorage.setItem("qsets", JSON.stringify(qsets));
+							window.parent.dewallblur()
+						});
+
+						if (JSON.parse(localStorage.getItem("qsets")).focusMode) {
+							document.getElementById("cbx-65").checked = true;
+						}
+
+						// save cam images as
+
+						let selinp;
+						selinp = document.getElementById("scapimas");
+						if (JSON.parse(localStorage.getItem("qsets")).svcpimas) {
+							console.log("what: " + JSON.parse(localStorage.getItem("qsets")).svcpimas)
+							selinp.value = JSON.parse(localStorage.getItem("qsets")).svcpimas;
+						}
+
+						document.getElementById("scapimas").addEventListener("change", function () {
+							let newValue = document.getElementById("scapimas").value;
+							let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
+							qsets.CamImgFormat = newValue;
+							localStorage.setItem("qsets", JSON.stringify(qsets));
+						});
+					}
+				</script>
+				<div class="inpbox">
+					<span>Default files app view mode </span>
+					<select id="defflvm">
+						<option>Grid</option>
+						<option>List</option>
+					</select>
+				</div>
+				<script>
+					function defs2() {
+						let selinp;
+						selinp = document.getElementById("defflvm");
+						if (JSON.parse(localStorage.getItem("qsets")).defflvm) {
+							console.log("what: " + JSON.parse(localStorage.getItem("qsets")).defflvm)
+							selinp.value = JSON.parse(localStorage.getItem("qsets")).defflvm;
+						}
+						document.getElementById("defflvm").addEventListener("change", function () {
+							let newValue = document.getElementById("defflvm").value;
+							let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
+							qsets.defFileLayout = newValue;
+							localStorage.setItem("qsets", JSON.stringify(qsets));
+						});
+					}
+				</script>
+				<div class="inpbox">
+					<span>Default Text App Theme </span>
+					<select id="deftexappth">
+						<option>Bright</option>
+						<option>Dark</option>
+					</select>
+				</div>
+				<script>
+					function defs3() {
+						let selinp;
+						selinp = document.getElementById("deftexappth");
+						if (JSON.parse(localStorage.getItem("qsets")).deftexappth) {
+							console.log("what: " + JSON.parse(localStorage.getItem("qsets")).deftexappth)
+							selinp.value = JSON.parse(localStorage.getItem("qsets")).deftexappth;
+						}
+						document.getElementById("deftexappth").addEventListener("change", function () {
+							let newValue = document.getElementById("deftexappth").value;
+							let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
+							qsets.deftexappth = newValue;
+							localStorage.setItem("qsets", JSON.stringify(qsets));
+						});
+					}
+				</script>
+			</segr>
+			<segr>
+				<div setting>
+					<b>Update Default Apps</b>
+					<button style="margin-top: 5px;float: right;" onclick="updefapps();">Update</button>
+					<p>Update or reinstall deleted or corrupted versions of default apps.</p>
+
+					<small id="updefapplog" style="margin-top: 5px;">Updating default apps frequently can assure newer
+						features and bug fixes.</small>
+					<script>
+						async function updefapps() {
+							document.getElementById("updefapplog").innerHTML = "Installing...";
+							try {
+								await window.parent.installdefaultapps();
+								document.getElementById("updefapplog").innerHTML = "All Default apps updated. <b>Re-open Settings to reflect changes.</b>";
+							} catch (error) {
+								console.error("Error updating default apps:", error);
+							}
+						}
+
+					</script>
+				</div>
+			</segr>
+		</div>
+
+		<div id="tbar" class="tabcontent">
+			<h1>TaskBar</h1>
+			<b>Apps Dock</b>
+			<p>Changes reset on rebooting Nova</p>
+			<script>
+				function updtsb(eve) {
+					let ele = eve.getElementsByClassName("theappname")[0].innerHTML;
+					console.log("ele: " + ele)
+				}
+			</script>
+			<div id="appdi">
+
+				<div class="appli" onclick="updtsb(this)">
+					<div class="checkbox-wrapper-46">
+						<input class="inp-cbx" id="cbx-fli" type="checkbox" disabled checked />
+						<label class="cbx" for="cbx-fli"><span>
+								<svg width="12px" height="10px" viewbox="0 0 12 10">
+									<polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+								</svg></span><span class="theappname">Files</span>
+
+						</label>
+						<small style="margin-top: 5px;">Files cannot be removed.</small>
+					</div>
+				</div>
+				<div class="appli" onclick="updtsb(this)">
+					<div class="checkbox-wrapper-46">
+						<input class="inp-cbx" id="cbx-cam" type="checkbox" />
+						<label class="cbx" for="cbx-cam"><span>
+								<svg width="12px" height="10px" viewbox="0 0 12 10">
+									<polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+								</svg></span><span class="theappname">Camera</span>
+						</label>
+					</div>
+				</div>
+				<div class="appli" onclick="updtsb(this)">
+					<div class="checkbox-wrapper-46">
+						<input class="inp-cbx" id="cbx-sets" type="checkbox" />
+						<label class="cbx" for="cbx-sets"><span>
+								<svg width="12px" height="10px" viewbox="0 0 12 10">
+									<polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+								</svg></span><span class="theappname">Settings</span>
+						</label>
+					</div>
+				</div>
+				<div class="appli" onclick="updtsb(this)">
+					<div class="checkbox-wrapper-46">
+						<input class="inp-cbx" id="cbx-str" type="checkbox" />
+						<label class="cbx" for="cbx-str"><span>
+								<svg width="12px" height="10px" viewbox="0 0 12 10">
+									<polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+								</svg></span><span class="theappname"> Store</span>
+						</label>
+					</div>
+				</div>
+
+				<!--
+				<div setting>
+					<div class="checkbox-wrapper-51">
+						<input type="checkbox" id="cbx-53" onclick="toggleatbr()" role="submit">
+						<label for="cbx-53" class="toggle">
+							<span>
+								<svg width="10px" height="10px" viewBox="0 0 10 10">
+									<path
+										d="M5,1 L5,1 C2.790861,1 1,2.790861 1,5 L1,5 C1,7.209139 2.790861,9 5,9 L5,9 C7.209139,9 9,7.209139 9,5 L9,5 C9,2.790861 7.209139,1 5,1 L5,9 L5,1 Z">
+									</path>
+								</svg>
+							</span>
+						</label>
+					</div>
+					<b>In App TaskBar</b>
+					<p>Show TaskBar while on an app fullscreen</p>
+
+				</div>
+				<script>
+					if (localStorage.getItem("tsets")) {
+							if (JSON.parse(localStorage.getItem("tsets")).tbsh) {
+					document.getElementById("cbx-53").checked = false;
+							} else {
+								document.getElementById("cbx-53").checked = true;
+							}
+						}
+					function toggleatbr() {
+						var tbsh = localStorage.getItem("tsets.tbsh");
+
+						if (document.getElementById("cbx-53").checked) {
+							document.getElementById("cbx-53").checked = true;
+							localStorage.setItem("tsets.tbsh", true);
+						} else {
+							document.getElementById("cbx-53").checked = false;
+							localStorage.setItem("tsets.tbsh", false);
+							window.parent.checktaskbar();
+						}
+					}
+				</script>
+-->
+			</div>
+			<button onclick="sytb()">Save</button><br>
+
+
+			<script>
+				function sytb() {
+					let tbtb = "";
+					const pref = `<div app-shortcut="" onclick="openapp('`
+					const suff = `</span>
+			</div>`
+					if (document.getElementById("cbx-fli").checked) {
+						tbtb += pref + `files', 1)">
+				<span ic="" class="material-icons">
+					folder` + suff
+					}
+					if (document.getElementById("cbx-cam").checked) {
+						tbtb += pref + `camera', 1)">
+						<span ic="" class="material-icons">
+							camera` + suff
+					}
+					if (document.getElementById("cbx-sets").checked) {
+						tbtb += pref + `settings', 1)">
+						<span ic="" class="material-icons">
+							settings` + suff
+					}
+					if (document.getElementById("cbx-str").checked) {
+						tbtb += pref + `store', 1)">
+						<span ic="" class="material-icons">
+							store` + suff
+					}
+					localStorage.setItem("sets", tbtb)
+					window.top.reloadTaskbar();
+				}
+
+			</script>
+
+
+		</div>
+
+		<div id="battery" class="tabcontent">
+			<h1 id="batperdisp">Here's lies battery %</h1>
+			<p id="batperrem"></p>
+			<small>Remarks may be innacurate or misleading.</small>
+			<script>
+				var batchar;
+				navigator.getBattery().then(function (battery) {
+					updateBatteryInfo(battery);
+
+					battery.addEventListener('chargingchange', function () {
+						updateBatteryInfo(battery);
+					});
+				});
+
+				function updateBatteryInfo(battery) {
+					batchar = battery.charging;
+					console.log(batchar)
+					var batteryPercentage = (battery.level * 100).toFixed(0);
+					document.getElementById("batperdisp").innerHTML = batteryPercentage + "%";
+
+					var batteryRemark = getBatteryRemark(batteryPercentage);
+					document.getElementById("batperrem").innerHTML = batteryRemark;
+
+					var chargingIcon = document.getElementById("chargingIcon");
+					if (batchar) {
+						document.getElementById("batperdisp").innerHTML += '<g id="chargingIcon"><i class="material-icons" >battery_charging_full</i></g>';
+					} else {
+					}
+				}
+
+				function getBatteryRemark(percentage) {
+					if (percentage < 20) {
+						if (batchar) {
+							return "Your battery is still low, keep charging."
+						} else {
+							return "Your battery is running low. Please charge soon.";
+						}
+					} else if (percentage < 50) {
+						if (batchar) {
+							return "You have some battery left, But let it keep charging."
+						} else {
+							return "You have some battery left. Consider charging.";
+						}
+					} else if (percentage < 90) {
+						if (batchar) {
+							return "Your battery is in good condition. You may unplug your charger if needed."
+						} else {
+							return "Your battery is in good condition. No need to worry.";
+						}
+					} else {
+						if (batchar) {
+							return "Overcharging your device is not reccomended. You may unplug the charger now."
+						} else {
+							return "Very high battery, keep it up.";
+						}
+					}
+				}</script>
+		</div>
+		<div id="about" class="tabcontent">
+			<h2>Nova OS 1.5 Platinium</h2>
+			<div id="felix"></div>
+			<p>You are Using Nova OS Web. <br>Thank you for being in the Nova Ecosystem.</p>
+			<supportb>
+				<b>Join this adventure</b>
+				<p>With $10/month, get access to the newest app versions and also support us run this project and many
+					other perks:
+					<br>
+					<a href="https://www.patreon.com/adthoughtsglobal/membership">Membership</a> <a okay>Join
+						discord</a>
+				</p>
+			</supportb>
+			<h3>Credits</h3>
+			<table>
+				<tbody style="width: 100%;">
+					<tr>
+						<td><b>adthoughtsglobal</b></td>
+						<td>Primary Developer</td>
+					</tr>
+					<tr>
+						<td><b>felix543</b></td>
+						<td>Developer</td>
+					</tr>
+					<tr>
+						<td>Google Fonts</td>
+						<td>Icons and fonts</td>
+
+					</tr>
+				</tbody>
+			</table>
+			<br>
+			<small>
+				Credits to all those who we didn't mention here.
+			</small>
+			<br>
+		</div>
+		<div id="devices" class="tabcontent">
+			<h1>Devices</h1>
+			<style>
+				.device {
+					padding: 10px;
+					background: #191919;
+					border-radius: 5px;
+					margin: 5px 0;
+				}
+
+				.device .dic {
+					display: inline-grid;
+					width: 30px;
+					height: 30px;
+					justify-content: center;
+					align-items: center;
+					justify-items: center;
+				}
+
+				.device .ddts {
+					display: inline-block;
+					width: calc(100% - 35px);
+					overflow: hidden;
+					white-space: nowrap;
+					text-overflow: ellipsis;
+					font-size: 15px;
+				}
+
+				.device [boo] {
+					opacity: 0.7;
+					overflow: hidden;
+					text-wrap: nowrap;
+					width: calc(100% - 20px);
+					display: block;
+					text-overflow: ellipsis;
+				}
+
+				.device-type {
+					margin-right: 3px;
+					padding-right: 3px;
+					border-right: 1px solid grey;
+				}
+			</style>
+			<div id="deviceslist">
+				<div class="device">
+					<div class="dic">
+						<span class="material-icons">
+							refresh
+						</span>
+					</div>
+					<div class="ddts">
+						<span>Reindex Devices</span>
+					</div>
+					<button onclick="generateDeviceDivs()">Refresh</button>
+				</div>
+			</div>
+			<script>
+				function generateDeviceDivs() {
+					const devicesListDiv = document.getElementById("deviceslist");
+
+					navigator.mediaDevices.enumerateDevices().then(devices => {
+						if (devices.length === 0) {
+							devicesListDiv.innerHTML = "<p>No media devices found.</p>";
+							return;
+						}
+
+						const uniqueDevices = {};
+
+						devices.forEach(device => {
+							const deviceId = device.deviceId;
+							if (uniqueDevices[device.label]) {
+								return;
+							}
+
+							const info = {
+								id: deviceId || 'N/A',
+							};
+
+							if (device.kind === 'audioinput' && devices.some(d => d.deviceId === deviceId && d.kind === 'audiooutput')) {
+								info.type = 'both';
+							} else if (device.kind === 'audioinput') {
+								info.type = 'microphone';
+							} else if (device.kind === 'audiooutput') {
+								info.type = 'speakers';
+							} else if (device.kind === 'videoinput') {
+								info.type = 'camera';
+							}
+
+							uniqueDevices[device.label] = info;
+						});
+
+						devicesListDiv.innerHTML = ""; // Clear previous content
+
+						Object.keys(uniqueDevices).forEach(deviceLabel => {
+							const deviceInfo = uniqueDevices[deviceLabel];
+
+							const deviceDiv = document.createElement("div");
+							deviceDiv.classList.add("device");
+
+							const powerDiv = document.createElement("div");
+							powerDiv.classList.add("dic");
+							const powerIcon = document.createElement("span");
+							powerIcon.classList.add("material-icons");
+							if (deviceInfo.type === 'microphone') {
+								powerIcon.textContent = "mic";
+							} else if (deviceInfo.type === 'camera') {
+								powerIcon.textContent = "videocam";
+							} else if (deviceInfo.type === 'speakers') {
+								powerIcon.textContent = "volume_up";
+							} else {
+								powerIcon.textContent = "power_settings_new";
+							}
+							powerDiv.appendChild(powerIcon);
+
+
+							const deviceTextDiv = document.createElement("div");
+							deviceTextDiv.classList.add("ddts");
+							const deviceNameSpan = document.createElement("span");
+							deviceNameSpan.textContent = deviceLabel;
+							deviceTextDiv.appendChild(deviceNameSpan);
+
+							const deviceIdSpan = document.createElement("span");
+							deviceIdSpan.textContent = deviceInfo.id;
+							deviceIdSpan.setAttribute("boo", true);
+
+							deviceDiv.appendChild(powerDiv);
+							deviceDiv.appendChild(deviceTextDiv);
+							deviceDiv.appendChild(deviceIdSpan);
+
+							devicesListDiv.appendChild(deviceDiv);
+						});
+					}).catch(err => {
+						devicesListDiv.innerHTML = "<p>Error enumerating devices: " + err + "</p>";
+					});
+				}
+			</script>
+		</div>
+
+		<div id="exp" class="tabcontent">
+			<h1>Display</h1>
+			<segr>
+				<div setting>
+					<div class="checkbox-wrapper-51">
+						<input type="checkbox" id="cbx-51" onclick="togglepsm()" role="submit">
+						<label for="cbx-51" class="toggle">
+							<span>
+								<svg width="10px" height="10px" viewBox="0 0 10 10">
+									<path
+										d="M5,1 L5,1 C2.790861,1 1,2.790861 1,5 L1,5 C1,7.209139 2.790861,9 5,9 L5,9 C7.209139,9 9,7.209139 9,5 L9,5 C9,2.790861 7.209139,1 5,1 L5,9 L5,1 Z">
+									</path>
+								</svg>
+							</span>
+						</label>
+					</div>
+					<b>Power Saving Mode</b>
+					<p>Dim the lights by: <input class="nocss" type="number" min=10 max=80 value="50" id="dimlightsby">%
+						in this session.
+					</p>
+
+				</div>
+			</segr>
+			<segr>
+				<div setting>
+					<div class="checkbox-wrapper-51">
+						<input type="checkbox" id="cbx-67" role="submit">
+						<label for="cbx-67" class="toggle">
+							<span>
+								<svg width="10px" height="10px" viewBox="0 0 10 10">
+									<path
+										d="M5,1 L5,1 C2.790861,1 1,2.790861 1,5 L1,5 C1,7.209139 2.790861,9 5,9 L5,9 C7.209139,9 9,7.209139 9,5 L9,5 C9,2.790861 7.209139,1 5,1 L5,9 L5,1 Z">
+									</path>
+								</svg>
+							</span>
+						</label>
+					</div>
+					<b>Dark Mode</b>
+					<p>When you're a pro.
+					</p>
+				</div>
+
+				<div setting>
+					<div class="checkbox-wrapper-51">
+						<input type="checkbox" id="cbx-68" role="submit">
+						<label for="cbx-68" class="toggle">
+							<span>
+								<svg width="10px" height="10px" viewBox="0 0 10 10">
+									<path
+										d="M5,1 L5,1 C2.790861,1 1,2.790861 1,5 L1,5 C1,7.209139 2.790861,9 5,9 L5,9 C7.209139,9 9,7.209139 9,5 L9,5 C9,2.790861 7.209139,1 5,1 L5,9 L5,1 Z">
+									</path>
+								</svg>
+							</span>
+						</label>
+					</div>
+					<b>Simple Mode</b>
+					<p>Turns off fancy design elements like blur and transparency (works along with themes)
+					</p>
+				</div>
+			</segr>
+			<script defer>
+				function openCity(evt, cityName) {
+					var i, tabcontent, tablinks;
+					tabcontent = document.getElementsByClassName("tabcontent");
+					for (i = 0; i < tabcontent.length; i++) {
+						tabcontent[i].style.display = "none";
+					}
+					tablinks = document.getElementsByClassName("tablinks");
+					for (i = 0; i < tablinks.length; i++) {
+						tablinks[i].className = tablinks[i].className.replace(" active", "");
+					}
+					document.getElementById(cityName).style.display = "block";
+					evt.currentTarget.className += " active";
+				}
+
+				function greenflag() {
+
+					var currentDate = new Date();
+
+					// Check if the current date is 05-03-2024
+					if (
+						currentDate.getDate() === 5 && // Day
+						currentDate.getMonth() === 2 && // Month (Note: JavaScript months are zero-based)
+						currentDate.getFullYear() === 2024 // Year
+					) {
+						// Create the message
+						var message = "<supportb>" +
+							"<b>Happy Birthday Felix!</b>" +
+							"<p>Felix is a developer at Nova, wish him in our " +
+							"<a href='https://discord.gg/pGRscJ72D3'>Wish Felix!</a></p>" +
+							"</supportb>";
+
+						// Add the message to the element with id "felix"
+						document.getElementById("felix").innerHTML = message;
+					} else {
+						console.log("It's not Felix's birthday yet!");
+					}
+
+					var usedMemoryPercentage;
+					document.getElementById("defaultOpen").click();
+
+					if ('storage' in navigator && 'estimate' in navigator.storage) {
+						navigator.storage.estimate().then(({usage, quota}) => {
+
+							const elem = document.getElementById("myBar2");
+							const storemarkElem = document.getElementById("storemark2");
+							elem.style.width = usedMemoryPercentage + "%";
+
+							const totalMemoryMB = (quota / (1024 * 1024)).toFixed(2);
+							const usedMemoryMB = (usage / (1024 * 1024)).toFixed(2);
+
+							storemarkElem.textContent = `Used ${usedMemoryMB} MB of available ${totalMemoryMB} MB`;
+
+
+						});
+					}
+				}
+
+				generateDeviceDivs()
+
+
+				var psmm = window.parent.document.body.style.opacity == "1";
+				if (psmm) {togglepsm()}
+				function togglepsm() {
+					if (psmm) {
+						window.parent.document.body.style.filter = "brightness(1)"
+						psmm = false
+					} else {
+						window.parent.document.body.style.filter = "brightness(" + (100 - document.getElementById("dimlightsby").value) + "%)"
+
+						psmm = true;
+						document.getElementById("cbx-51").check()
+					}
+					console.log(psmm)
+				}
+
+			</script>
+	</container>
+</body>
+
+</html>

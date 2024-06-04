@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Version Loader</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Barriecito&family=Ubuntu+Mono&display=swap');
+        body {
+            background-color: #080808;
+            color: white;
+            font-family: "Ubuntu Mono", monospace;
+            margin: 0;
+            padding: 20px;
+            display: grid;
+            align-content: center;
+            justify-content: center;
+            align-items: center;
+            justify-items: center;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .version-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .version-list li {
+            cursor: pointer;
+            margin-bottom: 10px;
+            padding: 5px 7px;
+            border-radius: 5px;
+        }
+
+        .version-list span {
+            cursor: pointer;
+            margin-bottom: 10px;
+            display: block;
+            padding: 5px 7px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            opacity: .5;
+            font-size: 13px;
+        }
+
+        hr {
+            border: 1px solid #1f1f1f;
+        }
+
+        .version-list li:hover {
+            text-decoration: underline;
+        }
+
+        .selected {
+            background-color: #2e353d;
+        }
+
+        .instructions {
+            margin-bottom: 20px;
+            opacity: .7;
+            font-size: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="instructions">Use arrow keys to select a version and press Enter to confirm.</div>
+        <hr>
+        <ul class="version-list">
+
+            <span>Unlocked Versions:</span>
+            <li data-version="Nova: Platinium 1.5">Nova: Platinium 1.5</li>
+            
+            <!-- Modified line for Nova: Classic redirection -->
+            <li data-version="latest" onclick="location.href = '/classicversion/test.html'">Nova: Classic</li>
+            
+            <hr>
+            <span>Locked Versions:</span>
+            <li data-version="Nova: Beta" class="locked">Nova: Beta</li>
+            <hr>
+            <li data-version="latest" onclick="location.href = '/index.html'">Launch the latest Version</li>
+        </ul>
+    </div>
+
+    <script>
+        const versionItems = document.querySelectorAll('.version-list li');
+        let selectedIndex = 0;
+
+        function highlightSelected() {
+            versionItems.forEach((item, index) => {
+                if (index === selectedIndex) {
+                    item.classList.add('selected');
+                } else {
+                    item.classList.remove('selected');
+                }
+            });
+        }
+
+        function selectVersion() {
+            const selectedVersion = versionItems[selectedIndex].getAttribute('data-version');
+            const lockedVersions = document.querySelectorAll('.locked');
+
+            if (selectedVersion === 'latest') {
+                window.location.href = '/index.html';
+            } else if ([...lockedVersions].includes(versionItems[selectedIndex])) {
+                const developerKey = prompt('Enter developer key:');
+                if (developerKey === 'ilovenova') {
+                    console.log('Unlocked version:', selectedVersion);
+                    // Here you can add your logic to load the selected version
+                    // For now, let's just log the selected version
+                    alert('Nova Beta is only available for Developers to prevent misuse and attacks.');
+                } else {
+                    console.log('Developer key incorrect');
+                }
+            } else {
+                console.log('Selected version:', selectedVersion);
+                // Here you can add your logic to load the selected version
+                // For now, let's just log the selected version
+            }
+        }
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowUp') {
+                selectedIndex = Math.max(0, selectedIndex - 1);
+                highlightSelected();
+            } else if (event.key === 'ArrowDown') {
+                selectedIndex = Math.min(versionItems.length - 1, selectedIndex + 1);
+                highlightSelected();
+            } else if (event.key === 'Enter') {
+                selectVersion();
+            }
+        });
+
+        // Highlight the initial selection
+        highlightSelected();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,258 @@
+<html><head>
+	<title>Nova New Tab</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Seaweed+Script&display=swap');
+
+		/* width */
+		::-webkit-scrollbar {
+			width: 5px;
+		}
+
+		/* Track */
+		::-webkit-scrollbar-track {
+			background: #818181;
+			border-radius: 5px;
+		}
+
+		/* Handle */
+		::-webkit-scrollbar-thumb {
+			background: #2b2b2b;
+			border-radius: 5px;
+		}
+
+		/* Handle on hover */
+		::-webkit-scrollbar-thumb:hover {
+			background: #555;
+		}
+
+		html {
+			height: 100%;
+			width: 100%;
+		}
+
+		button,
+		input,
+		textarea {
+			outline: none;
+		}
+
+		body {
+			margin: 0;
+			height: 100vh;
+			width: 100%;
+			background-color: #181a1b;
+			overflow: hidden;
+			background-image: url('https://tab.sli.ce.it/static/media/tobiasRademacher.7c48d501f5cd4031ca0f.webp');
+			background-repeat: no-repeat;
+			background-size: cover;
+			color: white;
+			font-family: 'Poppins', sans-serif;
+			transition: 2s;
+			background-repeat: no-repeat;
+		}
+
+		.logo {
+			font-family: "poppins", sans-serif;
+			text-shadow: 0 0 1rem black;
+			font-size: 1.5rem;
+			margin: 10px;
+		}
+
+		.mains {
+			display: grid;
+			align-content: center;
+			justify-content: center;
+			align-items: center;
+			min-height: 214px;
+			height: 40vh;
+			justify-items: center;
+		}
+
+		#news-section {
+			overflow: hidden;
+			overflow-y: scroll;
+			height: calc(50vh + 49px);
+			border-radius: 10px;
+			margin: 0 1rem;
+		}
+
+		.news-item {
+			background: white;
+			color: #1f1f1f;
+			padding: 5px 27px;
+			border-radius: 10px;
+			margin-bottom: 10px;
+		}
+
+		form {
+			margin: 0;
+		}
+
+		.searchbr {
+			overflow: hidden;
+			border-radius: 25px;
+			padding: 0;
+			background: white;
+			box-shadow: 0 5px 10px #00000054;
+		}
+
+		.searchbr input {
+			width: 30vw;
+			min-width: 180px;
+			padding: 5px;
+			font-size: 1rem;
+			border: none;
+			margin: 0;
+			display: inline-block;
+			transform: translateY(-8px);
+			padding-left: 15px;
+		}
+
+		.searchbr button {
+			color: white;
+			background: dodgerblue;
+			border: 0;
+			margin: 5px;
+			border-radius: 50%;
+			aspect-ratio: 1 / 1;
+			padding: 3px 4px 0px 5px;
+		}
+
+		[subb] {
+			height: fit-content;
+			background-color: grey;
+			border: none;
+			padding: 7px 10px;
+			color: white;
+			margin: 1rem;
+			border-radius: 5px;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="mains">
+		<h1 class="logo" id="titlet">Good afternoon!</h1>
+		<div class="searchbr">
+			<form action="https://www.bing.com/search">
+			<input placeholder="Search Bing..." name="q" id="q">
+			<button><span class="material-icons">search</span></button>
+			</form>
+			
+		</div>
+		<button subb onclick="nwpsearch()">
+			 Search Nwp
+		</button>
+	</div>
+	<div id="news-section">
+
+	  </div>
+	<script>
+
+		function nwpsearch() {
+			location.href = "https://adthoughtsglobal.github.io/Search?q=" + document.getElementById("q").value
+		}
+		
+		var titlet = document.getElementById("titlet");
+		var now = new Date();
+		var hour = now.getHours();
+		var greeting;
+
+		var holidays = {
+			"01-01": "Happy New Year!",
+			"02-14": "Happy Valentine's Day!",
+			"03-17": "Happy St. Patrick's Day!",
+			"04-01": "Happy April Fools' Day!",
+			"05-01": "Happy Labor Day!",
+			"07-04": "Happy Independence Day!",
+			"10-31": "Happy Halloween!",
+			"11-11": "Happy Veterans Day!",
+			"12-24": "Merry Christmas Eve!",
+			"12-25": "Merry Christmas!",
+			"01-20": "Happy Martin Luther King Jr. Day!",
+			"02-12": "Happy Abraham Lincoln's Birthday!",
+			"03-08": "Happy International Women's Day!",
+			"04-22": "Happy Earth Day!",
+			"05-05": "Happy Cinco de Mayo!",
+			"06-14": "Happy Flag Day!",
+			"08-15": "Happy Assumption of Mary!",
+			"09-06": "Happy Labor Day!",
+			"10-12": "Happy Columbus Day!",
+			"11-28": "Happy Thanksgiving!",
+			"12-31": "Happy New Year's Eve!",
+			"03-20": "Happy International Day of Happiness!",
+			"06-21": "Happy International Yoga Day!",
+			"08-26": "Happy Women's Equality Day!",
+			"09-19": "Happy Talk Like a Pirate Day!",
+			"10-16": "Happy World Food Day!",
+			"11-01": "Happy Day of the Dead!",
+			"12-07": "Happy Pearl Harbor Remembrance Day!",
+			"12-26": "Happy Boxing Day!"
+		};
+
+		var currentDate = now.toISOString().slice(5,10).replace("-", "");
+
+		if (holidays[currentDate]) {
+			greeting = holidays[currentDate];
+		} else {
+			if (hour < 12) {
+				greeting = "Good morning!";
+			} else if (hour < 18) {
+				greeting = "Good afternoon!";
+			} else {
+				greeting = "Good evening!";
+			}
+		}
+
+		titlet.textContent = greeting;
+
+		async function fetchWikinews(callback) {
+			const script = document.createElement('script');
+			const callbackName = 'wikinewsCallback';
+
+			window[callbackName] = function(data) {
+				callback(data);
+				delete window[callbackName];
+				document.body.removeChild(script);
+			};
+
+			script.src = 'https://en.wikinews.org/w/api.php?action=query&cmdir=desc&cmlimit=5&cmprop=ids%7Ctitle%7Ctimestamp&cmsort=timestamp&cmtitle=Category%3APolitics_and_conflicts&list=categorymembers&format=json&callback=' + callbackName;
+			document.body.appendChild(script);
+		}
+
+		async function news() {
+			fetchWikinews(function(data) {
+				const newsContainer = document.getElementById('news-section');
+				const newsItems = data.query.categorymembers;
+				console.log(newsItems)
+
+				newsItems.forEach(function(newsItem) {
+					const div = document.createElement('div');
+					div.classList.add('news-item');
+					div.onclick = function (){
+						window.parent.newtab("https://en.wikinews.org/wiki/"+newsItem.title+"?dpl_id=" + newsItem.pageid)
+					}
+
+					const title = document.createElement('h3');
+					title.textContent = newsItem.title;
+
+					const timestamp = document.createElement('p');
+					timestamp.textContent = new Date(newsItem.timestamp).toDateString();
+
+					div.appendChild(title);
+					div.appendChild(timestamp);
+
+					newsContainer.appendChild(div);
+				});
+			});
+		}
+
+		news();
+	</script>
+
+
+</body>
+</html>
+
