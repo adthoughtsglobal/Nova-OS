@@ -249,10 +249,7 @@ async function openn() {
 	}).catch((error) => {
 		console.error('An error occurred:', error);
 	});
-	gid('searchwindow').showModal()
-	if (window.innerWidth > 500) {
-		gid("strtsear").focus()
-	}
+	gid('appdmod').showModal()
 }
 
 async function loadrecentapps() {
@@ -1855,15 +1852,6 @@ function checksnapping(x, event) {
 	}
 }
 
-function togglepowermenu() {
-	let menu = document.getElementById("bobthedropdown");
-	if (menu.style.visibility == "hidden") {
-		menu.style.visibility = "visible"
-	} else {
-		menu.style.visibility = "hidden"
-	}
-}
-
 let countdown, countdown2;
 var sleepQuotes = [
 	"A quick nap is all you need.",
@@ -2118,5 +2106,8 @@ makedialogclosable('searchwindow');
 
 function opensearchpanel() {
 	gid('searchwindow').showModal() 
+	if (window.innerWidth > 500) {
+		gid("strtsear").focus()
+	}
 	loadrecentapps()
 }
