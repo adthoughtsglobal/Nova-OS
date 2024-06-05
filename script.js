@@ -1360,29 +1360,33 @@ async function remfile(ID) {
 }
 
 async function remfolder(folderName) {
-	try {
-		memory = await getdb('trojencat', 'rom');
+    try {
+        // Fetch the current state of the database
+        let memory = await getdb('trojencat', 'rom');
 
-		// Find the index of the folder with the specified name
-		const folderIndex = memory.findIndex(folder => folder.folderName === folderName);
+        // Find the index of the folder with the specified name
+        const folderIndex = memory.findIndex(folder => folder.folderName === folderName);
 
-		if (folderIndex !== -1) {
-			console.log(`its an error bro: 0004`);
-			await setdb('trojencat', 'rom', memory);
+        if (folderIndex !== -1) {
+            // Remove the folder from the array
+            memory.splice(folderIndex, 1);
 
-			// Check if the folder was successfully removed
-			if (!memory.some(folder => folder.folderName === folderName)) {
-				console.log("The folder has been eliminated.");
-			} else {
-				console.log("The folder resisted elimination somehow.");
-			}
-		} else {
-			// If the folder with the specified name is not found
-			console.error(`Folder with name "${folderName}" not found.`);
-		}
-	} catch (error) {
-		console.error("Error fetching or updating data:", error);
-	}
+            // Update the database with the new state
+            await setdb('trojencat', 'rom', memory);
+
+            // Check if the folder was successfully removed
+            if (!memory.some(folder => folder.folderName === folderName)) {
+                console.log("The folder has been eliminated.");
+            } else {
+                console.log("The folder resisted elimination somehow.");
+            }
+        } else {
+            // If the folder with the specified name is not found
+            console.error(`Folder with name "${folderName}" not found.`);
+        }
+    } catch (error) {
+        console.error("Error fetching or updating data:", error);
+    }
 }
 
 var defAppsList = [

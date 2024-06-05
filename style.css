@@ -1517,8 +1517,12 @@ background: #5c8dab;
 	transition: 0.3s;
 }
 
+#seprw-icon {
+	width: 100%;
+}
+
 #seprw-icon svg {
-	width: 50%;
+	width: 30%;
     height: auto;
     background: #63636330;
     padding: 0.3rem;
