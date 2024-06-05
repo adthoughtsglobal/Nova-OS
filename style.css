@@ -578,7 +578,7 @@ nav info {
 
 .strtappsugs svg {
 	width: 17px;
-    height: 24px;
+    height: 20px;
     margin-right: 0.3rem;
 }
 
@@ -1514,7 +1514,10 @@ background: #5c8dab;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-	transition: 0.3s;
+    transition: 0.3s;
+    border-radius: 0.5rem;
+    margin-left: 0.7rem;
+    background: linear-gradient(90deg, #00000021 0%, transparent 30%);
 }
 
 #seprw-icon {
@@ -1531,17 +1534,17 @@ background: #5c8dab;
 }
 
 #seprw-openb {
-	background-color: #57a7ee;
-	color: white;
-	padding: 0.3rem 0.7rem;
-	border:none;
-	border-radius: 0.5rem;
-	margin-top: 0.5rem;
-	cursor: pointer;
+	background-color: #ffffff21;
+    color: #e5e5e5;
+    padding: 0.3rem 0.7rem;
+    border: none;
+    border-radius: 1rem;
+    margin-top: 0.5rem;
+    cursor: pointer;
 }
 
 #seprw-openb:hover {
-	background-color: #63a2da;
+	background-color: #b8b8b8c0;
 }
 
 @media only screen and (max-width: 800px) {

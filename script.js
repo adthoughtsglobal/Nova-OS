@@ -842,6 +842,7 @@ function openwindow(title, cont, ic, theme) {
 		iframe.onload = function() {
 			iframe.src = "about:blank";
 			var doc = iframe.contentDocument || iframe.contentWindow.document;
+			doc.innerHTML = null;
 			doc.open();
 			doc.write(contentString);
 			doc.close();
@@ -1518,7 +1519,14 @@ function getfourthdimension() {
 }
 
 async function strtappse(event) {
-	var arrayToSearch = await getFileNamesByFolder("Apps");
+	var arrayToSearch = [];
+var folderstosearch = await getFolderNames();
+
+for (const [index, item] of folderstosearch.entries()) {
+    const x = await getFileNamesByFolder(item);
+    arrayToSearch = arrayToSearch.concat(x);
+}
+	
 	const searchValue = gid("strtsear").value.toLowerCase();
 	if (event.key === "Enter") {
 		event.preventDefault();
@@ -1577,7 +1585,7 @@ itemsWithSimilarity.forEach((entry, index) => {
 	}
 
 	const newElement = document.createElement("div");
-	newElement.innerHTML = "<div>" + appicns[item.name] + " " +item.name + "</div>" + `<span class="material-icons" onclick="openapp('` + item.name + `', '` + item.id + `')">arrow_outward</span>`;
+	newElement.innerHTML = "<div>" + ((appicns[item.name] != undefined) ? appicns[item.name] : defaultAppIcon) + " " +item.name + "</div>" + `<span class="material-icons" onclick="openapp('` + item.name + `', '` + item.id + `')">arrow_outward</span>`;
 	gid("strtappsugs").appendChild(newElement);
 	elements++;
 	appToOpen.push(item);
@@ -1586,7 +1594,7 @@ itemsWithSimilarity.forEach((entry, index) => {
 		if (appToOpen.length > 0) {
 			appfound = mostRelevantItem;
 			console.log(mostRelevantItem)
-			gid('seprw-icon').innerHTML = appicns[appfound.name];
+			gid('seprw-icon').innerHTML = (appicns[appfound.name] != undefined) ? appicns[appfound.name] : defaultAppIcon;
 			gid('seprw-appname').innerText = appfound.name;
 			gid('seprw-openb').onclick = function() {
 				openapp(appfound.name, appfound.id)

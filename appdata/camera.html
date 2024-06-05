@@ -28,7 +28,7 @@
 			border-radius:0.5rem;
 			transform: scaleX(1);
 			/* Initial scaling without mirroring */
-			transition: 0.3s ease-in-out;
+			transition: 0.2s ease-in-out;
 		}
 
 		.floattopnav {
@@ -39,9 +39,10 @@
 			padding: 4px;
 			display: flex;
 			background-color: #101010;
+			gap: 3px;
 		}
 
-		#camera-select {
+		.floattopnav select {
 			max-width: 130px;
 			background-color: #1f1f1f;
 			color: grey;
@@ -57,7 +58,6 @@
 			padding: 4px 7px;
 			aspect-ratio: 1 / 1;
 			display: inline-grid;
-			margin-left: 3px;
 			background-color: #1f1f1f;
 			color: #fff;
 			border: none;
@@ -104,6 +104,12 @@
 	<button id="mirror-btn" onclick="toggleMirror()"><span class="material-icons">
 			360
 		</span></button>
+		<select id="timer-select" >
+		<option selected value="0">0s</option>
+		<option value="3000">3s</option>
+		<option value="5000">5s</option>
+		<option value="10000">10s</option>
+		</select>
 		</div>
 	<button id="photo-btn" onclick="capture(this)"><span class="material-icons">
 			camera
@@ -213,6 +219,8 @@
 		}
 
 		function capture(obj) {
+		setTimeout(()=> {
+		
 			const video = document.getElementById('video');
 			video.style.filter = "brightness(5)"
 			let cakebuff = obj.innerHTML;
@@ -241,7 +249,7 @@
 			setTimeout(() => {
 				video.style.filter = "none";
 			}, 500);
-
+}, document.getElementById('timer-select').value)
 		}
 	</script>
 </body>
