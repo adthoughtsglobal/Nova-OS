@@ -19,7 +19,7 @@ const styles = {
 		},
 		nonSimple: {
 			flodiv: {color: "white", backdropFilter: "blur(10px)", backgroundColor: "rgb(0 0 0 / 33%)"},
-			appdmod: { background: "#00000091", color: "white", backdropFilter: "blur(14px)" },
+			appdmod: { background: "#00000091", color: "white", backdropFilter: "blur(14px) grayscale(0.5)" },
 			searchinpe: { color: "white", backgroundColor: "rgb(20 20 20)" },
 			searchnbtn: { background: "rgb(20 20 20)", color: "#878787" },
 			bob: { background: "rgb(20 20 20)" },
@@ -90,6 +90,7 @@ function switchtheme(x, y) {
 	// elementhahas that need styling
 	const flodivelementhahas = document.querySelectorAll('[navobj]');
 	const appdmodelementhaha = document.querySelector('#appdmod');
+	const searhwielementhaha = document.querySelector('#searchwindow');
 	const searchinpe = document.querySelector('.searchinputcont');
 	const searchnbtn = document.querySelector('#strtsearcontbtn');
 	const bob = document.querySelector('#bobthedropdown');
@@ -102,12 +103,14 @@ function switchtheme(x, y) {
 	thlog(`setting ${mode} mode ${simplicity === "simple" ? "simple" : "non-simple"}`);
 
 	// Apply styles
-	applyStyles(flodivelementhahas, styles[mode][simplicity].flodiv);
-	setStyle(appdmodelementhaha, styles[mode][simplicity].appdmod);
-	setStyle(searchinpe, styles[mode][simplicity].searchinpe);
-	setStyle(searchnbtn, styles[mode][simplicity].searchnbtn);
-	setStyle(bob, styles[mode][simplicity].bob);
-	novaicelementhaha.setAttribute('fill', styles[mode][simplicity].novaic.fill);
+	const currentStyles = styles[mode][simplicity];
+	applyStyles(flodivelementhahas, currentStyles.flodiv);
+	setStyle(appdmodelementhaha, currentStyles.appdmod);
+	setStyle(searhwielementhaha, currentStyles.appdmod); // Apply the same styles as appdmodelementhaha
+	setStyle(searchinpe, currentStyles.searchinpe);
+	setStyle(searchnbtn, currentStyles.searchnbtn);
+	setStyle(bob, currentStyles.bob);
+	novaicelementhaha.setAttribute('fill', currentStyles.novaic.fill);
 }
 
 // more stuff

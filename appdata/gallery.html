@@ -204,65 +204,86 @@
 
 						let content = await window.parent.unshrinkbsf(x.content);
 
-						// Create an image element
-						const img = new Image();
+				// Create an image element
+				const img = new Image();
+				img.src = content;
 
-						// Set the source of the image to the content
-						img.src = content;
+				// Wait for the image to load
+				await new Promise((resolve) => {
+					img.onload = resolve;
+				});
 
-						// Wait for the image to load
-						await new Promise((resolve) => {
-							img.onload = resolve;
+				// Create a canvas element
+				const canvas = document.createElement("canvas");
+				const ctx = canvas.getContext("2d");
+
+				// Set canvas dimensions to match the original image
+				canvas.width = img.width;
+				canvas.height = img.height;
+
+				// Draw the image onto the canvas
+				ctx.drawImage(img, 0, 0);
+
+				// Function to get Blob size
+				const getBlobSize = (blob) => new Promise((resolve) => {
+					const reader = new FileReader();
+					reader.readAsArrayBuffer(blob);
+					reader.onloadend = () => {
+						resolve(reader.result.byteLength);
+					};
+				});
+
+				// Function to compress image with dynamic quality
+				const compressImage = async (targetFileSize) => {
+					let quality = 1.0; // Start with highest quality
+					let blob;
+					let blobSize;
+
+					do {
+						blob = await new Promise((resolve) => {
+							canvas.toBlob(resolve, 'image/jpeg', quality);
 						});
+						blobSize = await getBlobSize(blob);
+						quality -= 0.05; // Decrease quality incrementally
+					} while (blobSize > targetFileSize && quality > 0);
 
-						// Create a canvas element
-						const canvas = document.createElement("canvas");
-						const ctx = canvas.getContext("2d");
-
-						// Set canvas dimensions to match the original image
-						canvas.width = img.width;
-						canvas.height = img.height;
-
-						// Draw the image onto the canvas
-						ctx.drawImage(img, 0, 0);
-
-						// Convert canvas content to Blob with reduced quality
-						const quality = 0.5; // Adjust quality (0.0 - 1.0) as needed
-						canvas.toBlob((blob) => {
-							const reader = new FileReader();
-							reader.readAsDataURL(blob);
-							reader.onloadend = () => {
-								const compressedContent = reader.result;
-
-								// Create an img element to display the compressed image
-								const compressedImg = document.createElement("img");
-								compressedImg.src = compressedContent;
-
-								
-
-						compressedImg.onclick = async function () {
-							const image = document.getElementById("bigshowcase");
-							const modal = document.getElementById("fullfmd");
-							let x = await window.parent.getFileById(item.id);
-							
-							let y = window.parent.unshrinkbsf(x.content);
-							console.log(x);
-							document.getElementById("flint").innerHTML = `${JSON.parse(x.metadata).datetime.hour}:${JSON.parse(x.metadata).datetime.minute}, ${JSON.parse(x.metadata).datetime.day}/${JSON.parse(x.metadata).datetime.month}/${JSON.parse(x.metadata).datetime.year}`
-							image.src = y;
-							modal.showModal();
+					return new Promise((resolve) => {
+						const reader = new FileReader();
+						reader.readAsDataURL(blob);
+						reader.onloadend = () => {
+							resolve(reader.result);
 						};
+					});
+				};
 
-						// Append the compressed image to the dayDiv
-						dayDivs[dateIdentifier].appendChild(compressedImg);
+				// Target file size in bytes (e.g., 50KB)
+				const targetFileSize = 5000;
+				const compressedContent = await compressImage(targetFileSize);
 
-									};
-								}, "image/jpeg", quality);
-					}
-				}
-			} catch (error) {
-				console.error(error);
+				// Create an img element to display the compressed image
+				const compressedImg = document.createElement("img");
+				compressedImg.src = compressedContent;
+
+				// Add an event listener to display the full image on click
+				compressedImg.onclick = async function () {
+					const image = document.getElementById("bigshowcase");
+					const modal = document.getElementById("fullfmd");
+					let x = await window.parent.getFileById(item.id);
+
+					let y = await window.parent.unshrinkbsf(x.content);
+					console.log(x);
+					document.getElementById("flint").innerHTML = `${JSON.parse(x.metadata).datetime.hour}:${JSON.parse(x.metadata).datetime.minute}, ${JSON.parse(x.metadata).datetime.day}/${JSON.parse(x.metadata).datetime.month}/${JSON.parse(x.metadata).datetime.year}`;
+					image.src = y;
+					modal.showModal();
+				};
+
+				// Append the compressed image to the dayDiv
+				dayDivs[dateIdentifier].appendChild(compressedImg);
 			}
-
+		}
+	} catch (error) {
+		console.error(error);
+	}
 			const modal = document.getElementById("fullfmd");
 			modal.addEventListener('click', function (event) {
 				if (event.target === modal) {

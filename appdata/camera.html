@@ -40,8 +40,13 @@
 			display: flex;
 			background-color: #101010;
 			gap: 3px;
+			transition: 0.2s ease-out;
+			opacity: 0.5;
 		}
 
+		.floattopnav:hover {
+			opacity: 1;
+		}
 		.floattopnav select {
 			max-width: 130px;
 			background-color: #1f1f1f;
@@ -244,7 +249,35 @@
 			} catch (error) {
 				console.log("safe error: " + error);
 			}
-			window.parent.createFile("Media", "captured", "image/" + FileFormat, x, y)
+			function createFileWithTimestamp() {
+    // Get the current date and time
+    let now = new Date();
+
+    // Format the timestamp
+    let year = now.getFullYear();
+    let month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    let day = String(now.getDate()).padStart(2, '0');
+    let hours = String(now.getHours()).padStart(2, '0');
+    let minutes = String(now.getMinutes()).padStart(2, '0');
+    let seconds = String(now.getSeconds()).padStart(2, '0');
+
+    // Combine into a formatted string
+    let timestamp = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+
+    // Insert the timestamp into the 'captured' string
+    let capturedString = `captured_${timestamp}`;
+
+    // Example variables for x and y
+    let x = 100;
+    let y = 200;
+    let FileFormat = "jpeg";
+
+    // Call the createFile function with the formatted string
+    window.parent.createFile("Media", capturedString, "image/" + FileFormat, x, y);
+}
+
+// Call the function to see it in action
+createFileWithTimestamp();
 			obj.innerHTML = cakebuff;
 			setTimeout(() => {
 				video.style.filter = "none";

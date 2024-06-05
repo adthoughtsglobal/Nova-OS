@@ -1,10 +1,14 @@
 var batteryLevel, winds = {}, rp, flwint = true, memory, _nowapp, stx = gid("startuptx"), fulsapp = false, nowappdo, appsHistory = [], nowwindow, appicns = {}, dev = true, appfound = 'files';
 var really = false;
+var novaFeaturedImage = `https://images.unsplash.com/photo-1716980197262-ce400709bf0d?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D`;
 
 gid("nowrunninapps").style.display = "none";
 
 const rllog = console.log;
 
+gid('seprw-openb').onclick = function() {
+	gid('searchside').style.flexGrow = 1;
+}
 
 Object.defineProperty(window, 'nowapp', {
 	get() {
@@ -547,11 +551,11 @@ async function dod() {
 			let unshrinkbsfX = unshrinkbsf(x.content);
 			document.getElementById('bgimage').style.backgroundImage = `url("` + unshrinkbsfX + `")`;
 		} else {
-			gid("bgimage").src = `https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D`;
+			gid("bgimage").src = novaFeaturedImage;
 			
 		}
 	document.getElementById("bgimage").onerror = function() {
-			document.getElementById("bgimage").src= `https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D`;
+			document.getElementById("bgimage").src= novaFeaturedImage;
 		if (x) {
 			let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
 			delete qsets.wall;
