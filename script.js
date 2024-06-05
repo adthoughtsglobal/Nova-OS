@@ -173,7 +173,8 @@ const jsonToDataURI = json => `data:application/json,${encodeURIComponent(JSON.s
 async function openn() {
 	gid("appsindeck").innerHTML = `<span class="loader" id="appsloader"></span>`
 	gid("strtsear").value = ""
-	gid("strtappsugs").style.visibility = "hidden"
+	gid("strtappsugs").style.display = "none";
+
 	let x = await getFileNamesByFolder("Apps");
 	x.sort((a, b) => a.name.localeCompare(b.name));
 	Promise.all(x.map(async (app) => {
@@ -255,7 +256,7 @@ async function openn() {
 async function loadrecentapps() {
 	gid("serrecentapps").innerHTML = `<span class="loader" id="appsloader"></span>`
 	let x = await getFileNamesByFolder("Apps");
-	x.sort((a, b) => a.name.localeCompare(b.name));
+	x.reverse()
 	Promise.all(x.map(async (app) => {
 		if (!appsHistory.includes(app.name)) {
 			return
@@ -264,11 +265,9 @@ async function loadrecentapps() {
 		var appShortcutDiv = document.createElement("div");
 		appShortcutDiv.className = "app-shortcut tooltip";
 		appShortcutDiv.setAttribute("onclick", "openapp('" + app.name + "', '" + app.id + "')");
-
 		// Create a span element for the app icon
 		var iconSpan = document.createElement("span");
 		if (!appicns[app.name]) {
-
 
 			// Fetch the content asynchronously using getFileById
 			const content = await getFileById(app.id);
@@ -1574,7 +1573,7 @@ itemsWithSimilarity.forEach((entry, index) => {
 	}
 
 	const newElement = document.createElement("div");
-	newElement.innerHTML = item.name + `<span class="material-icons" onclick="openapp('` + item.name + `', '` + item.id + `')">arrow_outward</span>`;
+	newElement.innerHTML = "<div>" + appicns[item.name] + " " +item.name + "</div>" + `<span class="material-icons" onclick="openapp('` + item.name + `', '` + item.id + `')">arrow_outward</span>`;
 	gid("strtappsugs").appendChild(newElement);
 	elements++;
 	appToOpen.push(item);
@@ -1583,6 +1582,7 @@ itemsWithSimilarity.forEach((entry, index) => {
 		if (appToOpen.length > 0) {
 			appfound = mostRelevantItem;
 			console.log(mostRelevantItem)
+			gid('seprw-icon').innerHTML = appicns[appfound.name];
 			gid('seprw-appname').innerText = appfound.name;
 			gid('seprw-openb').onclick = function() {
 				openapp(appfound.name, appfound.id)

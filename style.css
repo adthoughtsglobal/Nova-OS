@@ -576,6 +576,12 @@ nav info {
     padding-right: 5px;
 }
 
+.strtappsugs svg {
+	width: 17px;
+    height: 24px;
+    margin-right: 0.3rem;
+}
+
 .strtappsugs div {
 	text-align: left;
 	display: flex;
@@ -1455,7 +1461,7 @@ background: #5c8dab;
 	overflow-y: hidden;
 	text-align: left;
 	display: flex;
-	flex-wrap: wrap;
+	flex-wrap: nowrap;
 	justify-content: flex-start;
 	white-space: nowrap;
 	width: 100%;
@@ -1509,6 +1515,15 @@ background: #5c8dab;
     align-items: center;
     justify-content: center;
 	transition: 0.3s;
+}
+
+#seprw-icon svg {
+	width: 50%;
+    height: auto;
+    background: #63636330;
+    padding: 0.3rem;
+    border-radius: 1rem;
+    box-shadow: 0 5px 10px #0000004f;
 }
 
 #seprw-openb {
