@@ -1,4 +1,4 @@
-var batteryLevel, winds = {}, rp, flwint = true, memory, _nowapp, stx = gid("startuptx"), fulsapp = false, nowappdo, appsHistory = [], nowwindow, appicns = {}, dev = true, appfound = 'files';
+var batteryLevel, winds = {}, rp, flwint = true, memory, _nowapp, stx = gid("startuptx"), fulsapp = false, nowappdo, appsHistory = [], nowwindow, appicns = {}, dev = true, appfound = 'files', fileslist = [];
 var really = false;
 var novaFeaturedImage = `https://images.unsplash.com/photo-1716980197262-ce400709bf0d?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D`;
 
@@ -1522,94 +1522,101 @@ function getfourthdimension() {
 	};
 }
 
-async function strtappse(event) {
-	var arrayToSearch = [];
-var folderstosearch = await getFolderNames();
-
-for (const [index, item] of folderstosearch.entries()) {
-    const x = await getFileNamesByFolder(item);
-    arrayToSearch = arrayToSearch.concat(x);
+async function prepareArrayToSearch() {
+    let arrayToSearch = [];
+    const folderstosearch = await getFolderNames();
+    
+    for (const [index, item] of folderstosearch.entries()) {
+        const x = await getFileNamesByFolder(item);
+        arrayToSearch = arrayToSearch.concat(x);
+    }
+    
+    fileslist = arrayToSearch;
 }
-	
-	const searchValue = gid("strtsear").value.toLowerCase();
-	if (event.key === "Enter") {
-		event.preventDefault();
-		if (searchValue == "i love nova") {
-			gid("searchwindow").close();
-			notify("hmm", "you're really goofy...", "Nova just replied you:");
-			really = true
-		}
 
-		let maxSimilarity = 0.5;
-		let appToOpen = null;
+// Function to handle the search logic
+async function strtappse(event) {
+    if (fileslist.length === 0) {
+        await prepareArrayToSearch();
+    }
+    
+    const searchValue = gid("strtsear").value.toLowerCase();
+    if (event.key === "Enter") {
+        event.preventDefault();
+        if (searchValue == "i love nova") {
+            gid("searchwindow").close();
+            notify("hmm", "you're really goofy...", "Nova just replied you:");
+            really = true
+        }
 
-		arrayToSearch.forEach(item => {
-			// Calculate similarity between item name and search value
-			const similarity = calculateSimilarity(item.name.toLowerCase(), searchValue);
+        let maxSimilarity = 0.5;
+        let appToOpen = null;
 
-			// Update maxSimilarity and appToOpen if similarity is higher
-			if (similarity > maxSimilarity) {
-				maxSimilarity = similarity;
-				appToOpen = item;
-			}
-		});
+        fileslist.forEach(item => {
+            // Calculate similarity between item name and search value
+            const similarity = calculateSimilarity(item.name.toLowerCase(), searchValue);
 
-		
-		// Open the app with the highest similarity (if found)
-		if (appToOpen) {
-			openapp(appToOpen.name, appToOpen.id)
-		}
-		return;
-	}
+            // Update maxSimilarity and appToOpen if similarity is higher
+            if (similarity > maxSimilarity) {
+                maxSimilarity = similarity;
+                appToOpen = item;
+            }
+        });
 
-	gid("strtappsugs").innerHTML = "";
+        // Open the app with the highest similarity (if found)
+        if (appToOpen) {
+            openapp(appToOpen.name, appToOpen.id);
+        }
+        return;
+    }
 
-	let elements = 0;
-	appToOpen = [];
-	const itemsWithSimilarity = [];
+    gid("strtappsugs").innerHTML = "";
 
-// Calculate similarity for each item and store it with the item
-arrayToSearch.forEach(item => {
-	const similarity = calculateSimilarity(item.name.toLowerCase(), searchValue);
-	const similarityThreshold = 0.2;
+    let elements = 0;
+    appToOpen = [];
+    const itemsWithSimilarity = [];
 
-	if (similarity >= similarityThreshold) {
-		itemsWithSimilarity.push({ item, similarity });
-	}
-});
+    // Calculate similarity for each item and store it with the item
+    fileslist.forEach(item => {
+        const similarity = calculateSimilarity(item.name.toLowerCase(), searchValue);
+        const similarityThreshold = 0.2;
 
-// Sort the items by similarity in descending order
-itemsWithSimilarity.sort((a, b) => b.similarity - a.similarity);
-var mostRelevantItem;
-itemsWithSimilarity.forEach((entry, index) => {
-	const { item, similarity } = entry;
+        if (similarity >= similarityThreshold) {
+            itemsWithSimilarity.push({ item, similarity });
+        }
+    });
 
-	if (index === 0) {
-		mostRelevantItem = item;
-	}
+    // Sort the items by similarity in descending order
+    itemsWithSimilarity.sort((a, b) => b.similarity - a.similarity);
+    var mostRelevantItem;
+    itemsWithSimilarity.forEach((entry, index) => {
+        const { item, similarity } = entry;
 
-	const newElement = document.createElement("div");
-	newElement.innerHTML = "<div>" + ((appicns[item.name] != undefined) ? appicns[item.name] : defaultAppIcon) + " " +item.name + "</div>" + `<span class="material-icons" onclick="openapp('` + item.name + `', '` + item.id + `')">arrow_outward</span>`;
-	gid("strtappsugs").appendChild(newElement);
-	elements++;
-	appToOpen.push(item);
-});
+        if (index === 0) {
+            mostRelevantItem = item;
+        }
 
-		if (appToOpen.length > 0) {
-			appfound = mostRelevantItem;
-			console.log(mostRelevantItem)
-			gid('seprw-icon').innerHTML = (appicns[appfound.name] != undefined) ? appicns[appfound.name] : defaultAppIcon;
-			gid('seprw-appname').innerText = appfound.name;
-			gid('seprw-openb').onclick = function() {
-				openapp(appfound.name, appfound.id)
-			}
-		}
-	if (elements >= 1) {
-		gid("strtappsugs").style.display = "block";
-	} else {
-		gid("strtappsugs").style.display = "none";
-	}
+        const newElement = document.createElement("div");
+        newElement.innerHTML = "<div>" + ((appicns[item.name] != undefined) ? appicns[item.name] : defaultAppIcon) + " " + item.name + "</div>" + `<span class="material-icons" onclick="openapp('` + item.name + `', '` + item.id + `')">arrow_outward</span>`;
+        gid("strtappsugs").appendChild(newElement);
+        elements++;
+        appToOpen.push(item);
+    });
 
+    if (appToOpen.length > 0) {
+        appfound = mostRelevantItem;
+        console.log(mostRelevantItem);
+        gid('seprw-icon').innerHTML = (appicns[appfound.name] != undefined) ? appicns[appfound.name] : defaultAppIcon;
+        gid('seprw-appname').innerText = appfound.name;
+        gid('seprw-openb').onclick = function() {
+            openapp(appfound.name, appfound.id);
+        };
+    }
+    if (elements >= 1) {
+        gid("strtappsugs").style.display = "block";
+    } else {
+        gid("strtappsugs").style.display = "none";
+    }
 }
 
 function calculateSimilarity(string1, string2) {
@@ -2119,7 +2126,7 @@ async function genTaskBar() {
 }
 
 makedialogclosable('searchwindow');
-
+prepareArrayToSearch()
 function opensearchpanel() {
 	gid('searchwindow').showModal() 
 	if (window.innerWidth > 500) {

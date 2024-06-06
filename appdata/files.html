@@ -184,6 +184,12 @@
 			margin-bottom: 2px;
 		}
 
+		.file[list] .flfrname {
+			width: calc(100% - 73px);
+			display: inline-block;
+			overflow: hidden;
+		}
+
 		.file[grid] {
 			display: inline-block;
 			height: 83px;
@@ -1197,8 +1203,6 @@
 		}
 
 		async function slfile(y) {
-
-
 			let x = y;
 			if (x.id === "slfile") {
 				openfile(x);
@@ -1323,54 +1327,8 @@ drive_file_move
 				window.parent.clwin(myWindow)
 				return;
 			}
-			document.getElementById("fileinfobn").innerHTML = "";
-			try {
-				let unid = x.getAttribute("unid");
-				if (!unid) {
-					console.error("Safe Error: 'unid' attribute not found");
-					return;
-				}
-
-				let mm = await window.parent.getFileById(unid);
-				if (!mm) {
-					console.error("Safe Error: File not found");
-					return;
-				}
-
-				let realtype = mm.type;
-				if (rt && realtype != "txt") {
-					mm.type = rt;
-					if (!(await window.parent.justConfirm("Are you sure?", "The file you are about to open is meant to be not opened."))) {
-						return;
-					}
-				}
-				if (mm.type == "app") {
-					console.log("donald duck quack");
-					if (rt) {
-						console.log("ducks quack");
-						window.parent.openlaunchprotocol("studio", {"lclfile": mm.id});
-						return;
-					}
-					await window.parent.openapp(mm.fileName, unid);
-				} else if (mm.type.startsWith("image") || mm.type.startsWith("audio") || mm.type.startsWith("video")) {
-					await window.parent.openlaunchprotocol("media", {"lclfile": unid});
-				} else {
-					if ((realtype == "app" || realtype.startsWith("image") || realtype.startsWith("video") || realtype.startsWith("audio")) && !rt) {
-
-						// if it's compressed
-						console.log("passed test");
-						window.parent.openlaunchprotocol("text", {"lclfile": unid, "shrinkray": true});
-					} else if (mm.type.startsWith("text/html")) {
-						window.parent.openlaunchprotocol("studio", {"lclfile": unid});
-					} else if (mm.type.startsWith("osl")) {
-						window.parent.runAsOSL(mm.content);
-					} else {
-						window.parent.openlaunchprotocol("text", {"lclfile": unid});
-					}
-				}
-			} catch (error) {
-				console.error(":( Safe Error:", error);
-			}
+			
+			window.parent.openfile(x, rt)
 		}
 
 		async function renamef(x) {

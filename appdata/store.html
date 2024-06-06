@@ -793,9 +793,14 @@
 						p.innerHTML += `<br><a class="srca">Hosted on: ` + sourceurl + `</a>`;
 
 						p.innerHTML += `<br><button>#` + appcatitem + `</button>`
-						document.getElementById('openbtn').style.display = "none"
+						
+						document.getElementById('openbtn').style.display = "block"
 						if (appald.some(app => app.name === appName)) {
-							document.getElementById('openbtn').style.display = "block"
+							const appflor = appald.find(app => app.name === appName);
+							document.getElementById('openbtn').innerText = "Open";
+							document.getElementById('openbtn').onclick = async function () {
+								window.parent.openfile(appflor.id)
+							};
 							installButton.textContent = 'Update';
 							installButton.style.backgroundColor = "#2f2f2f";
 
@@ -807,6 +812,19 @@
 							installButton.style.backgroundColor = "#49ac49";
 							installButton.onclick = function () {
 								installapp(appDetails.find(item => item.src), appName, this);
+							};
+
+							const openButton = document.getElementById('openbtn');
+							openButton.innerText = "Try";
+							openButton.onclick = async function () {
+								const item = appDetails.find(item => item.src); // Find the correct item
+								let prefixurl = "";
+								if (!item.src.startsWith("http")) {
+									prefixurl = "https://adthoughtsglobal.github.io/";
+								}
+								const response = await fetch(prefixurl + item.src);
+								const content = await response.text();
+								window.parent.openwindow(appName, content); // Use appName instead of app.name
 							};
 						}
 						document.getElementById("installer").showModal()

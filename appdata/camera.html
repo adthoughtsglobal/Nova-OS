@@ -267,10 +267,6 @@
     // Insert the timestamp into the 'captured' string
     let capturedString = `captured_${timestamp}`;
 
-    // Example variables for x and y
-    let x = 100;
-    let y = 200;
-    let FileFormat = "jpeg";
 
     // Call the createFile function with the formatted string
     window.parent.createFile("Media", capturedString, "image/" + FileFormat, x, y);
