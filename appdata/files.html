@@ -179,15 +179,21 @@
 		}
 
 		.file[list] {
-			display: block;
-			padding: 3px 5px;
-			margin-bottom: 2px;
+			display: flex;
+    padding: 0.1rem 0.5rem;
+    margin-bottom: 0.2rem;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-start;
 		}
+
 
 		.file[list] .flfrname {
 			width: calc(100% - 73px);
 			display: inline-block;
 			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 
 		.file[grid] {
@@ -272,12 +278,14 @@
 
 		.file[list]>[flname] {
 			font-size: 14px;
-			display: inline-block;
-			width: calc(100% - 30px);
+			display: flex;
+			width: 0;
+			flex: 1;
 			overflow: hidden;
 			white-space: nowrap;
 			text-overflow: ellipsis;
 			margin: 0;
+			align-items: center;
 		}
 
 		.file span .material-symbols-rounded {
@@ -286,9 +294,17 @@
 
 		.file[list] span .material-symbols-rounded {
 			width: fit-content;
-			margin-right: 3px;
 			margin-left: 0;
 			transform: translate(-1px, 0px) scale(0.8);
+		}
+
+		.file[list] span {
+			width: 22px;
+			overflow: hidden;
+			display: grid;
+			margin-right: 3px;
+			align-items: center;
+			justify-items: center;
 		}
 
 		.file[grid] span .material-symbols-rounded {
@@ -1216,8 +1232,7 @@
 					fileData = await window.parent.getFileById(x.getAttribute("unid"));
 
 					if (fileData && fileData.content) {
-						fileSize = fileData.content.length;
-
+						fileSize =new TextEncoder().encode(fileData.content).length;
 					} else {
 						console.error("Safe Error: Unable to retrieve file content.");
 					}
@@ -1274,7 +1289,7 @@ save_as
 drive_file_move
 </span> Move</a>
 								  </div>
-								</div><button class="notdropbtn"><span class="material-symbols-rounded">info</span></button> `+ fileSize + ' ' + units[unitIndex]
+								</div> `+ fileSize + ' ' + units[unitIndex]
 				} catch (error) {
 					document.getElementById("fileinfobn").innerHTML += "Safe Error 0006";
 					window.parent.say(`<h1>File Error</h1><p>Nova files couldn't process that file</p><small>(Error 0006)</small>`, "warning")
@@ -1466,23 +1481,35 @@ drive_file_move
 		}
 
 		function geticon(x) {
-			let i;
+			let i,c;
 			if (x == "txt") {
 				i = "description"
+				c = "dodgerblue"
 			} else if (x == "app") {
 				i = "rocket_launch"
+				c = "#9cff7e"
 			} else if (x.startsWith("image")) {
 				i = "image"
+				c = "#ffff68"
 			} else if (x.startsWith("audio")) {
 				i = "graphic_eq"
+				c = "violet"
+			}else if (x.startsWith("video")) {
+				i = "videocam"
+				c = "lightblue"
 			} else if (x.startsWith("json")) {
 				i = "data_object"
+				c = "red"
 			} else if (x.startsWith("lnk")) {
 				i = "reply"
+				c = "green"
+			} else if (x.startsWith("wasm")) {
+				i = "developer_board"
+				c = "#hh83j2"
 			} else {
 				i = "bug_report"
 			}
-			return `<span class="material-symbols-rounded">
+			return `<span class="material-symbols-rounded" style="color:` + c+`">
 		`+ i + `
 		</span>`
 		}

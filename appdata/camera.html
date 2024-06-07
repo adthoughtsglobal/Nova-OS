@@ -259,10 +259,9 @@
     let day = String(now.getDate()).padStart(2, '0');
     let hours = String(now.getHours()).padStart(2, '0');
     let minutes = String(now.getMinutes()).padStart(2, '0');
-    let seconds = String(now.getSeconds()).padStart(2, '0');
 
     // Combine into a formatted string
-    let timestamp = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+    let timestamp = `${year}-${month}-${day}, ${hours}:${minutes}:${seconds}`;
 
     // Insert the timestamp into the 'captured' string
     let capturedString = `captured_${timestamp}`;

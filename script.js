@@ -894,10 +894,6 @@ function openwindow(title, cont, ic, theme) {
 		}
 	}
 
-	// Initial load
-	loadIframeContent(windowLoader, windowContent);
-
-
 	nowwindow = 'window' + winuid;
 	// Append the header and content to the window
 	windowDiv.appendChild(windowHeader);
@@ -906,6 +902,9 @@ function openwindow(title, cont, ic, theme) {
 
 	// Append the window to the document body
 	document.body.appendChild(windowDiv);
+	// Initial load
+	loadIframeContent(windowLoader, windowContent);
+
 	dragElement(windowDiv);
 	putwinontop('window' + winuid);
 	loadtaskspanel();
@@ -1565,7 +1564,7 @@ async function strtappse(event) {
 
         // Open the app with the highest similarity (if found)
         if (appToOpen) {
-            openapp(appToOpen.name, appToOpen.id);
+            openfile(appToOpen.id);
         }
         return;
     }
@@ -1609,7 +1608,7 @@ async function strtappse(event) {
         gid('seprw-icon').innerHTML = (appicns[appfound.name] != undefined) ? appicns[appfound.name] : defaultAppIcon;
         gid('seprw-appname').innerText = appfound.name;
         gid('seprw-openb').onclick = function() {
-            openapp(appfound.name, appfound.id);
+            openfile(appfound.id);
         };
     }
     if (elements >= 1) {
@@ -2066,6 +2065,7 @@ async function genTaskBar() {
 
 			if (app.type == "lnk") {
 				let z = JSON.parse(app.content);
+				 console.log("oogabooga", z)
 				app = await getFileById(z.open)
 				islnk = true;
 			}
