@@ -1,10 +1,18 @@
-var batteryLevel, winds = {}, rp, flwint = true, memory, _nowapp, stx = gid("startuptx"), fulsapp = false, nowappdo, appsHistory = [], nowwindow, appicns = {}, dev = true, appfound = 'files', fileslist = [];
+var batteryLevel, winds = {}, rp, flwint = true, memory, _nowapp, stx = gid("startuptx"), fulsapp = false, nowappdo, appsHistory = [], nowwindow, appicns = {}, dev = true, appfound = 'files', fileslist = [], qsetscache = {};
 var really = false;
 var novaFeaturedImage = `https://images.unsplash.com/photo-1716980197262-ce400709bf0d?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D`;
 
 gid("nowrunninapps").style.display = "none";
 
 const rllog = console.log;
+
+function qsetsRefresh() {
+	try {
+		qsetscache =  JSON.parse(localStorage.getItem("qsets"))
+	} catch (error) {
+		console.log("err:" + error)
+	}
+}
 
 gid('seprw-openb').onclick = function() {
 	gid('searchside').style.flexGrow = 1;
@@ -48,7 +56,7 @@ getdb('trojencat', 'rom')
 
 				fetchDataAndUpdate();
 			} else {
-				await say(`<h2>Terms of service and License</h2><p>By using Nova OS, you agree to the <a href="https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use">Adthoughtsglobal Nova Terms of Use</a>. <be><small>Your IP, personal data, or files are not shared or saved, We do not collect your personal information. <br> Read the terms clearly before use.</small>`);
+				await say(`<h2>Terms of service and License</h2><p>By using Nova OS, you agree to the <a href="https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use">Adthoughtsglobal Nova Terms of Use</a>. <be><small>We do not collect your personal information. <br>Read the terms clearly before use.</small>`);
 
 
 				gid("startup").showModal();
@@ -107,7 +115,7 @@ getdb('trojencat', 'rom')
 
 async function startup() {
 	console.log("INITIAL SETUP");
-
+	qsetsRefresh()
 	await dod().then(() => {
 		gid('startupterms').innerHTML += "<span>Setting up desktop...</span>";
 		return updateTime();
@@ -258,7 +266,13 @@ async function openn() {
 }
 
 async function loadrecentapps() {
-	gid("serrecentapps").innerHTML = `<span class="loader" id="appsloader"></span>`
+	gid("serrecentapps").innerHTML = ``
+	if (appsHistory.length < 1) {
+		gid("partrecentapps").style.display = "none";
+		return;
+	} else {
+		gid("partrecentapps").style.display = "block";
+	}
 	let x = await getFileNamesByFolder("Apps");
 	x.reverse()
 	Promise.all(x.map(async (app) => {
@@ -1540,29 +1554,40 @@ async function strtappse(event) {
     }
     
     const searchValue = gid("strtsear").value.toLowerCase();
+    if (searchValue.length == 0) {
+        return;
+    }
+
+    const abracadra = qsetscache.smartsearch;
+	console.log(abracadra)
+    
     if (event.key === "Enter") {
         event.preventDefault();
         if (searchValue == "i love nova") {
             gid("searchwindow").close();
             notify("hmm", "you're really goofy...", "Nova just replied you:");
-            really = true
+            really = true;
         }
 
         let maxSimilarity = 0.5;
         let appToOpen = null;
 
         fileslist.forEach(item => {
-            // Calculate similarity between item name and search value
-            const similarity = calculateSimilarity(item.name.toLowerCase(), searchValue);
-
-            // Update maxSimilarity and appToOpen if similarity is higher
-            if (similarity > maxSimilarity) {
-                maxSimilarity = similarity;
-                appToOpen = item;
+            const itemName = item.name.toLowerCase();
+            if (!abracadra) {
+                if (itemName.startsWith(searchValue)) {
+                    appToOpen = item;
+                    return false;
+                }
+            } else {
+                const similarity = calculateSimilarity(itemName, searchValue);
+                if (similarity > maxSimilarity) {
+                    maxSimilarity = similarity;
+                    appToOpen = item;
+                }
             }
         });
 
-        // Open the app with the highest similarity (if found)
         if (appToOpen) {
             openfile(appToOpen.id);
         }
@@ -1570,52 +1595,49 @@ async function strtappse(event) {
     }
 
     gid("strtappsugs").innerHTML = "";
-
     let elements = 0;
-    appToOpen = [];
     const itemsWithSimilarity = [];
 
-    // Calculate similarity for each item and store it with the item
     fileslist.forEach(item => {
-        const similarity = calculateSimilarity(item.name.toLowerCase(), searchValue);
-        const similarityThreshold = 0.2;
-
-        if (similarity >= similarityThreshold) {
-            itemsWithSimilarity.push({ item, similarity });
+        const itemName = item.name.toLowerCase();
+        if (!abracadra) {
+            if (itemName.startsWith(searchValue)) {
+                itemsWithSimilarity.push({ item, similarity: 1 });
+            }
+        } else {
+            const similarity = calculateSimilarity(itemName, searchValue);
+            if (similarity >= 0.2) {
+                itemsWithSimilarity.push({ item, similarity });
+            }
         }
     });
 
-    // Sort the items by similarity in descending order
     itemsWithSimilarity.sort((a, b) => b.similarity - a.similarity);
-    var mostRelevantItem;
+
+    let mostRelevantItem;
     itemsWithSimilarity.forEach((entry, index) => {
-        const { item, similarity } = entry;
+        const { item } = entry;
 
         if (index === 0) {
             mostRelevantItem = item;
         }
 
         const newElement = document.createElement("div");
-        newElement.innerHTML = "<div>" + ((appicns[item.name] != undefined) ? appicns[item.name] : defaultAppIcon) + " " + item.name + "</div>" + `<span class="material-icons" onclick="openapp('` + item.name + `', '` + item.id + `')">arrow_outward</span>`;
+        newElement.innerHTML = "<div>" + ((appicns[item.name] != undefined) ? appicns[item.name] : defaultAppIcon) + " " + item.name + "</div>" + `<span class="material-icons" onclick="openapp('${item.name}', '${item.id}')">arrow_outward</span>`;
         gid("strtappsugs").appendChild(newElement);
         elements++;
-        appToOpen.push(item);
     });
 
-    if (appToOpen.length > 0) {
-        appfound = mostRelevantItem;
-        console.log(mostRelevantItem);
+    if (elements > 0) {
+        const appfound = mostRelevantItem;
         gid('seprw-icon').innerHTML = (appicns[appfound.name] != undefined) ? appicns[appfound.name] : defaultAppIcon;
         gid('seprw-appname').innerText = appfound.name;
         gid('seprw-openb').onclick = function() {
             openfile(appfound.id);
         };
     }
-    if (elements >= 1) {
-        gid("strtappsugs").style.display = "block";
-    } else {
-        gid("strtappsugs").style.display = "none";
-    }
+
+    gid("strtappsugs").style.display = elements > 0 ? "block" : "none";
 }
 
 function calculateSimilarity(string1, string2) {
@@ -2129,6 +2151,21 @@ makedialogclosable('searchwindow');
 prepareArrayToSearch()
 function opensearchpanel() {
 	gid('searchwindow').showModal() 
+	if (qsetscache.smartsearch) {
+		gid('searchiconthingy').style = `background: linear-gradient(-34deg, #79afff, #f66eff);
+    opacity: 1;
+    color: white;
+    padding: 0.1rem 0.3rem;
+    margin: 0.3rem;
+    border-radius: 0.5rem;
+    aspect-ratio: 1 / 1;
+    display: grid;
+    cursor: default;
+    margin-right: 0.5rem;
+    box-shadow: 0 0 6px inset #ffffff6b;`
+	} else {
+		gid('searchiconthingy').style = ``;
+	}
 	if (window.innerWidth > 500) {
 		gid("strtsear").focus()
 	}
