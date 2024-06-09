@@ -2152,17 +2152,7 @@ prepareArrayToSearch()
 function opensearchpanel() {
 	gid('searchwindow').showModal() 
 	if (qsetscache.smartsearch) {
-		gid('searchiconthingy').style = `background: linear-gradient(-34deg, #79afff, #f66eff);
-    opacity: 1;
-    color: white;
-    padding: 0.1rem 0.3rem;
-    margin: 0.3rem;
-    border-radius: 0.5rem;
-    aspect-ratio: 1 / 1;
-    display: grid;
-    cursor: default;
-    margin-right: 0.5rem;
-    box-shadow: 0 0 6px inset #ffffff6b;`
+		gid('searchiconthingy').style = `background: linear-gradient(-34deg, #79afff, #f66eff);opacity: 1; color: white;padding: 0.1rem 0.3rem; margin: 0.3rem; border-radius: 0.5rem;aspect-ratio: 1 / 1;display: grid;cursor: default; margin-right: 0.5rem;box-shadow: 0 0 6px inset #ffffff6b;`
 	} else {
 		gid('searchiconthingy').style = ``;
 	}

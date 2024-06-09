@@ -1548,6 +1548,10 @@ background: #5c8dab;
 	background-color: #b8b8b8c0;
 }
 
+#partrecentapps {
+	text-align: left;
+}
+
 @media only screen and (max-width: 800px) {
 	#appdmod, #searchwindow {
 		width: 70%;

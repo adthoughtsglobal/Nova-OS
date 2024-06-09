@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Music app</title>
+  <link href="style.css" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
+	<style>
+		html {
+			height: 100%;
+			width: 100%;
+		}
+
+		.flex-dad {
+			display: flex;
+			flex-direction: row;
+			height: 100%;
+		}
+
+		body {
+			height: calc(100% - 20px);
+			font-family: "Poppins", sans-serif;
+            background-color: white;
+            color:#454545;
+		}
+
+		#musiclist {
+			flex-grow: 2;
+			width: 0;
+		}
+
+		#musiclist small {
+			margin-left: 10px;
+		}
+
+		#musiclist small span {
+			font-size: 15px;
+			transform: translateY(2px);
+		}
+
+		.track {
+			background: white;
+			border-bottom: 1px solid lightgrey;
+			padding: 5px;
+			margin: 7px;
+			display: flex;
+			flex-direction: row;
+			flex-wrap: nowrap;
+			justify-content: space-between;
+			transition: .2s;
+		}
+
+		.track:hover {
+			border: none;
+			box-shadow: 0 3px 3px #959595;
+			border-radius: 6px;
+		}
+
+		.track .title {
+			display: inline-block;
+			max-width: 100%;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			text-wrap: nowrap;
+		}
+
+		.navplbtn {
+			color: #2b76eb;
+			border-radius: 5px;
+			transition: .2s;
+		}
+
+		.navplbtn:hover {
+			background: #c5dbff;
+
+		}
+
+		.material-symbols-rounded {
+			cursor: pointer;
+		}
+
+		.player {
+			display: flex;
+			align-items: center;
+			flex-direction: column;
+			justify-content: center;
+			width: 0;
+			flex-grow: 4;
+			border-left: 1px solid grey;
+		}
+
+		.details {
+			display: flex;
+			align-items: center;
+			flex-direction: column;
+			justify-content: center;
+			margin-top: 25px;
+		}
+
+		.now-playing {
+			font-size: 12px;
+		}
+
+		.track-name {
+			font-size: 3rem;
+			text-align: center;
+			width: 80%;
+		}
+
+		.track-artist {
+			font-size: 1.5rem;
+		}
+
+		.buttons {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+		}
+
+		.playpause-track,
+		.prev-track,
+		.next-track {
+			padding: 25px;
+			opacity: 0.8;
+
+			/* Smoothly transition the opacity */
+			transition: opacity .2s;
+		}
+
+		.playpause-track:hover,
+		.prev-track:hover,
+		.next-track:hover {
+			opacity: 1.0;
+			transform: scale(1.1);
+		}
+
+		.slider_container {
+			width: 75%;
+			max-width: 400px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		/* Modify the appearance of the slider */
+		.seek_slider,
+		.volume_slider {
+			-webkit-appearance: none;
+			-moz-appearance: none;
+			appearance: none;
+			height: 5px;
+			background: black;
+			opacity: 0.7;
+			-webkit-transition: .2s;
+			transition: opacity .2s;
+		}
+
+		/* Modify the appearance of the slider thumb */
+		.seek_slider::-webkit-slider-thumb,
+		.volume_slider::-webkit-slider-thumb {
+			-webkit-appearance: none;
+			-moz-appearance: none;
+			appearance: none;
+			width: 15px;
+			height: 15px;
+			background: #1c1c1c;
+			cursor: pointer;
+			border-radius: 50%;
+		}
+
+		.seek_slider:hover,
+		.volume_slider:hover {
+			opacity: 1.0;
+		}
+
+		.seek_slider {
+			width: 60%;
+		}
+
+		.volume_slider {
+			width: 30%;
+		}
+
+		.current-time,
+		.total-duration {
+			padding: 10px;
+		}
+
+		i.fa-volume-down,
+		i.fa-volume-up {
+			padding: 10px;
+		}
+
+		i.fa-play-circle,
+		i.fa-pause-circle,
+		i.fa-step-forward,
+		i.fa-step-backward {
+			cursor: pointer;
+		}
+	</style>
+</head>
+
+<body>
+  <div class="flex-dad">
+	  <div id="musiclist">
+		  <small><span class="material-symbols-rounded">
+			  folder
+			  </span> Media</small>
+		  <div class="track">
+			  <span class="title">Cure For Me.mp3</span>
+			  <span class="material-symbols-rounded navplbtn">
+			  play_arrow
+			  </span>
+		  </div>
+	  </div>
+	  <div class="player">
+		  <div class="details">
+			<div class="now-playing">PLAYING x OF y</div>
+			<div class="track-name">Track Name</div>
+			<div class="track-artist">Track Artist</div>
+		  </div>
+		  <div class="buttons">
+			<div class="prev-track" onclick="prevTrack()"><span class="material-symbols-rounded">
+				skip_previous
+				</span></div>
+			<div class="playpause-track" onclick="playpauseTrack()"><span class="material-symbols-rounded">
+				play_circle
+				</span></div>
+			<div class="next-track" onclick="nextTrack()"><span class="material-symbols-rounded">
+				skip_next
+				</span></div>
+		  </div>
+		  <div class="slider_container">
+			<div class="current-time">00:00</div>
+			<input type="range" min="1" max="100" value="0" class="seek_slider" onchange="seekTo()">
+			<div class="total-duration">00:00</div>
+		  </div>
+		  <div class="slider_container">
+			  <span class="material-symbols-rounded">
+			  no_sound
+			  </span>
+			<input type="range" min="1" max="100" value="99" class="volume_slider" onchange="setVolume()">
+			  <span class="material-symbols-rounded">
+			  volume_up
+			  </span>
+		  </div>
+		</div>
+  </div>
+  <script>
+	  let now_playing = document.querySelector(".now-playing");
+
+	  let track_name = document.querySelector(".track-name");
+	  let track_artist = document.querySelector(".track-artist");
+
+	  let playpause_btn = document.querySelector(".playpause-track");
+	  let next_btn = document.querySelector(".next-track");
+	  let prev_btn = document.querySelector(".prev-track");
+
+	  let seek_slider = document.querySelector(".seek_slider");
+	  let volume_slider = document.querySelector(".volume_slider");
+	  let curr_time = document.querySelector(".current-time");
+	  let total_duration = document.querySelector(".total-duration");
+
+	  let track_index = 0;
+	  let isPlaying = false;
+	  let updateTimer;
+
+      try {
+				var lcldata = await window.parent.getFileNamesByFolder("Media");
+				if (lcldata.length < 1) {
+                    
+                }
+            }catch (err) {
+                console.log(err)
+            }
+
+	  // Create new audio element
+	  let curr_track = document.createElement('audio');
+
+	  // Define the tracks that have to be played
+	  let track_list = [
+		{
+		  name: "Cure For Me",
+		  artist: "Aroura",
+		  path: "cure for me.mp3"
+		}
+	  ];
+
+	  function loadTrack(track_index) {
+		clearInterval(updateTimer);
+		resetValues();
+		curr_track.src = track_list[track_index].path;
+		curr_track.load();
+
+		track_name.textContent = track_list[track_index].name;
+		track_artist.textContent = track_list[track_index].artist;
+		now_playing.textContent = "PLAYING " + (track_index + 1) + " OF " + track_list.length;
+
+		updateTimer = setInterval(seekUpdate, 1000);
+		curr_track.addEventListener("ended", nextTrack);
+	  }
+
+	  function resetValues() {
+		curr_time.textContent = "00:00";
+		total_duration.textContent = "00:00";
+		seek_slider.value = 0;
+	  }
+
+	  // Load the first track in the tracklist
+	  loadTrack(track_index);
+
+	  function playpauseTrack() {
+		if (!isPlaying) playTrack();
+		else pauseTrack();
+	  }
+
+	  function playTrack() {
+		curr_track.play();
+		isPlaying = true;
+		playpause_btn.innerHTML = `<span class="material-symbols-rounded">
+	  pause_circle
+	  </span>`;
+	  }
+
+	  function pauseTrack() {
+		curr_track.pause();
+		isPlaying = false;
+		playpause_btn.innerHTML = `<span class="material-symbols-rounded">
+	  play_circle
+	  </span>`;
+	  }
+
+	  function nextTrack() {
+		if (track_index < track_list.length - 1)
+		  track_index += 1;
+		else track_index = 0;
+		loadTrack(track_index);
+		playTrack();
+	  }
+
+	  function prevTrack() {
+		if (track_index > 0)
+		  track_index -= 1;
+		else track_index = track_list.length;
+		loadTrack(track_index);
+		playTrack();
+	  }
+
+	  function seekTo() {
+		let seekto = curr_track.duration * (seek_slider.value / 100);
+		curr_track.currentTime = seekto;
+	  }
+
+	  function setVolume() {
+		curr_track.volume = volume_slider.value / 100;
+	  }
+
+	  function seekUpdate() {
+		let seekPosition = 0;
+
+		if (!isNaN(curr_track.duration)) {
+		  seekPosition = curr_track.currentTime * (100 / curr_track.duration);
+
+		  seek_slider.value = seekPosition;
+
+		  let currentMinutes = Math.floor(curr_track.currentTime / 60);
+		  let currentSeconds = Math.floor(curr_track.currentTime - currentMinutes * 60);
+		  let durationMinutes = Math.floor(curr_track.duration / 60);
+		  let durationSeconds = Math.floor(curr_track.duration - durationMinutes * 60);
+
+		  if (currentSeconds < 10) { currentSeconds = "0" + currentSeconds; }
+		  if (durationSeconds < 10) { durationSeconds = "0" + durationSeconds; }
+		  if (currentMinutes < 10) { currentMinutes = "0" + currentMinutes; }
+		  if (durationMinutes < 10) { durationMinutes = "0" + durationMinutes; }
+
+		  curr_time.textContent = currentMinutes + ":" + currentSeconds;
+		  total_duration.textContent = durationMinutes + ":" + durationSeconds;
+		}
+	  }
+
+
+  </script>
+</body>
+
+</html>
