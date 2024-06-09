@@ -215,7 +215,9 @@
 
 		.file[list] small {
 			width: auto;
-			transform: none;
+    transform: none;
+    font-family: monospace;
+    opacity: 0.3;
 		}
 
 		@keyframes poprs {
@@ -972,7 +974,7 @@
 				return;
 			}
 
-			await window.parent.createFile(fwhere, fname, ftype, fcontent, fmetadata)
+			await window.parent.createFile(fwhere, fname + "." + ftype, ftype, fcontent, fmetadata)
 				.then(function () {
 					document.getElementById('makefiledia').close();
 					window.parent.say("File <br><small>" + fname + " created at " + fwhere + '</small', "success");
@@ -1176,7 +1178,7 @@
 							fileElement.setAttribute("onclick", "slfile(this);");
 							fileElement.setAttribute("ondragstart", "dragfl(event, this)");
 
-							fileElement.innerHTML = `<span>` + geticon(file.type) + `</span><span flname><span class='flfrname'> ${file.fileName}</span> <small>${file.type}</small></span>`;
+							fileElement.innerHTML = `<span>` + geticon(ptypext(file.fileName)) + `</span><span flname><span class='flfrname'> ${file.fileName}</span> <small>${file.uid}</small></span>`;
 							fileElement.setAttribute("title", file.fileName + "\nID: " + file.uid);
 							fllist.appendChild(fileElement);
 						} catch (error) {
@@ -1199,7 +1201,7 @@
 								}
 							}
 
-							fileElement.innerHTML = `<span>` + geticon(file.type) + `</span><span flname><span class='flfrname'> ${file.fileName}</span> <small>${file.type}</small></span>`;
+							fileElement.innerHTML = `<span>` + geticon(ptypext(file.fileName)) + `</span><span flname><span class='flfrname'> ${file.fileName}</span> <small>${ptypext(file.fileName)}</small></span>`;
 							fllist.appendChild(fileElement);
 						}
 					});
@@ -1274,8 +1276,8 @@ delete
 					document.getElementById("fileinfobn").innerHTML += `<div class="dropup">
 								  <button class="dropbtn">More</button>
 								  <div class="dropup-content">
-									${fileData.type.startsWith("image") ? '<a onclick="window.parent.makewall(\'' + x.getAttribute("unid") + '\')"><span class="material-symbols-rounded">wallpaper</span> Set As Wallpaper</a>' : ''}
-									${fileData.type.startsWith("app") || fileData.type.startsWith("osl") || fileData.type.startsWith("wasm") ? `<a onclick="openfile(document.getElementById('` + x.id + `'), 'text/html')"><span class="material-symbols-rounded">
+									${getbaseflty(fileData.type) == "image" ? '<a onclick="window.parent.makewall(\'' + x.getAttribute("unid") + '\')"><span class="material-symbols-rounded">wallpaper</span> Set As Wallpaper</a>' : ''}
+									${getbaseflty(fileData.type) == "app" || getbaseflty(fileData.type) == "osl" || getbaseflty(fileData.type) == "wasm" ? `<a onclick="openfile(document.getElementById('` + x.id + `'), 'text/html')"><span class="material-symbols-rounded">
 									construction
 									</span> Open in studio</a>` : ''}
 									
@@ -1369,7 +1371,10 @@ drive_file_move
 			let fileToMove = await window.parent.getFileById(flid);
 			console.log("Got file: " + JSON.stringify(fileToMove));
 
-			await window.parent.createFile(dest, fileToMove.fileName, fileToMove.type, fileToMove.content, fileToMove.metadata);
+			function getapnme(x) {
+			return x.split('.')[0];
+		}
+			await window.parent.createFile(dest, getapnme(fileToMove.fileName), fileToMove.type, fileToMove.content, fileToMove.metadata);
 			console.log("File created in folder: " + dest);
 
 			console.log("Removing file: " + flid);
@@ -1564,6 +1569,55 @@ drive_file_move
 				listFiles('System', true)
 			}
 		}
+
+		function ptypext(str) {
+			console.log("str", str)
+			try {
+				const parts = str.split('.');
+				return parts.length > 1 ? parts.pop() : '';
+			}catch(err) {
+				console.log(err)
+			}
+		}
+
+		function getbaseflty(ext) {
+    switch (ext) {
+        case 'mp3':
+        case 'mpeg':
+        case 'wav':
+        case 'flac':
+            return 'music';
+        
+        case 'mp4':
+        case 'avi':
+        case 'mov':
+        case 'mkv':
+            return 'video';
+        
+        case 'jpg':
+        case 'jpeg':
+        case 'png':
+        case 'gif':
+        case 'bmp':
+            return 'image';
+        
+        case 'txt':
+        case 'doc':
+        case 'docx':
+        case 'pdf':
+        case 'html':
+        case 'css':
+        case 'js':
+        case 'json':
+            return 'document';
+
+		case 'app':
+            return 'app';
+        
+        default:
+            return ext;
+    }
+}
 	</script>
 </body>
 

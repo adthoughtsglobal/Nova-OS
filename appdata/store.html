@@ -795,8 +795,13 @@
 						p.innerHTML += `<br><button>#` + appcatitem + `</button>`
 						
 						document.getElementById('openbtn').style.display = "block"
-						if (appald.some(app => app.name === appName)) {
-							const appflor = appald.find(app => app.name === appName);
+
+						function getapnme(x) {
+							return x.split('.')[0];
+						}
+
+						if (appald.some(app => getapnme(app.name) === appName)) {
+							const appflor = appald.find(app => getapnme(app.name)=== appName);
 							document.getElementById('openbtn').innerText = "Open";
 							document.getElementById('openbtn').onclick = async function () {
 								window.parent.openfile(appflor.id)

@@ -69,13 +69,13 @@ getdb('trojencat', 'rom')
 						"folderName": "Downloads",
 						"content": [
 							{
-								"fileName": "Welcome",
+								"fileName": "Welcome.txt",
 								"uid": "sibq81",
 								"type": "txt",
 								"content": "Welcome to Nova OS! Thank you for using this OS, we believe that we have made this 'software' as the most efficient for your daily usage. If not, kindly reach us https://adthoughtsglobal.github.io and connect via the available options, we will respond you back! Enjoy!"
 							},
 							{
-								"fileName": "Basic Help",
+								"fileName": "Basic Help.txt",
 								"uid": "y67njs",
 								"type": "txt",
 								"content": "Please visit the Nova wiki page on GitHub to learn how to use Nova if you seem to struggle using it. You can find it at: https://github.com/adthoughtsglobal/Nova-OS/wiki/"
@@ -241,14 +241,18 @@ async function openn() {
 			iconSpan.innerHTML = appicns[app.name]
 		}
 
+		function getapnme(x) {
+			return x.split('.')[0];
+		}
+
 		// Create a span element for the app name
 		var nameSpan = document.createElement("span");
 		nameSpan.className = "appname";
-		nameSpan.textContent = app.name;
+		nameSpan.textContent = getapnme(app.name);
 
 		var tooltisp = document.createElement("span");
 		tooltisp.className = "tooltiptext";
-		tooltisp.textContent = app.name;
+		tooltisp.textContent = getapnme(app.name);
 
 		// Append both spans to the app shortcut container
 		appShortcutDiv.appendChild(iconSpan);
@@ -1014,6 +1018,7 @@ async function createFolder(folderName) {
 
 
 async function createFile(folderName, fileName, type, content, metadata) {
+	fileName = fileName + "." + type;
 	if (metadata === undefined) {
 		metadata = { "via": "nope" };
 	}
@@ -1040,12 +1045,12 @@ async function createFile(folderName, fileName, type, content, metadata) {
 		if (folderIndex !== -1) {
 			// Push the new file object to the folder's content array
 			let uid = genUID();
-			console.log("The preface of the constitution of the file says that it is " + metadata);
+			console.log("The file says that it is " + metadata);
 			metadata.datetime = getfourthdimension();
 			metadata = JSON.stringify(metadata);
 
 			memory2[folderIndex].content.push({
-				fileName,
+				fileName: fileName,
 				uid,
 				type,
 				content,
@@ -1060,7 +1065,7 @@ async function createFile(folderName, fileName, type, content, metadata) {
 			await createFile(folderName, fileName, type, content, metadata);
 		}
 	} catch (error) {
-		console.error("Error fetching data:", error);
+		console.error("Error fetching data BOM BOOM:", error);
 		return null;
 	}
 }
@@ -1789,22 +1794,18 @@ async function openfile(x, rt) {
 		let realtype = mm.type;
 		if (mm.type == "app") {
 			await openapp(mm.fileName, unid);
-		} else if (mm.type.startsWith("image") || mm.type.startsWith("audio") || mm.type.startsWith("video")) {
-			openlaunchprotocol("media", { "lclfile": unid });
+		} else if (getbaseflty(mm.type) == "image"  || getbaseflty(mm.type) == "video"  || getbaseflty(mm.type) == "music" ) {
+			openlaunchprotocol("text", { "lclfile": unid, "shrinkray": true });
 		} else {
-			if ((realtype == "app" || realtype.startsWith("image") || realtype.startsWith("video") || realtype.startsWith("audio")) && !rt) {
-
-				// if it's compressed
-				openlaunchprotocol("text", { "lclfile": unid, "shrinkray": true });
-			} else if (mm.type.startsWith("text/html")) {
+			if (mm.type == "html" ) {
 				openlaunchprotocol("studio", { "lclfile": unid });
-			} else if (mm.type.startsWith("osl")) {
+			} else if (mm.type == "osl" ) {
 				runAsOSL(mm.content)
-			} else if (mm.type.startsWith("lnk")) {
+			} else if (mm.type == "lnk" ) {
 				console.log("lnk")
 				let z = JSON.parse(mm.content);
 				openfile(z.open)
-			} else if (mm.type.startsWith("wasm")) {
+			} else if (mm.type == "wasm" ) {
 				runAsWasm(mm.content)
 			} else {
 				openlaunchprotocol("text", { "lclfile": unid });
@@ -2160,4 +2161,53 @@ function opensearchpanel() {
 		gid("strtsear").focus()
 	}
 	loadrecentapps()
+}
+
+function ptypext(str) {
+			console.log("str", str)
+			try {
+				const parts = str.split('.');
+				return parts.length > 1 ? parts.pop() : '';
+			}catch(err) {
+				console.log(err)
+			}
+		}
+
+		function getbaseflty(ext) {
+    switch (ext) {
+        case 'mp3':
+        case 'mpeg':
+        case 'wav':
+        case 'flac':
+            return 'music';
+        
+        case 'mp4':
+        case 'avi':
+        case 'mov':
+        case 'mkv':
+            return 'video';
+        
+        case 'jpg':
+        case 'jpeg':
+        case 'png':
+        case 'gif':
+        case 'bmp':
+            return 'image';
+        
+        case 'txt':
+        case 'doc':
+        case 'docx':
+        case 'pdf':
+        case 'html':
+        case 'css':
+        case 'js':
+        case 'json':
+            return 'document';
+
+		case 'app':
+            return 'app';
+        
+        default:
+            return ext;
+    }
 }

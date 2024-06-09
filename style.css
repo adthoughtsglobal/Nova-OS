@@ -330,6 +330,7 @@ nav info {
 	padding: 1px 5px;
 	background: #1f1f1fa1;
 	max-width: 46px;
+	text-transform: capitalize;
 }
 
 #installer {
@@ -1550,6 +1551,7 @@ background: #5c8dab;
 
 #partrecentapps {
 	text-align: left;
+	width: 100%;
 }
 
 @media only screen and (max-width: 800px) {
