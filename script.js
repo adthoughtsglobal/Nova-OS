@@ -1018,7 +1018,7 @@ async function createFolder(folderName) {
 
 
 async function createFile(folderName, fileName, type, content, metadata) {
-	fileName = fileName + "." + type;
+	let fileName2 = fileName + "." + type;
 	if (metadata === undefined) {
 		metadata = { "via": "nope" };
 	}
@@ -1026,9 +1026,9 @@ async function createFile(folderName, fileName, type, content, metadata) {
 	const folderIndex = memory2.findIndex(folder => folder.folderName === folderName);
 	try {
 		if (type === "app") {
-			let appdataquacks = await getFileByPath(folderName + "/" + fileName);
+			let appdataquacks = await getFileByPath(folderName + "/" + fileName2);
 			appdataquacks = appdataquacks[0];
-			console.log("idk, Filesbepath:", fileName);
+			console.log("idk, Filesbepath:", fileName2);
 
 			if (appdataquacks != null) {
 				const newData = {
@@ -1050,19 +1050,19 @@ async function createFile(folderName, fileName, type, content, metadata) {
 			metadata = JSON.stringify(metadata);
 
 			memory2[folderIndex].content.push({
-				fileName: fileName,
+				fileName: fileName2,
 				uid,
 				type,
 				content,
 				metadata
 			});
-			console.log(`File "${fileName}" created in folder "${folderName}" for some reason.`);
+			console.log(`File "${fileName2}" created in folder "${folderName}" for some reason.`);
 			setdb('trojencat', 'rom', memory2);
 		} else {
 			console.log("Creating a folder anyway...");
 			await createFolder(folderName);
 			// Recursively call createFile after creating the folder
-			await createFile(folderName, fileName, type, content, metadata);
+			await createFile(folderName, fileName2, type, content, metadata);
 		}
 	} catch (error) {
 		console.error("Error fetching data BOM BOOM:", error);
