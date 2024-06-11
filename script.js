@@ -58,48 +58,35 @@ getdb('trojencat', 'rom')
 			} else {
 				await say(`<h2>Terms of service and License</h2><p>By using Nova OS, you agree to the <a href="https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use">Adthoughtsglobal Nova Terms of Use</a>. <be><small>We do not collect your personal information. <br>Read the terms clearly before use.</small>`);
 
-
 				gid("startup").showModal();
 				stx.innerHTML = "Preparing memory"
 				// If the 'rom' key doesn't exist, assign a random array to the 'memory' list
-				memory = [
-					// array with all folders
-					{
-						// folder
-						"folderName": "Downloads",
-						"content": [
-							{
-								"fileName": "Welcome.txt",
-								"uid": "sibq81",
-								"type": "txt",
-								"content": "Welcome to Nova OS! Thank you for using this OS, we believe that we have made this 'software' as the most efficient for your daily usage. If not, kindly reach us https://adthoughtsglobal.github.io and connect via the available options, we will respond you back! Enjoy!"
-							},
-							{
-								"fileName": "Basic Help.txt",
-								"uid": "y67njs",
-								"type": "txt",
-								"content": "Please visit the Nova wiki page on GitHub to learn how to use Nova if you seem to struggle using it. You can find it at: https://github.com/adthoughtsglobal/Nova-OS/wiki/"
+				const memory = {
+					"Downloads/": {
+						"Welcome.txt": {
+							"id": "sibq81",
+							"content": "Welcome to Nova OS! Thank you for using this OS, we believe that we have made this 'software' as the most efficient for your daily usage. If not, kindly reach us https://adthoughtsglobal.github.io and connect via the available options, we will respond you back! Enjoy!"
+						},
+						"Basic Help.txt": {
+							"id": "hejid3",
+							"content": "Please visit the Nova wiki page on GitHub to learn how to use Nova if you seem to struggle using it. You can find it at: https://github.com/adthoughtsglobal/Nova-OS/wiki/"
+						},
+						"Subfolder/": {
+							"Subfile.txt": {
+								"id": "1283jh",
+								"content": "This is a file inside a subfolder."
 							}
-						]
+						}
 					},
-					{
-						"folderName": "Apps",
-						"content": []
-					},
-					{
-						"folderName": "Desktop",
-						"content": []
-					}
-				];
+					"Apps/": {},
+					"Desktop/": {}
+				};
 
 				// Save the default array to the 'rom' key in the 'trojencat' database
 				setdb('trojencat', 'rom', memory);
 				initialiseOS()
 
 			}
-
-
-
 		} catch (error) {
 			console.error('Error in database operations:', error);
 		}
@@ -695,12 +682,8 @@ async function openapp(x, od) {
 		gid('searchwindow').close()
 	}
 
-
-	// opening an app
 	const fetchDataAndSave = async (x) => {
 		try {
-
-			console.log("bob, " + y)
 			var y;
 			if (od != 1) {
 				y = await getFileById(od)
@@ -995,132 +978,147 @@ function genUID() {
 
 async function createFolder(folderName) {
 	try {
-		memory = await getdb('trojencat', 'rom');
+        let parts = folderName.split('/');
+        let current = memory;
 
-		// Check if the folder already exists
-		const folderIndex = memory.findIndex(folder => folder.folderName === folderName);
+        for (let part of parts) {
+            part += '/';
+            if (!current[part]) {
+                current[part] = {};
+            }
+            current = current[part];
+        }
 
-		if (folderIndex === -1) {
-			// If the folder does not exist, create it
-			memory.push({
-				folderName,
-				content: []
-			});
-			console.log(`We proudly proclaim that the folder "${folderName}" `);
-			setdb('trojencat', 'rom', memory);
-		} else {
-			console.log(`Folder "${folderName}" says that im not dead! what de hail!`);
-		}
-	} catch (error) {
-		console.error("Error creating folder:", error);
-	}
+        console.log(`Folder "${folderName}" created successfully.`);
+    } catch (error) {
+        console.error("Error creating folder:", error);
+    }
 }
 
 
 async function createFile(folderName, fileName, type, content, metadata) {
-	let fileName2 = fileName + "." + type;
-	if (metadata === undefined) {
-		metadata = { "via": "nope" };
-	}
-	let memory2 = await getdb('trojencat', 'rom');
-	const folderIndex = memory2.findIndex(folder => folder.folderName === folderName);
-	try {
-		if (type === "app") {
-			let appdataquacks = await getFileByPath(folderName + "/" + fileName2);
-			appdataquacks = appdataquacks[0];
-			console.log("idk, Filesbepath:", fileName2);
+	let fileName2 = `${fileName}.${type}`;
+    if (!metadata) {
+        metadata = { "via": "nope" };
+    }
+    memory = await getdb('trojencat', 'rom');
+    let folder = createFolderStructure(folderName);
 
-			if (appdataquacks != null) {
-				const newData = {
-					metadata: metadata,
-					content: content,
-					fileName: fileName,
-					type: type
-				};
-				await updateFile("Apps", appdataquacks.id, newData);
-				return;
-			}
-		}
-		// Check if the folder exists
-		if (folderIndex !== -1) {
-			// Push the new file object to the folder's content array
-			let uid = genUID();
-			console.log("The file says that it is " + metadata);
-			metadata.datetime = getfourthdimension();
-			metadata = JSON.stringify(metadata);
+    try {
+        if (type === "app") {
+            let appData = await getFileByPath(`${folderName}/${fileName2}`);
+            if (appData) {
+                const newData = {
+                    metadata: metadata,
+                    content: content,
+                    fileName: fileName2,
+                    type: type
+                };
+                await updateFile("Apps", appData.id, newData);
+                return;
+            }
+        }
 
-			memory2[folderIndex].content.push({
-				fileName: fileName2,
-				uid,
-				type,
-				content,
-				metadata
-			});
-			console.log(`File "${fileName2}" created in folder "${folderName}" for some reason.`);
-			setdb('trojencat', 'rom', memory2);
-		} else {
-			console.log("Creating a folder anyway...");
-			await createFolder(folderName);
-			// Recursively call createFile after creating the folder
-			await createFile(folderName, fileName2, type, content, metadata);
+        let existingFile = Object.values(folder).find(file => file.fileName === fileName2);
+        if (existingFile) {
+            console.log(`File "${fileName2}" already exists in folder "${folderName}". Updating it...`);
+            const newData = {
+                metadata: metadata,
+                content: content,
+                fileName: fileName2,
+                type: type
+            };
+            await updateFile(folderName, existingFile.id, newData);
+        } else {
+            let uid = genUID();
+            console.log("The file says that it is " + metadata);
+            metadata.datetime = getfourthdimension();
+            metadata = JSON.stringify(metadata);
+
+            folder[fileName2] = {
+                id: uid,
+                type: type,
+                content: content,
+                metadata: metadata
+            };
+            console.log(`File "${fileName2}" created in folder "${folderName}" for some reason.`);
+            await setdb('trojencat', 'rom', memory);
+        }
+    } catch (error) {
+        console.error("Error creating file:", error);
+        return null;
+    }
+}
+
+// Simulate creating a folder
+function createFolderStructure(folderName) {
+	let parts = folderName.split('/');
+	let current = memory;
+	for (let part of parts) {
+		part += '/';
+		if (!current[part]) {
+			current[part] = {};
 		}
-	} catch (error) {
-		console.error("Error fetching data BOM BOOM:", error);
-		return null;
+		current = current[part];
 	}
+	return current;
 }
 
 async function updateFile(folderName, fileId, newData) {
 	memory = await getdb('trojencat', 'rom');
-	let folderIndex = memory.findIndex(folder => folder.folderName === folderName);
+    let folder = createFolderStructure(folderName);
 
-	try {
-		if (folderIndex === -1) {
-			console.log(`Folder "${folderName}" isnt born yet. guess what...`);
-			await createFolder(folderName);
-			memory = await getdb('trojencat', 'rom');
-			folderIndex = memory.findIndex(folder => folder.folderName === folderName);
-		}
+    try {
+        let fileKey = Object.keys(folder).find(key => folder[key].id === fileId);
+        if (fileKey) {
+            // Update the file with the new data
+            let fileToUpdate = folder[fileKey];
+            fileToUpdate.metadata = newData.metadata !== undefined ? JSON.stringify(newData.metadata) : fileToUpdate.metadata;
+            fileToUpdate.content = newData.content !== undefined ? newData.content : fileToUpdate.content;
+            fileToUpdate.fileName = newData.fileName !== undefined ? newData.fileName : fileKey;
+            fileToUpdate.type = newData.type !== undefined ? newData.type : fileToUpdate.type;
 
-		const fileIndex = memory[folderIndex].content.findIndex(file => file.uid === fileId);
+            // If the file name has changed, update the key in the folder
+            if (newData.fileName !== undefined && newData.fileName !== fileKey) {
+                folder[newData.fileName] = fileToUpdate;
+                delete folder[fileKey];
+            }
 
-		if (fileIndex !== -1) {
-			// Update the file with the new data
-			let fileToUpdate = memory[folderIndex].content[fileIndex];
-			fileToUpdate.metadata = newData.metadata !== undefined ? JSON.stringify(newData.metadata) : fileToUpdate.metadata;
-			fileToUpdate.content = newData.content !== undefined ? newData.content : fileToUpdate.content;
-			fileToUpdate.fileName = newData.fileName !== undefined ? newData.fileName : fileToUpdate.fileName;
-			fileToUpdate.type = newData.type !== undefined ? newData.type : fileToUpdate.type;
-
-			// Update the file in memory
-			memory[folderIndex].content[fileIndex] = fileToUpdate;
-			setdb('trojencat', 'rom', memory);
-			console.log(`File "${fileToUpdate.fileName}" is no more the old file.`);
-		} else {
-			console.log(`File with ID "${fileId}" is missing lol,  "${folderName}". Gonna make a new one now...`);
-			await createFile(folderName, fileId, newData.type, newData.content, newData.metadata);
-		}
-	} catch (error) {
-		console.error("Error updating file:", error);
-	}
+            await setdb('trojencat', 'rom', memory);
+            console.log(`File "${fileToUpdate.fileName}" is no more the old file.`);
+        } else {
+            console.log(`File with ID "${fileId}" is missing lol, in "${folderName}". Gonna make a new one now...`);
+            createFile(folder, fileId, newData);
+            await setdb('trojencat', 'rom', memory);
+        }
+    } catch (error) {
+        console.error("Error updating file:", error);
+    }
 }
 
-async function getFileById(x) {
-	try {
-		memory = await getdb('trojencat', 'rom');
-		for (const folder of memory) {
-			for (const item of folder.content) {
-				if (item.uid === x) {
-					return item;
-				}
-			}
-		}
-		return null;
-	} catch (error) {
-		console.error("Error fetching data:", error);
-		return null;
-	}
+function getFileById(id) {
+	function searchFolder(folder) {
+        for (let key in folder) {
+            if (typeof folder[key] === 'object' && folder[key] !== null) {
+                if (folder[key].id === id) {
+                    return {
+                        fileName: key,
+                        id: folder[key].id,
+                        content: folder[key].content
+                    };
+                } else if (key.endsWith('/')) {
+                    const result = searchFolder(folder[key]);
+                    if (result) {
+                        return result;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    return searchFolder(memory);
 }
+
 function makedialogclosable(ok) {
 	const myDialog = gid(ok);
 
@@ -1134,23 +1132,29 @@ makedialogclosable('appdmod')
 
 async function getFileNamesByFolder(folderName) {
 	try {
-		memory = await getdb('trojencat', 'rom');
-		const filesInFolder = [];
+        memory = await getdb('trojencat', 'rom');
+        const filesInFolder = [];
 
-		for (const folder of memory) {
-			if (folder.folderName === folderName) {
-				for (const item of folder.content) {
-					filesInFolder.push({ id: item.uid, name: item.fileName });
-				}
-				break;
-			}
-		}
+        for (const key in memory) {
+            if (key === folderName || key.startsWith(folderName)) {
+                const isFolder = key.endsWith('/');
+                if (isFolder) {
+                    const folder = memory[key];
+                    for (const fileName in folder) {
+                        if (!fileName.endsWith('/')) {
+                            const file = folder[fileName];
+                            filesInFolder.push({ id: file.id, name: fileName });
+                        }
+                    }
+                }
+            }
+        }
 
-		return filesInFolder;
-	} catch (error) {
-		console.error("Error fetching data:", error);
-		return null;
-	}
+        return filesInFolder;
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        return null;
+    }
 }
 
 function justConfirm(title, message, modal) {
@@ -1383,32 +1387,28 @@ async function remfile(ID) {
 }
 
 async function remfolder(folderName) {
-    try {
-        // Fetch the current state of the database
-        let memory = await getdb('trojencat', 'rom');
+	try {
+        memory = await getdb('trojencat', 'rom');
+        let parts = folderPath.split('/');
+        let current = memory;
 
-        // Find the index of the folder with the specified name
-        const folderIndex = memory.findIndex(folder => folder.folderName === folderName);
-
-        if (folderIndex !== -1) {
-            // Remove the folder from the array
-            memory.splice(folderIndex, 1);
-
-            // Update the database with the new state
-            await setdb('trojencat', 'rom', memory);
-
-            // Check if the folder was successfully removed
-            if (!memory.some(folder => folder.folderName === folderName)) {
-                console.log("The folder has been eliminated.");
+        for (let part of parts) {
+            part += '/';
+            if (current[part]) {
+                current = current[part];
             } else {
-                console.log("The folder resisted elimination somehow.");
+                console.error(`Folder "${folderPath}" not found.`);
+                return;
             }
-        } else {
-            // If the folder with the specified name is not found
-            console.error(`Folder with name "${folderName}" not found.`);
         }
+
+        // Remove the folder and its contents
+        delete current[parts[parts.length - 1]];
+
+        await setdb('trojencat', 'rom', memory);
+        console.log(`Folder "${folderPath}" and its contents successfully removed.`);
     } catch (error) {
-        console.error("Error fetching or updating data:", error);
+        console.error("Error removing folder:", error);
     }
 }
 
@@ -1498,33 +1498,16 @@ async function installdefaultapps() {
 }
 
 async function getFileByPath(filePath) {
-	try {
-		// Split the filePath into folderName and fileName
-		const [folderName, fileName] = filePath.split('/');
-
-		// Fetch data from database
-		memory = await getdb('trojencat', 'rom');
-		const matchingFiles = [];
-
-		// Iterate through memory to find the specified folder
-		for (const folder of memory) {
-			if (folder.folderName === folderName) {
-				// Iterate through content of the folder to find files with specified name
-				for (const item of folder.content) {
-					if (item.fileName === fileName) {
-						// If found, add the file object to the array
-						matchingFiles.push({ id: item.uid, name: item.fileName });
-					}
-				}
-				// No need to break here, as there might be multiple folders with the same name
-			}
+	let parts = filePath.split('/');
+	let current = memory;
+	for (let part of parts) {
+		if (part in current) {
+			current = current[part];
+		} else {
+			return null;
 		}
-		// Return the array of matching files
-		return matchingFiles;
-	} catch (error) {
-		console.error("Error fetching data:", error);
-		return null;
 	}
+	return current;
 }
 
 
@@ -1667,18 +1650,20 @@ function calculateSimilarity(string1, string2) {
 
 async function getFolderNames() {
 	try {
-		memory = await getdb('trojencat', 'rom');
-		const folderNames = [];
+        memory = await getdb('trojencat', 'rom');
+        const folderNames = [];
 
-		for (const folder of memory) {
-			folderNames.push(folder.folderName);
-		}
+        for (const key in memory) {
+            if (key.endsWith('/')) {
+                folderNames.push(key);
+            }
+        }
 
-		return folderNames;
-	} catch (error) {
-		console.error("Error fetching data:", error);
-		return null;
-	}
+        return folderNames;
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        return null;
+    }
 }
 
 function containsSmallSVGElement(str) {
@@ -1709,30 +1694,29 @@ async function moveFileToFolder(flid, dest) {
 
 async function remfile(ID) {
 	try {
-		memory = await getdb('trojencat', 'rom');
+        memory = await getdb('trojencat', 'rom');
+        let found = false;
 
-		for (let folder of memory) {
-			let fileIndex = folder.content.findIndex(file => file.uid === ID);
+        for (let folder of Object.values(memory)) {
+            if (!Array.isArray(folder)) continue; // Skip if it's not a folder object
+            let fileIndex = folder.findIndex(file => file.id === ID);
 
-			if (fileIndex !== -1) {
-				let removedFile = folder.content.splice(fileIndex, 1)[0];
-				console.log(`0004`);
-				await setdb('trojencat', 'rom', memory);
+            if (fileIndex !== -1) {
+                let removedFile = folder.splice(fileIndex, 1)[0];
+                console.log(`File with ID "${ID}" successfully removed.`);
+                found = true;
+                break;
+            }
+        }
 
-				if (!folder.content.includes(removedFile)) {
-					console.log("File successfully eleminated.");
-				} else {
-					console.log("File proved resistance.");
-				}
-				return;
-			}
-		}
-
-		// If the loop completes without finding the file
-		console.error(`File with ID "${ID}" not found.`);
-	} catch (error) {
-		console.error("Safe Error fetching or updating data:", error);
-	}
+        if (!found) {
+            console.error(`File with ID "${ID}" not found.`);
+        } else {
+            await setdb('trojencat', 'rom', memory);
+        }
+    } catch (error) {
+        console.error("Error removing file:", error);
+    }
 }
 
 function rightClick(e) {
@@ -1790,6 +1774,9 @@ async function openfile(x, rt) {
 			console.error("Error: File not found");
 			return;
 		}
+
+		console.log("ya", mm, (mm.fileName))
+		mm.type = ptypext(mm.fileName);
 
 		let realtype = mm.type;
 		if (mm.type == "app") {
@@ -2029,7 +2016,8 @@ function runAsWasm(content) {
 		}
 	`;
 	div.appendChild(script);
-	console.log("2321: " + div.innerHTML);
+	
+
 	openwindow("Nova Wasm Runner", div.innerHTML);
 }
 
@@ -2065,7 +2053,6 @@ async function genTaskBar() {
 	appbarelement.innerHTML = ""
 	if (appbarelement) {
 		let x = await getFileNamesByFolder("Dock");
-		console.log(x)
 		if (x.length == 0) {
 			let y = await getFileNamesByFolder("Apps");
 
@@ -2078,7 +2065,6 @@ async function genTaskBar() {
 
 			x = x.filter(item => item);
 		}
-		console.log(x)
 		x.forEach(async function(app) {
 			var islnk = false;
 			// Create a div element for the app shortcut
@@ -2088,12 +2074,10 @@ async function genTaskBar() {
 
 			if (app.type == "lnk") {
 				let z = JSON.parse(app.content);
-				 console.log("oogabooga", z)
 				app = await getFileById(z.open)
 				islnk = true;
 			}
 
-			console.log("after: " + app.uid);
 			appShortcutDiv.setAttribute("onclick", "openfile('" + app.uid + "')");
 			// Create a span element for the app icon
 			var iconSpan = document.createElement("span");
@@ -2163,8 +2147,16 @@ function opensearchpanel() {
 	loadrecentapps()
 }
 
+function mtpetxt(str) {
+	try {
+		const parts = str.split('/');
+		return parts.length > 1 ? parts.pop() : '';
+	}catch(err) {
+		console.log(err)
+	}
+}
+
 function ptypext(str) {
-			console.log("str", str)
 			try {
 				const parts = str.split('.');
 				return parts.length > 1 ? parts.pop() : '';
@@ -2174,6 +2166,9 @@ function ptypext(str) {
 		}
 
 		function getbaseflty(ext) {
+			if (mtpetxt(ext) != '') {
+				ext = mtpetxt(ext);
+			}
     switch (ext) {
         case 'mp3':
         case 'mpeg':
@@ -2199,15 +2194,35 @@ function ptypext(str) {
         case 'docx':
         case 'pdf':
         case 'html':
-        case 'css':
-        case 'js':
-        case 'json':
             return 'document';
 
 		case 'app':
             return 'app';
+
+		case 'cpp':
+		case 'py':
+		case 'css':
+		case 'js':
+		case 'json':
+			return 'code'
         
+		case 'html':
+			return 'webpage'
+
         default:
             return ext;
+    }
+}
+
+function basename(str) {
+    try {
+        const parts = str.split('.');
+        if (parts.length > 1) {
+            parts.pop(); // Remove the extension
+            return parts.join('.'); // Rejoin the remaining parts
+        }
+        return str; // No extension present
+    } catch (err) {
+        console.log(err);
     }
 }
