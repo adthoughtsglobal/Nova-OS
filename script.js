@@ -864,19 +864,19 @@ function openwindow(title, cont, ic, theme) {
 		try {
 			iframe.contentWindow.myWindow = windowDiv;
 			iframe.contentWindow.greenflag();
-			//windowLoader.style.display = "none";
-			//windowLoader.remove();
+			windowLoader.style.display = "none";
+			windowLoader.remove();
 		} catch (error) {
 			console.log(error)
 			if (!String(error.message).includes('greenflag')) {
-				// windowLoader.style.display = "none";
+				windowLoader.style.display = "none";
 				return;
 			}
 
 			setTimeout(function() {
 				try {
 					iframe.contentWindow.greenflag();
-				//	windowLoader.remove();
+				windowLoader.remove();
 				} catch (error) {
 					if (!String(error.message).includes('greenflag')) {
 						windowLoader.style.display = "none";
