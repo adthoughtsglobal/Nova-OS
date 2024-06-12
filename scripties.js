@@ -162,3 +162,9 @@ function cuteee() {
 `
 	document.body.appendChild(stylelement)
 }
+
+const originalFetch = window.fetch;
+window.fetch = async function(...args) {
+    console.log('Fetch called with:', ...args);
+    return originalFetch.apply(this, args);
+};

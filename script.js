@@ -478,6 +478,8 @@ function dragElement(elmnt) {
 }
 
 async function dod() {
+	let x = localStorage.getItem("qsets");
+	try {
 		gid("desktop").innerHTML = ``;
 		let y = await getFileNamesByFolder("Desktop")
 		y.forEach(async function(app) {
@@ -541,8 +543,6 @@ async function dod() {
 
 			gid("desktop").appendChild(appShortcutDiv);
 		});
-		let x = localStorage.getItem("qsets");
-		try {
 			x = await getFileById(JSON.parse(x).wall);
 		} catch (error) {
 			console.error(error)
@@ -552,11 +552,11 @@ async function dod() {
 			localStorage.setItem("qsets", JSON.stringify(qsets));
 		}
 
-		if (x) {
+		if (x == undefined) {
 			let unshrinkbsfX = unshrinkbsf(x.content);
-			document.getElementById('bgimage').style.backgroundImage = `url("` + unshrinkbsfX + `")`;
+			document.getElementById('bgimage').src = `url("` + unshrinkbsfX + `")`;
 		} else {
-			gid("bgimage").src = novaFeaturedImage;
+			document.getElementById("bgimage").src= novaFeaturedImage;
 			
 		}
 	document.getElementById("bgimage").onerror = function() {
@@ -837,7 +837,7 @@ function openwindow(title, cont, ic, theme) {
 	windowContent.classList += "windowcontent";
 
 	var windowLoader = document.createElement("div");
-	windowLoader.innerHTML = `<span class="loader5653"></span>`
+	windowLoader.innerHTML = appicns[title]
 	windowLoader.classList += "windowloader";
 
 	function loadIframeContent(windowLoader, windowContent, iframe) {
@@ -864,19 +864,19 @@ function openwindow(title, cont, ic, theme) {
 		try {
 			iframe.contentWindow.myWindow = windowDiv;
 			iframe.contentWindow.greenflag();
-			windowLoader.style.display = "none";
-			windowLoader.remove();
+			//windowLoader.style.display = "none";
+			//windowLoader.remove();
 		} catch (error) {
 			console.log(error)
 			if (!String(error.message).includes('greenflag')) {
-				windowLoader.style.display = "none";
+				// windowLoader.style.display = "none";
 				return;
 			}
 
 			setTimeout(function() {
 				try {
 					iframe.contentWindow.greenflag();
-					windowLoader.remove();
+				//	windowLoader.remove();
 				} catch (error) {
 					if (!String(error.message).includes('greenflag')) {
 						windowLoader.style.display = "none";
@@ -2148,11 +2148,14 @@ function opensearchpanel() {
 }
 
 function mtpetxt(str) {
+	if (!str) {
+		return;
+	}
 	try {
 		const parts = str.split('/');
 		return parts.length > 1 ? parts.pop() : '';
 	}catch(err) {
-		console.log(err)
+		console.error(err)
 	}
 }
 

@@ -199,7 +199,7 @@ nav info {
 	height: calc(100% - 26px);
 	display: grid;
 	transition: .5s;
-	background: transparent;
+	background: #101010;
 	justify-content: center;
 	align-content: center;
 	color: #748c9b;
@@ -211,6 +211,12 @@ nav info {
 
 .windowloader h2 {
 	margin: 0;
+}
+
+.windowloader svg {
+	height: 4rem;
+    width: 4rem;
+    box-shadow: 0 1rem 1rem #00000078;
 }
 
 .windowcontent iframe {

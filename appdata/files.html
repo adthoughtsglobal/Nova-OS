@@ -52,7 +52,7 @@
 		}
 
 		[flap-nav] y {
-			displa: flex;
+			display: flex;
 			background-color: #151515;
 			width: 100%;
 			flex-direction: row;
@@ -95,7 +95,7 @@
 			border-radius: 50%;
 			padding: 1px;
 			transform: translate(2px, 11px);
-			transisiton: .3s;
+			transition: .3s;
 		}
 
 		.navinfobtns:active {
@@ -439,7 +439,6 @@
 			color: white;
 			border-radius: 10px;
 			padding: 25px;
-			min-margin-top: 10px;
 			animation: pop .2s;
 			text-align: center;
 		}
@@ -781,7 +780,7 @@
 	</dialog>
 	<div id="flap-mot">
 		<div flap-nav>
-			<div style="" class="nowid">
+			<div class="nowid">
 				<span class="material-symbols-rounded navbfobtns" onclick="refresh()">
 					refresh
 				</span>
@@ -1036,7 +1035,8 @@
 		var fdlist;
 		var binmode = false;
 		var sessiontype = "normal"
-		function greenflag() {
+
+		function greenflagbro() {
 
 
 
@@ -1164,7 +1164,6 @@
 
 			// Helper function to navigate through the memory object
 			function findFolder(path, obj) {
-				console.log(path, obj);
 				let parts = path.split('/');
 				for (let part of parts) {
 					if (part) {
@@ -1510,7 +1509,6 @@ drive_file_move
 
 		function geticon(x) {
 			let i, c;
-			console.log(x)
 			if (x == "txt") {
 				i = "description"
 				c = "dodgerblue"
@@ -1547,27 +1545,25 @@ drive_file_move
 		}
 
 		function getfolicon(x) {
-			if (x == "Downloads") {
-				i = "download"
-			} else if (x == "Desktop") {
-				i = "computer"
-			} else if (x == "Apps") {
-				i = "apps"
-			} else if (x == "System") {
-				i = "settings_suggest"
-			} else if (x == "Dock") {
-				i = "dashboard"
-			} else if (x == "Media") {
-				i = "play_circle"
-			} else if (x == "Documents") {
-				i = "article"
-			} else if (x == "Favorites") {
-				i = "favorite"
-			} else {
-				i = "folder"
-			}
-			return i;
-		}
+    const iconMap = {
+        "Downloads": "download",
+        "Desktop": "computer",
+        "Apps": "apps",
+        "System": "settings_suggest",
+        "Dock": "dashboard",
+        "Media": "play_circle",
+        "Documents": "article",
+        "Favorites": "favorite"
+    };
+
+    for (const key in iconMap) {
+        if (x.startsWith(key)) {
+            return iconMap[key];
+        }
+    }
+    return "folder";
+}
+
 
 		function upmd() {
 			document.getElementById("fupibu").innerHTML = "Import";
@@ -1614,6 +1610,8 @@ drive_file_move
 				console.log(err)
 			}
 		}
+		
+		greenflagbro()
 	</script>
 </body>
 
