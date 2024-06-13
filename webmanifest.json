@@ -6,5 +6,12 @@
   "background_color": "#fff",
   "display": "fullscreen",
   "scope": "https://adthoughtsglobal.github.io/nova-dev-repl-rl/",
-  "start_url": "https://adthoughtsglobal.github.io/nova-dev-repl-rl"
+  "start_url": "https://adthoughtsglobal.github.io/nova-dev-repl-rl",
+  "icons": [
+    {
+      "src": "N.webp",
+      "sizes": "512x512",
+      "type": "image/webp"
+    }
+  ]
 }

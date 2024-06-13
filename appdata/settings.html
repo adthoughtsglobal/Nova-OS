@@ -583,11 +583,110 @@
 			<button class="tablinks" onclick="openCity(event, 'exp'); defs(); gwall() "><i
 					class="material-icons">monitor</i>
 				Display</button>
+			<button class="tablinks" onclick="openCity(event, 'lclstgsc'); lclstgsc();"><i
+					class="material-icons">manage_search</i>
+				Data Manager</button>
 			<button class="tablinks" onclick="openCity(event, 'defaults'); defs5(); defs2(); defs3()"><i
 					class="material-icons">settings</i> Preferances</button>
 			<button class="tablinks" onclick="openCity(event, 'about')"><i class="material-icons">info</i>
 				About</button>
 
+		</div>
+
+		<div id="lclstgsc" class="tabcontent">
+			<style>
+				.datamangernav {
+					display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.1rem 0.5rem;
+    background: #1f1f1f;
+    border-radius: 0.5rem;
+				}
+
+				.datamangernav i {
+					
+    font-size: 1rem !important;
+    transform: translateY(3px);
+				}
+
+				.lclstr {
+    border-bottom: 2px solid #1f1f1f;
+    padding: 0.2rem 0.5rem;
+    margin-top: 0.2rem;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+.lclstr:hover {
+    background: #1f1f1f69;
+    transition: 0.3s;
+}
+
+.lclstr span {
+	width: 0;
+    word-break: break-all;
+}
+
+.lclstr .name {
+    flex: 1;
+	margin-right: 0.2rem;
+}
+.lclstr .value {
+    flex: 3;
+}
+
+.lclstr .material-icons {
+	width: 20px;
+    font-size: 1rem;
+    display: grid;
+    justify-items: center;
+    align-items: center;
+    opacity: 0.5;
+}
+				</style>
+			<h1>Data Manager</h1>
+			<div class="datamangernav">
+				<span>LocalStorage</span>
+				<a onclick="lclstgsc()"><i class="material-icons">restart_alt</i></a>
+			</div>
+			<div id="datalist">
+
+			</div>
+			<script>
+				async function lclstgsc() {
+					document.getElementById("datalist").innerHTML = "";
+					let items = {};
+					for (let i = 0; i < localStorage.length; i++) {
+						let key = localStorage.key(i);
+						items[key] = localStorage.getItem(key);
+						const elem = document.createElement("div");
+						elem.classList = "lclstr";
+						const elemname = document.createElement("span");
+						elemname.classList = "name";
+						elemname.innerHTML = key;
+						elem.appendChild(elemname);
+						const elemval = document.createElement("span");
+						elemval.classList = "value";
+						elemval.innerHTML = items[key];
+						elemval.addEventListener('click', async function() {
+							let x = await window.parent.ask("Set value for '" + key + "':", items[key]);
+							localStorage.setItem(key, x)
+						});
+						elem.appendChild(elemval);
+						const delbtn = document.createElement("span");
+						delbtn.classList = "material-icons";
+						delbtn.innerHTML = "delete_forever";
+						delbtn.addEventListener('click', async function() {
+							localStorage.removeItem(key);
+							lclstgsc();
+						});
+						elem.appendChild(delbtn);
+						document.getElementById("datalist").appendChild(elem)
+					}
+				}
+				</script>
 		</div>
 
 		<div id="perform" class="tabcontent">
