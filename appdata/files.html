@@ -1073,7 +1073,7 @@
 						if (result !== null) {
 							memory = result;
 							liststuff()
-							listFiles("Downloads")
+							listFiles("Downloads/")
 
 						} else {
 							console.log('0003');
@@ -1181,60 +1181,69 @@
 
 			// Find the folder with the given name
 			const folder = findFolder(folderName, memory);
-			if (folder) {
-				currentPath = folderName;
-				updpth();
+if (folder) {
+    currentPath = folderName;
+    updpth();
 
-				// Display files and subfolders in the folder
-				const content = Object.keys(folder).map(key => ({ name: key, ...folder[key] }));
-				if (content.length > 0) {
-					// Sort files by file name
-					content.sort((a, b) => a.name.localeCompare(b.name));
+    // Display files and subfolders in the folder
+    const content = Object.keys(folder).map(key => ({
+        name: key,
+        ...folder[key],
+        type: key.endsWith('/') ? 'folder' : 'file'
+    }));
 
-					for (let file of content) {
-						try {
-							let fileElement = document.createElement('div');
-							fileElement.classList.add("file");
-							fileElement.setAttribute(flmode, '');
-							fileElement.setAttribute("unid", file.id);
-							fileElement.setAttribute("draggable", true);
+    if (content.length > 0) {
+        // Sort files by file name
+        content.sort((a, b) => a.name.localeCompare(b.name));
 
-							fileElement.setAttribute("onclick", "slfile(this);");
-							fileElement.setAttribute("ondragstart", "dragfl(event, this)");
+        for (let item of content) {
+            try {
+                let fileElement = document.createElement('div');
+                fileElement.classList.add("file");
+                fileElement.setAttribute(flmode, '');
+                fileElement.setAttribute("unid", item.id || '');
+                fileElement.setAttribute("draggable", !item.name.endsWith('/'));
 
-							fileElement.innerHTML = `<span>` + geticon(ptypext(file.name)) + `</span><span flname><span class='flfrname'> ${file.name}</span> <small>${file.id}</small></span>`;
-							fileElement.setAttribute("title", file.name + "\nID: " + file.id);
-							fllist.appendChild(fileElement);
-						} catch (error) {
-							console.error("Safe Error processing file:", error);
-							console.log("This file caused error: " + file.name);
-							// error files
-							let fileElement = document.createElement('div');
-							fileElement.classList.add("file");
-							fileElement.setAttribute(flmode, '');
-							fileElement.setAttribute("unid", file.id);
-							fileElement.setAttribute("onclick", "slfile(this)");
+                fileElement.setAttribute("onclick", "slfile(this);");
+                if (!item.name.endsWith('/')) {
+                    fileElement.setAttribute("ondragstart", "dragfl(event, this)");
+                }
 
-							// Assuming metadata is stored as a JSON object within the file
-							let metadata = {};
-							if (file.metadata) {
-								try {
-									metadata = JSON.parse(file.metadata);
-								} catch (error) {
-									console.error("Safe Error parsing metadata:", error);
-								}
-							}
+                const icon = item.type === 'folder' ? geticon('folder') : geticon(ptypext(item.name));
+                fileElement.innerHTML = `<span>${icon}</span><span flname><span class='flfrname'> ${item.name}</span> <small>${item.id || '>'}</small></span>`;
+                fileElement.setAttribute("title", `${item.name}\nID: ${item.id || ''}`);
+                fllist.appendChild(fileElement);
+            } catch (error) {
+                console.error("Safe Error processing item:", error);
+                console.log("This item caused error: " + item.name);
+                // error files
+                let fileElement = document.createElement('div');
+                fileElement.classList.add("file");
+                fileElement.setAttribute(flmode, '');
+                fileElement.setAttribute("unid", item.id || '');
+                fileElement.setAttribute("onclick", "slfile(this)");
 
-							fileElement.innerHTML = `<span>` + geticon(ptypext(file.name)) + `</span><span flname><span class='flfrname'> ${file.name}</span> <small>${ptypext(file.name)}</small></span>`;
-							fllist.appendChild(fileElement);
-						}
-					}
-				} else {
-					fllist.innerHTML = `<center style='padding-top: 30px'><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="74.20199" height="94.1023" viewBox="0,0,74.20199,94.1023"><g transform="translate(-224.61774,-142.87893)"><g data-paper-data="{&quot;isPaintingLayer&quot;:true}" fill-rule="nonzero" stroke="#ffffff" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" style="mix-blend-mode: normal"><path d="M227.11774,158.26119c0,-7.11468 5.76758,-12.88226 12.88226,-12.88226c7.11468,0 12.88226,5.76758 12.88226,12.88226c0,7.11468 -5.76758,12.88226 -12.88226,12.88226c-7.11468,0 -12.88226,-5.76758 -12.88226,-12.88226z" fill="none" stroke-width="5" stroke-linecap="butt"/><path d="M244.56247,233.94447l9.12493,-32.20565l-8.58817,-28.98508" fill="none" stroke-width="5" stroke-linecap="round"/><path d="M253.6874,202.81234l17.71311,31.66888" fill="none" stroke-width="5" stroke-linecap="round"/><path d="M246.17275,178.6581l-7.51465,27.37481" fill="none" stroke-width="5" stroke-linecap="round"/><path d="M250.46684,179.73163l28.44833,-12.3455" fill="none" stroke-width="5" stroke-linecap="round"/><path d="M260.82196,192.96703l-1.81137,-23.54791l37.99776,-2.9229l1.81138,23.54791z" fill="#aa8b00" stroke-width="0" stroke-linecap="butt"/><path d="M256.80524,189.29958l2.20535,-19.88046l37.99776,-2.9229l-2.20535,19.53118z" fill="#ffcf00" stroke-width="0" stroke-linecap="butt"/><path d="M279.06646,168.81576l-0.1513,-1.42964" fill="none" stroke-width="5" stroke-linecap="round"/></g></g></svg><br>This folder is empty.</center>`;
-				}
-			} else {
-				console.log("0003 b: no folder.");
-			}
+                // Assuming metadata is stored as a JSON object within the file
+                let metadata = {};
+                if (item.metadata) {
+                    try {
+                        metadata = JSON.parse(item.metadata);
+                    } catch (error) {
+                        console.error("Safe Error parsing metadata:", error);
+                    }
+                }
+
+                const icon = item.type === 'folder' ? geticon('folder') : geticon(ptypext(item.name));
+                fileElement.innerHTML = `<span>${icon}</span><span flname><span class='flfrname'> ${item.name}</span> <small>${ptypext(item.name)}</small></span>`;
+                fllist.appendChild(fileElement);
+            }
+        }
+    } else {
+        fllist.innerHTML = `<center style='padding-top: 30px'><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="74.20199" height="94.1023" viewBox="0,0,74.20199,94.1023"><g transform="translate(-224.61774,-142.87893)"><g data-paper-data="{&quot;isPaintingLayer&quot;:true}" fill-rule="nonzero" stroke="#ffffff" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" style="mix-blend-mode: normal"><path d="M227.11774,158.26119c0,-7.11468 5.76758,-12.88226 12.88226,-12.88226c7.11468,0 12.88226,5.76758 12.88226,12.88226c0,7.11468 -5.76758,12.88226 -12.88226,12.88226c-7.11468,0 -12.88226,-5.76758 -12.88226,-12.88226z" fill="none" stroke-width="5" stroke-linecap="butt"/><path d="M244.56247,233.94447l9.12493,-32.20565l-8.58817,-28.98508" fill="none" stroke-width="5" stroke-linecap="round"/><path d="M253.6874,202.81234l17.71311,31.66888" fill="none" stroke-width="5" stroke-linecap="round"/><path d="M246.17275,178.6581l-7.51465,27.37481" fill="none" stroke-width="5" stroke-linecap="round"/><path d="M250.46684,179.73163l28.44833,-12.3455" fill="none" stroke-width="5" stroke-linecap="round"/><path d="M260.82196,192.96703l-1.81137,-23.54791l37.99776,-2.9229l1.81138,23.54791z" fill="#aa8b00" stroke-width="0" stroke-linecap="butt"/><path d="M256.80524,189.29958l2.20535,-19.88046l37.99776,-2.9229l-2.20535,19.53118z" fill="#ffcf00" stroke-width="0" stroke-linecap="butt"/><path d="M279.06646,168.81576l-0.1513,-1.42964" fill="none" stroke-width="5" stroke-linecap="round"/></g></g></svg><br>This folder is empty.</center>`;
+    }
+} else {
+    console.log("0003 b: no folder.");
+}
 		}
 		// 
 
@@ -1247,6 +1256,13 @@
 			if (x.id === "slfile") {
 				openfile(x);
 			} else {
+				if (x.getAttribute("unid") === null || x.getAttribute("unid") === "") {
+					let folderPath = x.querySelector(".flfrname").innerText.trim();
+					console.log("Selected item is a folder: " + currentPath+ folderPath);
+					listFiles(currentPath+ folderPath)
+          		return;
+        }
+
 				if (document.getElementById("slfile")) { document.getElementById("slfile").id = null; }
 				nowfile = x;
 				var fileSize
@@ -1376,7 +1392,7 @@ drive_file_move
 
 				let file = await window.parent.getFileById(fileId);
 
-				file.fileName = await window.parent.ask("New Name:");
+				file.fileName = await window.parent.ask("New Name:", file.fileName);
 				await window.parent.updateFile(currentPath, fileId, file);
 
 				document.getElementById("fileinfobn").innerHTML = "File renamed successfully.";
@@ -1408,33 +1424,65 @@ drive_file_move
 
 
 		async function movefile(flid) {
-			flid = flid.getAttribute("unid")
-			console.log("NAV MOVE file with id: " + flid)
-			// Get folder names array
-			let folders = await window.parent.getFolderNames();
+    // Get file ID from the attribute
+    flid = flid.getAttribute("unid");
+    console.log("NAV MOVE file with id: " + flid);
 
-			let filteredFolders = folders.filter(folder => folder !== currentPath);
+    // Function to get folder names from the memory object
+    const getFolderNames = (memory) => {
+        return Object.keys(memory).filter(key => key.endsWith('/'));
+    };
 
-			// Create select element
-			let selectOptions = filteredFolders.map(folder => `<option>${folder}</option>`).join('');
-			let selectElement = `<select id="filesappselecttomovedest">${selectOptions}</select>`;
+    // Get the current path
+    const currentPath = "Downloads/";  
 
-			// Ask user to select a folder
-			let confpromise = await window.parent.justConfirm("Select a folder", `Move to ${selectElement}`);
+    // Get folder names array
+    let folders = getFolderNames(memory);
+    let filteredFolders = folders.filter(folder => folder !== currentPath);
 
-			console.log("promise result: " + confpromise)
-			if (confpromise) {
-				let x = window.parent.document.getElementById("filesappselecttomovedest").value;
-				console.log("Moving to: " + x)
-				let y = await window.parent.getFileById(flid);
-				console.log("got file: " + JSON.stringify(y))
-				await window.parent.createFile(x, y.fileName, y.type, y.content, y.metadata)
-				console.log("file made, " + JSON.stringify(y))
-				console.log("removing: " + flid)
-				await remfile(flid)
-				document.getElementById("fileinfobn").innerHTML = "File was moved to " + x;
-			}
-		}
+    // Create select element
+    let selectOptions = filteredFolders.map(folder => `<option>${folder}</option>`).join('');
+    let selectElement = `<select id="filesappselecttomovedest">${selectOptions}</select>`;
+
+    // Ask user to select a folder
+    let confpromise = await window.parent.justConfirm("Select a folder", `Move to ${selectElement}`);
+
+    console.log("promise result: " + confpromise);
+    if (confpromise) {
+        let selectedFolder = window.parent.document.getElementById("filesappselecttomovedest").value;
+        console.log("Moving to: " + selectedFolder);
+
+        // Function to find a file by ID
+        const getFileById = (memory, id) => {
+            for (let folder in memory) {
+                for (let file in memory[folder]) {
+                    if (memory[folder][file].id === id) {
+                        return { path: folder, name: file, data: memory[folder][file] };
+                    }
+                }
+            }
+            return null;
+        };
+
+        // Get file data by ID
+        let fileData = getFileById(memory, flid);
+        if (fileData) {
+            console.log("got file: " + JSON.stringify(fileData.data));
+
+            // Create file in the new location
+            memory[selectedFolder][fileData.name] = fileData.data;
+            console.log("file made in " + selectedFolder + ", " + JSON.stringify(fileData.data));
+
+            // Remove file from the old location
+            delete memory[fileData.path][fileData.name];
+            console.log("removing: " + flid);
+
+            document.getElementById("fileinfobn").innerHTML = "File was moved to " + selectedFolder;
+        } else {
+            console.error("File not found!");
+        }
+    }
+}
 
 
 		const databaseName = 'trojencat';
@@ -1511,13 +1559,13 @@ drive_file_move
 			let i, c;
 			if (x == "txt") {
 				i = "description"
-				c = "dodgerblue"
+				c = "#42A5F5"
 			} else if (x == "app") {
 				i = "rocket_launch"
-				c = "#9cff7e"
+				c = "#4CAF50"
 			} else if (window.parent.getbaseflty(x) == "image") {
 				i = "image"
-				c = "#ffff68"
+				c = "#FFEE58"
 			} else if (window.parent.getbaseflty(x) == "audio") {
 				i = "graphic_eq"
 				c = "violet"
@@ -1535,7 +1583,7 @@ drive_file_move
 				c = "#hh83j2"
 			} else if (x == "folder") {
 				i = "folder"
-				c = "yellow"
+				c = "#FDD835"
 			} else {
 				i = "bug_report"
 			}
@@ -1589,7 +1637,7 @@ drive_file_move
 			let x = await window.parent.justConfirm("Remove folder?", "Remove '" + currentPath + "' permanently from your device?")
 			if (x) {
 				await window.parent.remfolder(currentPath);
-				listFiles('System', true)
+				listFiles('System/', true)
 			}
 		}
 

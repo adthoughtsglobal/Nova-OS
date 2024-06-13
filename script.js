@@ -763,8 +763,8 @@ function openwindow(title, cont, ic, theme) {
 		let currentTop = parseFloat(computedStyle.top);
 
 		// Update the positions
-		let newLeft = `calc(50vw - 33.5vw + ${15 * Object.keys(winds).length}px)`;
-		let newTop = `calc(50vh - 35vh + ${10 * Object.keys(winds).length}px)`;
+		let newLeft = `calc(50vw - 33.5vw + ${5 * Object.keys(winds).length}px)`;
+		let newTop = `calc(50vh - 35vh + ${5 * Object.keys(winds).length}px)`;
 
 		windowDiv.style.left = newLeft;
 		windowDiv.style.top = newTop;
@@ -837,7 +837,7 @@ function openwindow(title, cont, ic, theme) {
 	windowContent.classList += "windowcontent";
 
 	var windowLoader = document.createElement("div");
-	windowLoader.innerHTML = appicns[title]
+	windowLoader.innerHTML = appicns[title] ? appicns[title] : defaultAppIcon;
 	windowLoader.classList += "windowloader";
 
 	function loadIframeContent(windowLoader, windowContent, iframe) {
@@ -1360,7 +1360,7 @@ async function remfile(ID) {
 
 		// Iterate through folders to find the file with the specified ID
 		for (let folder of memory) {
-			let fileIndex = folder.content.findIndex(file => file.uid === ID);
+			let fileIndex = folder.content.findIndex(file => file.id === ID);
 
 			if (fileIndex !== -1) {
 				// Remove the file from the folder's content array
@@ -1853,7 +1853,7 @@ function checksnapping(x, event) {
 
 	if (cursorY < VHInPixels || (viewportHeightInPixels - cursorY) < VHInPixels) {
 		x.classList.add("transp2");
-		x.style = "left: 3px; top: 3px; width: calc(100% - 7px); height: calc(100% - 63px);";
+		x.style = "width: calc(100% - 0px); height: calc(100% - 60px);";
 		fulsapp = true;
 		x.getElementsByClassName("flbtn")[0].innerHTML = "close_fullscreen";
 		setTimeout(() => {
@@ -1864,7 +1864,7 @@ function checksnapping(x, event) {
 	// left
 	if (cursorX < VWInPixels) {
 		x.classList.add("transp2");
-		x.style = "left: 3px; top: 3px; width: calc(50% - 5px); height: calc(100% - 63px);";
+		x.style = "left: 0; top: 0; width: calc(50% - 0px); height: calc(100% - 50px);";
 		fulsapp = true;
 		x.getElementsByClassName("flbtn")[0].innerHTML = "open_in_full";
 		setTimeout(() => {
@@ -1875,7 +1875,7 @@ function checksnapping(x, event) {
 	// right
 	if ((viewportWidthInPixels - cursorX) < VWInPixels) {
 		x.classList.add("transp2");
-		x.style = "right: 3px; top: 3px; width: calc(50% - 5px); height: calc(100% - 63px);";
+		x.style = "right: 0; top: 0; width: calc(50% - 0px); height: calc(100% - 50px);";
 		fulsapp = true;
 		x.getElementsByClassName("flbtn")[0].innerHTML = "open_in_full";
 		setTimeout(() => {
@@ -2057,7 +2057,7 @@ async function genTaskBar() {
 			let y = await getFileNamesByFolder("Apps");
 
 			x = await Promise.all(y.map(async (item) => {
-				if (item.name === "files" || item.name === "settings" || item.name === "store") {
+				if (item.name === "files.app" || item.name === "settings.app" || item.name === "store.app") {
 					console.log(`Found ${item.name}`);
 					return item;
 				}
@@ -2078,7 +2078,7 @@ async function genTaskBar() {
 				islnk = true;
 			}
 
-			appShortcutDiv.setAttribute("onclick", "openfile('" + app.uid + "')");
+			appShortcutDiv.setAttribute("onclick", "openfile('" + app.id + "')");
 			// Create a span element for the app icon
 			var iconSpan = document.createElement("span");
 
