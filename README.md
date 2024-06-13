@@ -29,6 +29,6 @@ Nova OS does not send and receive data from any external server to process your 
 We have made an amazing place for developers too in Nova OS, starting with a Studio app to make apps in Nova OS itself, to a detailed documentation and a discord server for your help! We have got you covered!
 
 <p align="center">
-## Nova is Free
-Nova runs without any ads, and we never deal with your data. If you consider supporting NovaOS development, please visit our [Patreon page](https://www.patreon.com/adthoughtsglobal/).
+<h1>Nova is Free</h1>
+Nova runs without any ads, and we never deal with your data. If you consider supporting NovaOS development, please visit our <a href="https://www.patreon.com/adthoughtsglobal/">Patreon page</a>.
 </p>
