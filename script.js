@@ -997,6 +997,7 @@ async function createFolder(folderName) {
 
 
 async function createFile(folderName, fileName, type, content, metadata) {
+	console.log(folderName, fileName, type, content, metadata)
 	let fileName2 = `${fileName}.${type}`;
     if (!metadata) {
         metadata = { "via": "nope" };
@@ -1104,7 +1105,8 @@ function getFileById(id) {
                     return {
                         fileName: key,
                         id: folder[key].id,
-                        content: folder[key].content
+                        content: folder[key].content,
+						metadata: folder[key].metadata
                     };
                 } else if (key.endsWith('/')) {
                     const result = searchFolder(folder[key]);
@@ -2043,7 +2045,7 @@ document.addEventListener('keydown', function(event) {
 document.addEventListener('keydown', function(event) {
 	if (event.shiftKey && event.key === 'Tab') {
 		event.preventDefault();
-		openn();
+		opensearchpanel();
 	}
 });
 
@@ -2152,7 +2154,7 @@ function mtpetxt(str) {
 		return;
 	}
 	try {
-		const parts = str.split('/');
+		const parts = str.split('.');
 		return parts.length > 1 ? parts.pop() : '';
 	}catch(err) {
 		console.error(err)
@@ -2190,6 +2192,7 @@ function ptypext(str) {
         case 'png':
         case 'gif':
         case 'bmp':
+		case 'webp':
             return 'image';
         
         case 'txt':

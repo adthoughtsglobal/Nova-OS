@@ -1314,8 +1314,8 @@ delete
 					document.getElementById("fileinfobn").innerHTML += `<div class="dropup">
 								  <button class="dropbtn">More</button>
 								  <div class="dropup-content">
-									${window.parent.getbaseflty(fileData.type) == "image" ? '<a onclick="window.parent.makewall(\'' + x.getAttribute("unid") + '\')"><span class="material-symbols-rounded">wallpaper</span> Set As Wallpaper</a>' : ''}
-									${window.parent.getbaseflty(fileData.type) == "app" || window.parent.getbaseflty(fileData.type) == "osl" || window.parent.getbaseflty(fileData.type) == "wasm" ? `<a onclick="openfile(document.getElementById('` + x.id + `'), 'text/html')"><span class="material-symbols-rounded">
+									${window.parent.getbaseflty(mtpetxt(fileData.fileName)) == "image" ? '<a onclick="window.parent.makewall(\'' + x.getAttribute("unid") + '\')"><span class="material-symbols-rounded">wallpaper</span> Set As Wallpaper</a>' : ''}
+									${window.parent.getbaseflty(mtpetxt(fileData.fileName)) == "app" || window.parent.getbaseflty(mtpetxt(fileData.fileName)) == "osl" || window.parent.getbaseflty(mtpetxt(fileData.fileName)) == "wasm" ? `<a onclick="openfile(document.getElementById('` + x.id + `'), 'text/html')"><span class="material-symbols-rounded">
 									construction
 									</span> Open in studio</a>` : ''}
 									

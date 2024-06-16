@@ -261,14 +261,14 @@
     let minutes = String(now.getMinutes()).padStart(2, '0');
 
     // Combine into a formatted string
-    let timestamp = `${year}-${month}-${day}, ${hours}:${minutes}:${seconds}`;
+    let timestamp = `${year}-${month}-${day}, ${hours}:${minutes}`;
 
     // Insert the timestamp into the 'captured' string
     let capturedString = `captured_${timestamp}`;
 
 
     // Call the createFile function with the formatted string
-    window.parent.createFile("Media", capturedString, "image/" + FileFormat, x, y);
+    window.parent.createFile("Media", capturedString, FileFormat, x, y);
 }
 
 // Call the function to see it in action
