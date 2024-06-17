@@ -17,6 +17,9 @@
 			font-family: Arial, Helvetica, sans-serif;
 			box-sizing: border-box;
 			background: linear-gradient(to top, #000000 0%, #1b1b1b 100%);
+			background-repeat: no-repeat;
+			background-size: cover;
+			height: 100vh;
 		}
 
 		img {
@@ -138,20 +141,21 @@
 					const file = await window.parent.getFileById(theID);
 
 					if (file && file.content) {
+						document.getElementById("tils").innerText = file.fileName;
 						file.content = window.parent.unshrinkbsf(file.content);
 						const type = file.type || 'application/octet-stream';
 						const base64Content = file.content;
 
-						if (file.type.startsWith("image")) {
+						if (window.parent.getbaseflty(file.fileName) == "image" ) {
 							disp.innerHTML = `<img id="thedisplay" alt="Nova" src="">`;
 							document.getElementById("thedisplay").src = `${base64Content}`;
-						} else if (file.type.startsWith("audio")) {
+						} else if (window.parent.getbaseflty(file.fileName) == "music" ) {
 							disp.innerHTML = `<audio controls>
 									<source src="" type="audio/mp3" id="thedisplay">
 									Your browser does not support the audio tag.
 								</audio>`;
 							document.getElementById("thedisplay").src = `${base64Content}`;
-						} else if (file.type.startsWith("video")) {
+						} else if (window.parent.getbaseflty(file.fileName) == "video" ) {
 							disp.innerHTML = `<video controls width="400" height="300" id="thedisplay">
 												<source src="" type="video/mp4" id="thesource">
 												Your browser does not support the video tag.

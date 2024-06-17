@@ -1757,7 +1757,7 @@ document.addEventListener('click', (event) => {
 });
 
 
-async function openfile(x, rt) {
+async function openfile(x) {
 	try {
 		let unid;
 		if (x instanceof Element || (x.nodeType && x.nodeType === 1)) {
@@ -1780,11 +1780,10 @@ async function openfile(x, rt) {
 		console.log("ya", mm, (mm.fileName))
 		mm.type = ptypext(mm.fileName);
 
-		let realtype = mm.type;
 		if (mm.type == "app") {
 			await openapp(mm.fileName, unid);
 		} else if (getbaseflty(mm.type) == "image"  || getbaseflty(mm.type) == "video"  || getbaseflty(mm.type) == "music" ) {
-			openlaunchprotocol("text", { "lclfile": unid, "shrinkray": true });
+			openlaunchprotocol("media", { "lclfile": unid, "shrinkray": true });
 		} else {
 			if (mm.type == "html" ) {
 				openlaunchprotocol("studio", { "lclfile": unid });
