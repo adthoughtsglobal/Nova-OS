@@ -14,6 +14,7 @@
 		:root {
 			--main-color: #00ff50;
 		}
+
 		html {
 			height: 100%;
 			width: 100%;
@@ -21,10 +22,14 @@
 
 		body {
 			height: calc(100% - 0px);
-    font-family: "Poppins", sans-serif;
-    margin: 0;
-    background: #101010;
-    color: white;
+			font-family: "Poppins", sans-serif;
+			margin: 0;
+			background: #101010;
+			color: white;
+		}
+
+		.material-symbols-rounded {
+			font-weight: 200;
 		}
 
 		.main-flex-container {
@@ -57,14 +62,14 @@
 
 		.track-name {
 			font-size: 2rem;
-    text-align: center;
-    width: 100%;
-    display: block;
+			text-align: center;
+			width: 100%;
+			display: block;
 		}
 
 		.track-artist {
 			font-size: 1rem;
-    opacity: 0.5;
+			opacity: 0.5;
 		}
 
 		.buttons {
@@ -73,21 +78,24 @@
 			align-items: center;
 		}
 
+		.playpause-track {
+			transform: scale(1.5);
+		}
+
 		.playpause-track,
 		.prev-track,
 		.next-track {
 			padding: 25px;
 			opacity: 0.8;
-
-			/* Smoothly transition the opacity */
-			transition: opacity .2s;
+			transition: .2s;
+			cursor: pointer;
 		}
 
 		.playpause-track:hover,
 		.prev-track:hover,
 		.next-track:hover {
 			opacity: 1.0;
-			transform: scale(1.1);
+			transform: scale(1.6);
 		}
 
 		.slider_container {
@@ -104,8 +112,8 @@
 			-webkit-appearance: none;
 			-moz-appearance: none;
 			appearance: none;
-    height: 4px;
-    background: #3b3b3b;
+			height: 4px;
+			background: #3b3b3b;
 			opacity: 0.7;
 			-webkit-transition: .2s;
 			transition: opacity .2s;
@@ -117,11 +125,11 @@
 			-webkit-appearance: none;
 			-moz-appearance: none;
 			appearance: none;
-			width: 15px;
-			height: 15px;
+			width: 11px;
+			height: 11px;
 			background: var(--main-color);
 			cursor: pointer;
-			border-radius: 50%;
+			border-radius: 10px;
 		}
 
 		.seek_slider:hover,
@@ -140,6 +148,8 @@
 		.current-time,
 		.total-duration {
 			padding: 10px;
+			font-size: 0.8rem;
+			opacity: 0.5;
 		}
 
 		i.fa-volume-down,
@@ -158,103 +168,193 @@
 			flex: 1;
 			width: 0;
 			background: inherit;
-    margin: 1rem;
-    border-radius: 1rem;
-    padding: 1rem;
-    background-image: radial-gradient(circle at 0% 0%, #292929 29%, transparent);
+			margin: 1rem;
+			border-radius: 1rem;
+			padding: 1rem;
+			backdrop-filter: brightness(1.5);
 		}
 
 		.queuewinnav {
 			display: flex;
-    width: 100%;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid #80808054;
-    padding-bottom: 0.5rem;
+			width: 100%;
+			flex-direction: row;
+			align-items: center;
+			justify-content: space-between;
+			border-bottom: 1px solid #80808054;
+			padding-bottom: 0.5rem;
 		}
 
 		.queuewinnav .buttonside button {
 			background: inherit;
-    border: none;
-    color: white;
-    opacity: 0.8;
-    border-radius: 50%;
-    display: inline-grid;
-    justify-content: center;
-    justify-items: center;
-    align-items: center;
-    margin-left: 0.3rem;
-	aspect-ratio: 1/1;
-}
+			border: none;
+			color: white;
+			opacity: 0.8;
+			border-radius: 50%;
+			display: inline-grid;
+			justify-content: center;
+			justify-items: center;
+			align-items: center;
+			margin-left: 0.3rem;
+			aspect-ratio: 1/1;
+		}
 
-.queuewinnav .buttonside button span {
-	font-size: 1.4rem;
-    font-weight: 200;
-}
+		.queuewinnav .buttonside button span {
+			font-size: 1.4rem;
+			font-weight: 200;
+		}
 
-.queuewinnav .buttonside button:hover {
-	backdrop-filter: brightness(0.8);
-}
+		.queuewinnav .buttonside button:hover {
+			background: #1f1f1f;
+		}
 
 		.queuenavtit {
 			font-size: 1.5rem;
 		}
+
+		.trackwid {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: nowrap;
+			justify-content: flex-start;
+			align-items: center;
+			padding: 0.3rem 0.4rem;
+			background: #1f1f1f;
+			margin: 0.3rem 0;
+			border-radius: 0.5rem;
+		}
+
+		.detailswid {
+			flex: 2;
+		}
+
+		.detailswid * {
+			display: block;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.trackwid .icon {
+			padding: 0.5rem;
+			background: #181818;
+			margin-right: 0.5rem;
+			border-radius: 0.3rem;
+			aspect-ratio: 1 / 1;
+			display: grid;
+			align-items: center;
+			justify-items: center;
+			text-shadow: 0 0 1rem black;
+		}
+
+		.ArtistName {
+			opacity: 0.5;
+			font-size: 0.8rem;
+		}
+
+		.rmtrfrqu {
+			display: none;
+			cursor: pointer;
+		}
+
+		.trackwid:hover .rmtrfrqu {
+			display: block;
+		}
+
+		.createtrackbtn {
+			position: absolute;
+			bottom: 1rem;
+			border-radius: 50%;
+			border: 0;
+			aspect-ratio: 1 / 1;
+			padding: 0.5rem;
+			line-height: 0;
+			right: 1rem;
+			background: #1f1f1f;
+			color: white;
+			cursor: pointer;
+
+		}
 	</style>
+
 </head>
 
 <body>
 	<div class="main-flex-container">
 		<div class="player">
 			<div class="details">
-			  <div class="track-name">Track Name</div>
-			  <div class="track-artist">Track Artist</div>
+				<div class="track-name">Track Name</div>
+				<div class="track-artist">Track Artist</div>
 			</div>
 			<div class="buttons">
-			  <div class="prev-track" onclick="prevTrack()"><span class="material-symbols-rounded">
-				  skip_previous
-				  </span></div>
-			  <div class="playpause-track" onclick="playpauseTrack()"><span class="material-symbols-rounded">
-				  play_circle
-				  </span></div>
-			  <div class="next-track" onclick="nextTrack()"><span class="material-symbols-rounded">
-				  skip_next
-				  </span></div>
+				<div class="prev-track" onclick="prevTrack()"><span class="material-symbols-rounded">
+						skip_previous
+					</span></div>
+				<div class="playpause-track" onclick="playpauseTrack()"><span class="material-symbols-rounded">
+						play_circle
+					</span></div>
+				<div class="next-track" onclick="nextTrack()"><span class="material-symbols-rounded">
+						skip_next
+					</span></div>
 			</div>
 			<div class="slider_container">
-			  <div class="current-time">00:00</div>
-			  <input type="range" min="1" max="100" value="0" class="seek_slider" onchange="seekTo()">
-			  <div class="total-duration">00:00</div>
+				<div class="current-time">00:00</div>
+				<input type="range" min="1" max="100" value="0" class="seek_slider" onchange="seekTo()">
+				<div class="total-duration">00:00</div>
 			</div>
 			<div class="slider_container">
 				<span class="material-symbols-rounded">
-				no_sound
+					no_sound
 				</span>
-			  <input type="range" min="1" max="100" value="99" class="volume_slider" onchange="setVolume()">
+				<input type="range" min="1" max="100" value="99" class="volume_slider" onchange="setVolume()">
 				<span class="material-symbols-rounded">
-				volume_up
+					volume_up
 				</span>
 			</div>
-		  </div>
-		  <div id="queuewindow">
+		</div>
+		<div id="queuewindow">
 			<div class="queuewinnav">
-				<span class="queuenavtit">Queue 
-					<div class="now-playing">Playing 1 / 1</div></span>
+				<span class="queuenavtit">Queue
+					<div class="now-playing">Playing 1 / 1</div>
+				</span>
 				<div class="buttonside">
-				<button>
-					<span class="material-symbols-rounded">
-						shuffle
+					<button>
+						<span class="material-symbols-rounded">
+							shuffle
 						</span>
-				</button>
-				<button>
-					<span class="material-symbols-rounded">
+					</button>
+					<button>
+						<span class="material-symbols-rounded">
+							close
+						</span>
+					</button>
+				</div>
+			</div>
+			<div id="tracklist">
+				<div class="trackwid">
+					<div class="icon">
+						<span class="material-symbols-rounded">
+							music_note
+						</span>
+					</div>
+					<div class="detailswid">
+						<b class="TrackName">Track Name</b>
+						<span class="ArtistName">Artist Name</span>
+					</div>
+					<span class="material-symbols-rounded rmtrfrqu">
 						close
-						</span>
-				</button>
+					</span>
+				</div>
 			</div>
-			</div>
-		  </div>
+			<button class="createtrackbtn">
+				<span class="material-symbols-rounded">
+					add
+				</span>
+			</button>
+		</div>
+
 	</div>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
 
 	<script>
 		let now_playing = document.querySelector(".now-playing");
@@ -278,28 +378,90 @@
 		// Create new audio element
 		let curr_track = document.createElement('audio');
 
+		let track_list = {
+	"Cure For Me": {
+		artist: "Aurora",
+		path: "cure for me.mp3"
+	},
+	"Cure For Me2": {
+		artist: "Aurora",
+		path: "cure for me2.mp3"
+	}
+};
+
 		// Define the tracks that have to be played
-		let track_list = [
-			{
-				name: "Cure For Me",
-				artist: "Aroura",
-				path: "cure for me.mp3"
-			}
-		];
+		function renderQueue() {
+	// Clear existing track widgets if needed
+	document.querySelectorAll('.trackwid').forEach(e => e.remove());
 
-		function loadTrack(track_index) {
-			clearInterval(updateTimer);
-			resetValues();
-			curr_track.src = track_list[track_index].path;
-			curr_track.load();
+	for (let trackName in track_list) {
+		if (track_list.hasOwnProperty(trackName)) {
+			const track = track_list[trackName];
 
-			track_name.textContent = track_list[track_index].name;
-			track_artist.textContent = track_list[track_index].artist;
-			now_playing.textContent = "PLAYING " + (track_index + 1) + " / " + track_list.length;
+			const trackWid = document.createElement('div');
+			trackWid.className = 'trackwid';
 
-			updateTimer = setInterval(seekUpdate, 1000);
-			curr_track.addEventListener("ended", nextTrack);
+			const iconDiv = document.createElement('div');
+			iconDiv.className = 'icon';
+
+			const musicNoteSpan = document.createElement('span');
+			musicNoteSpan.className = 'material-symbols-rounded';
+			musicNoteSpan.textContent = 'music_note';
+			iconDiv.appendChild(musicNoteSpan);
+
+			const detailsWid = document.createElement('div');
+			detailsWid.className = 'detailswid';
+
+			const trackNameElement = document.createElement('b');
+			trackNameElement.className = 'TrackName';
+			trackNameElement.textContent = trackName; // Set track name
+
+			const artistName = document.createElement('span');
+			artistName.className = 'ArtistName';
+			artistName.textContent = track.artist; // Set artist name
+
+			detailsWid.appendChild(trackNameElement);
+			detailsWid.appendChild(artistName);
+
+			const closeSpan = document.createElement('span');
+			closeSpan.className = 'material-symbols-rounded rmtrfrqu';
+			closeSpan.textContent = 'close';
+			closeSpan.addEventListener('click', function() {
+				delete track_list[trackName];
+				trackWid.remove();
+			});
+
+			trackWid.appendChild(iconDiv);
+			trackWid.appendChild(detailsWid);
+			trackWid.appendChild(closeSpan);
+
+			document.getElementById("tracklist").appendChild(trackWid);
 		}
+	}
+}
+
+renderQueue()
+
+function loadTrack(trackName) {
+	console.log("playing: " + trackName)
+	if (!track_list.hasOwnProperty(trackName)) {
+		console.error("Track not found in the track list");
+		return;
+	}
+	
+	const track = track_list[trackName];
+	clearInterval(updateTimer);
+	resetValues();
+	curr_track.src = track.path;
+	curr_track.load();
+
+	track_name.textContent = trackName;
+	track_artist.textContent = track.artist;
+	now_playing.textContent = "Playing " + trackName;
+
+	updateTimer = setInterval(seekUpdate, 1000);
+	curr_track.addEventListener("ended", nextTrack);
+}
 
 		function resetValues() {
 			curr_time.textContent = "00:00";
@@ -307,8 +469,68 @@
 			seek_slider.value = 0;
 		}
 
-		// Load the first track in the tracklist
-		loadTrack(track_index);
+		function playFirstTrack() {
+	const firstTrackName = Object.keys(track_list)[0];
+	if (firstTrackName) {
+		loadTrack(firstTrackName);
+	} else {
+		console.error("No tracks available in the track list");
+	}
+}
+
+// Call the function to play the first track
+playFirstTrack();
+
+function openfromfiles() {
+				window.parent.openlaunchprotocol("files",{"type": "open"})
+			}
+
+			window.addEventListener('storage', async (event) => {
+				if (event.key === 'todo') {
+					
+					if (JSON.parse(localStorage.getItem("todo")).type == "opentotext") {
+						console.log('Loading todo');
+						
+						const file = await window.parent.getFileById(JSON.parse(localStorage.getItem("todo")).lclfile);
+						readthefile(window.parent.unshrinkbsf(file.content),file.fileName )
+					}
+				}
+			});
+
+			function readthefile(base64Url, fileName = 'Unknown Title') {
+				const base64String = base64Url.split(',')[1];
+	const binaryString = atob(base64String);
+	const len = binaryString.length;
+	const bytes = new Uint8Array(len);
+
+	for (let i = 0; i < len; i++) {
+		bytes[i] = binaryString.charCodeAt(i);
+	}
+	jsmediatags.read(bytes.buffer, {
+		onSuccess: function(tag) {
+			// Handle the metadata
+			const metadata = tag.tags;
+			const trackName = metadata.title || fileName;
+			const artistName = metadata.artist || 'Unknown Artist';
+
+			// Add the track to the track_list map
+			track_list[trackName] = {
+				artist: artistName,
+				path: base64Url // Use the base64 URL directly
+			};
+
+			// Log the updated track list
+			console.log('Updated track list:', track_list);
+			
+			// Optionally, call a function to render the updated track list
+			renderQueue();
+		},
+		onError: function(error) {
+			console.error("Error reading metadata: ", error);
+		}
+	});
+	};
+
 
 		function playpauseTrack() {
 			if (!isPlaying) playTrack();

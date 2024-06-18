@@ -1098,7 +1098,8 @@ async function updateFile(folderName, fileId, newData) {
 }
 
 function getFileById(id) {
-	function searchFolder(folder) {
+
+    function searchFolder(folder) {
         for (let key in folder) {
             if (typeof folder[key] === 'object' && folder[key] !== null) {
                 if (folder[key].id === id) {
@@ -1106,7 +1107,7 @@ function getFileById(id) {
                         fileName: key,
                         id: folder[key].id,
                         content: folder[key].content,
-						metadata: folder[key].metadata
+                        metadata: folder[key].metadata
                     };
                 } else if (key.endsWith('/')) {
                     const result = searchFolder(folder[key]);
@@ -1118,8 +1119,11 @@ function getFileById(id) {
         }
         return null;
     }
-    return searchFolder(memory);
+    
+    const result = searchFolder(memory);
+    return result;
 }
+
 
 function makedialogclosable(ok) {
 	const myDialog = gid(ok);
