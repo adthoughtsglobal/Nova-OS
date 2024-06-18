@@ -440,7 +440,7 @@ nav info {
 }
 
 .transp2 {
-	transition: .2s;
+	transition:.5s cubic-bezier(0.6, 0.05, 0.41, 0.78);
 }
 
 .transp3 {

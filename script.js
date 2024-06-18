@@ -603,10 +603,10 @@ function flwin(x) {
 	if (x.innerHTML == "open_in_full") {
 		let oke = x.parentElement.parentElement.parentElement;
 
-		oke.style.left = "0";
-		oke.style.top = "0";
 		oke.style.width = "calc(100% - 0px)";
 		oke.style.height = "calc(100% - 57px)";
+		oke.style.left = "0";
+		oke.style.top = "0";
 
 		x.innerHTML = "close_fullscreen";
 		fulsapp = true;
@@ -1858,7 +1858,11 @@ function checksnapping(x, event) {
 
 	if (cursorY < VHInPixels || (viewportHeightInPixels - cursorY) < VHInPixels) {
 		x.classList.add("transp2");
-		x.style = "width: calc(100% - 0px); height: calc(100% - 60px);";
+		x.style.width = "calc(100% - 0px)";
+		x.style.height = "calc(100% - 60px)";
+		x.style.top = "0";
+		x.style.right , x.style.left = "0";
+		
 		fulsapp = true;
 		x.getElementsByClassName("flbtn")[0].innerHTML = "close_fullscreen";
 		setTimeout(() => {
