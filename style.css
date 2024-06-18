@@ -49,6 +49,7 @@ body {
 	color: white;
 	font-family: 'Poppins', sans-serif;
 	transition: 2s;
+	user-select: none;
 	background-repeat: no-repeat;
 }
 
