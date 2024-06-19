@@ -11,10 +11,6 @@ We are creating this for everyone, confident that no one will ever need to 'lear
 Nova is a web-based operating system that has an App Ecosystem powered by a community of Creators like you.
 # [Use Nova here](https://adthoughtsglobal.github.io/Nova-OS/)
 
-# Includes
-1. Operating system written in HTML, JS and CSS. (JSON is included in JS. JQuery has been used for 1 feature.)
-2. Default Apps for Nova OS package: Nova OS AppData BETA 
-
 # A Friendly OS that's always with you.
 Nova OS does not send and receive data from any external server to process your data in safe hands. Your Data never escapes your device, all cache and personal data are saved in your Browser Storage. Making it an entirely local entity.
 
