@@ -1,3 +1,11 @@
+say(`<h1>Huge Update Alert.</h1>
+<ul>
+<li>All your files in Nova would get corrupted if you didn't download them before the next Nova Update.</li>
+<li>The next Nova Update, Nova 1.2, will have major memory changes, making files unreadable.</li>
+
+<li>We are making a <u>system to download your files</u>, you can download the files out of NovaOS on the old filesystem before the update. </li></ul>
+
+Consider joining the discord to recive alerts of the progress of this update, <a href="https://discord.gg/atkqbwEQU8">here</a>.`)
 
 const databaseName = 'trojencat';
 // Function to open or create an IndexedDB database
