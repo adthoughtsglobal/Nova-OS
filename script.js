@@ -19,6 +19,15 @@ getdb('trojencat', 'rom')
 			if (result !== null) {
 				memory = result;
 
+say(`<h1>Huge Update Alert.</h1>
+<ul>
+<li>All your files in Nova would get corrupted if you didn't download them before the next Nova Update.</li>
+<li>The next Nova Update, Nova 1.2, will have major memory changes, making files unreadable.</li>
+
+<li>We are making a <u>system to download your files</u>, you can download the files out of NovaOS on the old filesystem before the update. </li></ul>
+
+Consider joining the discord to recive alerts of the progress of this update, <a href="https://discord.gg/atkqbwEQU8">here</a>.`)
+
 			} else {
 				await say(`<h2>Terms of service and License</h2><p>By using Nova OS, you agree to the <a href="https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use">Adthoughtsglobal Nova Terms of Use</a>. <be><small>Your IP, personal data, or files are not shared or saved, We do not collect your personal information. <br> Read the terms clearly before use.</small>`);
 
@@ -1064,15 +1073,6 @@ function say(message, status) {
 		modal.showModal();
 	});
 }
-
-say(`<h1>Huge Update Alert.</h1>
-<ul>
-<li>All your files in Nova would get corrupted if you didn't download them before the next Nova Update.</li>
-<li>The next Nova Update, Nova 1.2, will have major memory changes, making files unreadable.</li>
-
-<li>We are making a <u>system to download your files</u>, you can download the files out of NovaOS on the old filesystem before the update. </li></ul>
-
-Consider joining the discord to recive alerts of the progress of this update, <a href="https://discord.gg/atkqbwEQU8">here</a>.`)
 
 
 function loadtaskspanel() {
