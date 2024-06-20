@@ -928,6 +928,7 @@ nav info {
 	overflow: hidden;
 	text-align: center;
 	background: #202020;
+	transition: 0.8s;
 }
 
 #edison img {
@@ -952,7 +953,7 @@ nav info {
 
 .closeEffect {
   animation-name: closeEffect;
-  animation-duration: 1s; /* Adjust the duration as needed */
+  animation-duration: 1.05s; /* Adjust the duration as needed */
 }
 
 .loader5345 {
