@@ -1282,20 +1282,23 @@
 		async function slfile(y) {
 			let x = y;
 			if (x.id === "slfile") {
-				openfile(x);
-			} else {
 				if (x.getAttribute("unid") === null || x.getAttribute("unid") === "") {
 					let folderPath = x.querySelector(".flfrname").innerText.trim();
 					console.log("Selected item is a folder: " + currentPath + folderPath);
 					listFiles(currentPath + folderPath)
 					return;
 				}
-
+				openfile(x);
+			} else {
+				
 				if (document.getElementById("slfile")) { document.getElementById("slfile").id = null; }
 				nowfile = x;
+				
 				var fileSize
 				x.id = "slfile";
 				let fileData
+				if (!x.getAttribute("unid") === null || !x.getAttribute("unid") === "") {
+					
 				try {
 					fileData = await window.parent.getFileById(x.getAttribute("unid"));
 
@@ -1303,10 +1306,12 @@
 						fileSize = new TextEncoder().encode(fileData.content).length;
 					} else {
 						console.error("Safe Error: Unable to retrieve file content.");
+						
 					}
 				} catch (error) {
 					console.error("Safe Error:", error);
 				}
+				
 
 
 				if (fileSize !== 0) {
@@ -1358,6 +1363,7 @@ drive_file_move
 </span> Move</a>
 								  </div>
 								</div> `+ fileSize + ' ' + units[unitIndex]
+				
 				} catch (error) {
 					document.getElementById("fileinfobn").innerHTML += "Safe Error 0006";
 					window.parent.say(`<h1>File Error</h1><p>Nova files couldn't process that file</p><small>(Error 0006)</small>`, "warning")
@@ -1366,6 +1372,8 @@ drive_file_move
 					console.error("An error occurred:", error);
 
 				}
+								
+			}
 			}
 		}
 

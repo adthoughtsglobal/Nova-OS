@@ -1411,31 +1411,48 @@ async function remfile(ID) {
 	}
 }
 
-async function remfolder(folderName) {
-	try {
-        memory = await getdb('trojencat', 'rom');
+async function remfolder(folderPath) {
+    try {
+        // Get the memory database
+        const memory = await getdb('trojencat', 'rom');
+        
+        // Split the folderPath into parts
         let parts = folderPath.split('/');
         let current = memory;
-
+        let parent = null;
+        let key = null;
+        
+        // Traverse the path to find the folder
         for (let part of parts) {
-            part += '/';
-            if (current[part]) {
-                current = current[part];
-            } else {
-                console.error(`Folder "${folderPath}" not found.`);
-                return;
+            if (part) {
+                part += '/';
+                if (current[part]) {
+                    parent = current;
+                    key = part;
+                    current = current[part];
+                } else {
+                    console.error(`Folder "${folderPath}" not found.`);
+                    return;
+                }
             }
         }
 
         // Remove the folder and its contents
-        delete current[parts[parts.length - 1]];
+        if (parent && key) {
+            delete parent[key];
+        } else {
+            console.error(`Unable to delete folder "${folderPath}".`);
+            return;
+        }
 
+        // Update the memory database
         await setdb('trojencat', 'rom', memory);
         console.log(`Folder "${folderPath}" and its contents successfully removed.`);
     } catch (error) {
         console.error("Error removing folder:", error);
     }
 }
+
 
 var defAppsList = [
 	"camera",
