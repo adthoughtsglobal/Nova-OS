@@ -100,27 +100,34 @@ getdb('trojencat', 'rom')
 		console.error('Error retrieving data from the database:', error);
 	});
 
-async function startup() {
-	console.log("INITIAL SETUP");
-	qsetsRefresh()
-	await dod().then(() => {
-		gid('startupterms').innerHTML += "<span>Setting up desktop...</span>";
-		return updateTime();
-	}).then(() => {
-		gid('startupterms').innerHTML += "<span>Initialising clock...</span>";
-		setInterval(updateTime, 1000);
-		return checkdmode();
-	}).then(() => {
-		gid('startupterms').innerHTML += "<span>Setting themes...</span>";
-		return genTaskBar();
-	}).then(() => {
-		gid('startupterms').innerHTML += "<span>Creating taskbar...</span>";
-
-		closeElementedis()
-	}).catch(err => {
-		console.error("An error occurred during startup:", err);
-	});
-}
+	async function startup() {
+		console.log("INITIAL SETUP");
+		
+		try { qsetsRefresh(); } 
+		catch (err) { console.error("qsetsRefresh error:", err); }
+	
+		try {
+			gid('startupterms').innerHTML += "<span>Initialising clock...</span>";
+			await updateTime();
+		} catch (err) { console.error("updateTime error:", err); }
+	
+		try {
+			gid('startupterms').innerHTML += "<span>Checking themes...</span>";
+			setInterval(updateTime, 1000);
+			await checkdmode();
+		} catch (err) { console.error("checkdmode error:", err); }
+	
+		try {
+			gid('startupterms').innerHTML += "<span id='struploadtasnr'>Loading TaskBar... (0%)</span>";
+			await genTaskBar();
+		} catch (err) { console.error("genTaskBar error:", err); }
+	
+		try {
+			await dod();
+			gid('startupterms').innerHTML += "<span>Startup completed...</span>";
+			closeElementedis();
+		} catch (err) { console.error("dod error:", err); }
+	}
 
 document.addEventListener("DOMContentLoaded", function() {
 	console.log("DOMCL")
@@ -253,6 +260,17 @@ async function openn() {
 	}).catch((error) => {
 		console.error('An error occurred:', error);
 	});
+	if (gid("closeallwinsbtn").checked) {
+		gid("closeallwinsbtn").checked = false;
+	}
+	if (!winds.length) {
+		
+		gid("closeallwinsbtn").checked = true;
+		gid("closeallwinsbtn").setAttribute("disabled", true)
+	} else {
+		
+		gid("closeallwinsbtn").setAttribute("disabled", false)
+	}
 	gid('appdmod').showModal()
 }
 
@@ -572,6 +590,7 @@ async function dod() {
 function closeElementedis() {
 	var element = document.getElementById("edison");
 	element.classList.add("closeEffect");
+	
 	setTimeout(function() {
 		element.close()
 	}, 1000);
@@ -2064,6 +2083,7 @@ async function genTaskBar() {
 		let x = await getFileNamesByFolder("Dock");
 		if (x.length == 0) {
 			let y = await getFileNamesByFolder("Apps");
+			gid("struploadtasnr").innerHTML = "Loading TaskBar... (0%)"
 
 			x = await Promise.all(y.map(async (item) => {
 				if (item.name === "files.app" || item.name === "settings.app" || item.name === "store.app") {
@@ -2073,8 +2093,12 @@ async function genTaskBar() {
 			}));
 
 			x = x.filter(item => item);
+			
 		}
-		x.forEach(async function(app) {
+		let index = 0;
+		x.forEach(async function(app, index) {
+			index++
+			gid("struploadtasnr").innerHTML = "Loading TaskBar... ("+x.length/index*100+"%)"
 			var islnk = false;
 			// Create a div element for the app shortcut
 			var appShortcutDiv = document.createElement("biv");
@@ -2238,4 +2262,14 @@ function basename(str) {
     } catch (err) {
         console.log(err);
     }
+}
+
+function closeallwindows() {
+	Object.keys(winds).forEach(key => {
+		const taskId = key.slice(-6); // Extract the last 6 characters as the task ID
+
+		const taskName = key.slice(0, -6); // Remove the last 6 characters from the key
+		clwin("window" + taskId);
+		delete winds[taskName + taskId];
+	});
 }

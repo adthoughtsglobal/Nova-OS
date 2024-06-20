@@ -48,9 +48,13 @@ body {
 	background-position: center;
 	color: white;
 	font-family: 'Poppins', sans-serif;
-	transition: 2s;
+	transition: .5s;
 	user-select: none;
 	background-repeat: no-repeat;
+}
+
+dialog {
+	user-select: none;
 }
 
 #bgimage {
@@ -938,9 +942,11 @@ nav info {
 @keyframes closeEffect {
   0% {
 	opacity: 1;
+	filter: blur(0px);
   }
   100% {
 	opacity: 0;
+	filter: blur(10px);
   }
 }
 
@@ -1419,7 +1425,6 @@ background: #5c8dab;
 
 #startupterms span {
 	display: flex;
-	animation: pop .3s;
 }
 
 #searchwindow {
@@ -1607,3 +1612,209 @@ background: #5c8dab;
 		margin-right: auto !important;
 	}
 }
+
+.checkbox-wrapper-44 input[type="checkbox"] {
+    display: none;
+    visibility: hidden;
+  }
+
+  .checkbox-wrapper-44 *,
+  .checkbox-wrapper-44 *::before,
+  .checkbox-wrapper-44 *::after {
+    box-sizing: border-box;
+  }
+
+  .checkbox-wrapper-44 .toggleButton {
+    cursor: pointer;
+    display: block;
+    transform-origin: 50% 50%;
+    transform-style: preserve-3d;
+    transition: transform 0.14s ease;
+  }
+  .checkbox-wrapper-44 .toggleButton:active {
+    transform: rotateX(30deg);
+  }
+  .checkbox-wrapper-44 .toggleButton input + div {
+		border: 3px solid transparent;
+		border-radius: 50%;
+		position: relative;
+		width: 14px;
+		height: 14px;
+  }
+  .checkbox-wrapper-44 .toggleButton input + div svg {
+    fill: none;
+    stroke-width: 4.6px;
+    stroke: #cbcbcb;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    width: 14px;
+    height: 14px;
+    display: block;
+    position: absolute;
+    left: -3px;
+    top: -3px;
+    right: -3px;
+    bottom: -3px;
+    z-index: 1;
+    stroke-dashoffset: 124.6;
+    stroke-dasharray: 0 162.6 133 29.6;
+    transition: all 0.4s ease 0s;
+}
+  .checkbox-wrapper-44 .toggleButton input + div:before,
+  .checkbox-wrapper-44 .toggleButton input + div:after {
+		content: "";
+		width: 1px;
+		height: 7px;
+		background: #b5b5b5;
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		border-radius: 5px;
+	
+  }
+  .checkbox-wrapper-44 .toggleButton input + div:before {
+    opacity: 0;
+    transform: scale(0.3) translate(-50%, -50%) rotate(45deg);
+    -webkit-animation: bounceInBefore-44 0.3s linear forwards 0.3s;
+            animation: bounceInBefore-44 0.3s linear forwards 0.3s;
+  }
+  .checkbox-wrapper-44 .toggleButton input + div:after {
+    opacity: 0;
+    transform: scale(0.3) translate(-50%, -50%) rotate(-45deg);
+    -webkit-animation: bounceInAfter-44 0.3s linear forwards 0.3s;
+            animation: bounceInAfter-44 0.3s linear forwards 0.3s;
+  }
+  .checkbox-wrapper-44 .toggleButton input:checked + div svg {
+    stroke-dashoffset: 162.6;
+    stroke-dasharray: 0 162.6 28 134.6;
+    transition: all 0.4s ease 0.2s;
+    transform: scale(1.3);
+    stroke: #47da43;
+  }
+
+  .checkbox-wrapper-44 .toggleButton input:checked + div:before {
+    opacity: 0;
+    transform: scale(0.3) translate(-50%, -50%) rotate(45deg);
+    -webkit-animation: bounceInBeforeDont-44 0.3s linear forwards 0s;
+            animation: bounceInBeforeDont-44 0.3s linear forwards 0s;
+  }
+  .checkbox-wrapper-44 .toggleButton input:checked + div:after {
+    opacity: 0;
+    transform: scale(0.3) translate(-50%, -50%) rotate(-45deg);
+    -webkit-animation: bounceInAfterDont-44 0.3s linear forwards 0s;
+            animation: bounceInAfterDont-44 0.3s linear forwards 0s;
+  }
+
+  @-webkit-keyframes bounceInBefore-44 {
+    0% {
+      opacity: 0;
+      transform: scale(0.3) translate(-50%, -50%) rotate(45deg);
+    }
+    50% {
+      opacity: 0.9;
+      transform: scale(1.1) translate(-50%, -50%) rotate(45deg);
+    }
+    80% {
+      opacity: 1;
+      transform: scale(0.89) translate(-50%, -50%) rotate(45deg);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) translate(-50%, -50%) rotate(45deg);
+    }
+  }
+
+  @keyframes bounceInBefore-44 {
+    0% {
+      opacity: 0;
+      transform: scale(0.3) translate(-50%, -50%) rotate(45deg);
+    }
+    50% {
+      opacity: 0.9;
+      transform: scale(1.1) translate(-50%, -50%) rotate(45deg);
+    }
+    80% {
+      opacity: 1;
+      transform: scale(0.89) translate(-50%, -50%) rotate(45deg);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) translate(-50%, -50%) rotate(45deg);
+    }
+  }
+  @-webkit-keyframes bounceInAfter-44 {
+    0% {
+      opacity: 0;
+      transform: scale(0.3) translate(-50%, -50%) rotate(-45deg);
+    }
+    50% {
+      opacity: 0.9;
+      transform: scale(1.1) translate(-50%, -50%) rotate(-45deg);
+    }
+    80% {
+      opacity: 1;
+      transform: scale(0.89) translate(-50%, -50%) rotate(-45deg);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) translate(-50%, -50%) rotate(-45deg);
+    }
+  }
+  @keyframes bounceInAfter-44 {
+    0% {
+      opacity: 0;
+      transform: scale(0.3) translate(-50%, -50%) rotate(-45deg);
+    }
+    50% {
+      opacity: 0.9;
+      transform: scale(1.1) translate(-50%, -50%) rotate(-45deg);
+    }
+    80% {
+      opacity: 1;
+      transform: scale(0.89) translate(-50%, -50%) rotate(-45deg);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) translate(-50%, -50%) rotate(-45deg);
+    }
+  }
+  @-webkit-keyframes bounceInBeforeDont-44 {
+    0% {
+      opacity: 1;
+      transform: scale(1) translate(-50%, -50%) rotate(45deg);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(0.3) translate(-50%, -50%) rotate(45deg);
+    }
+  }
+  @keyframes bounceInBeforeDont-44 {
+    0% {
+      opacity: 1;
+      transform: scale(1) translate(-50%, -50%) rotate(45deg);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(0.3) translate(-50%, -50%) rotate(45deg);
+    }
+  }
+  @-webkit-keyframes bounceInAfterDont-44 {
+    0% {
+      opacity: 1;
+      transform: scale(1) translate(-50%, -50%) rotate(-45deg);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(0.3) translate(-50%, -50%) rotate(-45deg);
+    }
+  }
+  @keyframes bounceInAfterDont-44 {
+    0% {
+      opacity: 1;
+      transform: scale(1) translate(-50%, -50%) rotate(-45deg);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(0.3) translate(-50%, -50%) rotate(-45deg);
+    }
+  }

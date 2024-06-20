@@ -1145,6 +1145,7 @@
 		}
 
 		async function listFiles(folderName, gen) {
+			console.log("Listfiles log: " + folderName)
 			const startTime = performance.now();
 			if (currentPath == folderName && gen) {
 				return;
@@ -1158,20 +1159,36 @@
 
 			// Helper function to navigate through the memory object
 			function findFolder(path, obj) {
-				let parts = path.split('/');
-				for (let part of parts) {
-					if (part) {
-						if (obj[part + '/']) {
-							obj = obj[part + '/'];
-						} else if (obj[part]) {
-							obj = obj[part];
-						} else {
-							return null;
-						}
-					}
-				}
-				return obj;
-			}
+  // Split the path, retaining empty strings
+  let parts = path.split('/').map((part, index, array) => {
+    // Check if the current and next part are both empty, indicating a double slash
+    if (part === '' && array[index + 1] === '') {
+      return '/';
+    }
+    // Check if the current part is not empty and not the last part
+    if (part !== '' && index < array.length - 1 && array[index + 1] === '') {
+      return part + '/';
+    }
+    return part;
+  });
+
+  console.log('Path:', path, 'Parts:', parts);
+
+  for (let part of parts) {
+    if (part) {
+      if (obj[part + '/']) {
+        obj = obj[part + '/'];
+      } else if (obj[part]) {
+        obj = obj[part];
+      } else {
+        return null;
+      }
+    }
+  }
+
+  console.log("Listfiles log - obj: ", obj);
+  return obj;
+}
 
 			// Find the folder with the given name
 			const folder = findFolder(folderName, memory);
