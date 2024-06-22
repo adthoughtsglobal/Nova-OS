@@ -18,7 +18,7 @@ Nova OS does not send and receive data from any external server to process your 
 > "Nova has potential to be very good, and is currently very cool"
 - mistium
 
-> "Nova is cool, it has many features which help me solve my problems, Nova has all the things that are needed in an OS which makes it a very good OS."
+> "As one of the developers myself, i've experienced Nova's pre-release, every update that comes out is amazing and mind blowing, i use NovaOS everyday to do my tasks, it works like an OS and has a strong file system, it has a very strong core language support which can help developing a very good app for NovaOS, one thing special about NovaOS is that it is made just in html, css and js. Overall, in my opinion it is one of the most powerful webOS i've ever seen"
 - Felix
 
 # You're always welcome to the creators!
