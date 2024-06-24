@@ -5,12 +5,12 @@ on: [push]
 jobs:
   discordNotification:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Send message to Discord
+      - name: Send embed message to Discord
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
@@ -18,8 +18,36 @@ jobs:
           COMMIT_URL=$(jq -r '.head_commit.url' < $GITHUB_EVENT_PATH)
           REPO_NAME=$(jq -r '.repository.full_name' < $GITHUB_EVENT_PATH)
           AUTHOR_NAME=$(jq -r '.head_commit.author.name' < $GITHUB_EVENT_PATH)
+          AUTHOR_AVATAR=$(jq -r '.sender.avatar_url' < $GITHUB_EVENT_PATH)
+          TIMESTAMP=$(jq -r '.head_commit.timestamp' < $GITHUB_EVENT_PATH)
 
           curl -H "Content-Type: application/json" \
           -X POST \
-          -d "{\"content\": \"New commit in **$REPO_NAME** by **$AUTHOR_NAME**: [$COMMIT_MESSAGE]($COMMIT_URL)\"}" \
+          -d '{
+                "embeds": [
+                  {
+                    "title": "New Commit in '"$REPO_NAME"'",
+                    "description": "'"$COMMIT_MESSAGE"'",
+                    "url": "'"$COMMIT_URL"'",
+                    "timestamp": "'"$TIMESTAMP"'",
+                    "author": {
+                      "name": "'"$AUTHOR_NAME"'",
+                      "icon_url": "'"$AUTHOR_AVATAR"'"
+                    },
+                    "color": 5814783,
+                    "fields": [
+                      {
+                        "name": "Repository",
+                        "value": "'"$REPO_NAME"'",
+                        "inline": true
+                      },
+                      {
+                        "name": "Author",
+                        "value": "'"$AUTHOR_NAME"'",
+                        "inline": true
+                      }
+                    ]
+                  }
+                ]
+              }' \
           $DISCORD_WEBHOOK_URL
