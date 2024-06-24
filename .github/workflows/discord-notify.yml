@@ -26,26 +26,15 @@ jobs:
           -d '{
                 "embeds": [
                   {
-                    "title": "New Commit in '"$REPO_NAME"'",
-                    "description": "'"$COMMIT_MESSAGE"'",
+                    "title": "Update in Dev Version",
+                    "description": "## '"$COMMIT_MESSAGE"'",
                     "url": "'"$COMMIT_URL"'",
                     "timestamp": "'"$TIMESTAMP"'",
                     "author": {
                       "name": "'"$AUTHOR_NAME"'",
                       "icon_url": "'"$AUTHOR_AVATAR"'"
                     },
-                    "color": 5814783,
-                    "fields": [
-                      {
-                        "name": "Repository",
-                        "value": "'"$REPO_NAME"'",
-                        "inline": true
-                      },
-                      {
-                        "name": "Author",
-                        "value": "'"$AUTHOR_NAME"'",
-                        "inline": true
-                      }
+                    "color": 5814783
                     ]
                   }
                 ]
