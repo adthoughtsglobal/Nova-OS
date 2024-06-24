@@ -35,7 +35,6 @@ jobs:
                       "icon_url": "'"$AUTHOR_AVATAR"'"
                     },
                     "color": 5814783
-                    ]
                   }
                 ]
               }' \
