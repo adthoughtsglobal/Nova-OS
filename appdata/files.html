@@ -249,6 +249,8 @@
 			text-overflow: ellipsis;
 			flex-grow: 5;
 			text-align: end;
+			
+			margin-left: 0.2rem;
 		}
 
 		.file[grid]>[flname] {
@@ -1172,7 +1174,6 @@
     return part;
   });
 
-  console.log('Path:', path, 'Parts:', parts);
 
   for (let part of parts) {
     if (part) {
@@ -1186,7 +1187,6 @@
     }
   }
 
-  console.log("Listfiles log - obj: ", obj);
   return obj;
 }
 
@@ -1297,7 +1297,7 @@
 				var fileSize
 				x.id = "slfile";
 				let fileData
-				if (!x.getAttribute("unid") === null || !x.getAttribute("unid") === "") {
+				if (!(x.getAttribute("unid") === null || x.getAttribute("unid") === "")) {
 					
 				try {
 					fileData = await window.parent.getFileById(x.getAttribute("unid"));
@@ -1480,7 +1480,6 @@ drive_file_move
 			console.log("Moving file with id: " + flid + " to folder: " + dest);
 
 			let fileToMove = await window.parent.getFileById(flid);
-			console.log("Got file: " + JSON.stringify(fileToMove));
 
 			function getapnme(x) {
 				return x.split('.')[0];
@@ -1540,8 +1539,6 @@ drive_file_move
 				// Get file data by ID
 				let fileData = getFileById(memory, flid);
 				if (fileData) {
-					console.log("got file: " + JSON.stringify(fileData.data));
-
 					// Create file in the new location
 					memory[selectedFolder][fileData.name] = fileData.data;
 					console.log("file made in " + selectedFolder + ", " + JSON.stringify(fileData.data));
@@ -1709,10 +1706,13 @@ drive_file_move
 			}
 			let x = await window.parent.justConfirm("Remove folder?", "Remove '" + currentPath + "' permanently from your device?")
 			if (x) {
-				await window.parent.remfolder(currentPath);
+				await window.parent.remfolder(currentPath).then(function () {
+					document.getElementById("fileinfobn").innerHTML = currentPath + " was removed"
+				})
 				listFiles('System/', true)
 			}
 		}
+
 
 		function mtpetxt(str) {
 			try {

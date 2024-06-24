@@ -263,7 +263,7 @@ async function openn() {
 	if (gid("closeallwinsbtn").checked) {
 		gid("closeallwinsbtn").checked = false;
 	}
-	if (!winds.length) {
+	if (!Object.keys(winds).length) {
 		
 		gid("closeallwinsbtn").checked = true;
 		gid("closeallwinsbtn").setAttribute("disabled", true)
@@ -1423,7 +1423,8 @@ async function remfolder(folderPath) {
         let key = null;
         
         // Traverse the path to find the folder
-        for (let part of parts) {
+        for (let i = 0; i < parts.length; i++) {
+            let part = parts[i];
             if (part) {
                 part += '/';
                 if (current[part]) {
@@ -1437,7 +1438,7 @@ async function remfolder(folderPath) {
             }
         }
 
-        // Remove the folder and its contents
+        // Remove the specified subfolder and its contents
         if (parent && key) {
             delete parent[key];
         } else {
