@@ -858,27 +858,16 @@
 
 		#makefiledia {
 			max-width: 80%;
-			min-height: 300px;
-			max-height: 80vh;
-			min-width: 300px;
-			padding: 20px;
-			border: none;
-			background: #1c1c1c;
-			color: white;
-			border-radius: 10px;
-			box-shadow: 0 0 10px black;
-		}
-
-		#makefiledia a.closbtn {
-			right: 20px;
-			position: absolute;
-			top: 20px;
-			opacity: 0.5;
-			cursor: pointer;
-		}
-
-		#makefiledia a.closbtn:hover {
-			opacity: 1;
+    min-height: 50px;
+    max-height: 80vh;
+    min-width: 300px;
+    padding: 1rem 0rem;
+    padding-top: 0.7rem;
+    border: none;
+    background: #1c1c1c;
+    color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 10px #00000057;
 		}
 
 		#makefiledia input,
@@ -895,15 +884,16 @@
 		}
 
 		#makefiledia label {
-			text-transform: capitalize;
-			font-size: 14px;
-			font-weight: normal;
-			opacity: 0.8;
+		    text-transform: capitalize;
+    font-size: 14px;
+    font-weight: normal;
+    opacity: 0.8;
+    margin-bottom: 0.3rem;
+    display: block;
 		}
 
 		.makefilediv {
 			height: 100%;
-			padding-bottom: 20px;
 		}
 
 		.makefilediv h1 {
@@ -919,54 +909,61 @@
 			width: 70%;
 		}
 
+		.makefilediv .btncont {
+			display: flex;
+    width: calc(100% - 2rem);
+    flex-direction: row;
+    margin: 0 1rem;
+    gap: 0.5rem;
+		}
+
 		.makefilediv button {
-			width: calc(100% - 28px);
+			flex: 1;
 			margin: auto;
 			display: block;
 			margin-top: 10px;
 			background: #4d7297;
 		}
+
+		.makefilediv button.cancel {
+			flex: 1;
+			margin: auto;
+			display: block;
+			margin-top: 10px;
+			background: #272727;
+		}
+
+		#makefiledivno {
+			color:red;
+			opacity: 0.5;
+			font-size: 0.8rem;
+		}
+
+		#makefiledivno .material-symbols-rounded {
+			font-size: 10px;
+    transform: translate(4px, 1px) scale(1.5);
+    margin-right: 7px;
+		}
 	</style>
 	<dialog id="makefiledia">
 		<div class="makefilediv">
-			<a class="closbtn" onclick="document.getElementById('makefiledia').close()"><span
-					class="material-icons">close</span></a>
-			<h1>New File</h1>
 			<inpg>
-				<label>File Name: </label>
-				<input id="makflname" value="unnamed" placeholder="">
+				<label>New File: </label>
+				<input id="makflname" value="" placeholder="File Name">
+				<span id="makefiledivno"></span>
 			</inpg>
-			<inpg>
-				<label>File Type: </label>
-				<input id="makfltyp" value="txt" placeholder="">
-			</inpg>
-			<inpg>
-				<label>File Metadata: </label>
-				<input id="makflmedat" value="{'createdWith':'files'}" placeholder='{"in JSON":"true"}'>
-
-			</inpg>
-			<inpg>
-				<label>At: (makes folder if not exists)</label>
-				<input id="makflatw" value="Desktop" placeholder='Apps'>
-
-			</inpg>
-			<inpg>
-				<label>File Content: </label>
-				<textarea id="makflcontent" placeholder="Your File Content Here..."></textarea>
-			</inpg>
+			<div class="btncont">				
+			<button onclick="document.getElementById('makefiledia').close()" class="cancel">Cancel</button>
 			<button onclick="createit()">Create</button>
+			</div>
 		</div>
 	</dialog>
 	<script>
 		async function createit() {
 			let fname = document.getElementById("makflname").value;
-			let ftype = document.getElementById("makfltyp").value;
-			let fmetadata = document.getElementById("makflmedat").value;
-			let fcontent = document.getElementById("makflcontent").value;
-			let fwhere = document.getElementById("makflatw").value;
 
-			if (fname.length === 0 || ftype.length === 0 || fmetadata.length === 0 || fcontent.length === 0 || fwhere.length === 0) {
-				window.parent.say("Complete all fields to proceed.", "failed")
+			if (fname.length === 0 && window.parent.mtpetxt(fname) == "") {
+				document.getElementById("makefiledivno").value
 				return;
 			}
 

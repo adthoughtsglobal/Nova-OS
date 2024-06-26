@@ -1,6 +1,20 @@
 var batteryLevel, winds = {}, rp, flwint = true, memory, _nowapp, stx = gid("startuptx"), fulsapp = false, nowappdo, appsHistory = [], nowwindow, appicns = {}, dev = true, appfound = 'files', fileslist = [], qsetscache = {};
 var really = false;
 var novaFeaturedImage = `https://images.unsplash.com/photo-1716980197262-ce400709bf0d?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D`;
+var defAppsList = [
+	"camera",
+	"clock",
+	"files",
+	"media",
+	"settings",
+	"store",
+	"text",
+	"studio",
+	"gallery",
+	"wiki",
+	"browser",
+	"calculator"
+];
 
 gid("nowrunninapps").style.display = "none";
 
@@ -394,35 +408,57 @@ function makedefic(str) {
 
 
 function updateBattery() {
-	navigator.getBattery().then(function(battery) {
-		// Get the battery level
-		batteryLevel = Math.floor(battery.level * 100);
-		var isCharging = battery.charging;
+    var batteryPromise;
+    
+    // Check if the battery API is supported
+    if ('getBattery' in navigator) {
+        batteryPromise = navigator.getBattery();
+    } else if ('battery' in navigator) {
+        batteryPromise = Promise.resolve(navigator.battery);
+    } else {
+        console.log('Battery API not supported.');
+		gid("batterydisdiv").style.display = "none";
+        return; // Exit function if battery API is not supported
+    }
 
-		if (batteryLevel == 100 && isCharging || batteryLevel == 0 && isCharging) {
-			document.getElementById("batterydisdiv").style.display = "none";
-		} else {
-			document.getElementById("batterydisdiv").style.display = "block";
-		}
-		// Determine the appropriate icon based on battery level
-		let iconClass;
-		if (batteryLevel >= 75) {
-			iconClass = 'battery_full';
-		} else if (batteryLevel >= 25) {
-			iconClass = 'battery_5_bar';
-		} else if (batteryLevel >= 15) {
-			iconClass = 'battery_2_bar';
-		} else {
-			iconClass = 'battery_alert';
-		}
+    batteryPromise.then(function(battery) {
+        // Get the battery level
+        var batteryLevel = Math.floor(battery.level * 100);
+        var isCharging = battery.charging;
 
-		// Check if the value has changed
-		if (iconClass !== gid('battery-display').innerText) {
-			// Update the display only if the value changes
-			gid('battery-display').innerHTML = iconClass;
-			gid('battery-p-display').innerHTML = batteryLevel + "%";
-		}
-	});
+        // Display or hide the battery info based on conditions
+        if ((batteryLevel === 100 && isCharging) || (batteryLevel === 0 && isCharging)) {
+            document.getElementById("batterydisdiv").style.display = "none";
+        } else {
+            document.getElementById("batterydisdiv").style.display = "block";
+        }
+
+        // Determine the appropriate icon based on battery level
+        let iconClass;
+        if (batteryLevel >= 75) {
+            iconClass = 'battery_full';
+        } else if (batteryLevel >= 25) {
+            iconClass = 'battery_5_bar';
+        } else if (batteryLevel >= 15) {
+            iconClass = 'battery_2_bar';
+        } else {
+            iconClass = 'battery_alert';
+        }
+
+        // Check if the value has changed
+        var batteryDisplayElement = document.getElementById('battery-display');
+        var batteryPDisplayElement = document.getElementById('battery-p-display');
+        if (batteryDisplayElement && batteryPDisplayElement) {
+            if (iconClass !== batteryDisplayElement.innerText) {
+                // Update the display only if the value changes
+                batteryDisplayElement.innerHTML = iconClass;
+                batteryPDisplayElement.innerHTML = batteryLevel + "%";
+            }
+        }
+    }).catch(function(error) {
+        console.log("Battery information not available: " + error);
+
+    });
 }
 updateBattery();
 
@@ -1455,20 +1491,7 @@ async function remfolder(folderPath) {
 }
 
 
-var defAppsList = [
-	"camera",
-	"clock",
-	"files",
-	"media",
-	"settings",
-	"store",
-	"text",
-	"studio",
-	"gallery",
-	"wiki",
-	"browser",
-	"calculator"
-];
+
 
 async function initialiseOS() {
 	let x = {
