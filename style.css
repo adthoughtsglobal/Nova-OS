@@ -488,8 +488,8 @@ nav info {
 
 .modal p span {
 	font-size: 12px;
-	transform: translate(-5px, 0px) scale(1.5);
-	margin-right: 5px;
+    transform: scale(1.5);
+    margin-right: 6px;
 }
 
 .modal select {

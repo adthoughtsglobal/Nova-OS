@@ -934,9 +934,12 @@
 		}
 
 		#makefiledivno {
-			color:red;
-			opacity: 0.5;
-			font-size: 0.8rem;
+			color: #ff6161;
+    opacity: 1;
+    font-size: 0.8rem;
+    line-height: 1.2rem;
+    display: block;
+    margin: 0.5rem 0rem;
 		}
 
 		#makefiledivno .material-symbols-rounded {
@@ -962,15 +965,17 @@
 		async function createit() {
 			let fname = document.getElementById("makflname").value;
 
-			if (fname.length === 0 && window.parent.mtpetxt(fname) == "") {
-				document.getElementById("makefiledivno").value
+			if (fname.length < 2 || window.parent.mtpetxt(fname) == "" || !window.parent.mtpetxt(fname)) {
+				document.getElementById("makefiledivno").innerHTML = `<span class="material-symbols-rounded">
+									error
+								</span> File names should end with extensions (eg: .txt, .png etc.)`
 				return;
 			}
 
-			await window.parent.createFile(fwhere, mtpetxt(fname), ftype, fcontent, fmetadata)
+			await window.parent.createFile(currentPath, window.parent.basename(fname), window.parent.mtpetxt(fname))
 				.then(function () {
 					document.getElementById('makefiledia').close();
-					window.parent.say("File <br><small>" + fname + " created at " + fwhere + '</small', "success");
+					window.parent.say("File <br><small>" + fname + " created at " + currentPath + '</small', "success");
 				});
 		}
 
