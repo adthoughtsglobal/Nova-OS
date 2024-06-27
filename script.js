@@ -418,7 +418,7 @@ function updateBattery() {
     } else {
         console.log('Battery API not supported.');
 		gid("batterydisdiv").style.display = "none";
-        return; // Exit function if battery API is not supported
+        return; 
     }
 
     batteryPromise.then(function(battery) {
@@ -1299,6 +1299,7 @@ function say(message, status) {
 		okButton.textContent = 'OK';
 		okButton.addEventListener('click', () => {
 			modal.close();
+			modal.remove()
 			resolve(true);
 		});
 		modalContent.appendChild(okButton);
