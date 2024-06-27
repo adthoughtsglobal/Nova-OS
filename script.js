@@ -1121,30 +1121,61 @@ function createFolderStructure(folderName) {
 }
 
 async function updateFile(folderName, fileId, newData) {
-	memory = await getdb('trojencat', 'rom');
-    let folder = createFolderStructure(folderName);
+	function findFile(folder, fileId) {
+        for (let key in folder) {
+            if (typeof folder[key] === 'object' && folder[key] !== null) {
+                if (folder[key].id === fileId) {
+                    return { parent: folder, key: key };
+                } else if (key.endsWith('/') && typeof folder[key] === 'object') {
+                    let result = findFile(folder[key], fileId);
+                    if (result) {
+                        return result;
+                    }
+                }
+            }
+        }
+        return null;
+    }
 
     try {
-        let fileKey = Object.keys(folder).find(key => folder[key].id === fileId);
-        if (fileKey) {
-            // Update the file with the new data
-            let fileToUpdate = folder[fileKey];
+        // Locate the target folder
+        let targetFolder = memory;
+        let folderNames = folderName.split('/');
+        for (let name of folderNames) {
+            if (name) {
+                targetFolder = targetFolder[name + '/'];
+                if (!targetFolder) {
+                    throw new Error(`Folder "${name}" not found.`);
+                }
+            }
+        }
+
+        // Find the file within the folder structure
+        let fileLocation = findFile(targetFolder, fileId);
+
+        if (fileLocation) {
+            let fileToUpdate = fileLocation.parent[fileLocation.key];
             fileToUpdate.metadata = newData.metadata !== undefined ? JSON.stringify(newData.metadata) : fileToUpdate.metadata;
             fileToUpdate.content = newData.content !== undefined ? newData.content : fileToUpdate.content;
-            fileToUpdate.fileName = newData.fileName !== undefined ? newData.fileName : fileKey;
+            fileToUpdate.fileName = newData.fileName !== undefined ? newData.fileName : fileLocation.key;
             fileToUpdate.type = newData.type !== undefined ? newData.type : fileToUpdate.type;
 
             // If the file name has changed, update the key in the folder
-            if (newData.fileName !== undefined && newData.fileName !== fileKey) {
-                folder[newData.fileName] = fileToUpdate;
-                delete folder[fileKey];
+            if (newData.fileName !== undefined && newData.fileName !== fileLocation.key) {
+                fileLocation.parent[newData.fileName] = fileToUpdate;
+                delete fileLocation.parent[fileLocation.key];
             }
 
             await setdb('trojencat', 'rom', memory);
-            console.log(`File "${fileToUpdate.fileName}" is no more the old file.`);
+            console.log(`File "${fileToUpdate.fileName}" has been updated.`);
         } else {
-            console.log(`File with ID "${fileId}" is missing lol, in "${folderName}". Gonna make a new one now...`);
-            createFile(folder, fileId, newData);
+            console.log(`File with ID "${fileId}" not found in "${folderName}". Creating a new one...`);
+            targetFolder[newData.fileName || `NewFile_${fileId}`] = {
+                id: fileId,
+                metadata: newData.metadata ? JSON.stringify(newData.metadata) : '',
+                content: newData.content || '',
+                type: newData.type || ''
+            };
             await setdb('trojencat', 'rom', memory);
         }
     } catch (error) {
