@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 
-<head>
+<head><script type="text/javascript" src="/___vscode_livepreview_injected_script"></script>
 	<title>Files app</title>
 	<meta name="description" content="Default Files app for Nova OS">
 	<meta name="nova-icon"
@@ -647,10 +647,37 @@
 			margin-bottom: 1rem;
 			height: 50px;
 		}
+
+		#jstree {
+			margin-top: 0.5rem;
+    transform: translateX(-5px);
+		}
+
+		.jstree-default .jstree-icon:empty{
+			color:#897b31;
+		}
+
+		.jstree-default .jstree-node {
+			
+    margin-left: 10px !important;
+		}
+
+		.jstree-anchor {
+			padding: 0 6px 0 3px;
+		}
+
+		.jstree-default .jstree-icon:empty {
+			width: 17px !important;
+		}
 	</style>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	<link rel="stylesheet"
 		href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 </head>
 
@@ -773,6 +800,7 @@
 			}
 		</script>
 	</dialog>
+	
 	<div id="flap-mot">
 		<div flap-nav>
 			<div class="nowid">
@@ -793,9 +821,11 @@
 		height: 100%;">
 					<small>This Device</small>
 					<small class="newfoldbtn" onclick="makefolderhuh()">+</small>
+
 					<div id="folders">
-						loading...
+						
 					</div>
+					<div id="jstree"></div>
 					<div flap-sidenav-mems>
 
 					</div>
@@ -848,6 +878,7 @@
 			</div>
 		</div>
 	</div>
+	
 	<style>
 		inpg {
 			display: block;
@@ -947,6 +978,18 @@
     transform: translate(4px, 1px) scale(1.5);
     margin-right: 7px;
 		}
+
+		.jstree-default .jstree-clicked{
+			background: #393939;
+    border-radius: 0.3rem;
+    box-shadow: none;
+		} 
+		
+		.jstree-default .jstree-hovered {
+    background: #393939;
+    border-radius: 0.3rem;
+    box-shadow: none;
+}
 	</style>
 	<dialog id="makefiledia">
 		<div class="makefilediv">
@@ -1034,7 +1077,22 @@
 
 		function greenflagbro() {
 
+			$('#jstree').on("changed.jstree", function (e, data) {
+    if (data && data.node && data.node.li_attr && data.node.li_attr['data-path']) {
+        let selectedPath = data.node.li_attr['data-path'];
+        console.log('Selected folder:', selectedPath);
+        listFiles(selectedPath);
+    } else {
+        console.log('No folder selected');
+    }
+});
 
+
+$('button').on('click', function () {
+  $('#jstree').jstree(true).select_node('child_node_1');
+  $('#jstree').jstree('select_node', 'child_node_1');
+  $.jstree.reference('#jstree').select_node('child_node_1');
+});
 
 			var todo = localStorage.getItem("todo");
 
@@ -1069,7 +1127,7 @@
 						if (result !== null) {
 							memory = result;
 							liststuff()
-							listFiles("Downloads/")
+							listFiles("")
 
 						} else {
 							console.log('0003');
@@ -1105,29 +1163,59 @@
 			moveFileToFolder(data, dat)
 		}
 
+        function memoryToJsTree(memory, parentPath = '') {
+    function traverse(obj, parentPath) {
+        let result = [];
+
+        for (let key in obj) {
+            if (obj.hasOwnProperty(key) && key.endsWith('/')) { // Only process folders
+                let currentPath = parentPath ? `${parentPath}${key}` : key;
+
+                let node = {
+                    text: key,
+                    icon: getfolicon(key),
+                    state: {
+                        opened: false,
+                        selected: false,
+                        disabled: false
+                    },
+                    li_attr: {
+                        'data-path': currentPath // Hidden path attribute
+                    }
+                };
+
+                node.children = traverse(obj[key], currentPath);
+                result.push(node);
+            }
+        }
+
+        return result;
+    }
+
+    return traverse(memory, parentPath);
+}
+
 		function liststuff() {
-			if (fdlist) {
-				fdlist.innerText = "";
+			$(function() {
+    const jsTreeData = memoryToJsTree(window.parent.memory);
 
-				// Function to find all top-level folders
-				function getTopLevelFolders(obj) {
-					return Object.keys(obj).filter(key => key.endsWith('/'));
-				}
+    $('#jstree').jstree({
+        'core': {
+            'data': jsTreeData
+        }
+    });
 
-				const topLevelFolders = getTopLevelFolders(memory);
+    $('#jstree').on('loaded.jstree', function() {
+        $('#jstree').find('li[role="treeitem"]').each(function() {
+            const element = $(this);
+            const folderName = element.find('a').text();
 
-				topLevelFolders.forEach(folderName => {
-					let element = document.createElement('div');
-					element.classList.add("sdfld");
-					element.setAttribute("ondragover", "Allowdrop(event, this)");
-					element.setAttribute("ondrop", "dropfl(event, '" + folderName + "')");
-					element.innerHTML = '<span class="material-icons"> ' + getfolicon(folderName) + ' </span>' + folderName.slice(0, -1); // Remove trailing "/"
-					element.setAttribute('onclick', "listFiles('" + folderName + "', true)");
-					fdlist.appendChild(element);
-				});
-			} else {
-				console.error("Element with id 'folders' not found.");
-			}
+            element.attr('ondragover', 'Allowdrop(event, this)');
+            element.attr('ondrop', 'dropfl(event, "' + folderName + '")');
+        });
+    });
+});
+
 		}
 		function refresh() {
 			setTimeout(() => {
@@ -1665,14 +1753,14 @@ drive_file_move
 
 		function getfolicon(x) {
 			const iconMap = {
-				"Downloads": "download",
-				"Desktop": "computer",
-				"Apps": "apps",
-				"System": "settings_suggest",
-				"Dock": "dashboard",
-				"Media": "play_circle",
-				"Documents": "article",
-				"Favorites": "favorite"
+				"Downloads": "fas fa-download",
+				"Desktop": "fas fa-desktop",
+				"Apps": "fas fa-shapes",
+				"System": "fas fa-gear",
+				"Dock": "fas fa-rocket",
+				"Media": "fas fa-cirlce-play",
+				"Documents": "fas fa-file",
+				"Favorites": "fas fa-heart"
 			};
 
 			for (const key in iconMap) {
@@ -1680,7 +1768,7 @@ drive_file_move
 					return iconMap[key];
 				}
 			}
-			return "folder";
+			return "fas fa-folder";
 		}
 
 
