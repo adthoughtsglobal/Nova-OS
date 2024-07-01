@@ -7,18 +7,23 @@
 	<title>Nova OS</title>
 	<link href="style.css" rel="stylesheet" type="text/css" />
 	<script src="system32.js" defer></script>
-	<!-- Include pako library (CDN) -->
+	<!--String compression: pako-->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.0.3/pako.min.js"></script>
 	</script>
-
+	<!--Jquery-->
 	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css">
+	<!--NovaOS scripts-->
+	<script src="nova.js" defer></script>
 	<script src="edgecases.js" defer></script>
 	<script src="scripties.js" defer></script>
 	<script src="script.js" defer></script>
+	<!--PWA Manifest-->
 	<link href="webmanifest.json" rel="manifest">
+	<!--Google Icons-->
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<!--Google Fonts-->
 	<link rel="stylesheet"
 		href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 </head>
@@ -46,8 +51,9 @@
 			<h1>I don't even know what time is it now. Who to say? your browser...</h1>
 			<p>Well your browser seems to be messing around turning off some JS...</p>
 			<b>If you have set JS to be desabled:</b>
-			<p>Nova OS require JS to run.
-				<li>You can always <b><a href="https://www.larimer.gov/it/enable-javascript"> turn JS on</a>.</b></li>
+			<p>Nova OS requires JS to run.
+				<li>You can always <b><a href="https://www.larimer.gov/it/enable-javascript"> turn JS back on</a>.</b>
+				</li>
 				</ul>
 			</p>
 		</noscript>
@@ -93,7 +99,6 @@
 			<info navobj>
 				<div id="batterydisdiv">
 					<span id="battery-p-display">
-						%
 					</span>
 					<span id="battery-display" class="material-icons">
 						p ic
@@ -120,7 +125,6 @@
 			<div id="appsindeck">
 
 			</div>
-			
 			<div class="strtsearcont">
 				<div class="neweles" id="bobthedropdown">
 					<button class="tooltip" onclick="location.reload()">
@@ -146,14 +150,16 @@
 						<span class="tooltiptext">Close all windows</span>
 						<div class="checkbox-wrapper-44">
 							<label class="toggleButton">
-							  <input type="checkbox" id="closeallwinsbtn">
-							  <div>
-								<svg viewBox="0 0 44 44">
-								  <path d="M14,24 L21,31 L39.7428882,11.5937758 C35.2809627,6.53125861 30.0333333,4 24,4 C12.95,4 4,12.95 4,24 C4,35.05 12.95,44 24,44 C35.05,44 44,35.05 44,24 C44,19.3 42.5809627,15.1645919 39.7428882,11.5937758" transform="translate(-2.000000, -2.000000)"></path>
-								</svg>
-							  </div>
+								<input type="checkbox" id="closeallwinsbtn">
+								<div>
+									<svg viewBox="0 0 44 44">
+										<path
+											d="M14,24 L21,31 L39.7428882,11.5937758 C35.2809627,6.53125861 30.0333333,4 24,4 C12.95,4 4,12.95 4,24 C4,35.05 12.95,44 24,44 C35.05,44 44,35.05 44,24 C44,19.3 42.5809627,15.1645919 39.7428882,11.5937758"
+											transform="translate(-2.000000, -2.000000)"></path>
+									</svg>
+								</div>
 							</label>
-						  </div>
+						</div>
 					</button>
 				</div>
 			</div>
@@ -200,12 +206,15 @@
 					<span hi>Dark Dot</span>
 					<span class="material-icons">navigate_next</span>
 				</button>
+<<<<<<< HEAD
+=======
 				<button>
 					<img
 						src="https://images-ext-1.discordapp.net/external/Ke6Bx9Z1WmhAwHDoeW8-NbmO4CPcz4yt2gO3Vm1gQO0/%3Fsize%3D4096/https/cdn.discordapp.com/avatars/603952506330021898/5f696cc7068473feb3605c2f0a1e8539.png?format=webp&quality=lossless&width=424&height=424">
 					<span hi>Mist</span>
 					<span class="material-icons">navigate_next</span>
 				</button>
+>>>>>>> 9331ed507497f77c25b5543c5a70709108cc964d
 			</div>
 		</div>
 	</dialog>
@@ -270,12 +279,21 @@
 				<div class="strtappsugs" id="strtappsugs">
 				</div>
 				<div id="partrecentapps">
+<<<<<<< HEAD
+
+					<span class="smalltitl">Recently opened</span>
+					<div id="serrecentapps">
+
+					</div>
+				</div>
+=======
 					
 				<span class="smalltitl">Recently opened</span>
 				<div id="serrecentapps">
 					
 				</div>
 			</div>
+>>>>>>> 9331ed507497f77c25b5543c5a70709108cc964d
 				<div id="notiflist">
 					No new notifications
 				</div>
@@ -289,4 +307,8 @@
 	</dialog>
 </body>
 
+<<<<<<< HEAD
 </html>
+=======
+</html>
+>>>>>>> 9331ed507497f77c25b5543c5a70709108cc964d
