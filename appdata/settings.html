@@ -970,7 +970,7 @@
 						}
 
 						// sizes slider
-						document.getElementById("UISIZErangeslid").addEventListener("change", function () {
+						document.getElementById("UISIZErangeslid").addEventListener("input", function () {
 							let newValue2 = document.getElementById("UISIZErangeslid").value;
 							let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
 							qsets.UISizing = newValue2;
