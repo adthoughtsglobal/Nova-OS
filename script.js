@@ -200,7 +200,7 @@ async function openn() {
 	Promise.all(x.map(async (app) => {
 		// Create a div element for the app shortcut
 		var appShortcutDiv = document.createElement("div");
-		appShortcutDiv.className = "app-shortcut tooltip";
+		appShortcutDiv.className = "app-shortcut tooltip sizableuielement";
 		appShortcutDiv.setAttribute("onclick", "openapp('" + app.name + "', '" + app.id + "')");
 
 		// Create a span element for the app icon
@@ -304,7 +304,7 @@ async function loadrecentapps() {
 		}
 		// Create a div element for the app shortcut
 		var appShortcutDiv = document.createElement("div");
-		appShortcutDiv.className = "app-shortcut tooltip";
+		appShortcutDiv.className = "app-shortcut tooltip sizableuielement";
 		appShortcutDiv.setAttribute("onclick", "openapp('" + app.name + "', '" + app.id + "')");
 		// Create a span element for the app icon
 		var iconSpan = document.createElement("span");
@@ -539,7 +539,7 @@ async function dod() {
 		y.forEach(async function(app) {
 			// Create a div element for the app shortcut
 			var appShortcutDiv = document.createElement("div");
-			appShortcutDiv.className = "app-shortcut";
+			appShortcutDiv.className = "app-shortcut sizableuielement";
 			appShortcutDiv.setAttribute("onclick", "openfile(this)");
 			appShortcutDiv.setAttribute("unid", app.id);
 
@@ -1361,7 +1361,7 @@ function loadtaskspanel() {
 		console.log("she's here: " + app)
 		// Create a div element for the app shortcut
 		var appShortcutDiv = document.createElement("biv");
-		appShortcutDiv.className = "app-shortcut tooltip adock";
+		appShortcutDiv.className = "app-shortcut tooltip adock sizableuielement";
 
 		appShortcutDiv.addEventListener("click", function() {
 			putwinontop('window' + wid[index]);
@@ -2175,7 +2175,7 @@ async function genTaskBar() {
 			var islnk = false;
 			// Create a div element for the app shortcut
 			var appShortcutDiv = document.createElement("biv");
-			appShortcutDiv.className = "app-shortcut tooltip adock";
+			appShortcutDiv.className = "app-shortcut tooltip adock sizableuielement";
 			app = await getFileById(app.id)
 
 			if (app.type == "lnk") {
