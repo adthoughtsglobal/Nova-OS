@@ -48,6 +48,7 @@ const styles = {
 
 function checkdmode() {
 	let x = localStorage.getItem("qsets");
+	qsetsRefresh()
 	if (x) {
 
 		// scalable UI

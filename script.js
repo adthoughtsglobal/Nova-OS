@@ -286,6 +286,8 @@ async function openn() {
 		gid("closeallwinsbtn").setAttribute("disabled", false)
 	}
 	gid('appdmod').showModal()
+
+	scaleUIElements(qsetscache.UISizing)
 }
 
 async function loadrecentapps() {
@@ -367,8 +369,7 @@ async function loadrecentapps() {
 
 		gid("serrecentapps").appendChild(appShortcutDiv);
 	})).then(() => {
-
-		// gid('appsloader').remove();
+		scaleUIElements(qsetscache.UISizing)
 	}).catch((error) => {
 		console.error('An error occurred:', error);
 	});
@@ -621,6 +622,8 @@ async function dod() {
 			localStorage.setItem("qsets", JSON.stringify(qsets));
 		}
 	};
+
+	scaleUIElements(qsetscache.UISizing)
 }
 
 function closeElementedis() {
@@ -1384,6 +1387,7 @@ function loadtaskspanel() {
 		appbarelement.appendChild(appShortcutDiv);
 	})
 
+	scaleUIElements(qsetscache.UISizing)
 }
 
 function ask(question, preset) {

@@ -971,7 +971,13 @@
 
 						// sizes slider
 						document.getElementById("UISIZErangeslid").addEventListener("input", function () {
-							let newValue2 = document.getElementById("UISIZErangeslid").value;
+							let sizes = {
+  "-1": 0.8,
+  0: 1,
+  1: 1.1, 
+  2: 1.3
+};
+							let newValue2 = sizes[document.getElementById("UISIZErangeslid").value];
 							let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
 							qsets.UISizing = newValue2;
 							localStorage.setItem("qsets", JSON.stringify(qsets));
@@ -1726,7 +1732,7 @@
 						<span>big</span>
 						<span>biggest</span>
 					</div>
-					<input type="range" id="UISIZErangeslid" min="0" max="3" step="1" value="1">
+					<input type="range" id="UISIZErangeslid" min="-1" max="2" step="1" value="1">
 
 				</div>
 			</div>
