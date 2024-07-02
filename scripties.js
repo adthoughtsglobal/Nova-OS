@@ -52,7 +52,7 @@ function checkdmode() {
 
 		// scalable UI
 		if (JSON.parse(x).UISizing) {
-			scaleUIElements()
+			scaleUIElements(JSON.parse(x).UISizing)
 		}
 
 		// themes
