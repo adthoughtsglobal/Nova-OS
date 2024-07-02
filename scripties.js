@@ -46,10 +46,16 @@ const styles = {
 	}
 };
 
-// dark mode
 function checkdmode() {
 	let x = localStorage.getItem("qsets");
 	if (x) {
+
+		// scalable UI
+		if (JSON.parse(x).UISizing) {
+			scaleUIElements()
+		}
+
+		// themes
 		thlog("qsets found");
 		if (JSON.parse(x).darkMode) {
 			thlog("yeah dark mode");
@@ -168,3 +174,13 @@ window.fetch = async function(...args) {
     console.log('Fetch called with:', ...args);
     return originalFetch.apply(this, args);
 };
+
+function scaleUIElements(scaleFactor) {
+    // Select all elements with the class 'sizableuielement'
+    var elements = document.querySelectorAll('.sizableuielement');
+    
+    // Loop through each element and apply the scale transform
+    elements.forEach(function(element) {
+        element.style.transform = 'scale(' + scaleFactor + ')';
+    });
+}

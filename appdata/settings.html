@@ -332,7 +332,7 @@
 			}
 		}
 
-		[setting] div {
+		[setting] .checkbox-wrapper-51 {
 			float: right;
 			transform: scale(0.7);
 		}
@@ -967,6 +967,19 @@
 
 						if (JSON.parse(localStorage.getItem("qsets")).simpleMode) {
 							document.getElementById("cbx-68").checked = true;
+						}
+
+						// sizes slider
+						document.getElementById("UISIZErangeslid").addEventListener("change", function () {
+							let newValue2 = document.getElementById("UISIZErangeslid").value;
+							let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
+							qsets.UISizing = newValue2;
+							localStorage.setItem("qsets", JSON.stringify(qsets));
+							window.parent.checkdmode();
+						});
+
+						if (JSON.parse(localStorage.getItem("qsets")).UISizing) {
+							document.getElementById("cbx-68").value = JSON.parse(localStorage.getItem("qsets")).UISizing;
 						}
 					}
 
@@ -1702,9 +1715,42 @@
 					</p>
 				</div>
 			</segr>
+			<segr>
+				<div setting>
+				<b>UI Size</b>
+				<div class="UISIZEcontainer">
+					
+					<div class="UISIZEslider-labels">
+						<span>small</span>
+						<span>default</span>
+						<span>big</span>
+						<span>biggest</span>
+					</div>
+					<input type="range" id="UISIZErangeslid" min="0" max="3" step="1" value="1" oninput="updateValue()">
+
+				</div>
+			</div>
+				</segr>
 			<h1>Wallpaper</h1>
 			<segr>
 				<style>
+					#UISIZErangeslid {
+						width: 100%;
+					}
+					.UISIZEslider-labels {
+						display: flex;
+            justify-content: space-between;
+            width: 100%;
+			margin-top: 0.5rem;
+					}
+
+					.UISIZEslider-labels span {
+						opacity: 0.5;
+    font-size: 0.8rem;
+    width: 0;
+    text-align: center;
+    flex: 1;
+					}
 					#cwallimg {
 						display: block;
 						height: 120px;
