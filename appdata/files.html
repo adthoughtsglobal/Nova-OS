@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 
-<head><script type="text/javascript" src="/___vscode_livepreview_injected_script"></script>
+<head>
+	<script type="text/javascript" src="/___vscode_livepreview_injected_script"></script>
 	<title>Files app</title>
 	<meta name="description" content="Default Files app for Nova OS">
 	<meta name="nova-icon"
@@ -155,11 +156,12 @@
 		}
 
 		[flap-fl-topnav] {
-			display: block;
-			padding: 3px 10px;
-			font-size: 9px;
-			opacity: 70%;
-			transform: translateY(3px);
+			display: flex;
+    padding: 3px 10px;
+    font-size: 9px;
+    opacity: 70%;
+    transform: translateY(3px);
+    flex-direction: row;
 		}
 
 		[flap-files] {
@@ -249,7 +251,7 @@
 			text-overflow: ellipsis;
 			flex-grow: 5;
 			text-align: end;
-			
+
 			margin-left: 0.2rem;
 		}
 
@@ -650,16 +652,16 @@
 
 		#jstree {
 			margin-top: 0.5rem;
-    transform: translateX(-5px);
+			transform: translateX(-5px);
 		}
 
-		.jstree-default .jstree-icon:empty{
-			color:#897b31;
+		.jstree-default .jstree-icon:empty {
+			color: #897b31;
 		}
 
 		.jstree-default .jstree-node {
-			
-    margin-left: 10px !important;
+
+			margin-left: 10px !important;
 		}
 
 		.jstree-anchor {
@@ -669,16 +671,54 @@
 		.jstree-default .jstree-icon:empty {
 			width: 17px !important;
 		}
+
+		.jstree-icon.jstree-themeicon {
+			display: none;
+		}
+
+		.jstree-ocl {
+			display: inline-block;
+			font-family: 'FontAwesome';
+			font-style: normal;
+			font-weight: normal;
+			font-size: 8px;
+			width: 1em;
+			height: 1em;
+			line-height: 1em;
+			text-align: center;
+		}
+
+		.jstree-closed>.jstree-ocl:before {
+			content: "\f054";
+			/* Font Awesome chevron-right icon */
+		}
+
+		.jstree-open>.jstree-ocl:before {
+			content: "\f078";
+			/* Font Awesome chevron-down icon */
+		}
+		
+		#pathdisp {
+			flex: 1;
+			overflow-x: hidden;
+			text-overflow: ellipsis;
+			margin-right: 0.7rem;
+		}
 	</style>
+	<script src="https://unpkg.com/interactjs/dist/interact.min.js"></script>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	<link rel="stylesheet"
 		href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css">
+	<script src="https://kit.fontawesome.com/3ea8b9584f.js" crossorigin="anonymous"></script>
 
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css">
+	
+  <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.js"></script>
 </head>
 
 <body>
@@ -800,7 +840,7 @@
 			}
 		</script>
 	</dialog>
-	
+
 	<div id="flap-mot">
 		<div flap-nav>
 			<div class="nowid">
@@ -817,13 +857,13 @@
 		</div>
 		<div style="height: calc(100% - 43px);">
 			<div class="themainstuff">
-				<div flap-sidenav style="flex-grow: 1;
-		height: 100%;">
+				<div flap-sidenav style="
+		height: 100%;" id="flap-sidenav">
 					<small>This Device</small>
 					<small class="newfoldbtn" onclick="makefolderhuh()">+</small>
 
 					<div id="folders">
-						
+
 					</div>
 					<div id="jstree"></div>
 					<div flap-sidenav-mems>
@@ -835,7 +875,7 @@
 		flex-direction: column;
 		height: 100%;width: 0;">
 					<div flap-fl-topnav><span id="pathdisp">
-							device://*
+						/
 						</span>
 
 						<div class="nvbtns">
@@ -878,7 +918,7 @@
 			</div>
 		</div>
 	</div>
-	
+
 	<style>
 		inpg {
 			display: block;
@@ -889,16 +929,16 @@
 
 		#makefiledia {
 			max-width: 80%;
-    min-height: 50px;
-    max-height: 80vh;
-    min-width: 300px;
-    padding: 1rem 0rem;
-    padding-top: 0.7rem;
-    border: none;
-    background: #1c1c1c;
-    color: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 0 10px #00000057;
+			min-height: 50px;
+			max-height: 80vh;
+			min-width: 300px;
+			padding: 1rem 0rem;
+			padding-top: 0.7rem;
+			border: none;
+			background: #1c1c1c;
+			color: white;
+			border-radius: 0.5rem;
+			box-shadow: 0 0 10px #00000057;
 		}
 
 		#makefiledia input,
@@ -915,12 +955,12 @@
 		}
 
 		#makefiledia label {
-		    text-transform: capitalize;
-    font-size: 14px;
-    font-weight: normal;
-    opacity: 0.8;
-    margin-bottom: 0.3rem;
-    display: block;
+			text-transform: capitalize;
+			font-size: 14px;
+			font-weight: normal;
+			opacity: 0.8;
+			margin-bottom: 0.3rem;
+			display: block;
 		}
 
 		.makefilediv {
@@ -942,10 +982,10 @@
 
 		.makefilediv .btncont {
 			display: flex;
-    width: calc(100% - 2rem);
-    flex-direction: row;
-    margin: 0 1rem;
-    gap: 0.5rem;
+			width: calc(100% - 2rem);
+			flex-direction: row;
+			margin: 0 1rem;
+			gap: 0.5rem;
 		}
 
 		.makefilediv button {
@@ -966,30 +1006,30 @@
 
 		#makefiledivno {
 			color: #ff6161;
-    opacity: 1;
-    font-size: 0.8rem;
-    line-height: 1.2rem;
-    display: block;
-    margin: 0.5rem 0rem;
+			opacity: 1;
+			font-size: 0.8rem;
+			line-height: 1.2rem;
+			display: block;
+			margin: 0.5rem 0rem;
 		}
 
 		#makefiledivno .material-symbols-rounded {
 			font-size: 10px;
-    transform: translate(4px, 1px) scale(1.5);
-    margin-right: 7px;
+			transform: translate(4px, 1px) scale(1.5);
+			margin-right: 7px;
 		}
 
-		.jstree-default .jstree-clicked{
+		.jstree-default .jstree-clicked {
 			background: #393939;
-    border-radius: 0.3rem;
-    box-shadow: none;
-		} 
-		
+			border-radius: 0.3rem;
+			box-shadow: none;
+		}
+
 		.jstree-default .jstree-hovered {
-    background: #393939;
-    border-radius: 0.3rem;
-    box-shadow: none;
-}
+			background: #393939;
+			border-radius: 0.3rem;
+			box-shadow: none;
+		}
 	</style>
 	<dialog id="makefiledia">
 		<div class="makefilediv">
@@ -998,9 +1038,9 @@
 				<input id="makflname" value="" placeholder="File Name">
 				<span id="makefiledivno"></span>
 			</inpg>
-			<div class="btncont">				
-			<button onclick="document.getElementById('makefiledia').close()" class="cancel">Cancel</button>
-			<button onclick="createit()">Create</button>
+			<div class="btncont">
+				<button onclick="document.getElementById('makefiledia').close()" class="cancel">Cancel</button>
+				<button onclick="createit()">Create</button>
 			</div>
 		</div>
 	</dialog>
@@ -1078,21 +1118,24 @@
 		function greenflagbro() {
 
 			$('#jstree').on("changed.jstree", function (e, data) {
-    if (data && data.node && data.node.li_attr && data.node.li_attr['data-path']) {
-        let selectedPath = data.node.li_attr['data-path'];
-        console.log('Selected folder:', selectedPath);
-        listFiles(selectedPath);
-    } else {
-        console.log('No folder selected');
-    }
-});
+				if (data && data.node && data.node.li_attr && data.node.li_attr['data-path']) {
+					let selectedPath = data.node.li_attr['data-path'];
+					console.log('Selected folder:', selectedPath);
+					listFiles(selectedPath);
+				} else {
+					console.log('No folder selected');
+				}
+			});
 
+			$( function() {
+    $( "#flap-sidenav" ).resizable();
+  } );
 
-$('button').on('click', function () {
-  $('#jstree').jstree(true).select_node('child_node_1');
-  $('#jstree').jstree('select_node', 'child_node_1');
-  $.jstree.reference('#jstree').select_node('child_node_1');
-});
+			$('button').on('click', function () {
+				$('#jstree').jstree(true).select_node('child_node_1');
+				$('#jstree').jstree('select_node', 'child_node_1');
+				$.jstree.reference('#jstree').select_node('child_node_1');
+			});
 
 			var todo = localStorage.getItem("todo");
 
@@ -1163,58 +1206,58 @@ $('button').on('click', function () {
 			moveFileToFolder(data, dat)
 		}
 
-        function memoryToJsTree(memory, parentPath = '') {
-    function traverse(obj, parentPath) {
-        let result = [];
+		function memoryToJsTree(memory, parentPath = '') {
+			function traverse(obj, parentPath) {
+				let result = [];
 
-        for (let key in obj) {
-            if (obj.hasOwnProperty(key) && key.endsWith('/')) { // Only process folders
-                let currentPath = parentPath ? `${parentPath}${key}` : key;
+				for (let key in obj) {
+					if (obj.hasOwnProperty(key) && key.endsWith('/')) { // Only process folders
+						let currentPath = parentPath ? `${parentPath}${key}` : key;
 
-                let node = {
-                    text: key,
-                    icon: getfolicon(key),
-                    state: {
-                        opened: false,
-                        selected: false,
-                        disabled: false
-                    },
-                    li_attr: {
-                        'data-path': currentPath // Hidden path attribute
-                    }
-                };
+						let node = {
+							text: key,
+							icon: getfolicon(key),
+							state: {
+								opened: false,
+								selected: false,
+								disabled: false
+							},
+							li_attr: {
+								'data-path': currentPath // Hidden path attribute
+							}
+						};
 
-                node.children = traverse(obj[key], currentPath);
-                result.push(node);
-            }
-        }
+						node.children = traverse(obj[key], currentPath);
+						result.push(node);
+					}
+				}
 
-        return result;
-    }
+				return result;
+			}
 
-    return traverse(memory, parentPath);
-}
+			return traverse(memory, parentPath);
+		}
 
 		function liststuff() {
-			$(function() {
-    const jsTreeData = memoryToJsTree(window.parent.memory);
+			$(function () {
+				const jsTreeData = memoryToJsTree(window.parent.memory);
 
-    $('#jstree').jstree({
-        'core': {
-            'data': jsTreeData
-        }
-    });
+				$('#jstree').jstree({
+					'core': {
+						'data': jsTreeData
+					}
+				});
 
-    $('#jstree').on('loaded.jstree', function() {
-        $('#jstree').find('li[role="treeitem"]').each(function() {
-            const element = $(this);
-            const folderName = element.find('a').text();
+				$('#jstree').on('loaded.jstree', function () {
+					$('#jstree').find('li[role="treeitem"]').each(function () {
+						const element = $(this);
+						const folderName = element.find('a').text();
 
-            element.attr('ondragover', 'Allowdrop(event, this)');
-            element.attr('ondrop', 'dropfl(event, "' + folderName + '")');
-        });
-    });
-});
+						element.attr('ondragover', 'Allowdrop(event, this)');
+						element.attr('ondrop', 'dropfl(event, "' + folderName + '")');
+					});
+				});
+			});
 
 		}
 		function refresh() {
@@ -1250,34 +1293,34 @@ $('button').on('click', function () {
 
 			// Helper function to navigate through the memory object
 			function findFolder(path, obj) {
-  // Split the path, retaining empty strings
-  let parts = path.split('/').map((part, index, array) => {
-    // Check if the current and next part are both empty, indicating a double slash
-    if (part === '' && array[index + 1] === '') {
-      return '/';
-    }
-    // Check if the current part is not empty and not the last part
-    if (part !== '' && index < array.length - 1 && array[index + 1] === '') {
-      return part + '/';
-    }
-    return part;
-  });
+				// Split the path, retaining empty strings
+				let parts = path.split('/').map((part, index, array) => {
+					// Check if the current and next part are both empty, indicating a double slash
+					if (part === '' && array[index + 1] === '') {
+						return '/';
+					}
+					// Check if the current part is not empty and not the last part
+					if (part !== '' && index < array.length - 1 && array[index + 1] === '') {
+						return part + '/';
+					}
+					return part;
+				});
 
 
-  for (let part of parts) {
-    if (part) {
-      if (obj[part + '/']) {
-        obj = obj[part + '/'];
-      } else if (obj[part]) {
-        obj = obj[part];
-      } else {
-        return null;
-      }
-    }
-  }
+				for (let part of parts) {
+					if (part) {
+						if (obj[part + '/']) {
+							obj = obj[part + '/'];
+						} else if (obj[part]) {
+							obj = obj[part];
+						} else {
+							return null;
+						}
+					}
+				}
 
-  return obj;
-}
+				return obj;
+			}
 
 			// Find the folder with the given name
 			const folder = findFolder(folderName, memory);
@@ -1352,8 +1395,8 @@ $('button').on('click', function () {
 						}
 					}
 					const endTime = performance.now(); // End the timer if the file is not found
-			const timeTaken = endTime - startTime;
-			document.getElementById("fileinfobn").innerHTML = `Listed ${content.length} item(s) in ` + timeTaken.toFixed(2) + "ms";
+					const timeTaken = endTime - startTime;
+					document.getElementById("fileinfobn").innerHTML = `Listed ${content.length} item(s) in ` + timeTaken.toFixed(2) + "ms";
 				} else {
 					fllist.innerHTML = `<center style='padding-top: 30px'><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="74.20199" height="94.1023" viewBox="0,0,74.20199,94.1023"><g transform="translate(-224.61774,-142.87893)"><g data-paper-data="{&quot;isPaintingLayer&quot;:true}" fill-rule="nonzero" stroke="#ffffff" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" style="mix-blend-mode: normal"><path d="M227.11774,158.26119c0,-7.11468 5.76758,-12.88226 12.88226,-12.88226c7.11468,0 12.88226,5.76758 12.88226,12.88226c0,7.11468 -5.76758,12.88226 -12.88226,12.88226c-7.11468,0 -12.88226,-5.76758 -12.88226,-12.88226z" fill="none" stroke-width="5" stroke-linecap="butt"/><path d="M244.56247,233.94447l9.12493,-32.20565l-8.58817,-28.98508" fill="none" stroke-width="5" stroke-linecap="round"/><path d="M253.6874,202.81234l17.71311,31.66888" fill="none" stroke-width="5" stroke-linecap="round"/><path d="M246.17275,178.6581l-7.51465,27.37481" fill="none" stroke-width="5" stroke-linecap="round"/><path d="M250.46684,179.73163l28.44833,-12.3455" fill="none" stroke-width="5" stroke-linecap="round"/><path d="M260.82196,192.96703l-1.81137,-23.54791l37.99776,-2.9229l1.81138,23.54791z" fill="#aa8b00" stroke-width="0" stroke-linecap="butt"/><path d="M256.80524,189.29958l2.20535,-19.88046l37.99776,-2.9229l-2.20535,19.53118z" fill="#ffcf00" stroke-width="0" stroke-linecap="butt"/><path d="M279.06646,168.81576l-0.1513,-1.42964" fill="none" stroke-width="5" stroke-linecap="round"/></g></g></svg><br>This folder is empty.</center>`;
 				}
@@ -1361,11 +1404,11 @@ $('button').on('click', function () {
 				console.log("0003 b: no folder.");
 			}
 
-			
+
 		}
 
 		function updpth() {
-			document.getElementById("pathdisp").innerHTML = "device://" + currentPath;
+			document.getElementById("pathdisp").innerHTML = "/" + currentPath;
 		}
 
 		async function slfile(y) {
@@ -1379,61 +1422,61 @@ $('button').on('click', function () {
 				}
 				openfile(x);
 			} else {
-				
+
 				if (document.getElementById("slfile")) { document.getElementById("slfile").id = null; }
 				nowfile = x;
-				
+
 				var fileSize
 				x.id = "slfile";
 				let fileData
 				if (!(x.getAttribute("unid") === null || x.getAttribute("unid") === "")) {
-					
-				try {
-					fileData = await window.parent.getFileById(x.getAttribute("unid"));
 
-					if (fileData && fileData.content) {
-						fileSize = new TextEncoder().encode(fileData.content).length;
-					} else {
-						console.error("Safe Error: Unable to retrieve file content.");
-						
-					}
-				} catch (error) {
-					console.error("Safe Error:", error);
-				}
-				
-
-
-				if (fileSize !== 0) {
 					try {
-						var units = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-						var unitIndex = 0;
+						fileData = await window.parent.getFileById(x.getAttribute("unid"));
 
-						while (fileSize > 1024 && unitIndex < units.length - 1) {
-							fileSize /= 1024;
-							unitIndex++;
+						if (fileData && fileData.content) {
+							fileSize = new TextEncoder().encode(fileData.content).length;
+						} else {
+							console.error("Safe Error: Unable to retrieve file content.");
+
 						}
-
-						fileSize = fileSize.toFixed(2);
 					} catch (error) {
-						console.error(error)
-						fileSize = 0
+						console.error("Safe Error:", error);
 					}
-				}
 
 
-				if (sessiontype == "opener") {
-					return;
-				}
 
-				if (binmode) {
-					document.getElementById("fileinfobn").innerHTML = `<button class="delbtn" onclick="remfile('` + x.getAttribute("unid") + `')">Delete</button>`;
-				} else {
-					document.getElementById("fileinfobn").innerHTML = `<button class="delbtn" onclick="remfile('` + x.getAttribute("unid") + `')"><span class="material-symbols-rounded">
+					if (fileSize !== 0) {
+						try {
+							var units = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+							var unitIndex = 0;
+
+							while (fileSize > 1024 && unitIndex < units.length - 1) {
+								fileSize /= 1024;
+								unitIndex++;
+							}
+
+							fileSize = fileSize.toFixed(2);
+						} catch (error) {
+							console.error(error)
+							fileSize = 0
+						}
+					}
+
+
+					if (sessiontype == "opener") {
+						return;
+					}
+
+					if (binmode) {
+						document.getElementById("fileinfobn").innerHTML = `<button class="delbtn" onclick="remfile('` + x.getAttribute("unid") + `')">Delete</button>`;
+					} else {
+						document.getElementById("fileinfobn").innerHTML = `<button class="delbtn" onclick="remfile('` + x.getAttribute("unid") + `')"><span class="material-symbols-rounded">
 delete
 </span> Delete</button>`;
-				}
-				try {
-					document.getElementById("fileinfobn").innerHTML += `<div class="dropup">
+					}
+					try {
+						document.getElementById("fileinfobn").innerHTML += `<div class="dropup">
 								  <button class="dropbtn">More</button>
 								  <div class="dropup-content">
 									${window.parent.getbaseflty(mtpetxt(fileData.fileName)) == "image" ? '<a onclick="window.parent.makewall(\'' + x.getAttribute("unid") + '\')"><span class="material-symbols-rounded">wallpaper</span> Set As Wallpaper</a>' : ''}
@@ -1452,17 +1495,17 @@ drive_file_move
 </span> Move</a>
 								  </div>
 								</div> `+ fileSize + ' ' + units[unitIndex]
-				
-				} catch (error) {
-					document.getElementById("fileinfobn").innerHTML += "Safe Error 0006";
-					window.parent.say(`<h1>File Error</h1><p>Nova files couldn't process that file</p><small>(Error 0006)</small>`, "warning")
-					refresh()
-					// i did sjdfhsdkfhsdfj file type 
-					console.error("An error occurred:", error);
+
+					} catch (error) {
+						document.getElementById("fileinfobn").innerHTML += "Safe Error 0006";
+						window.parent.say(`<h1>File Error</h1><p>Nova files couldn't process that file</p><small>(Error 0006)</small>`, "warning")
+						refresh()
+						// i did sjdfhsdkfhsdfj file type 
+						console.error("An error occurred:", error);
+
+					}
 
 				}
-								
-			}
 			}
 		}
 
@@ -1820,8 +1863,7 @@ drive_file_move
 				console.log(err)
 			}
 		}
-
-		greenflagbro()
+    greenflagbro()
 	</script>
 </body>
 
