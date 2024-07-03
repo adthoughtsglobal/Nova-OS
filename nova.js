@@ -46,6 +46,18 @@ var novaos = {
       console.log("Connection closed");
     };
 
+  },
+  createFile: function(...args) {
+    return window.parent.createFile(args);
+  },
+  getFileById: function(...args) {
+    return window.parent.getFileById(args);
+  },
+  getFileByPath: function(...args) {
+    return window.parent.getFileByPath(args);
+  },
+  getFileNamesByFolder: function(...args) {
+    return window.parent.getFileNamesByFolder(args);
   }
 }
 
