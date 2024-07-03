@@ -969,25 +969,36 @@
 						if (JSON.parse(localStorage.getItem("qsets")).simpleMode) {
 							document.getElementById("cbx-68").checked = true;
 						}
+						let sizes2323 = {
+							"-1": 0.8,
+							0: 1,
+							1: 1.1,
+							2: 1.3
+						};
 
-						// sizes slider
+						// Retrieve stored UISizing value from localStorage
+						let storedUISizing = JSON.parse(localStorage.getItem("qsets")).UISizing;
+
+						// Iterate through sizes2323 object to find the matching key for storedUISizing
+						let matchingKey = Object.keys(sizes2323).find(key => sizes2323[key] === storedUISizing);
+
+						// Set the input value based on the matching key found
+						if (matchingKey !== undefined) {
+							document.getElementById("UISIZErangeslid").value = matchingKey;
+						} else {
+							// Handle case where storedUISizing doesn't match any value in sizes2323
+							console.error("No matching key found for stored UISizing value:", storedUISizing);
+						}
+
+						// Event listener to update localStorage when UISIZErangeslid input changes
 						document.getElementById("UISIZErangeslid").addEventListener("input", function () {
-							let sizes = {
-								"-1": 0.8,
-								0: 1,
-								1: 1.1,
-								2: 1.3
-							};
-							let newValue2 = sizes[document.getElementById("UISIZErangeslid").value];
+							let newValue = sizes2323[document.getElementById("UISIZErangeslid").value];
 							let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
-							qsets.UISizing = newValue2;
+							qsets.UISizing = newValue;
 							localStorage.setItem("qsets", JSON.stringify(qsets));
 							window.parent.checkdmode();
 						});
 
-						if (JSON.parse(localStorage.getItem("qsets")).UISizing) {
-							document.getElementById("UISIZErangeslid").value = JSON.parse(localStorage.getItem("qsets")).UISizing;
-						}
 					}
 
 					function defs5() {
