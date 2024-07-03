@@ -566,7 +566,7 @@
 <body>
 	<container>
 		<div class="tab">
-			
+
 			<button class="tablinks" onclick="openCity(event, 'storage')" id="defaultOpen"><i
 					class="material-icons">storage</i> Storage</button>
 			<button class="tablinks" onclick="openCity(event, 'battery')"><i class="material-icons">battery_full</i>
@@ -574,7 +574,7 @@
 			<button class="tablinks" onclick="openCity(event, 'devices')"><i class="material-icons">devices</i>
 				Devices</button>
 			<button class="tablinks" onclick="openCity(event, 'activity'); taskmg()"><i class="material-icons">poll</i>
-			Activity</button>
+				Activity</button>
 			<button class="tablinks" onclick="openCity(event, 'perform'); updateFPS()"><i
 					class="material-icons">speed</i>
 				Performance</button>
@@ -597,55 +597,56 @@
 			<style>
 				.datamangernav {
 					display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.1rem 0.5rem;
-    background: #1f1f1f;
-    border-radius: 0.5rem;
+					justify-content: space-between;
+					align-items: center;
+					padding: 0.1rem 0.5rem;
+					background: #1f1f1f;
+					border-radius: 0.5rem;
 				}
 
 				.datamangernav i {
-					
-    font-size: 1rem !important;
-    transform: translateY(3px);
+
+					font-size: 1rem !important;
+					transform: translateY(3px);
 				}
 
 				.lclstr {
-    border-bottom: 2px solid #1f1f1f;
-    padding: 0.2rem 0.5rem;
-    margin-top: 0.2rem;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-}
+					border-bottom: 2px solid #1f1f1f;
+					padding: 0.2rem 0.5rem;
+					margin-top: 0.2rem;
+					display: flex;
+					flex-direction: row;
+					flex-wrap: nowrap;
+				}
 
-.lclstr:hover {
-    background: #1f1f1f69;
-    transition: 0.3s;
-}
+				.lclstr:hover {
+					background: #1f1f1f69;
+					transition: 0.3s;
+				}
 
-.lclstr span {
-	width: 0;
-    word-break: break-all;
-}
+				.lclstr span {
+					width: 0;
+					word-break: break-all;
+				}
 
-.lclstr .name {
-    flex: 1;
-	margin-right: 0.2rem;
-}
-.lclstr .value {
-    flex: 3;
-}
+				.lclstr .name {
+					flex: 1;
+					margin-right: 0.2rem;
+				}
 
-.lclstr .material-icons {
-	width: 20px;
-    font-size: 1rem;
-    display: grid;
-    justify-items: center;
-    align-items: center;
-    opacity: 0.5;
-}
-				</style>
+				.lclstr .value {
+					flex: 3;
+				}
+
+				.lclstr .material-icons {
+					width: 20px;
+					font-size: 1rem;
+					display: grid;
+					justify-items: center;
+					align-items: center;
+					opacity: 0.5;
+				}
+			</style>
 			<h1>Data Manager</h1>
 			<div class="datamangernav">
 				<span>LocalStorage</span>
@@ -670,7 +671,7 @@
 						const elemval = document.createElement("span");
 						elemval.classList = "value";
 						elemval.innerHTML = items[key];
-						elemval.addEventListener('click', async function() {
+						elemval.addEventListener('click', async function () {
 							let x = await window.parent.ask("Set value for '" + key + "':", items[key]);
 							localStorage.setItem(key, x)
 						});
@@ -678,7 +679,7 @@
 						const delbtn = document.createElement("span");
 						delbtn.classList = "material-icons";
 						delbtn.innerHTML = "delete_forever";
-						delbtn.addEventListener('click', async function() {
+						delbtn.addEventListener('click', async function () {
 							localStorage.removeItem(key);
 							lclstgsc();
 						});
@@ -686,7 +687,7 @@
 						document.getElementById("datalist").appendChild(elem)
 					}
 				}
-				</script>
+			</script>
 		</div>
 
 		<div id="perform" class="tabcontent">
@@ -731,7 +732,7 @@
 				<p>To boost your FPS, consider closing resource-heavy apps and avoid using your device while it's
 					charging, as this can impact performance.</p>
 			</small>
-			
+
 			<script>
 				var running, currentpage;
 
@@ -799,7 +800,7 @@
 					render();
 
 					// Define a variable to hold the interval ID
-					let intervalId = setInterval(function() {
+					let intervalId = setInterval(function () {
 						if (currentpage === 'perform') {
 							calculateFPS();
 						} else {
@@ -860,7 +861,7 @@
 									console.log("Key 'rom' removed successfully");
 
 									localStorage.removeItem("qsets")
-										window.parent.location.reload()
+									window.parent.location.reload()
 								};
 
 								deleteRequest.onerror = function (event) {
@@ -972,11 +973,11 @@
 						// sizes slider
 						document.getElementById("UISIZErangeslid").addEventListener("input", function () {
 							let sizes = {
-  "-1": 0.8,
-  0: 1,
-  1: 1.1, 
-  2: 1.3
-};
+								"-1": 0.8,
+								0: 1,
+								1: 1.1,
+								2: 1.3
+							};
 							let newValue2 = sizes[document.getElementById("UISIZErangeslid").value];
 							let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
 							qsets.UISizing = newValue2;
@@ -985,7 +986,7 @@
 						});
 
 						if (JSON.parse(localStorage.getItem("qsets")).UISizing) {
-							document.getElementById("cbx-68").value = JSON.parse(localStorage.getItem("qsets")).UISizing;
+							document.getElementById("UISIZErangeslid").value = JSON.parse(localStorage.getItem("qsets")).UISizing;
 						}
 					}
 
@@ -1127,7 +1128,7 @@
 
 						let selinp2 = document.getElementById("defSearchEngine");
 						if (JSON.parse(localStorage.getItem("qsets")).defSearchEngine) {
-								selinp2.value = JSON.parse(localStorage.getItem("qsets")).defSearchEngine;
+							selinp2.value = JSON.parse(localStorage.getItem("qsets")).defSearchEngine;
 						}
 						document.getElementById("defSearchEngine").addEventListener("change", function () {
 							let newValue = document.getElementById("defSearchEngine").value;
@@ -1392,8 +1393,8 @@
 				<b>Make the change.</b>
 				<p>Support us making NovaOS into a better and more powerful place for you.
 					<br>
-					<a onclick="window.open('https://www.patreon.com/adthoughtsglobal/membership')">Patreon</a> <a
-						okay onclick="window.open('https://discord.gg/atkqbwEQU8')">Let's talk</a>
+					<a onclick="window.open('https://www.patreon.com/adthoughtsglobal/membership')">Patreon</a> <a okay
+						onclick="window.open('https://discord.gg/atkqbwEQU8')">Let's talk</a>
 				</p>
 			</supportb>
 			<h3>Credits</h3>
@@ -1458,10 +1459,12 @@
 					0% {
 						transform: scale(1);
 					}
+
 					50% {
 						transform: scale(1.1);
 						filter: brightness(120%);
 					}
+
 					100% {
 						transform: scale(1);
 					}
@@ -1475,7 +1478,7 @@
 				<div class="task">
 					<span>Settings</span>
 					<span class="material-icons stpicn">
-					do_disturb
+						do_disturb
 					</span>
 				</div>
 			</div>
@@ -1505,13 +1508,13 @@
 						spanIcon.onclick = function () {
 							spanIcon.classList.add('wooboo-animation');
 							delete window.parent.winds[taskName + taskId];
-				window.parent.clwin("window"+taskId);
-							
+							window.parent.clwin("window" + taskId);
+
 						}
 
 						taskDiv.appendChild(spanSettings);
 						taskDiv.appendChild(smallId);
-						
+
 						taskDiv.appendChild(spanIcon);
 
 						tasksList.appendChild(taskDiv);
@@ -1723,40 +1726,42 @@
 			</segr>
 			<segr>
 				<div setting>
-				<b>UI Size</b>
-				<div class="UISIZEcontainer">
-					
-					<div class="UISIZEslider-labels">
-						<span>small</span>
-						<span>default</span>
-						<span>big</span>
-						<span>biggest</span>
-					</div>
-					<input type="range" id="UISIZErangeslid" min="-1" max="2" step="1" value="1">
+					<b>UI Size</b>
+					<div class="UISIZEcontainer">
 
+						<div class="UISIZEslider-labels">
+							<span>small</span>
+							<span>default</span>
+							<span>big</span>
+							<span>biggest</span>
+						</div>
+						<input type="range" id="UISIZErangeslid" min="-1" max="2" step="1" value="1">
+
+					</div>
 				</div>
-			</div>
-				</segr>
+			</segr>
 			<h1>Wallpaper</h1>
 			<segr>
 				<style>
 					#UISIZErangeslid {
 						width: 100%;
 					}
+
 					.UISIZEslider-labels {
 						display: flex;
-            justify-content: space-between;
-            width: 100%;
-			margin-top: 0.5rem;
+						justify-content: space-between;
+						width: 100%;
+						margin-top: 0.5rem;
 					}
 
 					.UISIZEslider-labels span {
 						opacity: 0.5;
-    font-size: 0.8rem;
-    width: 0;
-    text-align: center;
-    flex: 1;
+						font-size: 0.8rem;
+						width: 0;
+						text-align: center;
+						flex: 1;
 					}
+
 					#cwallimg {
 						display: block;
 						height: 120px;
@@ -1823,39 +1828,39 @@
 					evt.currentTarget.className += " active";
 				}
 
-					var usedMemoryPercentage;
-					document.getElementById("defaultOpen").click();
+				var usedMemoryPercentage;
+				document.getElementById("defaultOpen").click();
 
-					if ('storage' in navigator && 'estimate' in navigator.storage) {
-						navigator.storage.estimate().then(({usage, quota}) => {
+				if ('storage' in navigator && 'estimate' in navigator.storage) {
+					navigator.storage.estimate().then(({ usage, quota }) => {
 
-							const elem = document.getElementById("myBar2");
-							const storemarkElem = document.getElementById("storemark2");
+						const elem = document.getElementById("myBar2");
+						const storemarkElem = document.getElementById("storemark2");
 
-							// Calculate used memory percentage
-							const usedMemoryPercentage = (usage / quota) * 100;
-							elem.style.width = usedMemoryPercentage + "%";
+						// Calculate used memory percentage
+						const usedMemoryPercentage = (usage / quota) * 100;
+						elem.style.width = usedMemoryPercentage + "%";
 
-							// Convert total and used memory to GB and MB
-							const totalMemoryGB = (quota / (1024 * 1024 * 1024)).toFixed(2);
-							const usedMemoryGB = (usage / (1024 * 1024 * 1024)).toFixed(2);
-							const totalMemoryMB = (quota / (1024 * 1024)).toFixed(2);
-							const usedMemoryMB = (usage / (1024 * 1024)).toFixed(2);
+						// Convert total and used memory to GB and MB
+						const totalMemoryGB = (quota / (1024 * 1024 * 1024)).toFixed(2);
+						const usedMemoryGB = (usage / (1024 * 1024 * 1024)).toFixed(2);
+						const totalMemoryMB = (quota / (1024 * 1024)).toFixed(2);
+						const usedMemoryMB = (usage / (1024 * 1024)).toFixed(2);
 
-							// Display memory usage
-							storemarkElem.textContent = `Used ${usedMemoryGB} GB (${usedMemoryMB} MB) of available ${totalMemoryGB} GB (${totalMemoryMB} MB)`;
-							let strgsugs = document.getElementById("storagesuggs");
-							if (usedMemoryPercentage < 20) {
-								strgsugs.innerHTML = `<small><b>You have a lot of storage left!</b><p>You can import files in files app or install apps from store to use it!</p></small>`
-							}
-						});
-					}
+						// Display memory usage
+						storemarkElem.textContent = `Used ${usedMemoryGB} GB (${usedMemoryMB} MB) of available ${totalMemoryGB} GB (${totalMemoryMB} MB)`;
+						let strgsugs = document.getElementById("storagesuggs");
+						if (usedMemoryPercentage < 20) {
+							strgsugs.innerHTML = `<small><b>You have a lot of storage left!</b><p>You can import files in files app or install apps from store to use it!</p></small>`
+						}
+					});
+				}
 
 				generateDeviceDivs()
 
 
 				var psmm = window.parent.document.body.style.opacity == "1";
-				if (psmm) {togglepsm()}
+				if (psmm) { togglepsm() }
 				function togglepsm() {
 					if (psmm) {
 						window.parent.document.body.style.filter = "brightness(1)"

@@ -2133,6 +2133,10 @@ document.addEventListener('keydown', function(event) {
 		event.preventDefault();
 		openapp('files', 1);
 	}
+	if (event.ctrlKey && (event.key === 's')) {
+		event.preventDefault();
+		openapp('settings', 1);
+	}
 });
 
 
