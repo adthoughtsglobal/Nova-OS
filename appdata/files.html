@@ -145,6 +145,7 @@
 			    display: flex;
     flex-direction: column;
     overflow-x: hidden;
+	transition: .3s;
 		}
 
 		[flap-sidenav] small {
@@ -672,6 +673,8 @@
 		#jstree {
 			margin-top: 0.5rem;
 			transform: translateX(-5px);
+			display: inline-block;
+    width: fit-content;
 		}
 
 		.jstree-default .jstree-icon:empty {
@@ -708,13 +711,9 @@
 		}
 
 		.jstree-closed>.jstree-ocl:before {
-			content: "\f054";
-			/* Font Awesome chevron-right icon */
 		}
 
 		.jstree-open>.jstree-ocl:before {
-			content: "\f078";
-			/* Font Awesome chevron-down icon */
 		}
 		
 		#pathdisp {
@@ -879,7 +878,7 @@
 				<div flap-sidenav style="
 		height: 100%;" id="flap-sidenav">
 		<div class="drivenav">
-					<small>IndexedDB</small>
+					<small onclick="listFiles('')">IndexedDB</small>
 					<small class="newfoldbtn" onclick="makefolderhuh()">+</small>
 </div>
 					<div id="folders">
@@ -1040,13 +1039,13 @@
 		}
 
 		.jstree-default .jstree-clicked {
-			background: #393939;
+			background: #1c1c1c;
 			border-radius: 0.3rem;
 			box-shadow: none;
 		}
 
 		.jstree-default .jstree-hovered {
-			background: #393939;
+			background: #272727;
 			border-radius: 0.3rem;
 			box-shadow: none;
 		}
@@ -1135,23 +1134,47 @@
 		var binmode = false;
 		var sessiontype = "normal"
 
+		function fitsizesidenav() {
+			document.getElementById("flap-sidenav").style.width = getComputedStyle(document.getElementById("jstree")).width
+		}
 		function greenflagbro() {
+
+			let x = localStorage.getItem("qsets");
+	if (x) {
+		if (JSON.parse(x).filesSidenavSize) {
+			document.getElementById("flap-sidenav").style.width = JSON.parse(x).filesSidenavSize;
+		} else {
+			fitsizesidenav()
+		}
+	}
 
 			$('#jstree').on("changed.jstree", function (e, data) {
 				if (data && data.node && data.node.li_attr && data.node.li_attr['data-path']) {
 					let selectedPath = data.node.li_attr['data-path'];
 					console.log('Selected folder:', selectedPath);
 					listFiles(selectedPath);
+					if (!JSON.parse(x).filesSidenavSize) {
+						fitsizesidenav()
+					}
 				} else {
 					console.log('No folder selected');
 				}
 			});
 
-			$( function() {
-    $( "#flap-sidenav" ).resizable({
-      handles: 'e'
-    });
-  } );
+			$("#flap-sidenav").resizable({
+                handles: 'e',
+				stop: function(event, ui) {
+                    const newWidth = ui.size.width;
+                    let qsets = localStorage.getItem('qsets');
+                    if (qsets) {
+                        qsets = JSON.parse(qsets);
+                        qsets.filesSidenavSize = newWidth + 'px';
+                    } else {
+                        qsets = { filesSidenavSize: newWidth + 'px' };
+                    }
+                    localStorage.setItem('qsets', JSON.stringify(qsets));
+                }
+            });
 
 			$('button').on('click', function () {
 				$('#jstree').jstree(true).select_node('child_node_1');

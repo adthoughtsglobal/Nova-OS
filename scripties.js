@@ -50,9 +50,9 @@ function checkdmode() {
 	let x = localStorage.getItem("qsets");
 	qsetsRefresh()
 	if (x) {
-
 		// scalable UI
-		if (JSON.parse(x).UISizing) {
+		if (JSON.parse(x).UISizing && JSON.parse(x).UISizing == 1) {
+			
 			scaleUIElements(JSON.parse(x).UISizing)
 		}
 
