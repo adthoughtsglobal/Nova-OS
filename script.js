@@ -799,6 +799,8 @@ function openwindow(title, cont, ic, theme) {
 	// Create the window element
 	var windowDiv = document.createElement("div");
 	windowDiv.id = "window" + winuid;
+	
+	
 	windowDiv.setAttribute("data-winds", title + winuid);
 	windowDiv.onclick = function() {
 		nowapp = title;
@@ -964,6 +966,9 @@ function openwindow(title, cont, ic, theme) {
 
 	// Append the window to the document body
 	document.body.appendChild(windowDiv);
+	$("#" + windowDiv.id).resizable({
+		handles: 'n, e, s, w, ne, nw, se, sw'
+	});
 	// Initial load
 	loadIframeContent(windowLoader, windowContent);
 

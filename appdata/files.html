@@ -853,7 +853,7 @@
 			}
 
 			async function makefolderhuh() {
-				let x = await window.parent.ask("Enter your Folder Name:", 'FolderName');
+				let x = await window.parent.ask("Enter your Folder Name:", currentPath);
 				window.parent.createFolder(x);
 			}
 		</script>
@@ -1127,7 +1127,7 @@
 			event.preventDefault();
 		});
 
-		var currentPath, nowfile, flmode = 'grid';
+		var currentPath = '/', nowfile, flmode = 'grid';
 		var memory;
 		var fllist;
 		var fdlist;
@@ -1148,7 +1148,7 @@
 		}
 	}
 
-			$('#jstree').on("changed.jstree", function (e, data) {
+	$('#jstree').on("changed.jstree", function (e, data) {
 				if (data && data.node && data.node.li_attr && data.node.li_attr['data-path']) {
 					let selectedPath = data.node.li_attr['data-path'];
 					console.log('Selected folder:', selectedPath);
@@ -1284,27 +1284,46 @@
 		}
 
 		function liststuff() {
-			$(function () {
-				const jsTreeData = memoryToJsTree(memory);
+    $(function () {
+        // Convert memory to jsTree data
+        const jsTreeData = memoryToJsTree(memory);
 
-				$('#jstree').jstree({
-					'core': {
-						'data': jsTreeData
+        // Check if the jsTree already exists
+        if ($('#jstree').jstree(true)) {
+            // Destroy the existing jsTree instance
+            $('#jstree').jstree('destroy').empty();
+        }
+
+        // Initialize jsTree with new data
+        $('#jstree').jstree({
+            'core': {
+                'data': jsTreeData
+            }
+        });
+
+        $('#jstree').on('loaded.jstree', function () {
+            $('#jstree').find('li[role="treeitem"]').each(function () {
+                const element = $(this);
+                const folderName = element.find('a').text();
+
+                element.attr('ondragover', 'Allowdrop(event, this)');
+                element.attr('ondrop', 'dropfl(event, "' + folderName + '")');
+            });
+        });
+		$('#jstree').on("changed.jstree", function (e, data) {
+				if (data && data.node && data.node.li_attr && data.node.li_attr['data-path']) {
+					let selectedPath = data.node.li_attr['data-path'];
+					console.log('Selected folder:', selectedPath);
+					listFiles(selectedPath);
+					if (!JSON.parse(x).filesSidenavSize) {
+						fitsizesidenav()
 					}
-				});
-
-				$('#jstree').on('loaded.jstree', function () {
-					$('#jstree').find('li[role="treeitem"]').each(function () {
-						const element = $(this);
-						const folderName = element.find('a').text();
-
-						element.attr('ondragover', 'Allowdrop(event, this)');
-						element.attr('ondrop', 'dropfl(event, "' + folderName + '")');
-					});
-				});
+				} else {
+					console.log('No folder selected');
+				}
 			});
-
-		}
+    });
+}
 		function refresh() {
 			setTimeout(() => {
 				getdb('trojencat', 'rom')
@@ -1316,7 +1335,6 @@
 				liststuff();
 				listFiles(currentPath);
 			}, 1000);
-			liststuff();
 		}
 
 		function dragfl(ev, obj) {
@@ -1886,7 +1904,7 @@ drive_file_move
 				await window.parent.remfolder(currentPath).then(function () {
 					document.getElementById("fileinfobn").innerHTML = currentPath + " was removed"
 				})
-				listFiles('System/', true)
+				listFiles('/', true)
 			}
 		}
 
