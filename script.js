@@ -838,8 +838,11 @@ function openwindow(title, cont, ic, theme) {
 	var windowHeader = document.createElement("div");
 	windowHeader.id = "window" + winuid + "header"
 	windowHeader.classList += "windowheader";
-	windowHeader.innerHTML = ic != null ? ic : "";
-	windowHeader.innerHTML += toTitleCase(title)
+	let windowdataspan = document.createElement("div");
+	windowdataspan.classList += "windowdataspan";
+	windowdataspan.innerHTML = ic != null ? ic : "";
+	windowdataspan.innerHTML += toTitleCase(title)
+	windowHeader.appendChild(windowdataspan)
 	if (theme != null) {
 		windowHeader.style.backgroundColor = theme;
 		windowDiv.style.border = `1px solid ` + theme;
@@ -1036,17 +1039,23 @@ function genUID() {
 
 async function createFolder(folderName) {
 	try {
-        let parts = folderName.split('/');
-        let current = memory;
+		
+		memory = await getdb('trojencat', 'rom');
+folderName = folderName.replace(/\/$/, ''); // Remove the trailing slash
+let parts = folderName.split('/');
+let current = memory;
 
-        for (let part of parts) {
-            part += '/';
-            if (!current[part]) {
-                current[part] = {};
-            }
-            current = current[part];
-        }
+for (let part of parts) {
+    part += '/';
+    if (!current[part]) {
+        current[part] = {};
+    }
+    current = current[part];
+    
+    console.log(current);
+}
 
+		await setdb('trojencat', 'rom', memory);
         console.log(`Folder "${folderName}" created successfully.`);
     } catch (error) {
         console.error("Error creating folder:", error);
@@ -1489,30 +1498,28 @@ async function remfolder(folderPath) {
         const memory = await getdb('trojencat', 'rom');
         
         // Split the folderPath into parts
-        let parts = folderPath.split('/');
+        let parts = folderPath.split('/').filter(part => part);
         let current = memory;
         let parent = null;
         let key = null;
         
         // Traverse the path to find the folder
         for (let i = 0; i < parts.length; i++) {
-            let part = parts[i];
-            if (part) {
-                part += '/';
-                if (current[part]) {
-                    parent = current;
-                    key = part;
-                    current = current[part];
-                } else {
-                    console.error(`Folder "${folderPath}" not found.`);
-                    return;
-                }
+            let part = parts[i] + '/';
+            if (current.hasOwnProperty(part)) {
+                parent = current;
+                key = part;
+                current = current[part];
+            } else {
+                console.error(`Folder "${folderPath}" not found.`);
+                return;
             }
         }
 
-        // Remove the specified subfolder and its contents
+        // Remove only the specified subfolder and its contents
         if (parent && key) {
             delete parent[key];
+            console.log(`Folder "${folderPath}" and its contents successfully removed.`);
         } else {
             console.error(`Unable to delete folder "${folderPath}".`);
             return;
@@ -1520,7 +1527,6 @@ async function remfolder(folderPath) {
 
         // Update the memory database
         await setdb('trojencat', 'rom', memory);
-        console.log(`Folder "${folderPath}" and its contents successfully removed.`);
     } catch (error) {
         console.error("Error removing folder:", error);
     }
@@ -1926,67 +1932,68 @@ function dewallblur() {
 }
 
 function checksnapping(x, event) {
-	let f = localStorage.getItem("qsets");
-	if (f) {
-		f = JSON.parse(f); // Assuming it's JSON data
-		if (!f.wsnapping) {
-			return;
-		}
-	}
-	var cursorX = event.clientX;
-	var cursorY = event.clientY;
+    let f = localStorage.getItem("qsets");
+    if (f) {
+        f = JSON.parse(f); // Assuming it's JSON data
+        if (!f.wsnapping) {
+            return;
+        }
+    }
+    var cursorX = event.clientX;
+    var cursorY = event.clientY;
 
-	var viewportWidthInPixels = window.innerWidth;
-	var viewportHeightInPixels = window.innerHeight;
+    var viewportWidthInPixels = window.innerWidth;
+    var viewportHeightInPixels = window.innerHeight;
 
-	var VWInPixels = (3 * viewportWidthInPixels) / 100;
-	var VHInPixels = (3 * viewportHeightInPixels) / 100;
+    var VWInPixels = (3 * viewportWidthInPixels) / 100;
+    var VHInPixels = (3 * viewportHeightInPixels) / 100;
 
-	if (fulsapp) {
-		x.classList.add("transp2");
-		x.getElementsByClassName("flbtn")[0].innerHTML = "open_in_full";
-		x.style = 'left: calc(50vw - 33.5vw); top: calc(50vh - 35vh); width: 65vw; height: 70vh; z-index: 0;';
-		fulsapp = false;
-		setTimeout(() => {
-			x.classList.remove("transp2");
-		}, 1000);
-	}
+    if (fulsapp) {
+        x.classList.add("snapping");
+        x.getElementsByClassName("flbtn")[0].innerHTML = "open_in_full";
+        x.style = 'left: calc(50vw - 33.5vw); top: calc(50vh - 35vh); width: 65vw; height: 70vh; z-index: 0;';
+        fulsapp = false;
+        setTimeout(() => {
+            x.classList.remove("snapping");
+        }, 1000);
+    }
 
-	if (cursorY < VHInPixels || (viewportHeightInPixels - cursorY) < VHInPixels) {
-		x.classList.add("transp2");
-		x.style.width = "calc(100% - 0px)";
-		x.style.height = "calc(100% - 60px)";
-		x.style.top = "0";
-		x.style.right , x.style.left = "0";
-		
-		fulsapp = true;
-		x.getElementsByClassName("flbtn")[0].innerHTML = "close_fullscreen";
-		setTimeout(() => {
-			x.classList.remove("transp2");
-		}, 1000);
-	}
+    if (cursorY < VHInPixels || (viewportHeightInPixels - cursorY) < VHInPixels) {
+        x.classList.add("snapping");
+        x.style.width = "calc(100% - 0px)";
+        x.style.height = "calc(100% - 60px)";
+        x.style.top = "0";
+        x.style.right = "0";
+        x.style.left = "0";
 
-	// left
-	if (cursorX < VWInPixels) {
-		x.classList.add("transp2");
-		x.style = "left: 0; top: 0; width: calc(50% - 0px); height: calc(100% - 50px);";
-		fulsapp = true;
-		x.getElementsByClassName("flbtn")[0].innerHTML = "open_in_full";
-		setTimeout(() => {
-			x.classList.remove("transp2");
-		}, 1000);
-	}
+        fulsapp = true;
+        x.getElementsByClassName("flbtn")[0].innerHTML = "close_fullscreen";
+        setTimeout(() => {
+            x.classList.remove("snapping");
+        }, 1000);
+    }
 
-	// right
-	if ((viewportWidthInPixels - cursorX) < VWInPixels) {
-		x.classList.add("transp2");
-		x.style = "right: 0; top: 0; width: calc(50% - 0px); height: calc(100% - 50px);";
-		fulsapp = true;
-		x.getElementsByClassName("flbtn")[0].innerHTML = "open_in_full";
-		setTimeout(() => {
-			x.classList.remove("transp2");
-		}, 1000);
-	}
+    // left
+    if (cursorX < VWInPixels) {
+        x.classList.add("snapping");
+        x.style = "left: 0; top: 0; width: calc(50% - 0px); height: calc(100% - 50px);";
+        fulsapp = true;
+        x.getElementsByClassName("flbtn")[0].innerHTML = "open_in_full";
+        setTimeout(() => {
+            x.classList.remove("snapping");
+        }, 1000);
+    }
+
+    // right
+    if ((viewportWidthInPixels - cursorX) < VWInPixels) {
+        x.classList.add("snapping");
+        x.style = "right: 0; top: 0; width: calc(50% - 0px); height: calc(100% - 50px);";
+        fulsapp = true;
+        x.getElementsByClassName("flbtn")[0].innerHTML = "open_in_full";
+        setTimeout(() => {
+            x.classList.remove("snapping");
+        }, 1000);
+    }
 }
 
 let countdown, countdown2;
