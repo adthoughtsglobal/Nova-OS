@@ -1,4 +1,4 @@
-> "It's not the OS, but the one who using it should work easily. "
+
 
 # Well this is Nova OS
 and it's a Web OS, that's made for you.
@@ -28,3 +28,5 @@ We have made an amazing place for developers too in Nova OS, starting with a Stu
 <p align="center">
 Nova runs without any ads, and we never deal with your data. If you consider supporting NovaOS development, please visit our <a href="https://www.patreon.com/adthoughtsglobal/">Patreon page</a>.
 </p>
+
+NovaOS is still being developed, currently, as any WebOS, its nowhere as powerful as traditional operating systems.
