@@ -142,10 +142,10 @@
 			min-width: 120px;
 			border-right: 1px solid #2a2a2a;
 			padding-bottom: 50px;
-			    display: flex;
-    flex-direction: column;
-    overflow-x: hidden;
-	transition: .3s;
+			display: flex;
+			flex-direction: column;
+			overflow-x: hidden;
+			transition: .3s;
 		}
 
 		[flap-sidenav] small {
@@ -161,11 +161,11 @@
 
 		[flap-fl-topnav] {
 			display: flex;
-    padding: 3px 10px;
-    font-size: 9px;
-    opacity: 70%;
-    transform: translateY(3px);
-    flex-direction: row;
+			padding: 3px 10px;
+			font-size: 9px;
+			opacity: 70%;
+			transform: translateY(3px);
+			flex-direction: row;
 		}
 
 		[flap-files] {
@@ -636,27 +636,27 @@
 
 		.newfoldbtn {
 			float: right;
-    margin: 0px;
-    font-size: 13px;
-    cursor: pointer;
-    background: #333333;
-    display: grid;
-    align-items: center;
-    justify-items: center;
-    justify-content: center;
-    align-content: center;
-    border-radius: 0.2rem;
-    height: 9px;
-    width: 6px;
-    text-align: right;
-    padding: 4px;
+			margin: 0px;
+			font-size: 13px;
+			cursor: pointer;
+			background: #333333;
+			display: grid;
+			align-items: center;
+			justify-items: center;
+			justify-content: center;
+			align-content: center;
+			border-radius: 0.2rem;
+			height: 9px;
+			width: 6px;
+			text-align: right;
+			padding: 4px;
 		}
 
 		.drivenav {
 			background: #3939395e;
-    padding: 3px;
-    border-radius: 0.3rem;
-    margin: 2px;
+			padding: 3px;
+			border-radius: 0.3rem;
+			margin: 2px;
 		}
 
 		.im {
@@ -674,7 +674,7 @@
 			margin-top: 0.5rem;
 			transform: translateX(-5px);
 			display: inline-block;
-    width: fit-content;
+			width: fit-content;
 		}
 
 		.jstree-default .jstree-icon:empty {
@@ -710,12 +710,10 @@
 			text-align: center;
 		}
 
-		.jstree-closed>.jstree-ocl:before {
-		}
+		.jstree-closed>.jstree-ocl:before {}
 
-		.jstree-open>.jstree-ocl:before {
-		}
-		
+		.jstree-open>.jstree-ocl:before {}
+
 		#pathdisp {
 			flex: 1;
 			overflow-x: hidden;
@@ -735,8 +733,8 @@
 	<script src="https://kit.fontawesome.com/3ea8b9584f.js" crossorigin="anonymous"></script>
 
 	<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css">
-	
-  <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.js"></script>
+
+	<script src="https://code.jquery.com/ui/1.13.3/jquery-ui.js"></script>
 </head>
 
 <body>
@@ -877,10 +875,10 @@
 			<div class="themainstuff">
 				<div flap-sidenav style="
 		height: 100%;" id="flap-sidenav">
-		<div class="drivenav">
-					<small onclick="listFiles('')">IndexedDB</small>
-					<small class="newfoldbtn" onclick="makefolderhuh()">+</small>
-</div>
+					<div class="drivenav">
+						<small onclick="listFiles('/')">IndexedDB</small>
+						<small class="newfoldbtn" onclick="makefolderhuh()">+</small>
+					</div>
 					<div id="folders">
 
 					</div>
@@ -894,7 +892,7 @@
 		flex-direction: column;
 		height: 100%;width: 0;">
 					<div flap-fl-topnav><span id="pathdisp">
-						/
+							/
 						</span>
 
 						<div class="nvbtns">
@@ -1140,15 +1138,15 @@
 		function greenflagbro() {
 
 			let x = localStorage.getItem("qsets");
-	if (x) {
-		if (JSON.parse(x).filesSidenavSize) {
-			document.getElementById("flap-sidenav").style.width = JSON.parse(x).filesSidenavSize;
-		} else {
-			fitsizesidenav()
-		}
-	}
+			if (x) {
+				if (JSON.parse(x).filesSidenavSize) {
+					document.getElementById("flap-sidenav").style.width = JSON.parse(x).filesSidenavSize;
+				} else {
+					fitsizesidenav()
+				}
+			}
 
-	$('#jstree').on("changed.jstree", function (e, data) {
+			$('#jstree').on("changed.jstree", function (e, data) {
 				if (data && data.node && data.node.li_attr && data.node.li_attr['data-path']) {
 					let selectedPath = data.node.li_attr['data-path'];
 					console.log('Selected folder:', selectedPath);
@@ -1162,19 +1160,19 @@
 			});
 
 			$("#flap-sidenav").resizable({
-                handles: 'e',
-				stop: function(event, ui) {
-                    const newWidth = ui.size.width;
-                    let qsets = localStorage.getItem('qsets');
-                    if (qsets) {
-                        qsets = JSON.parse(qsets);
-                        qsets.filesSidenavSize = newWidth + 'px';
-                    } else {
-                        qsets = { filesSidenavSize: newWidth + 'px' };
-                    }
-                    localStorage.setItem('qsets', JSON.stringify(qsets));
-                }
-            });
+				handles: 'e',
+				stop: function (event, ui) {
+					const newWidth = ui.size.width;
+					let qsets = localStorage.getItem('qsets');
+					if (qsets) {
+						qsets = JSON.parse(qsets);
+						qsets.filesSidenavSize = newWidth + 'px';
+					} else {
+						qsets = { filesSidenavSize: newWidth + 'px' };
+					}
+					localStorage.setItem('qsets', JSON.stringify(qsets));
+				}
+			});
 
 			$('button').on('click', function () {
 				$('#jstree').jstree(true).select_node('child_node_1');
@@ -1284,46 +1282,48 @@
 		}
 
 		function liststuff() {
-    $(function () {
-        // Convert memory to jsTree data
-        const jsTreeData = memoryToJsTree(memory);
+			$(function () {
+				// Convert memory to jsTree data
+				const jsTreeData = memoryToJsTree(memory);
 
-        // Check if the jsTree already exists
-        if ($('#jstree').jstree(true)) {
-            // Destroy the existing jsTree instance
-            $('#jstree').jstree('destroy').empty();
-        }
-
-        // Initialize jsTree with new data
-        $('#jstree').jstree({
-            'core': {
-                'data': jsTreeData
-            }
-        });
-
-        $('#jstree').on('loaded.jstree', function () {
-            $('#jstree').find('li[role="treeitem"]').each(function () {
-                const element = $(this);
-                const folderName = element.find('a').text();
-
-                element.attr('ondragover', 'Allowdrop(event, this)');
-                element.attr('ondrop', 'dropfl(event, "' + folderName + '")');
-            });
-        });
-		$('#jstree').on("changed.jstree", function (e, data) {
-				if (data && data.node && data.node.li_attr && data.node.li_attr['data-path']) {
-					let selectedPath = data.node.li_attr['data-path'];
-					console.log('Selected folder:', selectedPath);
-					listFiles(selectedPath);
-					if (!JSON.parse(x).filesSidenavSize) {
-						fitsizesidenav()
-					}
-				} else {
-					console.log('No folder selected');
+				// Check if the jsTree already exists
+				if ($('#jstree').jstree(true)) {
+					// Destroy the existing jsTree instance
+					$('#jstree').jstree('destroy').empty();
 				}
+
+				// Initialize jsTree with new data
+				$('#jstree').jstree({
+					'core': {
+						'data': jsTreeData
+					}
+				});
+
+				$('#jstree').on('loaded.jstree', function () {
+					$('#jstree').find('li[role="treeitem"]').each(function () {
+						console.log($(this))
+						const element = $(this);
+						const folderName = element.find('a').text();
+
+						element.attr('ondragover', 'Allowdrop(event, this)');
+						element.attr('ondrop', 'dropfl(event, "' + folderName + '")');
+					});
+				});
+				$('#jstree').on("changed.jstree", function (e, data) {
+					if (data && data.node && data.node.li_attr && data.node.li_attr['data-path']) {
+						let selectedPath = data.node.li_attr['data-path'];
+						console.log('Selected folder:', selectedPath);
+						listFiles(selectedPath);
+						let x = window.parent.qsetscache;
+						if (!x.filesSidenavSize) {
+							fitsizesidenav()
+						}
+					} else {
+						console.log('No folder selected');
+					}
+				});
 			});
-    });
-}
+		}
 		function refresh() {
 			setTimeout(() => {
 				getdb('trojencat', 'rom')
@@ -1342,7 +1342,6 @@
 		}
 
 		async function listFiles(folderName, gen) {
-			console.log("Listfiles log: " + folderName)
 			const startTime = performance.now();
 			if (currentPath == folderName && gen) {
 				return;
@@ -1354,15 +1353,11 @@
 			}
 			fllist.innerText = "";
 
-			// Helper function to navigate through the memory object
 			function findFolder(path, obj) {
-				// Split the path, retaining empty strings
 				let parts = path.split('/').map((part, index, array) => {
-					// Check if the current and next part are both empty, indicating a double slash
 					if (part === '' && array[index + 1] === '') {
 						return '/';
 					}
-					// Check if the current part is not empty and not the last part
 					if (part !== '' && index < array.length - 1 && array[index + 1] === '') {
 						return part + '/';
 					}
@@ -1563,7 +1558,6 @@ drive_file_move
 						document.getElementById("fileinfobn").innerHTML += "Safe Error 0006";
 						window.parent.say(`<h1>File Error</h1><p>Nova files couldn't process that file</p><small>(Error 0006)</small>`, "warning")
 						refresh()
-						// i did sjdfhsdkfhsdfj file type 
 						console.error("An error occurred:", error);
 
 					}
@@ -1639,6 +1633,7 @@ drive_file_move
 				} else {
 					console.error(`File with ID "${ID}" not found.`);
 				}
+				document.querySelector(`[unid="${ID}"]`).style.opacity = 0.2;
 			} catch (error) {
 				console.error("Safe Error fetching or updating data:", error);
 			}
@@ -1886,7 +1881,6 @@ drive_file_move
 		}
 
 		document.addEventListener('dbchange', () => {
-			// Handle database change, e.g., refresh data
 			refresh();
 		});
 
@@ -1926,7 +1920,7 @@ drive_file_move
 				console.log(err)
 			}
 		}
-    greenflagbro()
+		greenflagbro()
 	</script>
 </body>
 

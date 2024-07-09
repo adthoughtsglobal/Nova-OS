@@ -1066,18 +1066,19 @@ for (let part of parts) {
 }
 
 
-async function createFile(folderName, fileName, type, content, metadata) {
-	console.log(folderName, fileName, type, content, metadata)
+async function createFile(folderName2, fileName, type, content, metadata) {
+	let folderName = folderName2.replace(/\/$/, ''); 
+	console.log("Creating file", "")
 	let fileName2 = `${fileName}.${type}`;
     if (!metadata) {
-        metadata = { "via": "nope" };
+        metadata = {};
     }
     memory = await getdb('trojencat', 'rom');
     let folder = createFolderStructure(folderName);
 
     try {
         if (type === "app") {
-            let appData = await getFileByPath(`${folderName}/${fileName2}`);
+            let appData = await getFileByPath(`Apps/${fileName2}`);
             if (appData) {
                 const newData = {
                     metadata: metadata,
@@ -1112,7 +1113,7 @@ async function createFile(folderName, fileName, type, content, metadata) {
                 content: content,
                 metadata: metadata
             };
-            console.log(`File "${fileName2}" created in folder "${folderName}" for some reason.`);
+            console.log(`File "${fileName2}" created in "${folderName}".`);
             await setdb('trojencat', 'rom', memory);
         }
     } catch (error) {
