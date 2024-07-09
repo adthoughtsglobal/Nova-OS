@@ -966,9 +966,7 @@ function openwindow(title, cont, ic, theme) {
 
 	// Append the window to the document body
 	document.body.appendChild(windowDiv);
-	$("#" + windowDiv.id).resizable({
-		handles: 'n, e, s, w, ne, nw, se, sw'
-	});
+	
 	// Initial load
 	loadIframeContent(windowLoader, windowContent);
 

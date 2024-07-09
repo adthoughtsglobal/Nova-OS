@@ -1127,6 +1127,7 @@ logincard {
 	background:radial-gradient(black, #000000c7);
 	backdrop-filter: blur(10px);
 	animation: sleepwin .2s;
+	color: wheat;
 }
 
 @keyframes sleepwin {
