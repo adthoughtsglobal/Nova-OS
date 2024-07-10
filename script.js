@@ -150,7 +150,6 @@ document.addEventListener("DOMContentLoaded", function() {
 	bgImage.addEventListener("click", function() {
 		console.log("BG CLICK");
 		nowapp = '';
-		document.title = "Nova OS";
 		dewallblur();
 	});
 });
@@ -652,7 +651,6 @@ function clwin(x) {
 		document.getElementById(x).classList.remove("transp3")
 		document.getElementById(x).remove();
 		nowapp = '';
-		document.title = "Nova OS";
 	}, 700);
 }
 
@@ -905,27 +903,35 @@ function openwindow(title, cont, ic, theme) {
 
 	function loadIframeContent(windowLoader, windowContent, iframe) {
 		var iframe = document.createElement("iframe");
-		var contentString = content.toString();
+            var contentString = content.toString();
 
-		iframe.onload = function() {
-			iframe.src = "about:blank";
-			var doc = iframe.contentDocument || iframe.contentWindow.document;
-			doc.innerHTML = null;
-			doc.open();
-			doc.write(contentString);
-			doc.close();
-			if (contentString.includes(`function greenflag()`)) {
-				attemptGreenFlag(windowLoader, windowContent, iframe);
-			} else {
-				windowLoader.remove();
-			}
-		};
-		windowContent.appendChild(iframe);
-	}
+            // Create a Blob from the content string
+            var blob = new Blob([contentString], { type: 'text/html' });
+
+            // Create a URL for the Blob
+            var blobURL = URL.createObjectURL(blob);
+
+            iframe.onload = function() {
+                var doc = iframe.contentDocument || iframe.contentWindow.document;
+				
+			iframe.contentWindow.myWindow = windowDiv;
+
+                // Check if the content string contains the function greenflag
+                if (contentString.includes(`function greenflag()`)) {
+                    attemptGreenFlag(windowLoader, windowContent, iframe);
+                } else {
+                    windowLoader.remove();
+                }
+            };
+
+            // Set the src of the iframe to the Blob URL
+            iframe.src = blobURL;
+
+            windowContent.appendChild(iframe);
+        }
 
 	function attemptGreenFlag(windowLoader, windowContent, iframe) {
 		try {
-			iframe.contentWindow.myWindow = windowDiv;
 			iframe.contentWindow.greenflag();
 			windowLoader.style.display = "none";
 			windowLoader.remove();
@@ -936,25 +942,7 @@ function openwindow(title, cont, ic, theme) {
 				return;
 			}
 
-			setTimeout(function() {
-				try {
-					iframe.contentWindow.greenflag();
-				windowLoader.remove();
-				} catch (error) {
-					if (!String(error.message).includes('greenflag')) {
-						windowLoader.style.display = "none";
-					}
-					console.log('App failed to launch', error);
-					windowLoader.innerHTML = "<h2>App Failed to launch</h2><p>Click to retry</p>";
-					windowLoader.style.backgroundColor = "rgb(18 18 18)"
-					windowLoader.onclick = function() {
-						// Remove the previous iframe before retrying
-						var oldIframe = document.querySelector("iframe");
-						if (oldIframe) oldIframe.remove();
-						loadIframeContent(windowLoader, windowContent);
-					};
-				}
-			}, 500);
+			
 		}
 	}
 
@@ -1357,8 +1345,6 @@ function say(message, status) {
 }
 
 function loadtaskspanel() {
-
-	document.title = "Nova OS > " + nowapp;
 	let appbarelement = gid("nowrunninapps")
 
 	appbarelement.innerHTML = ""

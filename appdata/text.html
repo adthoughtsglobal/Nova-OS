@@ -5,8 +5,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Text App</title>
-    <meta name="nova-icon" content="<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'><path fill='#FFD983' d='M32 0H10C7.791 0 6 1.791 6 4v24H4c-2.209 0-4 1.791-4 4s1.791 4 4 4h24c2.209 0 4-1.791 4-4V8c2.209 0 4-1.791 4-4s-1.791-4-4-4z'/><path fill='#E39F3D' d='M8 10h24V8H10L8 7z'/><path fill='#FFE8B6' d='M10 0C7.791 0 6 1.791 6 4v24.555C5.41 28.211 4.732 28 4 28c-2.209 0-4 1.791-4 4s1.791 4 4 4 4-1.791 4-4V7.445C8.59 7.789 9.268 8 10 8c2.209 0 4-1.791 4-4s-1.791-4-4-4z'/><path fill='#C1694F' d='M12 4c0 1.104-.896 2-2 2s-2-.896-2-2 .896-2 2-2 2 .896 2 2M6 32c0 1.104-.896 2-2 2s-2-.896-2-2 .896-2 2-2 2 .896 2 2m24-17c0 .552-.447 1-1 1H11c-.552 0-1-.448-1-1s.448-1 1-1h18c.553 0 1 .448 1 1m0 4c0 .553-.447 1-1 1H11c-.552 0-1-.447-1-1s.448-1 1-1h18c.553 0 1 .447 1 1m0 4c0 .553-.447 1-1 1H11c-.552 0-1-.447-1-1s.448-1 1-1h18c.553 0 1 .447 1 1m0 4c0 .553-.447 1-1 1H11c-.552 0-1-.447-1-1 0-.553.448-1 1-1h18c.553 0 1 .447 1 1'/></svg>">
+    <meta name="nova-icon"
+        content="<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'><path fill='#FFD983' d='M32 0H10C7.791 0 6 1.791 6 4v24H4c-2.209 0-4 1.791-4 4s1.791 4 4 4h24c2.209 0 4-1.791 4-4V8c2.209 0 4-1.791 4-4s-1.791-4-4-4z'/><path fill='#E39F3D' d='M8 10h24V8H10L8 7z'/><path fill='#FFE8B6' d='M10 0C7.791 0 6 1.791 6 4v24.555C5.41 28.211 4.732 28 4 28c-2.209 0-4 1.791-4 4s1.791 4 4 4 4-1.791 4-4V7.445C8.59 7.789 9.268 8 10 8c2.209 0 4-1.791 4-4s-1.791-4-4-4z'/><path fill='#C1694F' d='M12 4c0 1.104-.896 2-2 2s-2-.896-2-2 .896-2 2-2 2 .896 2 2M6 32c0 1.104-.896 2-2 2s-2-.896-2-2 .896-2 2-2 2 .896 2 2m24-17c0 .552-.447 1-1 1H11c-.552 0-1-.448-1-1s.448-1 1-1h18c.553 0 1 .448 1 1m0 4c0 .553-.447 1-1 1H11c-.552 0-1-.447-1-1s.448-1 1-1h18c.553 0 1 .447 1 1m0 4c0 .553-.447 1-1 1H11c-.552 0-1-.447-1-1s.448-1 1-1h18c.553 0 1 .447 1 1m0 4c0 .553-.447 1-1 1H11c-.552 0-1-.447-1-1 0-.553.448-1 1-1h18c.553 0 1 .447 1 1'/></svg>">
     <style>
+        /* width */
+        ::-webkit-scrollbar {
+            width: 0.5em;
+        }
+
+        /* Track */
+        ::-webkit-scrollbar-track {
+            background: #818181;
+            border-radius: 5px;
+        }
+
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+            background: #2b2b2b;
+            border-radius: 5px;
+        }
+
+        /* Handle on hover */
+        ::-webkit-scrollbar-thumb:hover {
+            background: #434343;
+        }
+
         body {
             margin: 0;
             font-size: 12px;
@@ -14,7 +37,7 @@
             font-family: Arial, Helvetica, sans-serif;
             box-sizing: border-box;
             background: #d3d3d3;
-			transition: .2s;
+            transition: .2s;
         }
 
         body.dark-mode {
@@ -23,19 +46,19 @@
         }
 
         textarea {
-			font-size: 14px;
-			display: block;
-			padding: 10px;
-			width: calc(100% - 40px);
-			margin: 10px;
-			margin-top: 0px;
-			outline: none;
-			background: white;
-			border-radius: 0.5rem;
-			height: calc(100vh - 63px);
-			resize: none;
-			border: none;
-			color: #2f2f2f;
+            font-size: 14px;
+            display: block;
+            padding: 10px;
+            width: calc(100% - 40px);
+            margin: 10px;
+            margin-top: 0px;
+            outline: none;
+            background: white;
+            border-radius: 0.5rem;
+            height: calc(100vh - 63px);
+            resize: none;
+            border: none;
+            color: #2f2f2f;
         }
 
         textarea.dark-mode {
@@ -47,15 +70,16 @@
             padding: 5px 10px;
         }
 
-        nav button {
-            background: #ffffff;
-            color: #515151;
-            font-size: 10px;
-            padding: 2px 6px;
-            padding-top: 4px;
-            cursor: pointer;
-            border-radius: 2px;
-            border: 1px solid grey;
+        .navbutton {
+            background: #393939;
+    color: inherit;
+    padding: 5px 6px;
+    padding-top: 4px;
+    cursor: pointer;
+    border-radius: 2px;
+    border: none;
+    font-family: inherit;
+    font-size: .6rem;
         }
 
         nav button:hover {
@@ -123,34 +147,34 @@
 <body>
 
     <nav>
-        <button onclick="window.parent.openapp('text',1)">New</button>
-        <button onclick="openfromfiles()">Open</button>
-        <button onclick="savetx(1)" id="sbtn">Save</button>
+        <button onclick="window.parent.openapp('text',1)" class="navbutton">New</button>
+        <button onclick="openfromfiles()" class="navbutton">Open</button>
+        <button onclick="savetx(1)" id="sbtn" class="navbutton">Save</button>
         <div class="dropup">
-            <button class="dropbtn">Save As</button>
+            <button class="dropbtn" class="navbutton">Save As</button>
             <div class="dropup-content">
                 <a onclick="savetx('app')">App</a>
                 <a onclick="savetx('app')">HTML</a>
             </div>
         </div>
-        <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
+        <button onclick="toggleDarkMode()" class="navbutton">Dark Mode</button>
         <script>
-			function openfromfiles() {
-				window.parent.openlaunchprotocol("files",{"type": "open"})
-			}
+            function openfromfiles() {
+                window.parent.openlaunchprotocol("files", { "type": "open" })
+            }
 
-			window.addEventListener('storage', async (event) => {
-				if (event.key === 'todo') {
-					
-					if (JSON.parse(localStorage.getItem("todo")).type == "opentotext") {
-						console.log('Loading todo');
-						
-						const file = await window.parent.getFileById(JSON.parse(localStorage.getItem("todo")).lclfile);
-						readthefile(file)
-					}
-				}
-			});
-			
+            window.addEventListener('storage', async (event) => {
+                if (event.key === 'todo') {
+
+                    if (JSON.parse(localStorage.getItem("todo")).type == "opentotext") {
+                        console.log('Loading todo');
+
+                        const file = await window.parent.getFileById(JSON.parse(localStorage.getItem("todo")).lclfile);
+                        readthefile(file)
+                    }
+                }
+            });
+
             function savetx(x) {
                 sbtn.innerHTML = '* Saving';
                 if (x == 1) {
@@ -172,57 +196,57 @@
 
     <script>
 
-		function jsonFromDataURI(dataURI) {
-			// Split the Data URI into the MIME type and the data
-			const splitDataURI = dataURI.split(',');
+        function jsonFromDataURI(dataURI) {
+            // Split the Data URI into the MIME type and the data
+            const splitDataURI = dataURI.split(',');
 
-			// Ensure that the Data URI contains JSON data
-			if (splitDataURI.length !== 2 || splitDataURI[0].indexOf('application/json') === -1) {
-				throw new Error('Invalid Data URI. Expected a Data URI containing JSON data.');
-			}
+            // Ensure that the Data URI contains JSON data
+            if (splitDataURI.length !== 2 || splitDataURI[0].indexOf('application/json') === -1) {
+                throw new Error('Invalid Data URI. Expected a Data URI containing JSON data.');
+            }
 
-			// Extract the JSON data
-			const jsonData = splitDataURI[1];
+            // Extract the JSON data
+            const jsonData = splitDataURI[1];
 
-			// Decode the JSON data
-			const decodedData = decodeURIComponent(window.atob(jsonData));
+            // Decode the JSON data
+            const decodedData = decodeURIComponent(window.atob(jsonData));
 
-			// Parse the decoded JSON data into a JavaScript object
-			const jsonObject = JSON.parse(decodedData);
+            // Parse the decoded JSON data into a JavaScript object
+            const jsonObject = JSON.parse(decodedData);
 
-			return jsonObject;
-		}
+            return jsonObject;
+        }
 
-		function formatJS(code) {
-			let formattedCode = '';
+        function formatJS(code) {
+            let formattedCode = '';
 
-			// Add indentation and line breaks
-			let level = 0;
-			for (let i = 0; i < code.length; i++) {
-				const char = code[i];
-				if (char === '{' || char === '[') {
-					level++;
-					formattedCode += char + '\n' + ' '.repeat(level * 4);
-				} else if (char === '}' || char === ']') {
-					level--;
-					formattedCode = formattedCode.trimEnd() + '\n' + ' '.repeat(level * 4) + char;
-				} else if (char === ',') {
-					formattedCode += char + '\n' + ' '.repeat(level * 4);
-				} else {
-					formattedCode += char;
-				}
-			}
+            // Add indentation and line breaks
+            let level = 0;
+            for (let i = 0; i < code.length; i++) {
+                const char = code[i];
+                if (char === '{' || char === '[') {
+                    level++;
+                    formattedCode += char + '\n' + ' '.repeat(level * 4);
+                } else if (char === '}' || char === ']') {
+                    level--;
+                    formattedCode = formattedCode.trimEnd() + '\n' + ' '.repeat(level * 4) + char;
+                } else if (char === ',') {
+                    formattedCode += char + '\n' + ' '.repeat(level * 4);
+                } else {
+                    formattedCode += char;
+                }
+            }
 
-			return formattedCode;
-		}
+            return formattedCode;
+        }
 
-		
+
         async function greenflag() {
             var sbtn = document.getElementById("sbtn");
-			var disp = document.getElementById("thedisplay")
-			disp.focus()
+            var disp = document.getElementById("thedisplay")
+            disp.focus()
             var todo = localStorage.getItem("todo");
-            
+
             var defile
             try {
                 let parsedTodo = JSON.parse(todo);
@@ -231,8 +255,8 @@
                     const theID = parsedTodo.data.lclfile;
                     defile = theID;
                     const file = await window.parent.getFileById(theID);
-					readthefile(file, parsedTodo)
-					
+                    readthefile(file, parsedTodo)
+
                 } else {
                     document.getElementById("thedisplay").value = "Please open the files app to read a file from your system memory.";
                 }
@@ -242,19 +266,19 @@
 
         }
 
-		function readthefile(file, parsedTodo) {
-			if (file.type == "application/json") {
-				file.content = formatJS(JSON.stringify(jsonFromDataURI(file.content)))
-			}
+        function readthefile(file, parsedTodo) {
+            if (file.type == "application/json") {
+                file.content = formatJS(JSON.stringify(jsonFromDataURI(file.content)))
+            }
 
-			if (file && file.content) {
-					document.getElementById("thedisplay").value = window.parent.unshrinkbsf(file.content)
-				console.log("0002");
-				localStorage.setItem("todo", "");
-			} else {
-				console.error("0004");
-			}
-		}
+            if (file && file.content) {
+                document.getElementById("thedisplay").value = window.parent.unshrinkbsf(file.content)
+                console.log("0002");
+                localStorage.setItem("todo", "");
+            } else {
+                console.error("0004");
+            }
+        }
     </script>
 </body>
 

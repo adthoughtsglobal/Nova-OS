@@ -64,49 +64,44 @@
 
 		[flap-nav] {
 			display: flex;
-			height: 29px;
-			flex-direction: row;
-			flex-wrap: nowrap;
-			margin-top: 2px;
+    height: 29px;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    padding: 0.5rem;
+    padding-bottom: 0;
 		}
 
 		.flappsearch {
 			flex-grow: 10 !important;
 			text-align: center !important;
-			background: #191919;
-			border-radius: 5px;
 			font-size: 11px;
-			padding: 2px !important;
 			color: #b8b8b8;
-			border: 1px solid #414141;
 			display: grid;
 			align-items: center;
 		}
 
 		.nowid {
-			width: 0px;
-			padding: 5px;
-			flex-grow: 1;
-			align-self: flex-end;
-			text-align: center;
+			width: fit-content;
+    text-align: center;
+    backdrop-filter: brightness(1.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    overflow: hidden;
+    border-radius: 0.5rem;
+    margin: 0.1rem;
+    padding: 16px 0;
 		}
 
 		.navbfobtns {
-			font-size: 17px;
-			background-color: #222222;
-			border-radius: 50%;
-			padding: 1px;
-			transform: translate(2px, 11px);
-			transition: .3s;
+			width: fit-content;
+    flex: 0;
+    margin: 1rem;
 		}
 
 		.navinfobtns:active {
 			transform: rotate(360deg);
-		}
-
-		.setbtn {
-			font-size: 17px;
-			transform: translate(5px, 0px);
 		}
 
 		.sdfld {
@@ -137,15 +132,17 @@
 
 		[flap-sidenav] {
 			width: 0;
-			overflow-y: scroll;
-			font-size: 11px !important;
-			min-width: 120px;
-			border-right: 1px solid #2a2a2a;
-			padding-bottom: 50px;
-			display: flex;
-			flex-direction: column;
-			overflow-x: hidden;
-			transition: .3s;
+    overflow-y: scroll;
+    font-size: 11px !important;
+    min-width: 120px;
+    background: #161616;
+    padding-bottom: 50px;
+    display: flex;
+    flex-direction: column;
+    transition: .3s;
+    border-radius: 0.5rem;
+    overflow-x: hidden;
+    height: calc(100% - 58px);
 		}
 
 		[flap-sidenav] small {
@@ -345,6 +342,7 @@
 			padding: 5px 7px;
 			background: #161616;
 			font-size: 12px;
+			transition: .3s ease-out;
 		}
 
 		.delbtn {
@@ -657,6 +655,7 @@
 			padding: 3px;
 			border-radius: 0.3rem;
 			margin: 2px;
+			cursor:pointer;
 		}
 
 		.im {
@@ -861,18 +860,15 @@
 				</span>
 			</div>
 			<div class="nowid flappsearch" id="fileapptitledis">
-				Files App 2.1
+				Files App 2.2
 			</div>
-			<div style="flex-grow: 1;" class="nowid"><span class="material-symbols-rounded setbtn" style="
-														 transform: translate(-3px, 11px); cursor: pointer;
-				" onclick="upmd()">upload</span></div>
+			<div class="nowid"><span class="material-symbols-rounded navbfobtns" onclick="upmd()">upload</span></div>
 		</div>
-		<div style="height: calc(100% - 43px);">
+		<div style="height: calc(100% - 48px);">
 			<div class="themainstuff">
-				<div flap-sidenav style="
-		height: 100%;" id="flap-sidenav">
+				<div flap-sidenav id="flap-sidenav">
 					<div class="drivenav">
-						<small onclick="listFiles('/')">IndexedDB</small>
+						<small onclick="listFiles('')">IndexedDB</small>
 						<small class="newfoldbtn" onclick="makefolderhuh()">+</small>
 					</div>
 					<div id="folders">
@@ -1121,7 +1117,7 @@
 			event.preventDefault();
 		});
 
-		var currentPath = '/', nowfile, flmode = 'grid';
+		var currentPath = '', nowfile, flmode = 'grid';
 		var memory;
 		var fllist;
 		var fdlist;
@@ -1220,6 +1216,7 @@
 		}
 
 		function Allowdrop(ev, obj) {
+			console.log("allowdrop")
 			ev.preventDefault();
 			obj.style.backgroundColor = "#414e59";
 			setTimeout(function () {
@@ -1283,16 +1280,6 @@
 					}
 				});
 
-				$('#jstree').on('loaded.jstree', function () {
-					$('#jstree').find('li[role="treeitem"]').each(function () {
-						console.log($(this))
-						const element = $(this);
-						const folderName = element.find('a').text();
-
-						element.attr('ondragover', 'Allowdrop(event, this)');
-						element.attr('ondrop', 'dropfl(event, "' + folderName + '")');
-					});
-				});
 				$('#jstree').on("changed.jstree", function (e, data) {
 					if (data && data.node && data.node.li_attr && data.node.li_attr['data-path']) {
 						let selectedPath = data.node.li_attr['data-path'];
@@ -1305,6 +1292,16 @@
 					} else {
 						console.log('No folder selected');
 					}
+				});
+				$('#jstree').on('loaded.jstree', function () {
+					$('#jstree').find('li[role="treeitem"]').each(function () {
+						console.log($(this))
+						const element = $(this);
+						const folderName = element.find('a').text();
+
+						element.attr('ondragover', 'Allowdrop(event, this)');
+						element.attr('ondrop', 'dropfl(event, "' + folderName + '")');
+					});
 				});
 			});
 		}
@@ -1437,6 +1434,7 @@
 					}
 					const endTime = performance.now(); // End the timer if the file is not found
 					const timeTaken = endTime - startTime;
+					document.getElementById("fileinfobn").style.opacity = 0.5;
 					document.getElementById("fileinfobn").innerHTML = `Listed ${content.length} item(s) in ` + timeTaken.toFixed(2) + "ms";
 				} else {
 					fllist.innerHTML = `<center style='padding-top: 30px'><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="74.20199" height="94.1023" viewBox="0,0,74.20199,94.1023"><g transform="translate(-224.61774,-142.87893)"><g data-paper-data="{&quot;isPaintingLayer&quot;:true}" fill-rule="nonzero" stroke="#ffffff" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" style="mix-blend-mode: normal"><path d="M227.11774,158.26119c0,-7.11468 5.76758,-12.88226 12.88226,-12.88226c7.11468,0 12.88226,5.76758 12.88226,12.88226c0,7.11468 -5.76758,12.88226 -12.88226,12.88226c-7.11468,0 -12.88226,-5.76758 -12.88226,-12.88226z" fill="none" stroke-width="5" stroke-linecap="butt"/><path d="M244.56247,233.94447l9.12493,-32.20565l-8.58817,-28.98508" fill="none" stroke-width="5" stroke-linecap="round"/><path d="M253.6874,202.81234l17.71311,31.66888" fill="none" stroke-width="5" stroke-linecap="round"/><path d="M246.17275,178.6581l-7.51465,27.37481" fill="none" stroke-width="5" stroke-linecap="round"/><path d="M250.46684,179.73163l28.44833,-12.3455" fill="none" stroke-width="5" stroke-linecap="round"/><path d="M260.82196,192.96703l-1.81137,-23.54791l37.99776,-2.9229l1.81138,23.54791z" fill="#aa8b00" stroke-width="0" stroke-linecap="butt"/><path d="M256.80524,189.29958l2.20535,-19.88046l37.99776,-2.9229l-2.20535,19.53118z" fill="#ffcf00" stroke-width="0" stroke-linecap="butt"/><path d="M279.06646,168.81576l-0.1513,-1.42964" fill="none" stroke-width="5" stroke-linecap="round"/></g></g></svg><br>This folder is empty.</center>`;
@@ -1457,7 +1455,6 @@
 			if (x.id === "slfile") {
 				if (x.getAttribute("unid") === null || x.getAttribute("unid") === "") {
 					let folderPath = x.querySelector(".flfrname").innerText.trim();
-					console.log("Selected item is a folder: " + currentPath + folderPath);
 					listFiles(currentPath + folderPath)
 					return;
 				}
@@ -1509,6 +1506,9 @@
 						return;
 					}
 
+					
+					document.getElementById("fileinfobn").style.opacity = 1;
+
 					if (binmode) {
 						document.getElementById("fileinfobn").innerHTML = `<button class="delbtn" onclick="remfile('` + x.getAttribute("unid") + `')">Delete</button>`;
 					} else {
@@ -1545,6 +1545,9 @@ drive_file_move
 
 					}
 
+				} else {
+					
+					document.getElementById("fileinfobn").innerHTML = folderPath;
 				}
 			}
 		}
@@ -1609,6 +1612,7 @@ drive_file_move
 						console.log("File removal failed.");
 					}
 
+					document.getElementById("fileinfobn").style.opacity = 1;
 					document.getElementById("fileinfobn").innerHTML = "Deleting file...";
 					await setdb('trojencat', 'rom', memory).then(() => {
 						document.getElementById("fileinfobn").innerHTML = "File Deleted";
@@ -1633,6 +1637,7 @@ drive_file_move
 		}
 
 		async function renamef(x) {
+			document.getElementById("fileinfobn").style.opacity = 1;
 			try {
 				const fileId = x.getAttribute("unid");
 
@@ -1664,6 +1669,7 @@ drive_file_move
 			await remfile(flid);
 			console.log("File removed successfully");
 
+			document.getElementById("fileinfobn").style.opacity = 1;
 			document.getElementById("fileinfobn").innerHTML = "File was moved to " + dest;
 		}
 
@@ -1881,7 +1887,7 @@ drive_file_move
 				await window.parent.remfolder(currentPath).then(function () {
 					document.getElementById("fileinfobn").innerHTML = currentPath + " was removed"
 				})
-				listFiles('/', true)
+				listFiles('', true)
 			}
 		}
 

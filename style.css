@@ -227,7 +227,6 @@ nav info {
 .windowloader svg {
 	height: 4rem;
     width: 4rem;
-    box-shadow: 0 1rem 1rem #00000078;
 }
 
 .windowcontent iframe {
@@ -848,19 +847,21 @@ nav info {
 .tooltip .tooltiptext {
 	visibility: hidden;
 	width: 68px;
-	background-color: #555555;
-	color: #fff;
-	text-align: center;
-	border-radius: 6px;
-	padding: 2px;
-	position: absolute;
-	z-index: 1;
-	bottom: 110%;
-	left: 50%;
-	margin-left: -33px;
-	font-size: 12px;
-	opacity: 0;
-	transition: opacity 0.3s;
+    background-color: #353535;
+    color: #fff;
+    backdrop-filter: blur(1rem);
+    text-align: center;
+    border-radius: 0.3rem;
+    padding: 2px;
+    position: absolute;
+    z-index: 1;
+    bottom: 110%;
+    left: 50%;
+    margin-left: -33px;
+    font-size: 12px;
+    opacity: 0;
+    transition: opacity 0.3s ease-out;
+    box-shadow: 0 3px 1rem #1f1f1f9e;
 }
 
 .tooltip:hover .tooltiptext {
@@ -1087,15 +1088,14 @@ logincard {
 
 .strtsearcont button span {
 	font-size: 15px;
-	transform: translate(0px, 2px);
 }
 
 #bobthedropdown {
 	visibility: visible;
     display: flex;
     background: #2a2929;
-    border-radius: 8px;
     padding: 1px 3px;
+    border-radius: 0.5rem;
     height: 34px;
     width: calc(100% - 1px);
     justify-content: flex-start;
@@ -1106,17 +1106,20 @@ logincard {
 
 #bobthedropdown button {
 	background: transparent;
-	color: #c3c3c3;
-	border: none;
-	padding: 6px 7px;
-	border-radius: 6px;
-	cursor: pointer;
-	display: inline-block;
-	transition: .3s;
+    color: #c3c3c3;
+    border: none;
+    padding: 6px 7px;
+    border-radius: .3rem;
+    cursor: pointer;
+    display: flex;
+    transition: .3s;
+    aspect-ratio: 1 / 1;
+    justify-content: center;
+    align-items: center;
 }
 
 #bobthedropdown button:hover {
-	transform:scale(1.1);
+	background: #7e7e7e65;
 }
 
 #sleepwindow {
