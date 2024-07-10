@@ -710,10 +710,6 @@
 			text-align: center;
 		}
 
-		.jstree-closed>.jstree-ocl:before {}
-
-		.jstree-open>.jstree-ocl:before {}
-
 		#pathdisp {
 			flex: 1;
 			overflow-x: hidden;
@@ -1146,18 +1142,7 @@
 				}
 			}
 
-			$('#jstree').on("changed.jstree", function (e, data) {
-				if (data && data.node && data.node.li_attr && data.node.li_attr['data-path']) {
-					let selectedPath = data.node.li_attr['data-path'];
-					console.log('Selected folder:', selectedPath);
-					listFiles(selectedPath);
-					if (!JSON.parse(x).filesSidenavSize) {
-						fitsizesidenav()
-					}
-				} else {
-					console.log('No folder selected');
-				}
-			});
+			
 
 			$("#flap-sidenav").resizable({
 				handles: 'e',
@@ -1212,8 +1197,7 @@
 					try {
 						if (result !== null) {
 							memory = result;
-							liststuff()
-							listFiles("")
+							refresh()
 
 						} else {
 							console.log('0003');
@@ -1325,6 +1309,7 @@
 			});
 		}
 		function refresh() {
+			console.log("refresh called")
 			setTimeout(() => {
 				getdb('trojencat', 'rom')
 					.then((result) => {
@@ -1422,10 +1407,8 @@
 								});
 							}
 
-
-
 							fileElement.innerHTML = `<span class="fileicons">${icon}</span><span flname><span class='flfrname'> ${item.name}</span> <small>${item.id || '>'}</small></span>`;
-							fileElement.setAttribute("title", `${item.name}\nID: ${item.id || ''}`);
+							fileElement.setAttribute("title", `${item.name}\nID: ${item.id || 'Folder'}`);
 							fllist.appendChild(fileElement);
 						} catch (error) {
 							console.error("Safe Error processing item:", error);

@@ -1068,7 +1068,6 @@ for (let part of parts) {
 
 async function createFile(folderName2, fileName, type, content, metadata) {
 	let folderName = folderName2.replace(/\/$/, ''); 
-	console.log("Creating file", "")
 	let fileName2 = `${fileName}.${type}`;
     if (!metadata) {
         metadata = {};
@@ -1093,7 +1092,7 @@ async function createFile(folderName2, fileName, type, content, metadata) {
 
         let existingFile = Object.values(folder).find(file => file.fileName === fileName2);
         if (existingFile) {
-            console.log(`File "${fileName2}" already exists in folder "${folderName}". Updating it...`);
+            console.log(`File "${fileName2}" exists in "${folderName}". Updating...`);
             const newData = {
                 metadata: metadata,
                 content: content,
@@ -1103,7 +1102,6 @@ async function createFile(folderName2, fileName, type, content, metadata) {
             await updateFile(folderName, existingFile.id, newData);
         } else {
             let uid = genUID();
-            console.log("The file says that it is " + metadata);
             metadata.datetime = getfourthdimension();
             metadata = JSON.stringify(metadata);
 
