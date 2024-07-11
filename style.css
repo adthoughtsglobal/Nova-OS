@@ -1546,6 +1546,7 @@ background: #5c8dab;
     width: 0;
     display: flex;
     flex-direction: column;
+    padding: 2rem 0;
     align-items: center;
     justify-content: center;
     transition: 0.3s;

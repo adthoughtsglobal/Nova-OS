@@ -1713,6 +1713,8 @@ async function strtappse(event) {
     });
 
     if (elements > 0) {
+		
+	document.getElementsByClassName("previewsside")[0].style.display = "flex";
         const appfound = mostRelevantItem;
         gid('seprw-icon').innerHTML = (appicns[appfound.name] != undefined) ? appicns[appfound.name] : defaultAppIcon;
         gid('seprw-appname').innerText = appfound.name;
@@ -2253,7 +2255,14 @@ function opensearchpanel() {
 	if (window.innerWidth > 500) {
 		gid("strtsear").focus()
 	}
+	gid("strtsear").value = "";
+	document.getElementsByClassName("previewsside")[0].style.display = "none";
 	loadrecentapps()
+	if (appsHistory.length > 0) {
+		gid("partrecentapps").style.display = "flex";
+	} else {
+		gid("partrecentapps").style.display = "none";
+	}
 }
 
 function mtpetxt(str) {
