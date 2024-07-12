@@ -67,7 +67,7 @@
     height: 29px;
     flex-direction: row;
     flex-wrap: nowrap;
-    padding: 0.5rem;
+    padding: 3px;
     padding-bottom: 0;
 		}
 
@@ -82,22 +82,22 @@
 
 		.nowid {
 			width: fit-content;
-    text-align: center;
-    backdrop-filter: brightness(1.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: none;
-    overflow: hidden;
-    border-radius: 0.5rem;
-    margin: 0.1rem;
-    padding: 16px 0;
+			text-align: center;
+			backdrop-filter: brightness(1.7);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			border: none;
+			overflow: hidden;
+			border-radius: 0.5rem;
+			margin: 0.1rem;
+			padding: 16px 0;
 		}
 
 		.navbfobtns {
 			width: fit-content;
-    flex: 0;
-    margin: 1rem;
+			flex: 0;
+			margin: 1rem;
 		}
 
 		.navinfobtns:active {
@@ -132,17 +132,17 @@
 
 		[flap-sidenav] {
 			width: 0;
-    overflow-y: scroll;
-    font-size: 11px !important;
-    min-width: 120px;
-    background: #161616;
-    padding-bottom: 50px;
-    display: flex;
-    flex-direction: column;
-    transition: .3s;
-    border-radius: 0.5rem;
-    overflow-x: hidden;
-    height: calc(100% - 58px);
+			overflow-y: scroll;
+			font-size: 11px !important;
+			min-width: 120px;
+			background: #161616;
+			padding-bottom: 50px;
+			display: flex;
+			flex-direction: column;
+			transition: .3s;
+			border-radius: 0.5rem;
+			overflow-x: hidden;
+			height: calc(100% - 51px);
 		}
 
 		[flap-sidenav] small {
@@ -158,11 +158,14 @@
 
 		[flap-fl-topnav] {
 			display: flex;
-			padding: 3px 10px;
-			font-size: 9px;
-			opacity: 70%;
-			transform: translateY(3px);
-			flex-direction: row;
+    padding-top: 0.5rem;
+    margin: 0rem 0.5rem;
+    margin-bottom: 0.1rem;
+    font-size: 9px;
+    opacity: 70%;
+    flex-direction: row;
+    background-color: #181818;
+    border-radius: 0.3rem;
 		}
 
 		[flap-files] {
@@ -170,8 +173,9 @@
 			flex-grow: 8;
 			padding-bottom: 50px !important;
 			padding: 10px;
-			padding-top: 5px;
-			width: calc(100% - 28px);
+			width: calc(100% - 28px);   
+			 padding-top: 0;
+			margin-top: 5px;
 		}
 
 		.file {
@@ -340,9 +344,12 @@
 
 		[flap-fl-bottomnav] {
 			padding: 5px 7px;
-			background: #161616;
-			font-size: 12px;
-			transition: .3s ease-out;
+    background: #161616;
+    border-radius: 0.3rem;
+    font-size: 12px;
+    transition: .3s ease-out;
+    margin: 0.2rem;
+    width: calc(100% - 25px);
 		}
 
 		.delbtn {
@@ -655,7 +662,7 @@
 			padding: 3px;
 			border-radius: 0.3rem;
 			margin: 2px;
-			cursor:pointer;
+			cursor: pointer;
 		}
 
 		.im {
@@ -681,12 +688,13 @@
 		}
 
 		.jstree-default .jstree-node {
-
 			margin-left: 10px !important;
+			margin-bottom: 0.1rem;
 		}
 
 		.jstree-anchor {
 			padding: 0 6px 0 3px;
+			border-radius: 0.3rem !important;
 		}
 
 		.jstree-default .jstree-icon:empty {
@@ -711,9 +719,10 @@
 
 		#pathdisp {
 			flex: 1;
-			overflow-x: hidden;
-			text-overflow: ellipsis;
-			margin-right: 0.7rem;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    margin: 0 0.5rem;
+    display: flex;
 		}
 	</style>
 	<script src="https://unpkg.com/interactjs/dist/interact.min.js"></script>
@@ -911,8 +920,7 @@
 							</button>
 						</div>
 					</div>
-					<div flap-files style="flex-grow: 8; padding-bottom: 50px;padding: 10px;    padding-top: 5px;"
-						id="filelist">
+					<div flap-files id="filelist">
 
 					</div>
 					<div flap-fl-bottomnav id="fileinfobn">Click on a file to select it.
@@ -1029,14 +1037,12 @@
 		}
 
 		.jstree-default .jstree-clicked {
-			background: #1c1c1c;
-			border-radius: 0.3rem;
+			background: #2c2c2c;
 			box-shadow: none;
 		}
 
 		.jstree-default .jstree-hovered {
 			background: #272727;
-			border-radius: 0.3rem;
 			box-shadow: none;
 		}
 	</style>
@@ -1067,7 +1073,7 @@
 			await window.parent.createFile(currentPath, window.parent.basename(fname), window.parent.mtpetxt(fname))
 				.then(function () {
 					document.getElementById('makefiledia').close();
-					window.parent.say("File <br><small>" + fname + " created at " + currentPath + '</small', "success");
+					window.parent.notify("Created file", "File " + fname + " created at " + currentPath, "Files");
 				});
 		}
 
@@ -1138,7 +1144,7 @@
 				}
 			}
 
-			
+
 
 			$("#flap-sidenav").resizable({
 				handles: 'e',
@@ -1218,9 +1224,9 @@
 		function Allowdrop(ev, obj) {
 			console.log("allowdrop")
 			ev.preventDefault();
-			obj.style.backgroundColor = "#414e59";
+			obj.style.transform = "scale(1.1)";
 			setTimeout(function () {
-				obj.style.backgroundColor = "#151515";
+				obj.style.transform = "";
 			}, 500)
 		}
 
@@ -1247,7 +1253,7 @@
 								disabled: false
 							},
 							li_attr: {
-								'data-path': currentPath // Hidden path attribute
+								'data-path': currentPath
 							}
 						};
 
@@ -1267,41 +1273,30 @@
 				// Convert memory to jsTree data
 				const jsTreeData = memoryToJsTree(memory);
 
-				// Check if the jsTree already exists
 				if ($('#jstree').jstree(true)) {
-					// Destroy the existing jsTree instance
 					$('#jstree').jstree('destroy').empty();
 				}
 
-				// Initialize jsTree with new data
 				$('#jstree').jstree({
 					'core': {
 						'data': jsTreeData
 					}
+				}).on('loaded.jstree', function () {
+					addDragAndDropListeners();
 				});
 
 				$('#jstree').on("changed.jstree", function (e, data) {
-					if (data && data.node && data.node.li_attr && data.node.li_attr['data-path']) {
+					if (data?.node?.li_attr?.['data-path']) {
 						let selectedPath = data.node.li_attr['data-path'];
 						console.log('Selected folder:', selectedPath);
 						listFiles(selectedPath);
-						let x = window.parent.qsetscache;
-						if (!x.filesSidenavSize) {
-							fitsizesidenav()
+
+						if (!window.parent.qsetscache?.filesSidenavSize) {
+							fitsizesidenav();
 						}
 					} else {
 						console.log('No folder selected');
 					}
-				});
-				$('#jstree').on('loaded.jstree', function () {
-					$('#jstree').find('li[role="treeitem"]').each(function () {
-						console.log($(this))
-						const element = $(this);
-						const folderName = element.find('a').text();
-
-						element.attr('ondragover', 'Allowdrop(event, this)');
-						element.attr('ondrop', 'dropfl(event, "' + folderName + '")');
-					});
 				});
 			});
 		}
@@ -1317,6 +1312,21 @@
 				liststuff();
 				listFiles(currentPath);
 			}, 1000);
+		}
+
+		function addDragAndDropListeners() {
+			console.log("trying to add event listeners")
+			document.querySelectorAll('#jstree li[role="none"]').forEach(function (element) {
+				const folderName = element.querySelector('a').textContent;
+				console.log(element)
+				element.addEventListener('dragover', function (event) {
+					Allowdrop(event, element);
+				});
+
+				element.addEventListener('drop', function (event) {
+					dropfl(event, folderName);
+				});
+			});
 		}
 
 		function dragfl(ev, obj) {
@@ -1506,7 +1516,7 @@
 						return;
 					}
 
-					
+
 					document.getElementById("fileinfobn").style.opacity = 1;
 
 					if (binmode) {
@@ -1546,7 +1556,7 @@ drive_file_move
 					}
 
 				} else {
-					
+
 					document.getElementById("fileinfobn").innerHTML = folderPath;
 				}
 			}
