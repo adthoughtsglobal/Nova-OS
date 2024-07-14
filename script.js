@@ -21,11 +21,7 @@ gid("nowrunninapps").style.display = "none";
 const rllog = console.log;
 
 function qsetsRefresh() {
-	try {
-		qsetscache =  JSON.parse(localStorage.getItem("qsets"))
-	} catch (error) {
-		console.log("err:" + error)
-	}
+	updateMemoryData()
 }
 
 gid('seprw-openb').onclick = function() {
@@ -157,10 +153,8 @@ document.addEventListener("DOMContentLoaded", function() {
 let timeFormat;
 var condition = true;
 try {
-	let qsets = localStorage.getItem("qsets")
-	if (localStorage.getItem("qsets")) {
-		condition = JSON.parse(qsets).timefrmt == '24 Hour' ? false : true;
-	}
+	qsetsRefresh()
+	condition = getSetting("timefrmt") == '24 Hour' ? false : true;
 } catch (error) {
 	console.log("safe error: " + error)
 }
@@ -286,7 +280,7 @@ async function openn() {
 	}
 	gid('appdmod').showModal()
 
-	scaleUIElements(qsetscache.UISizing)
+	scaleUIElements(await getSetting("UISizing"))
 }
 
 async function loadrecentapps() {
@@ -367,8 +361,8 @@ async function loadrecentapps() {
 		appShortcutDiv.appendChild(tooltisp);
 
 		gid("serrecentapps").appendChild(appShortcutDiv);
-	})).then(() => {
-		scaleUIElements(qsetscache.UISizing)
+	})).then(async () => {
+		scaleUIElements(await getSetting("UISizing"))
 	}).catch((error) => {
 		console.error('An error occurred:', error);
 	});
@@ -532,7 +526,7 @@ function dragElement(elmnt) {
 }
 
 async function dod() {
-	let x = localStorage.getItem("qsets");
+	let x;
 	try {
 		gid("desktop").innerHTML = ``;
 		let y = await getFileNamesByFolder("Desktop")
@@ -597,32 +591,27 @@ async function dod() {
 
 			gid("desktop").appendChild(appShortcutDiv);
 		});
-			x = await getFileById(JSON.parse(x).wall);
+			x = await getFileById(await getSetting("wall"));
 		} catch (error) {
 			console.error(error)
-			// reset wallpaper setting
-			let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
-			delete qsets.wall;
-			localStorage.setItem("qsets", JSON.stringify(qsets));
+			remSetting("wall");
 		}
 
-		if (x == undefined) {
+		if (x != undefined) {
 			let unshrinkbsfX = unshrinkbsf(x.content);
 			document.getElementById('bgimage').src = `url("` + unshrinkbsfX + `")`;
 		} else {
 			document.getElementById("bgimage").src= novaFeaturedImage;
 			
 		}
-	document.getElementById("bgimage").onerror = function() {
+	document.getElementById("bgimage").onerror = async function() {
 			document.getElementById("bgimage").src= novaFeaturedImage;
-		if (x) {
-			let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
-			delete qsets.wall;
-			localStorage.setItem("qsets", JSON.stringify(qsets));
+		if (await getSetting("wall")) {
+			remSetting("wall");
 		}
 	};
 
-	scaleUIElements(qsetscache.UISizing)
+	scaleUIElements(await getSetting("UISizing"))
 }
 
 function closeElementedis() {
@@ -1031,7 +1020,7 @@ function genUID() {
 async function createFolder(folderName) {
 	try {
 		
-		memory = await getdb('trojencat', 'rom');
+		await updateMemoryData()
 folderName = folderName.replace(/\/$/, ''); // Remove the trailing slash
 let parts = folderName.split('/');
 let current = memory;
@@ -1056,11 +1045,16 @@ for (let part of parts) {
 
 async function createFile(folderName2, fileName, type, content, metadata) {
 	let folderName = folderName2.replace(/\/$/, ''); 
-	let fileName2 = `${fileName}.${type}`;
+	let fileName2;
+	if (type) {
+		fileName2 = `${fileName}.${type}`;
+	} else {
+		fileName2 = fileName
+	}
     if (!metadata) {
         metadata = {};
     }
-    memory = await getdb('trojencat', 'rom');
+    await updateMemoryData()
     let folder = createFolderStructure(folderName);
 
     try {
@@ -1226,7 +1220,7 @@ makedialogclosable('appdmod')
 
 async function getFileNamesByFolder(folderName) {
 	try {
-        memory = await getdb('trojencat', 'rom');
+        await updateMemoryData()
         const filesInFolder = [];
 
         for (const key in memory) {
@@ -1344,7 +1338,7 @@ function say(message, status) {
 	});
 }
 
-function loadtaskspanel() {
+async function loadtaskspanel() {
 	let appbarelement = gid("nowrunninapps")
 
 	appbarelement.innerHTML = ""
@@ -1384,7 +1378,7 @@ function loadtaskspanel() {
 		appbarelement.appendChild(appShortcutDiv);
 	})
 
-	scaleUIElements(qsetscache.UISizing)
+	scaleUIElements(await getSetting("UISizing"))
 }
 
 function ask(question, preset) {
@@ -1442,15 +1436,13 @@ async function makewall(deid) {
 	let x = await getFileById(deid);
 	x = x.content
 	x = unshrinkbsf(x)
-	let y = JSON.parse(localStorage.getItem("qsets"))
-	y.wall = deid;
-	localStorage.setItem("qsets", JSON.stringify(y))
+	setSetting("wall", deid);
 	document.getElementById('bgimage').style.backgroundImage = `url("` + x + `")`;
 }
 
 async function remfile(ID) {
 	try {
-		memory = await getdb('trojencat', 'rom');
+		await updateMemoryData()
 
 		// Iterate through folders to find the file with the specified ID
 		for (let folder of memory) {
@@ -1482,8 +1474,7 @@ async function remfile(ID) {
 
 async function remfolder(folderPath) {
     try {
-        // Get the memory database
-        const memory = await getdb('trojencat', 'rom');
+        await updateMemoryData()
         
         // Split the folderPath into parts
         let parts = folderPath.split('/').filter(part => part);
@@ -1534,7 +1525,7 @@ async function initialiseOS() {
 		"defSearchEngine": "NWP"
 	}
 	let qsets = JSON.stringify(x);
-	localStorage.setItem("qsets", qsets);
+	resetSettings(qsets);
 	await installdefaultapps().then(async () => {
 		let x = await getFileNamesByFolder("Apps")
 		if (defAppsList.length != x.length) {
@@ -1642,7 +1633,7 @@ async function strtappse(event) {
         return;
     }
 
-    const abracadra = qsetscache.smartsearch;
+    const abracadra = await getSetting("smartsearch");
 	console.log(abracadra)
     
     if (event.key === "Enter") {
@@ -1748,7 +1739,7 @@ function calculateSimilarity(string1, string2) {
 
 async function getFolderNames() {
 	try {
-        memory = await getdb('trojencat', 'rom');
+        await updateMemoryData()
         const folderNames = [];
 
         for (const key in memory) {
@@ -1792,7 +1783,7 @@ async function moveFileToFolder(flid, dest) {
 
 async function remfile(ID) {
 	try {
-        memory = await getdb('trojencat', 'rom');
+        await updateMemoryData()
         let found = false;
 
         for (let folder of Object.values(memory)) {
@@ -1901,19 +1892,11 @@ async function openfile(x) {
 	}
 }
 
-function dewallblur() {
-	let f = localStorage.getItem("qsets");
-	if (f) {
-		f = JSON.parse(f); // Assuming it's JSON data
-		if (f.focusMode) { } else {
+async function dewallblur() {
+		if (!await getSetting("focusMode")) {
 			gid("bgimage").style.filter = "blur(0px)";
 			return;
 		}
-	} else {
-		// qsets is not defined in localStorage
-		return;
-	}
-	console.log("dewallblur: " + nowapp)
 	if (nowapp != "" && nowapp != undefined) {
 		gid("bgimage").style.filter = "blur(5px)";
 	} else {
@@ -1921,13 +1904,9 @@ function dewallblur() {
 	}
 }
 
-function checksnapping(x, event) {
-    let f = localStorage.getItem("qsets");
-    if (f) {
-        f = JSON.parse(f); // Assuming it's JSON data
-        if (!f.wsnapping) {
-            return;
-        }
+async function checksnapping(x, event) {
+    if (await getSetting("wsnapping") != true) {
+        return;
     }
     var cursorX = event.clientX;
     var cursorY = event.clientY;
@@ -2245,9 +2224,9 @@ async function genTaskBar() {
 
 makedialogclosable('searchwindow');
 prepareArrayToSearch()
-function opensearchpanel() {
+async function opensearchpanel() {
 	gid('searchwindow').showModal() 
-	if (qsetscache.smartsearch) {
+	if (await getSetting("smartsearch")) {
 		gid('searchiconthingy').style = `background: linear-gradient(-34deg, #79afff, #f66eff);opacity: 1; color: white;padding: 0.1rem 0.3rem; margin: 0.3rem; border-radius: 0.5rem;aspect-ratio: 1 / 1;display: grid;cursor: default; margin-right: 0.5rem;box-shadow: 0 0 6px inset #ffffff6b;`
 	} else {
 		gid('searchiconthingy').style = ``;
@@ -2357,4 +2336,5 @@ function closeallwindows() {
 		clwin("window" + taskId);
 		delete winds[taskName + taskId];
 	});
+	gid("closeallwinsbtn").checked = true;
 }

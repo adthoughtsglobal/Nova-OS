@@ -61,3 +61,82 @@ function getdb(databaseName, key) {
 		});
 	});
 }
+
+// settings store functions
+
+var MemoryTimeCache = null;
+
+function getTime() {
+    return Date.now();
+}
+
+async function updateMemoryData() {
+	let isittime = (Date.now() - MemoryTimeCache) >= 5000;
+	if (MemoryTimeCache === null || isittime) {
+		console.log("Catching Memory", (Date.now() - MemoryTimeCache))
+		getdb('trojencat', 'rom').then(function (result) {
+			memory = result;
+			MemoryTimeCache = Date.now();
+		});
+}
+}
+
+async function getSetting(key) {
+    await updateMemoryData()
+    try {
+        if (memory["System/"]["preferences.json"]) {
+            let preferences = JSON.parse(memory["System/"]["preferences.json"]["content"]);
+            return preferences[key];
+        } else {
+            return undefined;
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function setSetting(key, value) {
+    await updateMemoryData();
+    try {
+        if (!memory["System/"]["preferences.json"]) {
+            memory["System/"]["preferences.json"] = { content: '{}', id: genUID() };
+        }
+        let preferences = JSON.parse(memory["System/"]["preferences.json"]["content"]);
+        preferences[key] = value;
+        memory["System/"]["preferences.json"]["content"] = JSON.stringify(preferences);
+        await setdb('trojencat', 'rom', memory);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function resetSettings(value) {
+    await updateMemoryData();
+    try {
+        if (!memory["System/"]["preferences.json"]) {
+            memory["System/"]["preferences.json"] = { content: '{}', id: genUID() };
+        }
+        let preferences = JSON.parse(memory["System/"]["preferences.json"]["content"]);
+        preferences = value;
+        memory["System/"]["preferences.json"]["content"] = JSON.stringify(preferences);
+        await setdb('trojencat', 'rom', memory);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function remSetting(key) {
+    await updateMemoryData();
+    try {
+        if (memory["System/"] && memory["System/"]["preferences.json"]) {
+            let preferences = JSON.parse(memory["System/"]["preferences.json"]["content"]);
+            if (preferences[key]) {
+                delete preferences[key];
+                memory["System/"]["preferences.json"]["content"] = JSON.stringify(preferences);
+                await setdb('trojencat', 'rom', memory);
+            }
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}

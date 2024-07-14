@@ -840,7 +840,6 @@
 							window.parent.localStorage.removeItem('todo');
 							window.parent.localStorage.removeItem('sets');
 							window.parent.localStorage.removeItem('updver');
-							window.parent.localStorage.removeItem('qsets');
 
 							let indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
 							let dbName = 'trojencat';
@@ -943,30 +942,26 @@
 				</div>
 				<small>Retain quality while compression using PNG.</small>
 				<script>
-					function defs() {
+					async function defs() {
 						// dark mode 
 						document.getElementById("cbx-67").addEventListener("change", function () {
 							let newValue2 = document.getElementById("cbx-67").checked;
-							let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
-							qsets.darkMode = newValue2;
-							localStorage.setItem("qsets", JSON.stringify(qsets));
+							window.parent.setSetting("darkMode", newValue2)
 							window.parent.checkdmode();
 						});
 
-						if (JSON.parse(localStorage.getItem("qsets")).darkMode) {
+						if (await window.parent.getSetting("darkMode")) {
 							document.getElementById("cbx-67").checked = true;
 						}
 
 						// simple mode 
 						document.getElementById("cbx-68").addEventListener("change", function () {
 							let newValue2 = document.getElementById("cbx-68").checked;
-							let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
-							qsets.simpleMode = newValue2;
-							localStorage.setItem("qsets", JSON.stringify(qsets));
+							window.parent.setSetting("simpleMode", newValue2)
 							window.parent.checkdmode();
 						});
 
-						if (JSON.parse(localStorage.getItem("qsets")).simpleMode) {
+						if (await window.parent.getSetting("simpleMode")) {
 							document.getElementById("cbx-68").checked = true;
 						}
 						let sizes2323 = {
@@ -977,7 +972,7 @@
 						};
 
 						// Retrieve stored UISizing value from localStorage
-						let storedUISizing = JSON.parse(localStorage.getItem("qsets")).UISizing;
+						let storedUISizing = await window.parent.getSetting("UISizing");
 
 						// Iterate through sizes2323 object to find the matching key for storedUISizing
 						let matchingKey = Object.keys(sizes2323).find(key => sizes2323[key] === storedUISizing);
@@ -993,28 +988,24 @@
 						// Event listener to update localStorage when UISIZErangeslid input changes
 						document.getElementById("UISIZErangeslid").addEventListener("input", function () {
 							let newValue = sizes2323[document.getElementById("UISIZErangeslid").value];
-							let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
-							qsets.UISizing = newValue;
-							localStorage.setItem("qsets", JSON.stringify(qsets));
+							window.parent.setSetting("UISizing", newValue);
 							window.parent.checkdmode();
 						});
 
 					}
 
-					function defs5() {
+					async function defs5() {
 						console.log("defs5 loaded");
 
 						// focus mode
 						document.getElementById("cbx-65").addEventListener("change", function () {
 							let newValue2 = document.getElementById("cbx-65").checked;
-							let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
-							qsets.focusMode = newValue2;
-							localStorage.setItem("qsets", JSON.stringify(qsets));
+							window.parent.setSetting("focusMode", newValue2);
 							window.parent.dewallblur()
 						});
 
 						try {
-							if (JSON.parse(localStorage.getItem("qsets")).focusMode) {
+							if (await window.parent.getSetting("focusMode")) {
 								document.getElementById("cbx-65").checked = true;
 							}
 						} catch (error) {
@@ -1024,14 +1015,12 @@
 						// smartsearch
 						document.getElementById("cbx-69").addEventListener("change", function () {
 							let newValue2 = document.getElementById("cbx-69").checked;
-							let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
-							qsets.smartsearch = newValue2;
-							localStorage.setItem("qsets", JSON.stringify(qsets));
+							window.parent.setSetting("smartsearch",newValue2 )
 							window.parent.qsetsRefresh()
 						});
 
 						try {
-							if (JSON.parse(localStorage.getItem("qsets")).smartsearch) {
+							if (await window.parent.getSetting("smartsearch")) {
 								document.getElementById("cbx-69").checked = true;
 							}
 						} catch (error) {
@@ -1041,13 +1030,11 @@
 						// window snapping
 						document.getElementById("cbx-66").addEventListener("change", function () {
 							let newValue2 = document.getElementById("cbx-66").checked;
-							let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
-							qsets.wsnapping = newValue2;
-							localStorage.setItem("qsets", JSON.stringify(qsets));
+							window.parent.setSetting("wsnapping", newValue2)
 						});
 
 						try {
-							if (JSON.parse(localStorage.getItem("qsets")).wsnapping) {
+							if (await window.parent.getSetting("wsnapping")) {
 								document.getElementById("cbx-66").checked = true;
 							}
 						} catch (error) {
@@ -1055,22 +1042,18 @@
 						}
 
 						// save cam images as
-						console.log("CamImgFormat loaded " + JSON.parse(localStorage.getItem("qsets")).CamImgFormat)
 						let selinp;
 						selinp = document.getElementById("scapimas");
 						try {
-							if (JSON.parse(localStorage.getItem("qsets")).CamImgFormat) {
-								console.log("what3: " + JSON.parse(localStorage.getItem("qsets")).CamImgFormat)
-								selinp.value = JSON.parse(localStorage.getItem("qsets")).CamImgFormat;
+							if (await window.parent.getSetting("CamImgFormat")) {
+								selinp.value = await window.parent.getSetting("CamImgFormat");
 							}
 						} catch (error) {
 							console.error(error)
 						}
 						document.getElementById("scapimas").addEventListener("change", function () {
 							let newValue = document.getElementById("scapimas").value;
-							let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
-							qsets.CamImgFormat = newValue;
-							localStorage.setItem("qsets", JSON.stringify(qsets));
+							window.parent.setSetting("CamImgFormat", newValue)
 						});
 					}
 				</script>
@@ -1082,22 +1065,19 @@
 					</select>
 				</div>
 				<script>
-					function defs2() {
+					async function defs2() {
 						let selinp;
 						selinp = document.getElementById("defflvm");
 						try {
-							if (JSON.parse(localStorage.getItem("qsets")).defflvm) {
-								console.log("what: " + JSON.parse(localStorage.getItem("qsets")).defflvm)
-								selinp.value = JSON.parse(localStorage.getItem("qsets")).defflvm;
+							if (await window.parent.getSetting("defflvm")) {
+								selinp.value = defflvm;
 							}
 						} catch (error) {
 							console.error(error)
 						}
 						document.getElementById("defflvm").addEventListener("change", function () {
 							let newValue = document.getElementById("defflvm").value;
-							let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
-							qsets.defFileLayout = newValue;
-							localStorage.setItem("qsets", JSON.stringify(qsets));
+							window.parent.setSetting("defFileLayout", newValue)
 						});
 					}
 				</script>
@@ -1123,29 +1103,24 @@
 					</select>
 				</div>
 				<script>
-					function defs3() {
+					async function defs3() {
 						let selinp;
 						selinp = document.getElementById("timefrmt");
-						if (JSON.parse(localStorage.getItem("qsets")).timefrmt) {
-							console.log("what: " + JSON.parse(localStorage.getItem("qsets")).timefrmt)
-							selinp.value = JSON.parse(localStorage.getItem("qsets")).timefrmt;
+						if (await window.parent.getSetting("timefrmt")) {
+							selinp.value = await window.parent.getSetting("timefrmt");
 						}
 						document.getElementById("timefrmt").addEventListener("change", function () {
 							let newValue = document.getElementById("timefrmt").value;
-							let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
-							qsets.timefrmt = newValue;
-							localStorage.setItem("qsets", JSON.stringify(qsets));
+							window.parent.setSetting("timefrmt", newValue)
 						});
 
 						let selinp2 = document.getElementById("defSearchEngine");
-						if (JSON.parse(localStorage.getItem("qsets")).defSearchEngine) {
-							selinp2.value = JSON.parse(localStorage.getItem("qsets")).defSearchEngine;
+						if (await window.parent.getSetting("defSearchEngine")) {
+							selinp2.value = await window.parent.getSetting("defSearchEngine");
 						}
 						document.getElementById("defSearchEngine").addEventListener("change", function () {
 							let newValue = document.getElementById("defSearchEngine").value;
-							let qsets = JSON.parse(localStorage.getItem("qsets")) || {};
-							qsets.defSearchEngine = newValue;
-							localStorage.setItem("qsets", JSON.stringify(qsets));
+							window.parent.setSetting("defSearchEngine", newValue)
 						});
 					}
 				</script>
@@ -1159,29 +1134,6 @@
 					<small id="updefapplog" style="margin-top: 5px;">Updating default apps frequently can assure newer
 						features and bug fixes.</small>
 					<script>
-						async function updefapps() {
-							document.getElementById("updefapplog").innerHTML = "Installing...";
-							try {
-								await window.parent.installdefaultapps();
-								document.getElementById("updefapplog").innerHTML = "All Default apps updated. <b>Re-open Settings to reflect changes.</b>";
-							} catch (error) {
-								console.error("Error updating default apps:", error);
-							}
-						}
-
-					</script>
-				</div>
-				<div setting>
-					<b>Download settings as text</b>
-					<button style="margin-top: 5px;float: right;" onclick="dowserecp();">Download</button>
-					<p>Get a file based your choices. For debugging.</p>
-					<script>
-						async function dowserecp() {
-							var qsetsText = window.parent.localStorage.getItem('qsets');
-							await window.parent.createFile("Downloads", "settings", "application/json", jsonToDataURI(qsetsText));
-							window.parent.notify("File downloaded", "Open files app to view your file.", "Downloader")
-						}
-
 						async function updefapps() {
 							document.getElementById("updefapplog").innerHTML = "Installing...";
 							try {
@@ -1786,7 +1738,7 @@
 				</style>
 				<script>
 					async function gwall() {
-						let x = await window.parent.getFileById(JSON.parse(localStorage.getItem("qsets")).wall);
+						let x = await window.parent.getFileById(await window.parent.getSetting("wall"));
 						x = window.parent.unshrinkbsf(x.content);
 
 						// Create a new HTML image element

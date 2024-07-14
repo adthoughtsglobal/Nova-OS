@@ -723,7 +723,18 @@
     text-overflow: ellipsis;
     margin: 0 0.5rem;
     display: flex;
+	user-select: text;
+	-moz-user-select: text;
 		}
+
+		#pathdisp span {
+    display: inline-block;
+	opacity:0.7;
+}
+
+#pathdisp span:hover {
+	opacity:1;
+}
 	</style>
 	<script src="https://unpkg.com/interactjs/dist/interact.min.js"></script>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -1334,6 +1345,7 @@
 		}
 
 		async function listFiles(folderName, gen) {
+			console.log(folderName)
 			const startTime = performance.now();
 			if (currentPath == folderName && gen) {
 				return;
@@ -1457,8 +1469,29 @@
 		}
 
 		function updpth() {
-			document.getElementById("pathdisp").innerHTML = "/" + currentPath;
-		}
+    const pathDisp = document.getElementById("pathdisp");
+    pathDisp.innerHTML = "";
+
+    const parts = currentPath.split('/').filter(Boolean);
+    let accumulatedPath = "";
+
+    parts.forEach((part, index) => {
+        const currentPart = part + "/";
+        accumulatedPath += currentPart;
+
+        const span = document.createElement("span");
+        span.textContent = currentPart;
+
+        if (index < parts.length - 1) {
+            // Create a closure to capture the current value of accumulatedPath
+            const pathToCall = accumulatedPath;
+            span.style.cursor = "pointer";
+            span.addEventListener("click", () => listFiles(pathToCall));
+        }
+
+        pathDisp.appendChild(span);
+    });
+}
 
 		async function slfile(y) {
 			let x = y;
@@ -1557,7 +1590,7 @@ drive_file_move
 
 				} else {
 
-					document.getElementById("fileinfobn").innerHTML = folderPath;
+					document.getElementById("fileinfobn").innerHTML = x.querySelector(".flfrname").innerText.trim();
 				}
 			}
 		}
@@ -1669,15 +1702,11 @@ drive_file_move
 
 			let fileToMove = await window.parent.getFileById(flid);
 
-			function getapnme(x) {
-				return x.split('.')[0];
-			}
-			await window.parent.createFile(dest, getapnme(fileToMove.fileName), fileToMove.type, fileToMove.content, fileToMove.metadata);
+			await window.parent.createFile(dest, fileToMove.fileName, fileToMove.type, fileToMove.content, fileToMove.metadata);
 			console.log("File created in folder: " + dest);
 
 			console.log("Removing file: " + flid);
 			await remfile(flid);
-			console.log("File removed successfully");
 
 			document.getElementById("fileinfobn").style.opacity = 1;
 			document.getElementById("fileinfobn").innerHTML = "File was moved to " + dest;
