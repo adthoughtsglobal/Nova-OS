@@ -544,8 +544,9 @@
 		renderQueue()
 
 		function loadTrack(trackName) {
-    console.log("playing: " + trackName);
+    console.log("Loading track: " + trackName);
 
+    // Check if the track exists in the track_list
     if (!track_list.hasOwnProperty(trackName)) {
         console.error("Track not found in the track list");
         return;
@@ -553,30 +554,38 @@
 
     const track = track_list[trackName];
 
+    // Stop any currently playing track and reset values
     clearInterval(updateTimer);
     resetValues();
 
+    // Extract base64 data from the path
     const base64String = track.path.split(',')[1];
-    const bytes = window.atob(base64String);
-    const arrayBuffer = new ArrayBuffer(bytes.length);
-    const uint8Array = new Uint8Array(arrayBuffer);
 
-    for (let i = 0; i < bytes.length; i++) {
-        uint8Array[i] = bytes.charCodeAt(i);
+    // Convert base64 string to binary data (Uint8Array)
+    const binaryString = window.atob(base64String);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
     }
 
-    const blob = new Blob([arrayBuffer], { type: 'audio/mp3' }); // Adjust type based on actual audio format
+    // Create an ArrayBuffer from the Uint8Array
+    const arrayBuffer = bytes.buffer;
 
+    // Create a Blob from the ArrayBuffer with the appropriate MIME type
+    const blob = new Blob([arrayBuffer], { type: 'audio/mpeg' }); // Adjust type based on actual audio format
+
+    // Read metadata using jsmediatags
     jsmediatags.read(blob, {
         onSuccess: function(tag) {
             const metadata = tag.tags;
             console.log('Metadata:', metadata);
 
-            // Display track information and picture cover if available
+            // Update UI with track information
             track_name.textContent = trackName;
             track_artist.textContent = metadata.artist || 'Unknown Artist';
             now_playing.textContent = "Playing " + (Object.keys(track_list).indexOf(trackName) + 1) + " of " + Object.keys(track_list).length;
 
+            // Update baseimg with album art if available
             if (metadata.picture && metadata.picture.data) {
                 const base64String = arrayBufferToBase64(metadata.picture.data);
                 baseimg.src = `data:${metadata.picture.format};base64,${base64String}`;
@@ -584,9 +593,11 @@
                 baseimg.src = ''; // Clear previous image if no picture available
             }
 
-            playTrack();
-            updateTimer = setInterval(seekUpdate, 1000);
-            curr_track.addEventListener("ended", nextTrack);
+            // Load and play the track
+            curr_track.src = URL.createObjectURL(blob); // Set audio element source
+            playTrack(); // Start playback
+            updateTimer = setInterval(seekUpdate, 1000); // Update seek slider
+            curr_track.addEventListener("ended", nextTrack); // Listen for track end
         },
         onError: function(error) {
             console.error("Error reading metadata: ", error);
@@ -594,7 +605,6 @@
         }
     });
 }
-
 
 // Helper function to convert ArrayBuffer to Base64 string
 function arrayBufferToBase64(buffer) {
@@ -687,12 +697,24 @@ function arrayBufferToBase64(buffer) {
 		}
 
 		function playTrack() {
-			curr_track.play();
-			isPlaying = true;
-			playpause_btn.innerHTML = `<span class="material-symbols-rounded">
-	  pause_circle
-	  </span>`;
-		}
+    if (curr_track) {
+        curr_track.addEventListener('canplaythrough', function() {
+            curr_track.play()
+                .then(() => {
+                    isPlaying = true;
+                    playpause_btn.innerHTML = `<span class="material-symbols-rounded">
+                        pause_circle
+                    </span>`;
+                    console.log('Playback started successfully.');
+                })
+                .catch(error => {
+                    console.error('Error playing track:', error);
+                });
+        }, false);
+    } else {
+        console.error('curr_track is not defined or is invalid.');
+    }
+}
 
 		function pauseTrack() {
 			curr_track.pause();
