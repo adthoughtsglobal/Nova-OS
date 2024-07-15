@@ -589,6 +589,9 @@
             if (metadata.picture && metadata.picture.data) {
                 const base64String = arrayBufferToBase64(metadata.picture.data);
                 baseimg.src = `data:${metadata.picture.format};base64,${base64String}`;
+				getDominantColor(`url("data:${metadata.picture.format};base64,${base64String}")`, function(color) {
+					baseimg.style.boxShadow = "0 3px 1rem " + color;
+				});
             } else {
                 baseimg.src = ''; // Clear previous image if no picture available
             }
@@ -728,7 +731,7 @@ function arrayBufferToBase64(buffer) {
 			if (track_index < (Object.keys(track_list).length - 1))
 				track_index += 1;
 			else track_index = 0;
-			loadTrack(track_index);
+			loadTrack(loadTrack(Object.keys(track_list)[track_index]));
 			playTrack();
 		}
 
@@ -736,7 +739,8 @@ function arrayBufferToBase64(buffer) {
 			if (track_index > 0)
 				track_index -= 1;
 			else track_index = (Object.keys(track_list).length - 1);
-			loadTrack(track_index);
+			
+			loadTrack(loadTrack(Object.keys(track_list)[track_index]));
 			playTrack();
 		}
 
@@ -828,6 +832,51 @@ scanFolders(window.parent.memory);
 primaryalert.close();
 			primaryalert.style.display = "none"
 		}
+
+		function getDominantColor(imageUrl, callback) {
+    var img = new Image();
+    img.crossOrigin = "Anonymous"; // Enable CORS for images
+    
+    img.onload = function() {
+        var canvas = document.createElement('canvas');
+        var ctx = canvas.getContext('2d');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+        
+        var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        var data = imageData.data;
+        var colorCount = {};
+        var maxCount = 0;
+        var dominantColor = [0, 0, 0];
+        
+        for (var i = 0; i < data.length; i += 4) {
+            var r = data[i];
+            var g = data[i + 1];
+            var b = data[i + 2];
+            var key = r + ',' + g + ',' + b;
+            if (colorCount[key]) {
+                colorCount[key]++;
+            } else {
+                colorCount[key] = 1;
+            }
+            
+            if (colorCount[key] > maxCount) {
+                maxCount = colorCount[key];
+                dominantColor = [r, g, b];
+            }
+        }
+        
+        var hexColor = rgbToHex(dominantColor[0], dominantColor[1], dominantColor[2]);
+        callback(hexColor);
+    };
+
+    img.src = imageUrl;
+}
+
+function rgbToHex(r, g, b) {
+    return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+}
 	</script>
 </body>
 
