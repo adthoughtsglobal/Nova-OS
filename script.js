@@ -830,8 +830,10 @@ function openwindow(title, cont, ic, theme) {
 	let windowdataspan = document.createElement("div");
 	windowdataspan.classList += "windowdataspan";
 	windowdataspan.innerHTML = ic != null ? ic : "";
-	windowdataspan.innerHTML += toTitleCase(title)
-	windowHeader.appendChild(windowdataspan)
+	let windowtitlespan = document.createElement("div");
+	windowtitlespan.innerHTML += toTitleCase(basename(title));
+	windowdataspan.appendChild(windowtitlespan);
+	windowHeader.appendChild(windowdataspan);
 	if (theme != null) {
 		windowHeader.style.backgroundColor = theme;
 		windowDiv.style.border = `1px solid ` + theme;
@@ -903,7 +905,10 @@ function openwindow(title, cont, ic, theme) {
             iframe.onload = function() {
                 var doc = iframe.contentDocument || iframe.contentWindow.document;
 				
-			iframe.contentWindow.myWindow = windowDiv;
+			iframe.contentWindow.myWindow = {
+				"element":windowDiv,
+				"titleElement":windowtitlespan
+			};
 
                 // Check if the content string contains the function greenflag
                 if (contentString.includes(`function greenflag()`)) {
@@ -1049,7 +1054,12 @@ async function createFile(folderName2, fileName, type, content, metadata) {
 	if (type) {
 		fileName2 = `${fileName}.${type}`;
 	} else {
-		fileName2 = fileName
+		if (mtpetxt(fileName) && mtpetxt(fileName) != "") {
+			fileName2 = fileName
+		} else {
+			say("Cannot find file extension. Can't create file.", "failed");
+			return;
+		}
 	}
     if (!metadata) {
         metadata = {};

@@ -1511,7 +1511,9 @@
 				x.id = "slfile";
 				let fileData
 				if (!(x.getAttribute("unid") === null || x.getAttribute("unid") === "")) {
-
+					if (sessiontype == "opener") {
+						return;
+					}
 					try {
 						fileData = await window.parent.getFileById(x.getAttribute("unid"));
 
@@ -1545,9 +1547,7 @@
 					}
 
 
-					if (sessiontype == "opener") {
-						return;
-					}
+					
 
 
 					document.getElementById("fileinfobn").style.opacity = 1;

@@ -45,26 +45,28 @@
 			justify-content: center;
 			width: 0;
 			flex-grow: 1;
-			border-left: 1px solid grey;
+			margin: 2rem;
+
 		}
 
 		.details {
 			display: flex;
-			align-items: center;
-			flex-direction: column;
-			justify-content: center;
-			margin-top: 25px;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    margin-top: 25px;
+    width: 100%;
+    overflow: hidden;
+    flex-wrap: nowrap;
+		}
+
+		#baseimg {
+			    flex: 1;
+    height: 0;
 		}
 
 		.now-playing {
 			font-size: 12px;
-		}
-
-		.track-name {
-			font-size: 2rem;
-			text-align: center;
-			width: 100%;
-			display: block;
 		}
 
 		.track-artist {
@@ -215,7 +217,7 @@
 			display: flex;
 			flex-direction: row;
 			flex-wrap: nowrap;
-			justify-content: flex-start;
+			justify-content: space-between;
 			align-items: center;
 			padding: 0.3rem 0.4rem;
 			background: #1f1f1f;
@@ -224,7 +226,15 @@
 		}
 
 		.detailswid {
-			flex: 2;
+
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.buttonside {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: flex-end;
 		}
 
 		.detailswid * {
@@ -274,6 +284,23 @@
 			cursor: pointer;
 
 		}
+
+		.iconanddatdiv {
+			display: flex;
+			flex-direction: row;
+			overflow: hidden;
+		}
+
+		.track-name {
+			font-size: 2rem;
+    text-align: center;
+    display: block;
+    white-space: nowrap;
+    margin: 0.5rem;
+    overflow: hidden;
+    width: 100%;
+    text-overflow: ellipsis;
+		}
 	</style>
 
 </head>
@@ -282,6 +309,7 @@
 	<div class="main-flex-container">
 		<div class="player">
 			<div class="details">
+				<img id="baseimg" src="https://media.discordapp.net/attachments/1147362736032985221/1262355247922417715/jail.png?ex=66964b70&is=6694f9f0&hm=50d1bb38db0f09a2042d45ae33f8c136203e5b581e847e90567e6e69657dd171&=&format=webp&quality=lossless&width=424&height=424">
 				<div class="track-name">Track Name</div>
 				<div class="track-artist">Track Artist</div>
 			</div>
@@ -317,7 +345,7 @@
 					<div class="now-playing">Playing 1 / 1</div>
 				</span>
 				<div class="buttonside">
-					<button>
+					<button onclick="shuffle()">
 						<span class="material-symbols-rounded">
 							shuffle
 						</span>
@@ -345,7 +373,7 @@
 					</span>
 				</div>
 			</div>
-			<button class="createtrackbtn">
+			<button class="createtrackbtn" onclick="openfromfiles()">
 				<span class="material-symbols-rounded">
 					add
 				</span>
@@ -361,6 +389,7 @@
 
 		let track_name = document.querySelector(".track-name");
 		let track_artist = document.querySelector(".track-artist");
+		let baseimg = document.querySelector("#baseimg");
 
 		let playpause_btn = document.querySelector(".playpause-track");
 		let next_btn = document.querySelector(".next-track");
@@ -378,89 +407,129 @@
 		// Create new audio element
 		let curr_track = document.createElement('audio');
 
-		let track_list = {
-	"Cure For Me": {
-		artist: "Aurora",
-		path: "cure for me.mp3"
-	},
-	"Cure For Me2": {
-		artist: "Aurora",
-		path: "cure for me2.mp3"
-	}
-};
+		let track_list = {};
 
 		// Define the tracks that have to be played
 		function renderQueue() {
-	// Clear existing track widgets if needed
-	document.querySelectorAll('.trackwid').forEach(e => e.remove());
+			// Clear existing track widgets if needed
+			document.querySelectorAll('.trackwid').forEach(e => e.remove());
 
-	for (let trackName in track_list) {
-		if (track_list.hasOwnProperty(trackName)) {
-			const track = track_list[trackName];
+			for (let trackName in track_list) {
+				if (track_list.hasOwnProperty(trackName)) {
+					const track = track_list[trackName];
 
-			const trackWid = document.createElement('div');
-			trackWid.className = 'trackwid';
+					const trackWid = document.createElement('div');
+					trackWid.className = 'trackwid';
+					trackWid.onclick = function () {
+						loadTrack(trackName)
+					}
 
-			const iconDiv = document.createElement('div');
-			iconDiv.className = 'icon';
+					const iconanddatdiv = document.createElement('div');
+					iconanddatdiv.classList += "iconanddatdiv"
 
-			const musicNoteSpan = document.createElement('span');
-			musicNoteSpan.className = 'material-symbols-rounded';
-			musicNoteSpan.textContent = 'music_note';
-			iconDiv.appendChild(musicNoteSpan);
+					const iconDiv = document.createElement('div');
+					iconDiv.className = 'icon';
 
-			const detailsWid = document.createElement('div');
-			detailsWid.className = 'detailswid';
+					const musicNoteSpan = document.createElement('span');
+					musicNoteSpan.className = 'material-symbols-rounded';
+					musicNoteSpan.textContent = 'music_note';
+					iconDiv.appendChild(musicNoteSpan);
 
-			const trackNameElement = document.createElement('b');
-			trackNameElement.className = 'TrackName';
-			trackNameElement.textContent = trackName; // Set track name
+					const detailsWid = document.createElement('div');
+					detailsWid.className = 'detailswid';
 
-			const artistName = document.createElement('span');
-			artistName.className = 'ArtistName';
-			artistName.textContent = track.artist; // Set artist name
+					const trackNameElement = document.createElement('b');
+					trackNameElement.className = 'TrackName';
+					trackNameElement.textContent = trackName; // Set track name
 
-			detailsWid.appendChild(trackNameElement);
-			detailsWid.appendChild(artistName);
+					const artistName = document.createElement('span');
+					artistName.className = 'ArtistName';
+					artistName.textContent = track.artist; // Set artist name
 
-			const closeSpan = document.createElement('span');
-			closeSpan.className = 'material-symbols-rounded rmtrfrqu';
-			closeSpan.textContent = 'close';
-			closeSpan.addEventListener('click', function() {
-				delete track_list[trackName];
-				trackWid.remove();
-			});
+					detailsWid.appendChild(trackNameElement);
+					detailsWid.appendChild(artistName);
 
-			trackWid.appendChild(iconDiv);
-			trackWid.appendChild(detailsWid);
-			trackWid.appendChild(closeSpan);
+					const closeSpan = document.createElement('span');
+					closeSpan.className = 'material-symbols-rounded rmtrfrqu';
+					closeSpan.textContent = 'close';
+					closeSpan.addEventListener('click', function () {
+						delete track_list[trackName];
+						trackWid.remove();
+					});
 
-			document.getElementById("tracklist").appendChild(trackWid);
+					iconanddatdiv.appendChild(iconDiv);
+					iconanddatdiv.appendChild(detailsWid);
+					trackWid.appendChild(iconanddatdiv);
+					trackWid.appendChild(closeSpan);
+
+					document.getElementById("tracklist").appendChild(trackWid);
+				}
+			}
 		}
-	}
+
+		renderQueue()
+
+		function loadTrack(trackName) {
+    console.log("playing: " + trackName);
+
+    if (!track_list.hasOwnProperty(trackName)) {
+        console.error("Track not found in the track list");
+        return;
+    }
+
+    const track = track_list[trackName];
+
+    clearInterval(updateTimer);
+    resetValues();
+
+    const base64String = track.path.split(',')[1];
+    const bytes = window.atob(base64String);
+    const arrayBuffer = new ArrayBuffer(bytes.length);
+    const uint8Array = new Uint8Array(arrayBuffer);
+
+    for (let i = 0; i < bytes.length; i++) {
+        uint8Array[i] = bytes.charCodeAt(i);
+    }
+
+    const blob = new Blob([arrayBuffer], { type: 'audio/mp3' }); // Adjust type based on actual audio format
+
+    jsmediatags.read(blob, {
+        onSuccess: function(tag) {
+            const metadata = tag.tags;
+            console.log('Metadata:', metadata);
+
+            // Display track information and picture cover if available
+            track_name.textContent = trackName;
+            track_artist.textContent = metadata.artist || 'Unknown Artist';
+            now_playing.textContent = "Playing " + (Object.keys(track_list).indexOf(trackName) + 1) + " of " + Object.keys(track_list).length;
+
+            if (metadata.picture && metadata.picture.data) {
+                const base64String = arrayBufferToBase64(metadata.picture.data);
+                baseimg.src = `data:${metadata.picture.format};base64,${base64String}`;
+            } else {
+                baseimg.src = ''; // Clear previous image if no picture available
+            }
+
+            playTrack();
+            updateTimer = setInterval(seekUpdate, 1000);
+            curr_track.addEventListener("ended", nextTrack);
+        },
+        onError: function(error) {
+            console.error("Error reading metadata: ", error);
+            baseimg.src = ''; // Clear previous image on error
+        }
+    });
 }
 
-renderQueue()
-
-function loadTrack(trackName) {
-	console.log("playing: " + trackName)
-	if (!track_list.hasOwnProperty(trackName)) {
-		console.error("Track not found in the track list");
-		return;
-	}
-	
-	const track = track_list[trackName];
-	clearInterval(updateTimer);
-	resetValues();
-	curr_track.src = track.path;
-	curr_track.load();
-
-	track_name.textContent = trackName;
-	track_artist.textContent = track.artist;
-	now_playing.textContent = "Playing " + trackName;
-
-	updateTimer = setInterval(seekUpdate, 1000);
-	curr_track.addEventListener("ended", nextTrack);
+// Helper function to convert ArrayBuffer to Base64 string
+function arrayBufferToBase64(buffer) {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+    }
+    return window.btoa(binary);
 }
 
 		function resetValues() {
@@ -470,67 +539,70 @@ function loadTrack(trackName) {
 		}
 
 		function playFirstTrack() {
-	const firstTrackName = Object.keys(track_list)[0];
-	if (firstTrackName) {
-		loadTrack(firstTrackName);
-	} else {
-		console.error("No tracks available in the track list");
-	}
-}
+			const firstTrackName = Object.keys(track_list)[0];
+			if (firstTrackName) {
+				loadTrack(firstTrackName);
+			} else {
+				console.error("No tracks available in the track list");
+			}
+		}
 
-// Call the function to play the first track
-playFirstTrack();
+		function openfromfiles() {
+			window.parent.openlaunchprotocol("files", { "type": "open" })
+		}
 
-function openfromfiles() {
-				window.parent.openlaunchprotocol("files",{"type": "open"})
+		window.addEventListener('storage', async (event) => {
+			if (event.key === 'todo') {
+
+				if (JSON.parse(localStorage.getItem("todo")).type == "opentotext") {
+
+
+					const file = await window.parent.getFileById(JSON.parse(localStorage.getItem("todo")).lclfile);
+
+					readthefile(window.parent.unshrinkbsf(file.content), file.fileName)
+				}
+			}
+		});
+		function readthefile(base64Url, fileName = 'Unknown Title') {
+			const base64String = base64Url.split(',')[1];
+			const binaryString = atob(base64String);
+			const bytes = new Uint8Array(binaryString.length);
+
+			for (let i = 0; i < binaryString.length; i++) {
+				bytes[i] = binaryString.charCodeAt(i);
 			}
 
-			window.addEventListener('storage', async (event) => {
-				if (event.key === 'todo') {
-					
-					if (JSON.parse(localStorage.getItem("todo")).type == "opentotext") {
-						console.log('Loading todo');
-						
-						const file = await window.parent.getFileById(JSON.parse(localStorage.getItem("todo")).lclfile);
-						readthefile(window.parent.unshrinkbsf(file.content),file.fileName )
+			// Convert ArrayBuffer to Blob
+			const blob = new Blob([bytes.buffer], { type: 'application/octet-binary' });
+
+			// Parse metadata using jsmediatags
+			jsmediatags.read(blob, {
+				onSuccess: function (tag) {
+					const metadata = tag.tags;
+					const trackName = metadata.title || fileName;
+					const artistName = metadata.artist || 'Unknown Artist';
+					const albumName = metadata.album || 'Unknown Album';
+
+					// Add the track to the track_list map
+					track_list[trackName] = {
+						artist: artistName,
+						path: base64Url // Use the base64 URL directly
+					};
+
+					// Log the updated track list
+					console.log('Updated track list:', track_list);
+
+					// Optionally, call a function to render the updated track list
+					renderQueue();
+					if (Object.keys(track_list) == 1) {
+						playFirstTrack();
 					}
+				},
+				onError: function (error) {
+					console.error("Error reading metadata: ", error);
 				}
 			});
-
-			function readthefile(base64Url, fileName = 'Unknown Title') {
-				const base64String = base64Url.split(',')[1];
-	const binaryString = atob(base64String);
-	const len = binaryString.length;
-	const bytes = new Uint8Array(len);
-
-	for (let i = 0; i < len; i++) {
-		bytes[i] = binaryString.charCodeAt(i);
-	}
-	jsmediatags.read(bytes.buffer, {
-		onSuccess: function(tag) {
-			// Handle the metadata
-			const metadata = tag.tags;
-			const trackName = metadata.title || fileName;
-			const artistName = metadata.artist || 'Unknown Artist';
-
-			// Add the track to the track_list map
-			track_list[trackName] = {
-				artist: artistName,
-				path: base64Url // Use the base64 URL directly
-			};
-
-			// Log the updated track list
-			console.log('Updated track list:', track_list);
-			
-			// Optionally, call a function to render the updated track list
-			renderQueue();
-		},
-		onError: function(error) {
-			console.error("Error reading metadata: ", error);
 		}
-	});
-	};
-
 
 		function playpauseTrack() {
 			if (!isPlaying) playTrack();
@@ -554,7 +626,7 @@ function openfromfiles() {
 		}
 
 		function nextTrack() {
-			if (track_index < track_list.length - 1)
+			if (track_index < (Object.keys(track_list).length - 1))
 				track_index += 1;
 			else track_index = 0;
 			loadTrack(track_index);
@@ -564,7 +636,7 @@ function openfromfiles() {
 		function prevTrack() {
 			if (track_index > 0)
 				track_index -= 1;
-			else track_index = track_list.length;
+			else track_index = (Object.keys(track_list).length - 1);
 			loadTrack(track_index);
 			playTrack();
 		}
@@ -601,7 +673,21 @@ function openfromfiles() {
 			}
 		}
 
+		function shuffle() {
+			const trackNames = Object.keys(track_list);
+			for (let i = trackNames.length - 1; i > 0; i--) {
+				const j = Math.floor(Math.random() * (i + 1));
+				[trackNames[i], trackNames[j]] = [trackNames[j], trackNames[i]];
+			}
 
+			const shuffledTrackList = {};
+			trackNames.forEach((trackName, index) => {
+				shuffledTrackList[trackName] = track_list[trackName];
+			});
+
+			track_list = shuffledTrackList;
+			renderQueue()
+		}
 	</script>
 </body>
 
