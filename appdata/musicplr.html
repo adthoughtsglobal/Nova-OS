@@ -301,11 +301,82 @@
     width: 100%;
     text-overflow: ellipsis;
 		}
+
+		#primaryalert {
+			border: 0;
+    height: 100%;
+	width: 100%;
+    margin: 0;
+    display: grid;
+    justify-content: center;
+    justify-items: center;
+    align-items: center;
+    align-content: center;
+    background: #101010;
+    color: white;
+		}
+
+		#primaryalert p {
+			max-width: 216px;
+    text-align: center;
+    opacity: 0.5;
+    font-size: 0.8rem;
+		}
+
+		#primaryalert button {
+			display: grid;
+    padding: 1rem;
+    background: #141414;
+    border-radius: 50%;
+    border: 0;
+    cursor: pointer;
+    color: white;
+    margin-top: 1rem;
+	animation: skibidibtn 10s infinite;
+		}
+
+		@keyframes skibidibtn {
+			0% {
+				box-shadow: 5px 5px 1rem red inset, -5px -5px 1rem #ffe000 inset;
+			}
+			25% {
+				box-shadow: 5px 0px 1rem #ffde4d inset, -5px 0px 1rem #ff41e6 inset;
+			}
+			75% {
+				box-shadow: 0px 5px 1rem #68c1ff inset, -0px -5px 1rem #3cff6f inset;
+			}
+			100% {
+				box-shadow: 5px 5px 1rem red inset, -5px -5px 1rem #ffe000 inset;
+			}
+		}
+
+		#primaryalert button span {
+			color: #b3b3b3;
+    font-size: 3rem;
+    font-weight: lighter;
+		}
+
+		#primaryalert a {
+			margin-top: 2rem;
+    font-size: 0.7rem;
+    background: #181818;
+    padding: 0.3rem 0.7rem;
+    border-radius: 2rem;
+    color: #afafaf;
+    cursor: pointer;
+		}
 	</style>
 
 </head>
 
 <body>
+	<dialog id="primaryalert">
+		<p>You don't have any songs in your queue! Click here to open some:</p>
+		<button onclick="openfromfiles()"><span class="material-symbols-rounded">
+			add
+		</span></button>
+		<a onclick="theskibidiscan()">Scan everything for music</a>
+	</dialog>
 	<div class="main-flex-container">
 		<div class="player">
 			<div class="details">
@@ -386,7 +457,8 @@
 
 	<script>
 		let now_playing = document.querySelector(".now-playing");
-
+		let primaryalert= document.querySelector("#primaryalert");
+		
 		let track_name = document.querySelector(".track-name");
 		let track_artist = document.querySelector(".track-artist");
 		let baseimg = document.querySelector("#baseimg");
@@ -408,6 +480,8 @@
 		let curr_track = document.createElement('audio');
 
 		let track_list = {};
+
+		primaryalert.showModal();
 
 		// Define the tracks that have to be played
 		function renderQueue() {
@@ -521,6 +595,7 @@
     });
 }
 
+
 // Helper function to convert ArrayBuffer to Base64 string
 function arrayBufferToBase64(buffer) {
     let binary = '';
@@ -549,6 +624,8 @@ function arrayBufferToBase64(buffer) {
 
 		function openfromfiles() {
 			window.parent.openlaunchprotocol("files", { "type": "open" })
+			primaryalert.close();
+			primaryalert.style.display = "none"
 		}
 
 		window.addEventListener('storage', async (event) => {
@@ -687,6 +764,47 @@ function arrayBufferToBase64(buffer) {
 
 			track_list = shuffledTrackList;
 			renderQueue()
+		}
+
+		
+
+		function theskibidiscan() {
+			const musicExtensions = ['mp3', 'wav', 'flac', 'mpeg'];
+
+const scanFolders = (folder, basePath = '') => {
+    const isMusicFile = (fileName) => {
+        const extension = fileName.split('.').pop().toLowerCase();
+        return musicExtensions.includes(extension);
+    };
+
+    const getBase64Url = (content) => {
+        return `data:audio/*;base64,${btoa(content)}`;
+    };
+
+    const base64ToArrayBuffer = (base64) => {
+        base64 = base64.replace(/[^A-Za-z0-9+/=]/g, ""); // Ensure valid characters
+        const binaryString = atob(base64);
+        const len = binaryString.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+        }
+        return bytes.buffer;
+    };
+
+    for (const key in folder) {
+        if (key.endsWith('/')) {
+            scanFolders(folder[key], `${basePath}${key}`);
+        } else if (isMusicFile(key)) {
+			readthefile(window.parent.unshrinkbsf(folder[key].content), folder[key]);
+        }
+    }
+};
+
+scanFolders(window.parent.memory);
+
+primaryalert.close();
+			primaryalert.style.display = "none"
 		}
 	</script>
 </body>

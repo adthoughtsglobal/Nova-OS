@@ -99,7 +99,7 @@ async function setSetting(key, value) {
     await updateMemoryData();
     try {
         if (!memory["System/"]["preferences.json"]) {
-            memory["System/"]["preferences.json"] = { content: '{}', id: genUID() };
+           await createFile("System/", "preferences.json", false, "{}")
         }
         let preferences = JSON.parse(memory["System/"]["preferences.json"]["content"]);
         preferences[key] = value;

@@ -1145,30 +1145,17 @@
 			document.getElementById("flap-sidenav").style.width = getComputedStyle(document.getElementById("jstree")).width
 		}
 		function greenflagbro() {
-
-			let x = localStorage.getItem("qsets");
-			if (x) {
-				if (JSON.parse(x).filesSidenavSize) {
-					document.getElementById("flap-sidenav").style.width = JSON.parse(x).filesSidenavSize;
+				if (window.parent.getSetting("filesSidenavSize")) {
+					document.getElementById("flap-sidenav").style.width = window.parent.getSetting("filesSidenavSize");
 				} else {
-					fitsizesidenav()
+					fitsizesidenav();
 				}
-			}
-
-
 
 			$("#flap-sidenav").resizable({
 				handles: 'e',
 				stop: function (event, ui) {
 					const newWidth = ui.size.width;
-					let qsets = localStorage.getItem('qsets');
-					if (qsets) {
-						qsets = JSON.parse(qsets);
-						qsets.filesSidenavSize = newWidth + 'px';
-					} else {
-						qsets = { filesSidenavSize: newWidth + 'px' };
-					}
-					localStorage.setItem('qsets', JSON.stringify(qsets));
+					window.parent.setSetting("filesSidenavSize", newWidth + 'px');
 				}
 			});
 
