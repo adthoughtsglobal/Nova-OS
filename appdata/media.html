@@ -79,55 +79,6 @@
 	</div>
 
 	<script>
-		async function playBase64Chunks(videoElement, base64String) {
-		  // Decode the base64 string into an ArrayBuffer
-		  const arrayBuffer = atob(base64String).split('').map(char => char.charCodeAt(0));
-
-		  // Use a library to parse the video container format (e.g., jsmediatags)
-		  const mediaTags = await jsmediatags.read(arrayBuffer);
-		  const videoLength = mediaTags.video.duration; // Get video duration in seconds
-
-		  // Define the chunk size in seconds
-		  const chunkSize = 5;
-
-		  let currentChunkStart = 0;
-		  let chunks = [];
-
-		  // Iterate through the video in chunks
-		  while (currentChunkStart < videoLength) {
-			const chunkEnd = Math.min(currentChunkStart + chunkSize, videoLength);
-			chunks.push({ start: currentChunkStart, end: chunkEnd });
-			currentChunkStart = chunkEnd;
-		  }
-
-		  // Function to play the next chunk
-		  function playNextChunk(index) {
-			if (index >= chunks.length) {
-			  videoElement.pause();
-			  return;
-			}
-			const chunk = chunks[index];
-			const dataUri = createDataUriWithStartEnd(base64String, chunk.start, chunk.end);
-			videoElement.src = dataUri;
-			videoElement.addEventListener('loadedmetadata', () => videoElement.play());
-			videoElement.addEventListener('ended', () => playNextChunk(index + 1));
-		  }
-
-		  // Create a data URI with specified start and end timestamps
-		  function createDataUriWithStartEnd(base64String, startTime, endTime) {
-			const slice = base64String.slice(calculateBase64Slice(startTime, mediaTags), calculateBase64Slice(endTime, mediaTags));
-			return `data:video/mp4;base64,${slice}`;
-		  }
-
-		  function calculateBase64Slice(timestamp, mediaTags) {
-			throw new Error('Please implement calculateBase64Slice based on your chosen video parsing library');
-		  }
-
-		  // Start playing the first chunk
-		  playNextChunk(0);
-		}
-
-
 		
 		var disp;
 		async function greenflag() {
@@ -161,14 +112,11 @@
 												Your browser does not support the video tag.
 											  </video>`;
 
-							// Convert base64 content to Blob
-							var blob = dataURItoBlob(base64Content);
-							var videoFile = new File([blob], "video.mp4", {type: "video/mp4"});
-
-							// Create a video element to get the duration
-							var videoElement = document.createElement('video');
-							const base64Video = URL.createObjectURL(videoFile)
-							playBase64Chunks(videoElement, base64Video);
+											  var blob = dataURItoBlob(base64Content);
+var videoFile = new File([blob], "video.mp4", { type: "video/mp4" });
+var videoElement = document.createElement('video');
+const base64Video = URL.createObjectURL(videoFile);
+playBase64Chunks(videoElement, base64Video);
 						} else {
 							document.getElementById("thedisplay").alt = "Please open the files app to read a file from your system memory.";
 						}
@@ -180,33 +128,50 @@
 		}
 
 		function dataURItoBlob(dataURI) {
-			var byteString = atob(dataURI.split(',')[1]);
-			var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-			var ab = new ArrayBuffer(byteString.length);
-			var ia = new Uint8Array(ab);
-			for (var i = 0; i < byteString.length; i++) {
-				ia[i] = byteString.charCodeAt(i);
-			}
-			return new Blob([ab], {type: mimeString});
-		}
+    var byteString = atob(dataURI.split(',')[1]);
+    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = new Uint8Array(ab);
+    for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], { type: mimeString });
+}
 
-		// Function to slice video into chunks
-		async function sliceVideo(startTime, endTime, videoFile) {
-			return new Promise((resolve, reject) => {
-				var slicedBlob = videoFile.slice(startTime, endTime);
-				var fileReader = new FileReader();
-				fileReader.onload = function (event) {
-					console.log('Blob created successfully');
-					var blob = new Blob([event.target.result], {type: 'video/mp4'});
-					resolve(blob);
-				};
-				fileReader.onerror = function (event) {
-					console.error('Error reading Blob:', event);
-					reject(event);
-				};
-				fileReader.readAsArrayBuffer(slicedBlob);
-			});
-		}
+function playBase64Chunks(videoElement, base64Video) {
+    videoElement.src = base64Video;
+    videoElement.addEventListener('loadedmetadata', () => {
+        const duration = videoElement.duration;
+        const chunkSize = 10; // chunk size in seconds
+
+        let currentTime = 0;
+
+        function playNextChunk() {
+            if (currentTime >= duration) {
+                console.log("Video finished");
+                return;
+            }
+
+            const nextTime = Math.min(currentTime + chunkSize, duration);
+
+            videoElement.currentTime = currentTime;
+            videoElement.play();
+
+            const playChunkInterval = setInterval(() => {
+                if (videoElement.currentTime >= nextTime) {
+                    videoElement.pause();
+                    currentTime = nextTime;
+                    clearInterval(playChunkInterval);
+                    playNextChunk();
+                }
+            }, 100);
+        }
+
+        playNextChunk();
+    });
+
+    document.body.appendChild(videoElement); // Add the video element to the DOM if needed
+}
 
 	</script>
 </body>

@@ -10,6 +10,7 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
+	<meta name="nova-icon" content= "<svg version= '1.1 ' xmlns= 'http://www.w3.org/2000/svg ' xmlns:xlink= 'http://www.w3.org/1999/xlink ' width= '51 ' height= '49.50242 ' viewBox= '0,0,51,49.50242 '><g transform= 'translate(-214.5,-154.75988) '><g data-paper-data= '{&quot;isPaintingLayer&quot;:true} ' fill-rule= 'nonzero ' stroke-linejoin= 'miter ' stroke-miterlimit= '10 ' stroke-dasharray= ' ' stroke-dashoffset= '0 ' style= 'mix-blend-mode: normal '><path d= 'M214.5,177.00988c0,-14.08326 4.66674,-22.25 18.75,-22.25c14.08326,0 32.25,14.16674 32.25,28.25c0,14.08326 -11.89966,17.91973 -23.5,20.5c-20.43901,4.54627 -27.5,-12.41674 -27.5,-26.5z ' fill= '#6179ff ' stroke= 'none ' stroke-width= '0 ' stroke-linecap= 'butt '/><path d= 'M235.26333,186.05913l-2.26753,-13.83446l11.61789,0.96088l2.46892,13.36372 ' fill= 'none ' stroke= '#ffffff ' stroke-width= '3.5 ' stroke-linecap= 'round '/><path d= 'M227.30363,185.33244c0.21528,-2.60295 2.4999,-4.53854 5.10285,-4.32326c2.60295,0.21528 4.53854,2.49991 4.32326,5.10286c-0.21528,2.60295 -2.49991,4.53853 -5.10286,4.32325c-2.60295,-0.21528 -4.53853,-2.4999 -4.32325,-5.10285z ' fill= '#ffffff ' stroke= 'none ' stroke-width= '0 ' stroke-linecap= 'butt '/><path d= 'M239.88904,186.49159c0.20118,-2.43237 2.33609,-4.24111 4.76846,-4.03994c2.43237,0.20118 4.24111,2.33608 4.03994,4.76845c-0.20118,2.43237 -2.33608,4.24112 -4.76845,4.03995c-2.43237,-0.20118 -4.24112,-2.33609 -4.03995,-4.76846z ' fill= '#ffffff ' stroke= 'none ' stroke-width= '0 ' stroke-linecap= 'butt '/></g></g></svg>">
 	<style>
 		:root {
 			--main-color: #00ff50;
@@ -56,13 +57,14 @@
     justify-content: center;
     margin-top: 25px;
     width: 100%;
-    overflow: hidden;
+    overflow: visible;
     flex-wrap: nowrap;
 		}
 
 		#baseimg {
-			    flex: 1;
+			flex: 1;
     height: 0;
+    width: 50%;
 		}
 
 		.now-playing {
@@ -76,8 +78,15 @@
 
 		.buttons {
 			display: flex;
-			flex-direction: row;
-			align-items: center;
+    flex-direction: row;
+    align-items: center;
+    width: 60%;
+    justify-content: space-evenly;
+    background: #1f1f1f;
+    border-radius: 3rem;
+    padding: 0.5rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
 		}
 
 		.playpause-track {
@@ -87,51 +96,52 @@
 		.playpause-track,
 		.prev-track,
 		.next-track {
-			padding: 25px;
-			opacity: 0.8;
-			transition: .2s;
-			cursor: pointer;
+		    padding: 5px;
+    opacity: 0.8;
+    transition: .2s;
+    cursor: pointer;
+    padding-bottom: 0;
+    padding-top: 7px;
 		}
 
 		.playpause-track:hover,
 		.prev-track:hover,
 		.next-track:hover {
 			opacity: 1.0;
-			transform: scale(1.6);
 		}
 
 		.slider_container {
-			width: 75%;
-			max-width: 400px;
-			display: flex;
-			justify-content: center;
-			align-items: center;
+			width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
 		}
 
 		/* Modify the appearance of the slider */
 		.seek_slider,
 		.volume_slider {
-			-webkit-appearance: none;
-			-moz-appearance: none;
-			appearance: none;
-			height: 4px;
-			background: #3b3b3b;
-			opacity: 0.7;
-			-webkit-transition: .2s;
-			transition: opacity .2s;
+			    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    height: 0.5rem;
+    border-radius: 1rem;
+    background: #272727;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
 		}
 
 		/* Modify the appearance of the slider thumb */
 		.seek_slider::-webkit-slider-thumb,
 		.volume_slider::-webkit-slider-thumb {
 			-webkit-appearance: none;
-			-moz-appearance: none;
-			appearance: none;
-			width: 11px;
-			height: 11px;
-			background: var(--main-color);
-			cursor: pointer;
-			border-radius: 10px;
+    -moz-appearance: none;
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    background: #ffffff;
+    cursor: pointer;
+    border-radius: 10px;
 		}
 
 		.seek_slider:hover,
@@ -144,7 +154,7 @@
 		}
 
 		.volume_slider {
-			width: 30%;
+			width: 60%;
 		}
 
 		.current-time,
@@ -366,6 +376,7 @@
     cursor: pointer;
 		}
 	</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script>
 
 </head>
 
@@ -589,22 +600,24 @@
             if (metadata.picture && metadata.picture.data) {
                 const base64String = arrayBufferToBase64(metadata.picture.data);
                 baseimg.src = `data:${metadata.picture.format};base64,${base64String}`;
-				getDominantColor(`url("data:${metadata.picture.format};base64,${base64String}")`, function(color) {
+				getDominantColor(baseimg.src, function(color) {
 					baseimg.style.boxShadow = "0 3px 1rem " + color;
 				});
             } else {
                 baseimg.src = ''; // Clear previous image if no picture available
+				baseimg.style.boxShadow = "";
             }
 
             // Load and play the track
             curr_track.src = URL.createObjectURL(blob); // Set audio element source
             playTrack(); // Start playback
             updateTimer = setInterval(seekUpdate, 1000); // Update seek slider
-            curr_track.addEventListener("ended", nextTrack); // Listen for track end
+            curr_track.addEventListener("ended", nextTrack);
         },
         onError: function(error) {
             console.error("Error reading metadata: ", error);
             baseimg.src = ''; // Clear previous image on error
+			baseimg.style.boxShadow = "";
         }
     });
 }
@@ -620,10 +633,18 @@ function arrayBufferToBase64(buffer) {
     return window.btoa(binary);
 }
 
+
+function sliderbgupt() {
+	let slider = seek_slider;
+    const value = (slider.value - slider.min) / (slider.max - slider.min) * 100;
+    slider.style.background = `linear-gradient(to right, #ffffff ${value}%, #272727 ${value}%)`;
+}
+
 		function resetValues() {
 			curr_time.textContent = "00:00";
 			total_duration.textContent = "00:00";
 			seek_slider.value = 0;
+			sliderbgupt()
 		}
 
 		function playFirstTrack() {
@@ -654,45 +675,45 @@ function arrayBufferToBase64(buffer) {
 			}
 		});
 		function readthefile(base64Url, fileName = 'Unknown Title') {
-			const base64String = base64Url.split(',')[1];
-			const binaryString = atob(base64String);
-			const bytes = new Uint8Array(binaryString.length);
+    const base64String = base64Url.split(',')[1];
+    const binaryString = atob(base64String);
+    const bytes = new Uint8Array(binaryString.length);
 
-			for (let i = 0; i < binaryString.length; i++) {
-				bytes[i] = binaryString.charCodeAt(i);
-			}
+    for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+    }
 
-			// Convert ArrayBuffer to Blob
-			const blob = new Blob([bytes.buffer], { type: 'application/octet-binary' });
+    // Convert ArrayBuffer to Blob
+    const blob = new Blob([bytes.buffer], { type: 'application/octet-binary' });
 
-			// Parse metadata using jsmediatags
-			jsmediatags.read(blob, {
-				onSuccess: function (tag) {
-					const metadata = tag.tags;
-					const trackName = metadata.title || fileName;
-					const artistName = metadata.artist || 'Unknown Artist';
-					const albumName = metadata.album || 'Unknown Album';
+    // Parse metadata using jsmediatags
+    jsmediatags.read(blob, {
+        onSuccess: function (tag) {
+            const metadata = tag.tags;
+            const trackName = metadata.title || fileName;
+            const artistName = metadata.artist || 'Unknown Artist';
+            const albumName = metadata.album || 'Unknown Album';
 
-					// Add the track to the track_list map
-					track_list[trackName] = {
-						artist: artistName,
-						path: base64Url // Use the base64 URL directly
-					};
+            // Add the track to the track_list map
+            track_list[trackName] = {
+                artist: artistName,
+                path: base64Url // Use the base64 URL directly
+            };
 
-					// Log the updated track list
-					console.log('Updated track list:', track_list);
+            // Log the updated track list if there are changes
+            console.log('Updated track list:', track_list);
 
-					// Optionally, call a function to render the updated track list
-					renderQueue();
-					if (Object.keys(track_list) == 1) {
-						playFirstTrack();
-					}
-				},
-				onError: function (error) {
-					console.error("Error reading metadata: ", error);
-				}
-			});
-		}
+            // Optionally, call a function to render the updated track list
+            renderQueue();
+            if (Object.keys(track_list).length === 1) {
+                playFirstTrack();
+            }
+        },
+        onError: function (error) {
+            console.error("Error reading metadata: ", error);
+        }
+    });
+}
 
 		function playpauseTrack() {
 			if (!isPlaying) playTrack();
@@ -728,6 +749,7 @@ function arrayBufferToBase64(buffer) {
 		}
 
 		function nextTrack() {
+			console.log("next track")
 			if (track_index < (Object.keys(track_list).length - 1))
 				track_index += 1;
 			else track_index = 0;
@@ -747,6 +769,7 @@ function arrayBufferToBase64(buffer) {
 		function seekTo() {
 			let seekto = curr_track.duration * (seek_slider.value / 100);
 			curr_track.currentTime = seekto;
+			sliderbgupt()
 		}
 
 		function setVolume() {
@@ -760,6 +783,7 @@ function arrayBufferToBase64(buffer) {
 				seekPosition = curr_track.currentTime * (100 / curr_track.duration);
 
 				seek_slider.value = seekPosition;
+				sliderbgupt()
 
 				let currentMinutes = Math.floor(curr_track.currentTime / 60);
 				let currentSeconds = Math.floor(curr_track.currentTime - currentMinutes * 60);
@@ -794,38 +818,51 @@ function arrayBufferToBase64(buffer) {
 
 		
 
-		function theskibidiscan() {
-			const musicExtensions = ['mp3', 'wav', 'flac', 'mpeg'];
+function theskibidiscan() {
+    const musicExtensions = ['mp3', 'wav', 'flac', 'mpeg'];
 
-const scanFolders = (folder, basePath = '') => {
-    const isMusicFile = (fileName) => {
-        const extension = fileName.split('.').pop().toLowerCase();
-        return musicExtensions.includes(extension);
+    const scanFolders = async (folder, basePath = '') => {
+        const isMusicFile = (fileName) => {
+            const extension = fileName.split('.').pop().toLowerCase();
+            return musicExtensions.includes(extension);
+        };
+
+        const getBase64Url = (content) => {
+            return `data:audio/*;base64,${btoa(content)}`;
+        };
+
+        const base64ToArrayBuffer = (base64) => {
+            base64 = base64.replace(/[^A-Za-z0-9+/=]/g, ""); // Ensure valid characters
+            const binaryString = atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        };
+
+        const processFile = async (fileContent, fileInfo) => {
+            // Simulating async file read operation
+            await new Promise(resolve => setTimeout(resolve, 0));
+            readthefile(window.parent.unshrinkbsf(fileContent), fileInfo);
+        };
+
+        const processFolder = async (folder, basePath = '') => {
+            const filePromises = [];
+            for (const key in folder) {
+                if (key.endsWith('/')) {
+                    filePromises.push(processFolder(folder[key], `${basePath}${key}`));
+                } else if (isMusicFile(key)) {
+                    filePromises.push(processFile(folder[key].content, folder[key]));
+                }
+            }
+            await Promise.all(filePromises);
+        };
+
+        await processFolder(folder, basePath);
     };
 
-    const getBase64Url = (content) => {
-        return `data:audio/*;base64,${btoa(content)}`;
-    };
-
-    const base64ToArrayBuffer = (base64) => {
-        base64 = base64.replace(/[^A-Za-z0-9+/=]/g, ""); // Ensure valid characters
-        const binaryString = atob(base64);
-        const len = binaryString.length;
-        const bytes = new Uint8Array(len);
-        for (let i = 0; i < len; i++) {
-            bytes[i] = binaryString.charCodeAt(i);
-        }
-        return bytes.buffer;
-    };
-
-    for (const key in folder) {
-        if (key.endsWith('/')) {
-            scanFolders(folder[key], `${basePath}${key}`);
-        } else if (isMusicFile(key)) {
-			readthefile(window.parent.unshrinkbsf(folder[key].content), folder[key]);
-        }
-    }
-};
 
 scanFolders(window.parent.memory);
 
@@ -834,47 +871,17 @@ primaryalert.close();
 		}
 
 		function getDominantColor(imageUrl, callback) {
-    var img = new Image();
-    img.crossOrigin = "Anonymous"; // Enable CORS for images
-    
-    img.onload = function() {
-        var canvas = document.createElement('canvas');
-        var ctx = canvas.getContext('2d');
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx.drawImage(img, 0, 0);
-        
-        var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        var data = imageData.data;
-        var colorCount = {};
-        var maxCount = 0;
-        var dominantColor = [0, 0, 0];
-        
-        for (var i = 0; i < data.length; i += 4) {
-            var r = data[i];
-            var g = data[i + 1];
-            var b = data[i + 2];
-            var key = r + ',' + g + ',' + b;
-            if (colorCount[key]) {
-                colorCount[key]++;
-            } else {
-                colorCount[key] = 1;
-            }
-            
-            if (colorCount[key] > maxCount) {
-                maxCount = colorCount[key];
-                dominantColor = [r, g, b];
-            }
-        }
-        
-        var hexColor = rgbToHex(dominantColor[0], dominantColor[1], dominantColor[2]);
-        callback(hexColor);
-    };
-
-    img.src = imageUrl;
+  const image = new Image();
+  image.crossOrigin = 'Anonymous';
+  image.src = imageUrl;
+  image.onload = function() {
+    const colorThief = new ColorThief();
+    const dominantColor = colorThief.getColor(image);
+    const hexColor = rgbToHex(dominantColor[0], dominantColor[1], dominantColor[2]);
+    callback(hexColor);
+  };
 }
-
-function rgbToHex(r, g, b) {
+	function rgbToHex(r, g, b) {
     return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
 }
 	</script>

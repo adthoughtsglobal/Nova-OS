@@ -47,20 +47,18 @@ const styles = {
 };
 
 function checkdmode() {
-	let x = localStorage.getItem("qsets");
 	qsetsRefresh()
-	if (x) {
 		// scalable UI
-		if (JSON.parse(x).UISizing && JSON.parse(x).UISizing == 1) {
+		if (getSetting("UISizing") && getSetting("UISizing") == 1) {
 			
-			scaleUIElements(JSON.parse(x).UISizing)
+			scaleUIElements(getSetting("UISizing"))
 		}
 
 		// themes
 		thlog("qsets found");
-		if (JSON.parse(x).darkMode) {
+		if (getSetting("darkMode")) {
 			thlog("yeah dark mode");
-			if (JSON.parse(x).simpleMode) {
+			if (getSetting("simpleMode")) {
 				thlog("oh its dark simple");
 				switchtheme("dark", "simple");
 			} else {
@@ -69,7 +67,7 @@ function checkdmode() {
 			}
 		} else {
 			thlog("bright");
-			if (JSON.parse(x).simpleMode) {
+			if (getSetting("simpleMode")) {
 				thlog("its simple bright");
 				switchtheme("bright", "simple");
 			} else {
@@ -77,7 +75,6 @@ function checkdmode() {
 				switchtheme("bright");
 			}
 		}
-	}
 }
 
 // Common style settings for elementhahas
