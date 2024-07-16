@@ -112,7 +112,7 @@ getdb('trojencat', 'rom')
 
 	async function startup() {
 		console.log("INITIAL SETUP");
-		
+		const start = performance.now();
 		try { qsetsRefresh(); } 
 		catch (err) { console.error("qsetsRefresh error:", err); }
 	
@@ -137,6 +137,9 @@ getdb('trojencat', 'rom')
 			gid('startupterms').innerHTML += "<span>Startup completed...</span>";
 			closeElementedis();
 		} catch (err) { console.error("dod error:", err); }
+		const end = performance.now();
+
+console.log(`Execution time: ${end - start} milliseconds`);
 	}
 
 document.addEventListener("DOMContentLoaded", function() {
