@@ -2251,7 +2251,7 @@ async function opensearchpanel() {
 	document.getElementsByClassName("previewsside")[0].style.display = "none";
 	loadrecentapps()
 	if (appsHistory.length > 0) {
-		gid("partrecentapps").style.display = "flex";
+		gid("partrecentapps").style.display = "block";
 	} else {
 		gid("partrecentapps").style.display = "none";
 	}

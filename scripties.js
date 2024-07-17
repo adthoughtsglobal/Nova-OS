@@ -46,19 +46,19 @@ const styles = {
 	}
 };
 
-function checkdmode() {
+async function checkdmode() {
 	qsetsRefresh()
 		// scalable UI
-		if (getSetting("UISizing") && getSetting("UISizing") == 1) {
+		if (await getSetting("UISizing") && await getSetting("UISizing") == 1) {
 			
-			scaleUIElements(getSetting("UISizing"))
+			scaleUIElements(await getSetting("UISizing"))
 		}
 
 		// themes
 		thlog("qsets found");
-		if (getSetting("darkMode")) {
+		if (await getSetting("darkMode")) {
 			thlog("yeah dark mode");
-			if (getSetting("simpleMode")) {
+			if (await getSetting("simpleMode")) {
 				thlog("oh its dark simple");
 				switchtheme("dark", "simple");
 			} else {
@@ -67,7 +67,7 @@ function checkdmode() {
 			}
 		} else {
 			thlog("bright");
-			if (getSetting("simpleMode")) {
+			if (await getSetting("simpleMode")) {
 				thlog("its simple bright");
 				switchtheme("bright", "simple");
 			} else {
