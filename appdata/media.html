@@ -139,37 +139,35 @@ playBase64Chunks(videoElement, base64Video);
 }
 
 function playBase64Chunks(videoElement, base64Video) {
-    videoElement.src = base64Video;
-    videoElement.addEventListener('loadedmetadata', () => {
+      videoElement.src = base64Video;
+      videoElement.addEventListener('loadedmetadata', () => {
         const duration = videoElement.duration;
         const chunkSize = 10; // chunk size in seconds
-
         let currentTime = 0;
 
         function playNextChunk() {
-            if (currentTime >= duration) {
-                console.log("Video finished");
-                return;
+          if (currentTime >= duration) {
+            console.log("Video finished");
+            return;
+          }
+
+          const nextTime = Math.min(currentTime + chunkSize, duration);
+          videoElement.currentTime = currentTime;
+          videoElement.play();
+
+          const playChunkInterval = setInterval(() => {
+            if (videoElement.currentTime >= nextTime) {
+              videoElement.pause();
+              currentTime = nextTime;
+              clearInterval(playChunkInterval);
+              playNextChunk();
             }
-
-            const nextTime = Math.min(currentTime + chunkSize, duration);
-
-            videoElement.currentTime = currentTime;
-            videoElement.play();
-
-            const playChunkInterval = setInterval(() => {
-                if (videoElement.currentTime >= nextTime) {
-                    videoElement.pause();
-                    currentTime = nextTime;
-                    clearInterval(playChunkInterval);
-                    playNextChunk();
-                }
-            }, 100);
+          }, 100);
         }
 
         playNextChunk();
-    });
-}
+      });
+    }
 
 	</script>
 </body>

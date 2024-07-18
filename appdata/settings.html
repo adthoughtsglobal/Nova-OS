@@ -157,9 +157,29 @@
 		}
 
 		td {
-			padding: 0px 5px;
 			font-size: 10px;
-			padding-top: 2px;
+    padding-bottom: 0.5rem;
+    padding-top: 0.5rem;
+    vertical-align: top;
+    padding-right: 1rem;
+    border-bottom: 1px solid #292929;
+		}
+
+		td b, ul li {
+			color: #b4d2ff;
+    background: #2d2d2d;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.3rem;
+	cursor: pointer;
+		}
+
+		ul {
+			
+			padding: 0;
+		}
+
+		ul li {
+			margin-bottom: 0.5rem;
 		}
 
 		supportb {
@@ -872,8 +892,14 @@
 								console.error("Error opening database:", event.target.errorCode);
 							};
 						}
+						function ercache() {
+							window.parent.appicns = {};
+							window.parent.memory = {};
+							window.parent.MemoryTimeCache = 4000;
+						}
 					</script>
 					<button danger onclick="erdbs()">Erase Device</button>
+					<button danger onclick="ercache()">Reset cached data</button>
 				</div>
 			</segr>
 		</div>
@@ -1350,7 +1376,7 @@
 		</div>
 		<div id="about" class="tabcontent">
 			<h2 style="margin-bottom: 3px;">Nova OS <span style="font-weight: normal;">Platinium</span></h2>
-			<p style="margin-top: 3px;">Version 1.57</p>
+			<p style="margin-top: 3px;">Version 2</p>
 			<p>You are Using Nova OS Web. <br>Thank you for being in the Nova Ecosystem.</p>
 			<supportb>
 				<b>Make the change.</b>
@@ -1364,21 +1390,28 @@
 			<table>
 				<tbody style="width: 100%;">
 					<tr>
-						<td><b>adthoughtsglobal</b></td>
-						<td>Primary Developer</td>
-					</tr>
-					<tr>
-						<td><b>Felix</b></td>
+						<td><b onclick="openlink('https://github.com/Felix9390')">Felix</b></td>
 						<td>Developer</td>
 					</tr>
 					<tr>
-						<td><b>Mistium</b></td>
-						<td>Developer</td>
+						<td><b onclick="openlink('https://github.com/funsparktv-ai')">FunsparkTV</b></td>
+						<td>Concept Developer</td>
 					</tr>
 					<tr>
-						<td>Google Fonts</td>
-						<td>Icons and fonts</td>
-
+						<td><b onclick="openlink('https://mistium.com/')">Mistium</b></td>
+						<td>Concept Developer and OSL embed</td>
+					</tr>
+					<tr>
+						<td><b onclick="openlink('https://github.com/RoturTW')">RoturTW</b></td>
+						<td>Networking</td>
+					</tr>
+					<tr>
+						<td>Libraries</td>
+						<td><ul>
+							<li onclick="openlink('https://nodeca.github.io/pako/')">Pako</li>
+							<li onclick="openlink('https://jquery.com/')">jquery</li>
+							<li onclick="openlink('https://fonts.google.com/')">Google Fonts</li>
+						</ul></td>
 					</tr>
 				</tbody>
 			</table>
@@ -1446,6 +1479,12 @@
 				</div>
 			</div>
 			<script>
+				async function openlink(x) {
+					let okay = await window.parent.justConfirm("Are you sure?", "Open " + x + " outside of NovaOS?");
+					if (okay) {
+						window.open(x);
+					}
+				}
 				function taskmg() {
 					const winds = window.parent.winds;
 					const tasksList = document.getElementById("taskslist");

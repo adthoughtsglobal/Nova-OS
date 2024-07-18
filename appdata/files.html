@@ -828,18 +828,16 @@
             const file = event.data;
             const chunkSize = 1024 * 1024; // 1MB chunks
             const fileReader = new FileReader();
-
             let offset = 0;
-            let chunks = [];
 
             fileReader.onload = function(e) {
-              chunks.push(e.target.result);
+              postMessage({ chunk: e.target.result, offset: offset });
 
               offset += chunkSize;
               if (offset < file.size) {
                 readNextChunk();
               } else {
-                postMessage(chunks);
+                postMessage({ done: true });
               }
             };
 
@@ -855,34 +853,38 @@
         const workerBlob = new Blob([workerCode], { type: 'application/javascript' });
         const worker = new Worker(URL.createObjectURL(workerBlob));
 
+        let combinedChunks = [];
+
         worker.onmessage = function(event) {
-          const chunks = event.data;
-          const combined = new Blob(chunks, { type: file.type });
-          const reader = new FileReader();
+          if (event.data.done) {
+            const combined = new Blob(combinedChunks, { type: file.type });
+            const reader = new FileReader();
 
-          reader.onload = function(e) {
-            const out = e.target.result;
-            const type = file.type || 'txt';
-            const folderName = 'Downloads/';
-            const md = { "via": "imported" };
+            reader.onload = function(e) {
+              const out = e.target.result;
+              const type = file.type || 'txt';
+              const folderName = 'Downloads/';
+              const md = { "via": "imported" };
 
-            const shrinkedOut = window.parent.shrinkbsf(out);
+              const shrinkedOut = window.parent.shrinkbsf(out);
 
-            window.parent.createFile(folderName, window.parent.basename(file.name), mtpetxt(type), shrinkedOut, md)
-              .then(function () {
-                document.getElementById("fupibu").innerHTML = "File Saved, Close";
-                document.getElementById("fupibu").onclick = function () {
-                  document.getElementById("upmod").close();
-                };
-              });
-          };
+              window.parent.createFile(folderName, window.parent.basename(file.name), mtpetxt(type), shrinkedOut, md)
+                .then(function () {
+                  document.getElementById("fupibu").innerHTML = "File Saved, Close";
+                  document.getElementById("fupibu").onclick = function () {
+                    document.getElementById("upmod").close();
+                  };
+                });
+            };
 
-          reader.readAsDataURL(combined);
+            reader.readAsDataURL(combined);
+          } else {
+            combinedChunks.push(event.data.chunk);
+          }
         };
 
         worker.postMessage(file);
       }
-
     }
 
 
