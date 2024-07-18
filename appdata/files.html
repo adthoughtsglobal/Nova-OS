@@ -816,38 +816,75 @@
 			}
 
 			var out;
+			
 			function fupit() {
-				document.getElementById("fupibu").innerHTML = "Importing..."
-				const fileInput = document.getElementById('filupin');
-				const file = fileInput.files[0];
+      document.getElementById("fupibu").innerHTML = "Importing...";
+      const fileInput = document.getElementById('filupin');
+      const file = fileInput.files[0];
 
-				if (file) {
+      if (file) {
+        const workerCode = `
+          onmessage = function(event) {
+            const file = event.data;
+            const chunkSize = 1024 * 1024; // 1MB chunks
+            const fileReader = new FileReader();
 
-					const type = file.type || 'txt';
-					let folderName;
+            let offset = 0;
+            let chunks = [];
 
-					getBase64(file)
-					setTimeout(function () {
-						folderName = 'Downloads/';
+            fileReader.onload = function(e) {
+              chunks.push(e.target.result);
 
-						out = window.parent.shrinkbsf(out)
+              offset += chunkSize;
+              if (offset < file.size) {
+                readNextChunk();
+              } else {
+                postMessage(chunks);
+              }
+            };
 
-						let md = {
-							"via": "imported"
-						}
+            function readNextChunk() {
+              const chunk = file.slice(offset, offset + chunkSize);
+              fileReader.readAsArrayBuffer(chunk);
+            }
 
-						window.parent.createFile(folderName, window.parent.basename(file.name), mtpetxt(type), out, md)
-							.then(function () {
-								document.getElementById("fupibu").innerHTML = "File Saved, Close";
-								document.getElementById("fupibu").onclick = function () {
-									document.getElementById("upmod").close();
-								};
+            readNextChunk();
+          };
+        `;
 
-							});
-					}, 1000)
+        const workerBlob = new Blob([workerCode], { type: 'application/javascript' });
+        const worker = new Worker(URL.createObjectURL(workerBlob));
 
-				};
-			}
+        worker.onmessage = function(event) {
+          const chunks = event.data;
+          const combined = new Blob(chunks, { type: file.type });
+          const reader = new FileReader();
+
+          reader.onload = function(e) {
+            const out = e.target.result;
+            const type = file.type || 'txt';
+            const folderName = 'Downloads/';
+            const md = { "via": "imported" };
+
+            const shrinkedOut = window.parent.shrinkbsf(out);
+
+            window.parent.createFile(folderName, window.parent.basename(file.name), mtpetxt(type), shrinkedOut, md)
+              .then(function () {
+                document.getElementById("fupibu").innerHTML = "File Saved, Close";
+                document.getElementById("fupibu").onclick = function () {
+                  document.getElementById("upmod").close();
+                };
+              });
+          };
+
+          reader.readAsDataURL(combined);
+        };
+
+        worker.postMessage(file);
+      }
+
+    }
+
 
 			function getBase64(file) {
 				var reader = new FileReader();

@@ -114,7 +114,7 @@
 
 											  var blob = dataURItoBlob(base64Content);
 var videoFile = new File([blob], "video.mp4", { type: "video/mp4" });
-var videoElement = document.createElement('video');
+var videoElement = document.getElementById("thesource");
 const base64Video = URL.createObjectURL(videoFile);
 playBase64Chunks(videoElement, base64Video);
 						} else {
@@ -169,8 +169,6 @@ function playBase64Chunks(videoElement, base64Video) {
 
         playNextChunk();
     });
-
-    document.body.appendChild(videoElement); // Add the video element to the DOM if needed
 }
 
 	</script>
