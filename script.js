@@ -923,6 +923,44 @@ async function updateFile(folderName, fileId, newData) {
 	}
 }
 
+async function downloadf(fileId) {
+    try {
+        const fileToDownload = await getFileById(fileId);
+
+        if (fileToDownload) {
+            const { content, type, fileName } = fileToDownload;
+
+            // Determine file extension from MIME type
+            const extensionMap = {
+                'text/plain': 'txt',
+                'application/json': 'json',
+                'application/pdf': 'pdf',
+                'image/jpeg': 'jpg',
+                'image/png': 'png',
+                'video/mp4': 'mp4',
+                // Add other MIME types as needed
+            };
+            
+            const extension = extensionMap[type] || 'bin'; // Default to 'bin' if type is unknown
+            const fileWithExtension = `${fileName}.${extension}`;
+
+            const blob = new Blob([content], { type });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = fileWithExtension;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            console.log(`File "${fileWithExtension}" downloaded successfully.`);
+        } else {
+            console.log(`File with ID "${fileId}" not found.`);
+        }
+    } catch (error) {
+        console.error("Error downloading file:", error);
+    }
+}
+
 async function getFileById(x) {
 	try {
 		memory = await getdb('trojencat', 'rom');
