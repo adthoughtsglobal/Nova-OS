@@ -149,14 +149,13 @@ function getTime() {
 }
 
 async function updateMemoryData() {
-	let isittime = (Date.now() - MemoryTimeCache) >= 5000;
-	if (MemoryTimeCache === null || isittime) {
-		console.log("Catching Memory", (Date.now() - MemoryTimeCache))
-		getdb('trojencat', 'rom').then(function (result) {
-			memory = result;
-			MemoryTimeCache = Date.now();
-		});
-}
+    if (MemoryTimeCache === null || (Date.now() - MemoryTimeCache) >= 5000) {
+        console.log("Catching Memory", Date.now() - (MemoryTimeCache || Date.now()));
+        await getdb('trojencat', 'rom').then(result => {
+            memory = result;
+            MemoryTimeCache = Date.now();
+        });
+    }
 }
 
 async function getdbWithDefault(databaseName, storeName, key, defaultValue) {
