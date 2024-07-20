@@ -85,31 +85,21 @@ async function decryptData(key, encryptedData) {
 
 async function setdb(databaseName, key, value) {
     try {
-        // Open the database and ensure the object store exists
         const db = await openDB(databaseName, 1);
-
-        // Generate encryption key
         const cryptoKey = await getKey(password);
-
-        // Encrypt data
         const encryptedValue = await encryptData(cryptoKey, JSON.stringify(value));
 
-		// Create a new transaction
         const transaction = db.transaction([CurrentUsername], 'readwrite');
         const store = transaction.objectStore(CurrentUsername);
-
-        // Create a promise for the put request
         const putRequest = store.put({ key, value: encryptedValue });
 
-        // Handle success and error for the put request
         await new Promise((resolve, reject) => {
-            putRequest.onsuccess = () => resolve();
+            putRequest.onsuccess = resolve;
             putRequest.onerror = () => reject(putRequest.error);
         });
 
-        // Ensure the transaction completes
         await new Promise((resolve, reject) => {
-            transaction.oncomplete = () => resolve();
+            transaction.oncomplete = resolve;
             transaction.onerror = () => reject(transaction.error);
             transaction.onabort = () => reject(transaction.error);
         });
@@ -122,30 +112,24 @@ async function setdb(databaseName, key, value) {
 
 async function getdb(databaseName, key) {
     try {
-        // Open database and ensure object store
         const db = await openDB(databaseName, 1);
-        
-        // Create a new transaction
         const transaction = db.transaction([CurrentUsername], 'readonly');
         const store = transaction.objectStore(CurrentUsername);
-
-        // Retrieve the data
         const request = store.get(key);
 
         return new Promise((resolve, reject) => {
             request.onsuccess = async () => {
-                const result = request.result;
-                if (result) {
+                if (request.result) {
                     try {
                         const cryptoKey = await getKey(password);
-                        const decryptedValue = await decryptData(cryptoKey, result.value);
+                        const decryptedValue = await decryptData(cryptoKey, request.result.value);
                         resolve(JSON.parse(decryptedValue));
                     } catch (error) {
                         console.error("Decryption error:", error);
                         reject(error);
                     }
                 } else {
-                    resolve(null); // Key not found
+                    resolve(null);
                 }
             };
 
@@ -155,6 +139,7 @@ async function getdb(databaseName, key) {
         console.error("Error in getdb function:", error);
     }
 }
+
 // settings store functions
 
 var MemoryTimeCache = null;

@@ -1192,8 +1192,8 @@ async function updateFile(folderName, fileId, newData) {
     }
 }
 
-function getFileById(id) {
-
+async function getFileById(id) {
+	await updateMemoryData();
     function searchFolder(folder) {
         for (let key in folder) {
             if (typeof folder[key] === 'object' && folder[key] !== null) {
@@ -1232,6 +1232,7 @@ function makedialogclosable(ok) {
 makedialogclosable('appdmod')
 
 async function getFileNamesByFolder(folderName) {
+	await updateMemoryData();
 	try {
         await updateMemoryData()
         const filesInFolder = [];
@@ -1595,6 +1596,7 @@ async function installdefaultapps() {
 }
 
 async function getFileByPath(filePath) {
+	await updateMemoryData();
 	let parts = filePath.split('/');
 	let current = memory;
 	for (let part of parts) {
@@ -1791,32 +1793,6 @@ async function moveFileToFolder(flid, dest) {
 	console.log("File eleminated successfully");
 }
 
-async function remfile(ID) {
-	try {
-        await updateMemoryData()
-        let found = false;
-
-        for (let folder of Object.values(memory)) {
-            if (!Array.isArray(folder)) continue; // Skip if it's not a folder object
-            let fileIndex = folder.findIndex(file => file.id === ID);
-
-            if (fileIndex !== -1) {
-                let removedFile = folder.splice(fileIndex, 1)[0];
-                console.log(`File with ID "${ID}" successfully removed.`);
-                found = true;
-                break;
-            }
-        }
-
-        if (!found) {
-            console.error(`File with ID "${ID}" not found.`);
-        } else {
-            await setdb('trojencat', 'rom', memory);
-        }
-    } catch (error) {
-        console.error("Error removing file:", error);
-    }
-}
 
 function rightClick(e) {
 	e.preventDefault();
