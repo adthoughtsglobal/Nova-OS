@@ -143,18 +143,26 @@ async function getdb(databaseName, key) {
 // settings store functions
 
 var MemoryTimeCache = null;
+let isFetchingMemory = false;
 
 function getTime() {
     return Date.now();
 }
 
 async function updateMemoryData() {
-    if (MemoryTimeCache === null || (Date.now() - MemoryTimeCache) >= 5000) {
-        console.log("Catching Memory", Date.now() - (MemoryTimeCache || Date.now()));
-        await getdb('trojencat', 'rom').then(result => {
-            memory = result;
-            MemoryTimeCache = Date.now();
-        });
+    if (MemoryTimeCache === null || (getTime() - MemoryTimeCache) >= 5000) {
+        if (!isFetchingMemory) {
+            isFetchingMemory = true;
+            console.log("Catching Memory", getTime() - (MemoryTimeCache || getTime()));
+            await getdb('trojencat', 'rom').then(result => {
+                memory = result;
+                MemoryTimeCache = getTime();
+                isFetchingMemory = false;
+            }).catch(err => {
+                console.error("Failed to fetch memory data:", err);
+                isFetchingMemory = false;
+            });
+        }
     }
 }
 

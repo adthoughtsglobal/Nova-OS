@@ -892,8 +892,12 @@ function openwindow(title, cont, ic, theme) {
 	windowContent.classList += "windowcontent";
 
 	var windowLoader = document.createElement("div");
-	windowLoader.innerHTML = appicns[title] ? appicns[title] : defaultAppIcon;
 	windowLoader.classList += "windowloader";
+	var loaderdiv = document.createElement("div");
+	loaderdiv.classList = "loader33";
+	windowLoader.innerHTML = appicns[title] ? appicns[title] : defaultAppIcon;
+	windowLoader.appendChild(loaderdiv);
+
 
 	function loadIframeContent(windowLoader, windowContent, iframe) {
 		var iframe = document.createElement("iframe");
