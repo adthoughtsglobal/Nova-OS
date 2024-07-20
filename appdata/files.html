@@ -1265,7 +1265,7 @@ open_in_new
 									<a onclick="renamef(document.getElementById('`+ x.id + `'))"><span class="material-symbols-rounded">
 save_as
 </span> Rename</a>
-<a onclick="window.parent.downloadf('`+ x.id + `')"><span class="material-symbols-rounded">
+<a onclick="window.parent.downloadf('`+ x.getAttribute("unid") + `')"><span class="material-symbols-rounded">
 download
 </span> Download File</a>
 									<a onclick="movefile(document.getElementById('`+ x.id + `'))"><span class="material-symbols-rounded">
