@@ -932,16 +932,14 @@ async function downloadf(fileId) {
 
             // Determine file extension from MIME type
             const extensionMap = {
-                'text/plain': 'txt',
                 'application/json': 'json',
                 'application/pdf': 'pdf',
                 'image/jpeg': 'jpg',
                 'image/png': 'png',
                 'video/mp4': 'mp4',
-                // Add other MIME types as needed
             };
             
-            const extension = extensionMap[type] || 'bin'; // Default to 'bin' if type is unknown
+            const extension = extensionMap[type] || 'txt'; 
             const fileWithExtension = `${fileName}.${extension}`;
 
             const blob = new Blob([content], { type });
