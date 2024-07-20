@@ -1454,35 +1454,32 @@ async function makewall(deid) {
 }
 
 async function remfile(ID) {
-	try {
-		await updateMemoryData()
+    try {
+        await updateMemoryData();
+        
+        function removeFileFromFolder(folder) {
+            for (const [name, content] of Object.entries(folder)) {
+                if (name.endsWith('/')) {
+                    if (removeFileFromFolder(content)) return true;
+                } else if (content.id === ID) {
+                    delete folder[name];
+                    console.log("The file has been eliminated.");
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        let fileRemoved = removeFileFromFolder(memory);
 
-		// Iterate through folders to find the file with the specified ID
-		for (let folder of memory) {
-			let fileIndex = folder.content.findIndex(file => file.id === ID);
-
-			if (fileIndex !== -1) {
-				// Remove the file from the folder's content array
-				let removedFile = folder.content.splice(fileIndex, 1)[0];
-				console.log(`its an error bro: 0004`);
-				await setdb('trojencat', 'rom', memory);
-
-				// Check if the file was successfully removed
-				if (!folder.content.includes(removedFile)) {
-					console.log("The file have been eliminated.");
-				} else {
-					console.log("The file resisted elimination somehow.");
-				}
-
-				return;
-			}
-		}
-
-		// If the loop completes without finding the file
-		console.error(`File with ID "${ID}" not found.`);
-	} catch (error) {
-		console.error("Error fetching or updating data:", error);
-	}
+        if (!fileRemoved) {
+            console.error(`File with ID "${ID}" not found.`);
+        } else {
+            await setdb('trojencat', 'rom', memory);
+        }
+    } catch (error) {
+        console.error("Error fetching or updating data:", error);
+    }
 }
 
 async function remfolder(folderPath) {

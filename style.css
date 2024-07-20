@@ -1015,26 +1015,36 @@ nav info {
 }
 
 #loginmod {
-	background: #262b31;
-	border: none;
-	color: white;
-	width: 50%;
-	height: fit-content;
-	padding: 3rem 1rem;
-	margin: auto;
-	border-radius: 1rem;
+	background: transparent;
+    backdrop-filter: blur(1.5rem);
+    border: none;
+    color: white;
+    width: 100%;
+    height: 100%;
+    padding: 2rem 1.5rem;
+    margin: auto;
+    border-radius: 1rem;
 }
 
-#loginmod::backdrop {
-	backdrop-filter: brightness(0.3);
-	background-color: transparent;
+#loginmod .logincard {
+	height: 100%;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    justify-items: center;
 }
 
-logincard {
-	height: calc(100% - 1rem);
-	display: grid;
-	align-items: center;
-	align-content: center;
+#loginmod #loginform {
+    display: flex;
+}
+
+#loginform #loginform1 {
+	padding: 0.3rem 0.8rem;
+    border-radius: 0.5rem;
+    border: none;
+    background: #ffffffc2;
+    font-size: 0.8rem;
 }
 
 .logincard button material-icons {
@@ -1048,19 +1058,16 @@ logincard {
 }
 
 .logincard button {
-	width: 100%;
-	max-width: 197px;
-	display: flex;
-	padding: 0.5rem 0.7rem;
-	border-radius: 7px;
-	border: none;
-	background: #4a5159;
-	color: white;
-	margin: 3px auto;
-	flex-direction: row;
-	justify-content: flex-start;
-	align-items: center;
-	cursor: pointer;
+	padding: 0.5rem;
+    border-radius: 0.5rem;
+    border: none;
+    background: #dbdbdb;
+    justify-content: flex-start;
+    align-items: center;
+    cursor: pointer;
+    display: grid;
+    margin-left: 0.3rem;
+    color: #5988ab;
 }
 
 .logincard img {
@@ -1071,20 +1078,14 @@ logincard {
 }
 
 .logincard button:hover {
-	background-color: #56606b;
-}
-
-.logincard button [hi] {
-	display: inline-block;
-	margin-left: 5px;
-	font-size: 1rem;
+	background-color: #f0f0f0;
 }
 
 .logincardwelt {
-	font-size: 2rem;
-	display: block;
-	text-align: center;
-	margin: 1rem;
+	font-size: 1.5rem;
+    display: block;
+    text-align: center;
+    margin: 0.5rem;
 }
 
 .strtsearcont button span {

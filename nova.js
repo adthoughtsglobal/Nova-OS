@@ -58,7 +58,8 @@ var novaos = {
   },
   getFileNamesByFolder: function(...args) {
     return window.parent.getFileNamesByFolder(args);
-  }
+  },
+  CurrentUsername: window.parent.CurrentUsername
 }
 
 var ws; // rotur ws

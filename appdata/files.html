@@ -64,11 +64,11 @@
 
 		[flap-nav] {
 			display: flex;
-    height: 29px;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    padding: 3px;
-    padding-bottom: 0;
+			height: 29px;
+			flex-direction: row;
+			flex-wrap: nowrap;
+			padding: 3px;
+			padding-bottom: 0;
 		}
 
 		.flappsearch {
@@ -158,14 +158,14 @@
 
 		[flap-fl-topnav] {
 			display: flex;
-    padding-top: 0.5rem;
-    margin: 0rem 0.5rem;
-    margin-bottom: 0.1rem;
-    font-size: 9px;
-    opacity: 70%;
-    flex-direction: row;
-    background-color: #181818;
-    border-radius: 0.3rem;
+			padding-top: 0.5rem;
+			margin: 0rem 0.5rem;
+			margin-bottom: 0.1rem;
+			font-size: 9px;
+			opacity: 70%;
+			flex-direction: row;
+			background-color: #181818;
+			border-radius: 0.3rem;
 		}
 
 		[flap-files] {
@@ -173,8 +173,8 @@
 			flex-grow: 8;
 			padding-bottom: 50px !important;
 			padding: 10px;
-			width: calc(100% - 28px);   
-			 padding-top: 0;
+			width: calc(100% - 28px);
+			padding-top: 0;
 			margin-top: 5px;
 		}
 
@@ -344,12 +344,12 @@
 
 		[flap-fl-bottomnav] {
 			padding: 5px 7px;
-    background: #161616;
-    border-radius: 0.3rem;
-    font-size: 12px;
-    transition: .3s ease-out;
-    margin: 0.2rem;
-    width: calc(100% - 25px);
+			background: #161616;
+			border-radius: 0.3rem;
+			font-size: 12px;
+			transition: .3s ease-out;
+			margin: 0.2rem;
+			width: calc(100% - 25px);
 		}
 
 		.delbtn {
@@ -719,22 +719,22 @@
 
 		#pathdisp {
 			flex: 1;
-    overflow-x: hidden;
-    text-overflow: ellipsis;
-    margin: 0 0.5rem;
-    display: flex;
-	user-select: text;
-	-moz-user-select: text;
+			overflow-x: hidden;
+			text-overflow: ellipsis;
+			margin: 0 0.5rem;
+			display: flex;
+			user-select: text;
+			-moz-user-select: text;
 		}
 
 		#pathdisp span {
-    display: inline-block;
-	opacity:0.7;
-}
+			display: inline-block;
+			opacity: 0.7;
+		}
 
-#pathdisp span:hover {
-	opacity:1;
-}
+		#pathdisp span:hover {
+			opacity: 1;
+		}
 	</style>
 	<script src="https://unpkg.com/interactjs/dist/interact.min.js"></script>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -816,14 +816,14 @@
 			}
 
 			var out;
-			
-			function fupit() {
-      document.getElementById("fupibu").innerHTML = "Importing...";
-      const fileInput = document.getElementById('filupin');
-      const file = fileInput.files[0];
 
-      if (file) {
-        const workerCode = `
+			function fupit() {
+				document.getElementById("fupibu").innerHTML = "Importing...";
+				const fileInput = document.getElementById('filupin');
+				const file = fileInput.files[0];
+
+				if (file) {
+					const workerCode = `
           onmessage = function(event) {
             const file = event.data;
             const chunkSize = 1024 * 1024; // 1MB chunks
@@ -850,42 +850,42 @@
           };
         `;
 
-        const workerBlob = new Blob([workerCode], { type: 'application/javascript' });
-        const worker = new Worker(URL.createObjectURL(workerBlob));
+					const workerBlob = new Blob([workerCode], { type: 'application/javascript' });
+					const worker = new Worker(URL.createObjectURL(workerBlob));
 
-        let combinedChunks = [];
+					let combinedChunks = [];
 
-        worker.onmessage = function(event) {
-          if (event.data.done) {
-            const combined = new Blob(combinedChunks, { type: file.type });
-            const reader = new FileReader();
+					worker.onmessage = function (event) {
+						if (event.data.done) {
+							const combined = new Blob(combinedChunks, { type: file.type });
+							const reader = new FileReader();
 
-            reader.onload = function(e) {
-              const out = e.target.result;
-              const type = file.type || 'txt';
-              const folderName = 'Downloads/';
-              const md = { "via": "imported" };
+							reader.onload = function (e) {
+								const out = e.target.result;
+								const type = file.type || 'txt';
+								const folderName = 'Downloads/';
+								const md = { "via": "imported" };
 
-              const shrinkedOut = window.parent.shrinkbsf(out);
+								const shrinkedOut = window.parent.shrinkbsf(out);
 
-              window.parent.createFile(folderName, window.parent.basename(file.name), mtpetxt(type), shrinkedOut, md)
-                .then(function () {
-                  document.getElementById("fupibu").innerHTML = "File Saved, Close";
-                  document.getElementById("fupibu").onclick = function () {
-                    document.getElementById("upmod").close();
-                  };
-                });
-            };
+								window.parent.createFile(folderName, window.parent.basename(file.name), mtpetxt(type), shrinkedOut, md)
+									.then(function () {
+										document.getElementById("fupibu").innerHTML = "File Saved, Close";
+										document.getElementById("fupibu").onclick = function () {
+											document.getElementById("upmod").close();
+										};
+									});
+							};
 
-            reader.readAsDataURL(combined);
-          } else {
-            combinedChunks.push(event.data.chunk);
-          }
-        };
+							reader.readAsDataURL(combined);
+						} else {
+							combinedChunks.push(event.data.chunk);
+						}
+					};
 
-        worker.postMessage(file);
-      }
-    }
+					worker.postMessage(file);
+				}
+			}
 
 
 			function getBase64(file) {
@@ -1184,11 +1184,11 @@
 			document.getElementById("flap-sidenav").style.width = getComputedStyle(document.getElementById("jstree")).width
 		}
 		function greenflagbro() {
-				if (window.parent.getSetting("filesSidenavSize")) {
-					document.getElementById("flap-sidenav").style.width = window.parent.getSetting("filesSidenavSize");
-				} else {
-					fitsizesidenav();
-				}
+			if (window.parent.getSetting("filesSidenavSize")) {
+				document.getElementById("flap-sidenav").style.width = window.parent.getSetting("filesSidenavSize");
+			} else {
+				fitsizesidenav();
+			}
 
 			$("#flap-sidenav").resizable({
 				handles: 'e',
@@ -1231,7 +1231,7 @@
 				console.error(error)
 			}
 
-			getdb('trojencat', 'rom')
+			window.parent.getdb('trojencat', 'rom')
 				.then((result) => {
 					try {
 						if (result !== null) {
@@ -1340,7 +1340,7 @@
 		function refresh() {
 			console.log("refresh called")
 			setTimeout(() => {
-				getdb('trojencat', 'rom')
+				window.parent.getdb('trojencat', 'rom')
 					.then((result) => {
 						if (result !== null) {
 							memory = result;
@@ -1495,29 +1495,29 @@
 		}
 
 		function updpth() {
-    const pathDisp = document.getElementById("pathdisp");
-    pathDisp.innerHTML = "";
+			const pathDisp = document.getElementById("pathdisp");
+			pathDisp.innerHTML = "";
 
-    const parts = currentPath.split('/').filter(Boolean);
-    let accumulatedPath = "";
+			const parts = currentPath.split('/').filter(Boolean);
+			let accumulatedPath = "";
 
-    parts.forEach((part, index) => {
-        const currentPart = part + "/";
-        accumulatedPath += currentPart;
+			parts.forEach((part, index) => {
+				const currentPart = part + "/";
+				accumulatedPath += currentPart;
 
-        const span = document.createElement("span");
-        span.textContent = currentPart;
+				const span = document.createElement("span");
+				span.textContent = currentPart;
 
-        if (index < parts.length - 1) {
-            // Create a closure to capture the current value of accumulatedPath
-            const pathToCall = accumulatedPath;
-            span.style.cursor = "pointer";
-            span.addEventListener("click", () => listFiles(pathToCall));
-        }
+				if (index < parts.length - 1) {
+					// Create a closure to capture the current value of accumulatedPath
+					const pathToCall = accumulatedPath;
+					span.style.cursor = "pointer";
+					span.addEventListener("click", () => listFiles(pathToCall));
+				}
 
-        pathDisp.appendChild(span);
-    });
-}
+				pathDisp.appendChild(span);
+			});
+		}
 
 		async function slfile(y) {
 			let x = y;
@@ -1573,7 +1573,7 @@
 					}
 
 
-					
+
 
 
 					document.getElementById("fileinfobn").style.opacity = 1;
@@ -1623,72 +1623,15 @@ drive_file_move
 
 		async function remfile(ID) {
 			try {
-				let memory = await getdb('trojencat', 'rom');
 
-				// Recursive function to search and remove the file by ID
-				function removeFileByID(folder) {
-					for (let key in folder) {
-						if (folder[key].id === ID) {
-							delete folder[key];
-							return true;
-						} else if (typeof folder[key] === 'object' && !folder[key].id) {
-							if (removeFileByID(folder[key])) {
-								return true;
-							}
-						}
-					}
-					return false;
-				}
+				window.parent.remfile(ID);
+				console.log(`0004`);
 
-				// Start the removal process from the top-level directories
-				let fileRemoved = false;
-				for (let folderName in memory) {
-					if (removeFileByID(memory[folderName])) {
-						fileRemoved = true;
-						break;
-					}
-				}
-
-				if (fileRemoved) {
-					console.log(`0004`);
-					await setdb('trojencat', 'rom', memory);
-
-					// Check if the file was successfully removed
-					function checkFileRemoved(folder) {
-						for (let key in folder) {
-							if (folder[key].id === ID) {
-								return false;
-							} else if (typeof folder[key] === 'object' && !folder[key].id) {
-								if (!checkFileRemoved(folder[key])) {
-									return false;
-								}
-							}
-						}
-						return true;
-					}
-
-					let fileStillRemoved = true;
-					for (let folderName in memory) {
-						if (!checkFileRemoved(memory[folderName])) {
-							fileStillRemoved = false;
-							break;
-						}
-					}
-
-					if (fileStillRemoved) {
-						console.log("File successfully removed.");
-					} else {
-						console.log("File removal failed.");
-					}
-
-					document.getElementById("fileinfobn").style.opacity = 1;
-					document.getElementById("fileinfobn").innerHTML = "Deleting file...";
-					await setdb('trojencat', 'rom', memory).then(() => {
-						document.getElementById("fileinfobn").innerHTML = "File Deleted";
-					});
-				} else {
-					console.error(`File with ID "${ID}" not found.`);
-				}
+				document.getElementById("fileinfobn").style.opacity = 1;
+				document.getElementById("fileinfobn").innerHTML = "Deleting file...";
+				await window.parent.updateMemoryData().then(() => {
+					document.getElementById("fileinfobn").innerHTML = "File Deleted";
+				});
 				document.querySelector(`[unid="${ID}"]`).style.opacity = 0.2;
 			} catch (error) {
 				console.error("Safe Error fetching or updating data:", error);
@@ -1821,51 +1764,6 @@ drive_file_move
 				request.onerror = () => {
 					reject(request.error);
 				};
-			});
-		}
-
-
-		// Function to set a key-value pair in the database
-		function setdb(databaseName, key, value) {
-			return openDB(databaseName, 1).then((db) => {
-				return new Promise((resolve, reject) => {
-					const transaction = db.transaction(['store'], 'readwrite');
-					const store = transaction.objectStore('store');
-					const request = store.put({ key, value });
-
-					request.onsuccess = () => {
-						triggerDBChange();
-						resolve();
-					};
-
-					request.onerror = () => {
-						reject(request.error);
-					};
-				});
-			});
-		}
-
-		// Function to get a value by key from the database
-		function getdb(databaseName, key) {
-			return openDB(databaseName, 1).then((db) => {
-				return new Promise((resolve, reject) => {
-					const transaction = db.transaction(['store'], 'readonly');
-					const store = transaction.objectStore('store');
-					const request = store.get(key);
-
-					request.onsuccess = () => {
-						const result = request.result;
-						if (result) {
-							resolve(result.value);
-						} else {
-							resolve(null); // Key not found
-						}
-					};
-
-					request.onerror = () => {
-						reject(request.error);
-					};
-				});
 			});
 		}
 
