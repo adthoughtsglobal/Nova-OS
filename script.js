@@ -2,7 +2,7 @@ var batteryLevel, winds = {}, rp, flwint = true, memory, _nowapp, stx = gid("sta
 var really = false;
 var novaFeaturedImage = `https://images.unsplash.com/photo-1716980197262-ce400709bf0d?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D`;
 
-document.getElementById("bgimage").src= novaFeaturedImage;
+document.getElementById("bgimage").src = novaFeaturedImage;
 var defAppsList = [
 	"camera",
 	"clock",
@@ -26,7 +26,7 @@ function qsetsRefresh() {
 	updateMemoryData()
 }
 
-gid('seprw-openb').onclick = function() {
+gid('seprw-openb').onclick = function () {
 	gid('searchside').style.flexGrow = 1;
 }
 
@@ -43,7 +43,7 @@ Object.defineProperty(window, 'nowapp', {
 async function showloginmod() {
 	closeElementedis()
 	gid('loginmod').showModal();
-	gid('loginform1').addEventListener("keydown", async function(event) {
+	gid('loginform1').addEventListener("keydown", async function (event) {
 		if (event.key === 'Enter') {
 			event.preventDefault();
 			await checkifpassright();
@@ -59,7 +59,7 @@ getdb('trojencat', 'rom')
 			if (result !== null) {
 				memory = result;
 				await showloginmod();
-				
+
 			} else {
 				await say(`<h2>Terms of service and License</h2><p>By using Nova OS, you agree to the <a href="https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use">Adthoughtsglobal Nova Terms of Use</a>. <be><small>We do not collect your personal information. <br>Read the terms clearly before use.</small>`);
 				await say(`<h2>Your default password</h2><p>The default password for ${CurrentUsername} is 'nova'. You can change this in settings.</p>`);
@@ -99,71 +99,71 @@ getdb('trojencat', 'rom')
 
 	})
 	.then(() => {
-		
+
 	})
 	.catch(async (error) => {
 		console.error('Error retrieving data from the database:', error);
 		await showloginmod()
 	});
 
-	async function startup() {
-		gid("edison").showModal();
-		console.log("INITIAL SETUP");
-		const start = performance.now();
-		try { qsetsRefresh(); } 
-		catch (err) { console.error("qsetsRefresh error:", err); }
-	
-		try {
-			gid('startupterms').innerHTML += "<span>Initialising clock...</span>";
-			await updateTime();
-		} catch (err) { console.error("updateTime error:", err); }
-	
-		try {
-			gid('startupterms').innerHTML += "<span>Checking themes...</span>";
-			setInterval(updateTime, 1000);
-			await checkdmode();
-		} catch (err) { console.error("checkdmode error:", err); }
-	
-		try {
-			gid('startupterms').innerHTML += "<span id='struploadtasnr'>Loading TaskBar... (0%)</span>";
-			await genTaskBar();
-		} catch (err) { console.error("genTaskBar error:", err); }
-	
-		try {
-			await dod();
-			gid('startupterms').innerHTML += "<span>Startup completed...</span>";
-			closeElementedis();
-		} catch (err) { console.error("dod error:", err); }
-		const end = performance.now();
+async function startup() {
+	gid("edison").showModal();
+	console.log("INITIAL SETUP");
+	const start = performance.now();
+	try { qsetsRefresh(); }
+	catch (err) { console.error("qsetsRefresh error:", err); }
 
-console.log(`Execution time: ${end - start} milliseconds`);
-async function fetchDataAndUpdate() {
-	let localupdatedataver = localStorage.getItem("updver");
-	let fetchupdatedata = await fetch("versions.json");
+	try {
+		gid('startupterms').innerHTML += "<span>Initialising clock...</span>";
+		await updateTime();
+	} catch (err) { console.error("updateTime error:", err); }
 
-	if (fetchupdatedata.ok) {
-		let fetchupdatedataver = (await fetchupdatedata.json()).osver;
+	try {
+		gid('startupterms').innerHTML += "<span>Checking themes...</span>";
+		setInterval(updateTime, 1000);
+		await checkdmode();
+	} catch (err) { console.error("checkdmode error:", err); }
 
-		if (localupdatedataver !== fetchupdatedataver) {
-			if (await justConfirm("Update default apps?", "Your default apps are old. Update them to access new features and fixes.")) {
-				await installdefaultapps();
-			} else {
-				say("You can always update app on settings app/Preferances")
+	try {
+		gid('startupterms').innerHTML += "<span id='struploadtasnr'>Loading TaskBar... (0%)</span>";
+		await genTaskBar();
+	} catch (err) { console.error("genTaskBar error:", err); }
+
+	try {
+		await dod();
+		gid('startupterms').innerHTML += "<span>Startup completed...</span>";
+		closeElementedis();
+	} catch (err) { console.error("dod error:", err); }
+	const end = performance.now();
+
+	console.log(`Execution time: ${end - start} milliseconds`);
+	async function fetchDataAndUpdate() {
+		let localupdatedataver = localStorage.getItem("updver");
+		let fetchupdatedata = await fetch("versions.json");
+
+		if (fetchupdatedata.ok) {
+			let fetchupdatedataver = (await fetchupdatedata.json()).osver;
+
+			if (localupdatedataver !== fetchupdatedataver) {
+				if (await justConfirm("Update default apps?", "Your default apps are old. Update them to access new features and fixes.")) {
+					await installdefaultapps();
+				} else {
+					say("You can always update app on settings app/Preferances")
+				}
 			}
+		} else {
+			console.error("Failed to fetch data from the server.");
 		}
-	} else {
-		console.error("Failed to fetch data from the server.");
 	}
+
+	fetchDataAndUpdate();
 }
 
-fetchDataAndUpdate();
-	}
-
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
 	console.log("DOMCL")
 	var bgImage = document.getElementById("bgimage");
 
-	bgImage.addEventListener("click", function() {
+	bgImage.addEventListener("click", function () {
 		console.log("BG CLICK");
 		nowapp = '';
 		dewallblur();
@@ -218,48 +218,24 @@ async function openn() {
 
 		// Create a span element for the app icon
 		var iconSpan = document.createElement("span");
+
 		if (!appicns[app.name]) {
-
-
 			// Fetch the content asynchronously using getFileById
 			const content = await getFileById(app.id);
 
 			// Unshrink the content
 			const unshrunkContent = unshrinkbsf(content.content);
 
-			// Create a temporary div to parse the content
-			const tempElement = document.createElement('div');
-			tempElement.innerHTML = unshrunkContent;
+			// Use the getAppIcon function to fetch the icon
+			const icon = getAppIcon(unshrunkContent, app.name);
 
-			// Get all meta tags
-			const metaTags = tempElement.getElementsByTagName('meta');
-
-			// Create an object to store meta tag data
-			let metaTagData = null;
-
-			// Iterate through meta tags and extract data
-			Array.from(metaTags).forEach(tag => {
-				const tagName = tag.getAttribute('name');
-				const tagContent = tag.getAttribute('content');
-				if (tagName === 'nova-icon' && tagContent) {
-					metaTagData = tagContent;
-				}
-			});
-
-			if (typeof metaTagData === "string") {
-				if (containsSmallSVGElement(metaTagData)) {
-					iconSpan.innerHTML = metaTagData;
-				} else {
-
-					iconSpan.innerHTML = defaultAppIcon;
-				}
+			if (icon) {
+				iconSpan.innerHTML = icon;
 			} else {
 				iconSpan.innerHTML = defaultAppIcon;
 			}
-			appicns[app.name] = iconSpan.innerHTML
-
 		} else {
-			iconSpan.innerHTML = appicns[app.name]
+			iconSpan.innerHTML = appicns[app.name];
 		}
 
 		function getapnme(x) {
@@ -291,11 +267,11 @@ async function openn() {
 		gid("closeallwinsbtn").checked = false;
 	}
 	if (!Object.keys(winds).length) {
-		
+
 		gid("closeallwinsbtn").checked = true;
 		gid("closeallwinsbtn").setAttribute("disabled", true)
 	} else {
-		
+
 		gid("closeallwinsbtn").setAttribute("disabled", false)
 	}
 	gid('appdmod').showModal()
@@ -422,61 +398,61 @@ function makedefic(str) {
 
 
 function updateBattery() {
-    var batteryPromise;
-    
-    // Check if the battery API is supported
-    if ('getBattery' in navigator) {
-        batteryPromise = navigator.getBattery();
-    } else if ('battery' in navigator) {
-        batteryPromise = Promise.resolve(navigator.battery);
-    } else {
-        console.log('Battery API not supported.');
+	var batteryPromise;
+
+	// Check if the battery API is supported
+	if ('getBattery' in navigator) {
+		batteryPromise = navigator.getBattery();
+	} else if ('battery' in navigator) {
+		batteryPromise = Promise.resolve(navigator.battery);
+	} else {
+		console.log('Battery API not supported.');
 		gid("batterydisdiv").style.display = "none";
-        return; 
-    }
+		return;
+	}
 
-    batteryPromise.then(function(battery) {
-        // Get the battery level
-        var batteryLevel = Math.floor(battery.level * 100);
-        var isCharging = battery.charging;
+	batteryPromise.then(function (battery) {
+		// Get the battery level
+		var batteryLevel = Math.floor(battery.level * 100);
+		var isCharging = battery.charging;
 
-        // Display or hide the battery info based on conditions
-        if ((batteryLevel === 100 && isCharging) || (batteryLevel === 0 && isCharging)) {
-            document.getElementById("batterydisdiv").style.display = "none";
-        } else {
-            document.getElementById("batterydisdiv").style.display = "block";
-        }
+		// Display or hide the battery info based on conditions
+		if ((batteryLevel === 100 && isCharging) || (batteryLevel === 0 && isCharging)) {
+			document.getElementById("batterydisdiv").style.display = "none";
+		} else {
+			document.getElementById("batterydisdiv").style.display = "block";
+		}
 
-        // Determine the appropriate icon based on battery level
-        let iconClass;
-        if (batteryLevel >= 75) {
-            iconClass = 'battery_full';
-        } else if (batteryLevel >= 25) {
-            iconClass = 'battery_5_bar';
-        } else if (batteryLevel >= 15) {
-            iconClass = 'battery_2_bar';
-        } else {
-            iconClass = 'battery_alert';
-        }
+		// Determine the appropriate icon based on battery level
+		let iconClass;
+		if (batteryLevel >= 75) {
+			iconClass = 'battery_full';
+		} else if (batteryLevel >= 25) {
+			iconClass = 'battery_5_bar';
+		} else if (batteryLevel >= 15) {
+			iconClass = 'battery_2_bar';
+		} else {
+			iconClass = 'battery_alert';
+		}
 
-        // Check if the value has changed
-        var batteryDisplayElement = document.getElementById('battery-display');
-        var batteryPDisplayElement = document.getElementById('battery-p-display');
-        if (batteryDisplayElement && batteryPDisplayElement) {
-            if (iconClass !== batteryDisplayElement.innerText) {
-                // Update the display only if the value changes
-                batteryDisplayElement.innerHTML = iconClass;
-                batteryPDisplayElement.innerHTML = batteryLevel + "%";
-            }
-        }
-    }).catch(function(error) {
-        console.log("Battery information not available: " + error);
+		// Check if the value has changed
+		var batteryDisplayElement = document.getElementById('battery-display');
+		var batteryPDisplayElement = document.getElementById('battery-p-display');
+		if (batteryDisplayElement && batteryPDisplayElement) {
+			if (iconClass !== batteryDisplayElement.innerText) {
+				// Update the display only if the value changes
+				batteryDisplayElement.innerHTML = iconClass;
+				batteryPDisplayElement.innerHTML = batteryLevel + "%";
+			}
+		}
+	}).catch(function (error) {
+		console.log("Battery information not available: " + error);
 
-    });
+	});
 }
 updateBattery();
 
-navigator.getBattery().then(function(battery) {
+navigator.getBattery().then(function (battery) {
 	battery.addEventListener('levelchange', updateBattery);
 });
 
@@ -550,7 +526,7 @@ async function dod() {
 	try {
 		gid("desktop").innerHTML = ``;
 		let y = await getFileNamesByFolder("Desktop")
-		y.forEach(async function(app) {
+		y.forEach(async function (app) {
 			// Create a div element for the app shortcut
 			var appShortcutDiv = document.createElement("div");
 			appShortcutDiv.className = "app-shortcut sizableuielement";
@@ -611,21 +587,21 @@ async function dod() {
 
 			gid("desktop").appendChild(appShortcutDiv);
 		});
-			x = await getFileById(await getSetting("wall"));
-		} catch (error) {
-			console.error(error)
-			remSetting("wall");
-		}
+		x = await getFileById(await getSetting("wall"));
+	} catch (error) {
+		console.error(error)
+		remSetting("wall");
+	}
 
-		if (x != undefined) {
-			let unshrinkbsfX = unshrinkbsf(x.content);
-			document.getElementById('bgimage').src = `url("` + unshrinkbsfX + `")`;
-		} else {
-			document.getElementById("bgimage").src= novaFeaturedImage;
-			
-		}
-	document.getElementById("bgimage").onerror = async function() {
-			document.getElementById("bgimage").src= novaFeaturedImage;
+	if (x != undefined) {
+		let unshrinkbsfX = unshrinkbsf(x.content);
+		document.getElementById('bgimage').src = `url("` + unshrinkbsfX + `")`;
+	} else {
+		document.getElementById("bgimage").src = novaFeaturedImage;
+
+	}
+	document.getElementById("bgimage").onerror = async function () {
+		document.getElementById("bgimage").src = novaFeaturedImage;
 		if (await getSetting("wall")) {
 			remSetting("wall");
 		}
@@ -637,8 +613,8 @@ async function dod() {
 function closeElementedis() {
 	var element = document.getElementById("edison");
 	element.classList.add("closeEffect");
-	
-	setTimeout(function() {
+
+	setTimeout(function () {
 		element.close()
 	}, 1000);
 }
@@ -696,37 +672,31 @@ function flwin(x) {
 }
 
 function getAppIcon(unshrunkContent, appname) {
-    if (!appicns[appname]) {
-        console.log("Fetching icon");
-        const tempElement = document.createElement('div');
-        tempElement.innerHTML = decodeBase64Content(unshrunkContent);
-        const metaTags = tempElement.getElementsByTagName('meta');
-        let metaTagData = null;
-        Array.from(metaTags).forEach(tag => {
-            const tagName = tag.getAttribute('name');
-            const tagContent = tag.getAttribute('content');
-            if (tagName === 'nova-icon' && tagContent) {
-                metaTagData = tagContent;
-            }
-        });
-        if (typeof metaTagData === "string" && containsSmallSVGElement(metaTagData)) {
-            appicns[appname] = metaTagData;
-            return metaTagData;
-        } else {
-            return null;
-        }
-    } else {
-        return appicns[appname];
-    }
+	if (appicns[appname]) return appicns[appname];
+
+	const decodedContent = decodeBase64Content(unshrunkContent);
+
+	const tempElement = document.createElement('div');
+	tempElement.innerHTML = decodedContent;
+
+	const metaTag = Array.from(tempElement.getElementsByTagName('meta')).find(tag => 
+		tag.getAttribute('name') === 'nova-icon' && tag.getAttribute('content')
+	);
+
+	if (!metaTag) return null;
+
+	const metaTagContent = metaTag.getAttribute('content');
+	if (typeof metaTagContent === "string" && containsSmallSVGElement(metaTagContent)) {
+		appicns[appname] = metaTagContent;
+		return metaTagContent;
+	}
+	
+	return null;
 }
 
 // Function to check and decode Base64 content with marker
 function decodeBase64Content(str) {
-    const marker = 'data:image/svg+xml;base64,';
-    if (str.startsWith(marker)) {
-        return atob(str.slice(marker.length));
-    }
-    return str;
+	return atob(str);
 }
 
 function getAppTheme(unshrunkContent) {
@@ -813,10 +783,10 @@ function openwindow(title, cont, ic, theme) {
 	// Create the window element
 	var windowDiv = document.createElement("div");
 	windowDiv.id = "window" + winuid;
-	
-	
+
+
 	windowDiv.setAttribute("data-winds", title + winuid);
-	windowDiv.onclick = function() {
+	windowDiv.onclick = function () {
 		nowapp = title;
 		dewallblur();
 	}
@@ -871,11 +841,11 @@ function openwindow(title, cont, ic, theme) {
 		}
 	}
 	windowHeader.setAttribute("title", title + winuid)
-	windowHeader.addEventListener("mouseup", function(event) {
+	windowHeader.addEventListener("mouseup", function (event) {
 		checksnapping(windowDiv, event);
 	});
 
-	windowHeader.addEventListener("mousedown", function(event) {
+	windowHeader.addEventListener("mousedown", function (event) {
 		putwinontop('window' + winuid);
 		winds[title + winuid] = windowDiv.style.zIndex;
 
@@ -889,7 +859,7 @@ function openwindow(title, cont, ic, theme) {
 	flButton.style = `    padding: 4px 5px;
     font-size: 8px !important;`;
 	flButton.textContent = "open_in_full";
-	flButton.onclick = function() {
+	flButton.onclick = function () {
 		flwin(flButton);
 	};
 
@@ -897,8 +867,8 @@ function openwindow(title, cont, ic, theme) {
 	var closeButton = document.createElement("span");
 	closeButton.classList.add("material-symbols-rounded", "wincl");
 	closeButton.textContent = "close";
-	closeButton.onclick = function() {
-		setTimeout(function() {
+	closeButton.onclick = function () {
+		setTimeout(function () {
 			dewallblur();
 		}, 500);
 		clwin("window" + winuid);
@@ -925,49 +895,49 @@ function openwindow(title, cont, ic, theme) {
 
 	function loadIframeContent(windowLoader, windowContent, iframe) {
 		var iframe = document.createElement("iframe");
-var contentString = content.toString();
+		var contentString = content.toString();
 
-// Function to check if a string is Base64 encoded
-function isBase64(str) {
-    try {
-        return btoa(atob(str)) === str;
-    } catch (err) {
-        return false;
-    }
-}
+		// Function to check if a string is Base64 encoded
+		function isBase64(str) {
+			try {
+				return btoa(atob(str)) === str;
+			} catch (err) {
+				return false;
+			}
+		}
 
-// Decode the content string if it's Base64 encoded
-if (isBase64(contentString)) {
-    contentString = atob(contentString);
-}
+		// Decode the content string if it's Base64 encoded
+		if (isBase64(contentString)) {
+			contentString = atob(contentString);
+		}
 
-// Create a Blob from the content string
-var blob = new Blob([contentString], { type: 'text/html' });
+		// Create a Blob from the content string
+		var blob = new Blob([contentString], { type: 'text/html' });
 
-// Create a URL for the Blob
-var blobURL = URL.createObjectURL(blob);
+		// Create a URL for the Blob
+		var blobURL = URL.createObjectURL(blob);
 
-iframe.onload = function() {
-    var doc = iframe.contentDocument || iframe.contentWindow.document;
-	
-	iframe.contentWindow.myWindow = {
-		"element": windowDiv,
-		"titleElement": windowtitlespan
-	};
+		iframe.onload = function () {
+			var doc = iframe.contentDocument || iframe.contentWindow.document;
 
-    // Check if the content string contains the function greenflag
-    if (contentString.includes(`function greenflag()`)) {
-        attemptGreenFlag(windowLoader, windowContent, iframe);
-    } else {
-        windowLoader.remove();
-    }
-};
+			iframe.contentWindow.myWindow = {
+				"element": windowDiv,
+				"titleElement": windowtitlespan
+			};
 
-// Set the src of the iframe to the Blob URL
-iframe.src = blobURL;
+			// Check if the content string contains the function greenflag
+			if (contentString.includes(`function greenflag()`)) {
+				attemptGreenFlag(windowLoader, windowContent, iframe);
+			} else {
+				windowLoader.remove();
+			}
+		};
 
-windowContent.appendChild(iframe);
-        }
+		// Set the src of the iframe to the Blob URL
+		iframe.src = blobURL;
+
+		windowContent.appendChild(iframe);
+	}
 
 	function attemptGreenFlag(windowLoader, windowContent, iframe) {
 		try {
@@ -981,7 +951,7 @@ windowContent.appendChild(iframe);
 				return;
 			}
 
-			
+
 		}
 	}
 
@@ -993,7 +963,7 @@ windowContent.appendChild(iframe);
 
 	// Append the window to the document body
 	document.body.appendChild(windowDiv);
-	
+
 	// Initial load
 	loadIframeContent(windowLoader, windowContent);
 
@@ -1019,7 +989,7 @@ function putwinontop(x) {
 
 function toTitleCase(str) {
 	rp = str
-	return str.toLowerCase().replace(/(?:^|\s)\w/g, function(match) {
+	return str.toLowerCase().replace(/(?:^|\s)\w/g, function (match) {
 		return match.toUpperCase();
 	});
 }
@@ -1069,68 +1039,68 @@ function genUID() {
 
 async function createFolder(folderName) {
 	try {
-		
-		await updateMemoryData()
-folderName = folderName.replace(/\/$/, ''); // Remove the trailing slash
-let parts = folderName.split('/');
-let current = memory;
 
-for (let part of parts) {
-    part += '/';
-    if (!current[part]) {
-        current[part] = {};
-    }
-    current = current[part];
-    
-    console.log(current);
-}
+		await updateMemoryData()
+		folderName = folderName.replace(/\/$/, ''); // Remove the trailing slash
+		let parts = folderName.split('/');
+		let current = memory;
+
+		for (let part of parts) {
+			part += '/';
+			if (!current[part]) {
+				current[part] = {};
+			}
+			current = current[part];
+
+			console.log(current);
+		}
 
 		await setdb('trojencat', 'rom', memory);
-        console.log(`Folder "${folderName}" created successfully.`);
-    } catch (error) {
-        console.error("Error creating folder:", error);
-    }
+		console.log(`Folder "${folderName}" created successfully.`);
+	} catch (error) {
+		console.error("Error creating folder:", error);
+	}
 }
 
 
 async function createFile(folderName2, fileName, type, content, metadata = {}) {
-    let folderName = folderName2.replace(/\/$/, '');
-    let fileName2 = type ? `${fileName}.${type}` : (mtpetxt(fileName) || (() => { say("Cannot find file extension. Can't create file.", "failed"); return; })());
+	let folderName = folderName2.replace(/\/$/, '');
+	let fileName2 = type ? `${fileName}.${type}` : (mtpetxt(fileName) || (() => { say("Cannot find file extension. Can't create file.", "failed"); return; })());
 
-    if (!fileName2) return;
+	if (!fileName2) return;
 
-    await updateMemoryData();
-    let folder = createFolderStructure(folderName);
+	await updateMemoryData();
+	let folder = createFolderStructure(folderName);
 
-    try {
-        if (type === "app") {
-            let appData = await getFileByPath(`Apps/${fileName2}`);
-            if (appData) {
-                content = btoa(content); // Encode HTML content as Base64
-                await updateFile("Apps", appData.id, { metadata, content, fileName: fileName2, type });
-                return;
-            }
-        }
+	try {
+		if (type === "app") {
+			let appData = await getFileByPath(`Apps/${fileName2}`);
+			if (appData) {
+				content = btoa(content); // Encode HTML content as Base64
+				await updateFile("Apps", appData.id, { metadata, content, fileName: fileName2, type });
+				return;
+			}
+		}
 
-        let existingFile = Object.values(folder).find(file => file.fileName === fileName2);
-        if (existingFile) {
-            console.log(`File "${fileName2}" exists in "${folderName}". Updating...`);
-            content = btoa(content); // Encode content as Base64
-            await updateFile(folderName, existingFile.id, { metadata, content, fileName: fileName2, type });
-        } else {
-            let uid = genUID();
-            metadata.datetime = getfourthdimension();
-            metadata = JSON.stringify(metadata);
-            content = btoa(content); // Encode content as Base64
+		let existingFile = Object.values(folder).find(file => file.fileName === fileName2);
+		if (existingFile) {
+			console.log(`File "${fileName2}" exists in "${folderName}". Updating...`);
+			content = btoa(content); // Encode content as Base64
+			await updateFile(folderName, existingFile.id, { metadata, content, fileName: fileName2, type });
+		} else {
+			let uid = genUID();
+			metadata.datetime = getfourthdimension();
+			metadata = JSON.stringify(metadata);
+			content = btoa(content); // Encode content as Base64
 
-            folder[fileName2] = { id: uid, type, content, metadata };
-            console.log(`File "${fileName2}" created in "${folderName}".`);
-            await setdb('trojencat', 'rom', memory);
-        }
-    } catch (error) {
-        console.error("Error creating file:", error);
-        return null;
-    }
+			folder[fileName2] = { id: uid, type, content, metadata };
+			console.log(`File "${fileName2}" created in "${folderName}".`);
+			await setdb('trojencat', 'rom', memory);
+		}
+	} catch (error) {
+		console.error("Error creating file:", error);
+		return null;
+	}
 }
 
 // Simulate creating a folder
@@ -1149,92 +1119,92 @@ function createFolderStructure(folderName) {
 
 async function updateFile(folderName, fileId, newData) {
 	function findFile(folder, fileId) {
-        for (let key in folder) {
-            if (typeof folder[key] === 'object' && folder[key] !== null) {
-                if (folder[key].id === fileId) {
-                    return { parent: folder, key: key };
-                } else if (key.endsWith('/') && typeof folder[key] === 'object') {
-                    let result = findFile(folder[key], fileId);
-                    if (result) {
-                        return result;
-                    }
-                }
-            }
-        }
-        return null;
-    }
+		for (let key in folder) {
+			if (typeof folder[key] === 'object' && folder[key] !== null) {
+				if (folder[key].id === fileId) {
+					return { parent: folder, key: key };
+				} else if (key.endsWith('/') && typeof folder[key] === 'object') {
+					let result = findFile(folder[key], fileId);
+					if (result) {
+						return result;
+					}
+				}
+			}
+		}
+		return null;
+	}
 
-    try {
-        // Locate the target folder
-        let targetFolder = memory;
-        let folderNames = folderName.split('/');
-        for (let name of folderNames) {
-            if (name) {
-                targetFolder = targetFolder[name + '/'];
-                if (!targetFolder) {
-                    throw new Error(`Folder "${name}" not found.`);
-                }
-            }
-        }
+	try {
+		// Locate the target folder
+		let targetFolder = memory;
+		let folderNames = folderName.split('/');
+		for (let name of folderNames) {
+			if (name) {
+				targetFolder = targetFolder[name + '/'];
+				if (!targetFolder) {
+					throw new Error(`Folder "${name}" not found.`);
+				}
+			}
+		}
 
-        // Find the file within the folder structure
-        let fileLocation = findFile(targetFolder, fileId);
+		// Find the file within the folder structure
+		let fileLocation = findFile(targetFolder, fileId);
 
-        if (fileLocation) {
-            let fileToUpdate = fileLocation.parent[fileLocation.key];
-            fileToUpdate.metadata = newData.metadata !== undefined ? JSON.stringify(newData.metadata) : fileToUpdate.metadata;
-            fileToUpdate.content = newData.content !== undefined ? newData.content : fileToUpdate.content;
-            fileToUpdate.fileName = newData.fileName !== undefined ? newData.fileName : fileLocation.key;
-            fileToUpdate.type = newData.type !== undefined ? newData.type : fileToUpdate.type;
+		if (fileLocation) {
+			let fileToUpdate = fileLocation.parent[fileLocation.key];
+			fileToUpdate.metadata = newData.metadata !== undefined ? JSON.stringify(newData.metadata) : fileToUpdate.metadata;
+			fileToUpdate.content = newData.content !== undefined ? newData.content : fileToUpdate.content;
+			fileToUpdate.fileName = newData.fileName !== undefined ? newData.fileName : fileLocation.key;
+			fileToUpdate.type = newData.type !== undefined ? newData.type : fileToUpdate.type;
 
-            // If the file name has changed, update the key in the folder
-            if (newData.fileName !== undefined && newData.fileName !== fileLocation.key) {
-                fileLocation.parent[newData.fileName] = fileToUpdate;
-                delete fileLocation.parent[fileLocation.key];
-            }
+			// If the file name has changed, update the key in the folder
+			if (newData.fileName !== undefined && newData.fileName !== fileLocation.key) {
+				fileLocation.parent[newData.fileName] = fileToUpdate;
+				delete fileLocation.parent[fileLocation.key];
+			}
 
-            await setdb('trojencat', 'rom', memory);
-            console.log(`File "${fileToUpdate.fileName}" has been updated.`);
-        } else {
-            console.log(`File with ID "${fileId}" not found in "${folderName}". Creating a new one...`);
-            targetFolder[newData.fileName || `NewFile_${fileId}`] = {
-                id: fileId,
-                metadata: newData.metadata ? JSON.stringify(newData.metadata) : '',
-                content: newData.content || '',
-                type: newData.type || ''
-            };
-            await setdb('trojencat', 'rom', memory);
-        }
-    } catch (error) {
-        console.error("Error updating file:", error);
-    }
+			await setdb('trojencat', 'rom', memory);
+			console.log(`File "${fileToUpdate.fileName}" has been updated.`);
+		} else {
+			console.log(`File with ID "${fileId}" not found in "${folderName}". Creating a new one...`);
+			targetFolder[newData.fileName || `NewFile_${fileId}`] = {
+				id: fileId,
+				metadata: newData.metadata ? JSON.stringify(newData.metadata) : '',
+				content: newData.content || '',
+				type: newData.type || ''
+			};
+			await setdb('trojencat', 'rom', memory);
+		}
+	} catch (error) {
+		console.error("Error updating file:", error);
+	}
 }
 
 async function getFileById(id) {
 	await updateMemoryData();
-    function searchFolder(folder) {
-        for (let key in folder) {
-            if (typeof folder[key] === 'object' && folder[key] !== null) {
-                if (folder[key].id === id) {
-                    return {
-                        fileName: key,
-                        id: folder[key].id,
-                        content: folder[key].content,
-                        metadata: folder[key].metadata
-                    };
-                } else if (key.endsWith('/')) {
-                    const result = searchFolder(folder[key]);
-                    if (result) {
-                        return result;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-    
-    const result = searchFolder(memory);
-    return result;
+	function searchFolder(folder) {
+		for (let key in folder) {
+			if (typeof folder[key] === 'object' && folder[key] !== null) {
+				if (folder[key].id === id) {
+					return {
+						fileName: key,
+						id: folder[key].id,
+						content: folder[key].content,
+						metadata: folder[key].metadata
+					};
+				} else if (key.endsWith('/')) {
+					const result = searchFolder(folder[key]);
+					if (result) {
+						return result;
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	const result = searchFolder(memory);
+	return result;
 }
 
 
@@ -1252,29 +1222,29 @@ makedialogclosable('appdmod')
 async function getFileNamesByFolder(folderName) {
 	await updateMemoryData();
 	try {
-        await updateMemoryData()
-        const filesInFolder = [];
+		await updateMemoryData()
+		const filesInFolder = [];
 
-        for (const key in memory) {
-            if (key === folderName || key.startsWith(folderName)) {
-                const isFolder = key.endsWith('/');
-                if (isFolder) {
-                    const folder = memory[key];
-                    for (const fileName in folder) {
-                        if (!fileName.endsWith('/')) {
-                            const file = folder[fileName];
-                            filesInFolder.push({ id: file.id, name: fileName });
-                        }
-                    }
-                }
-            }
-        }
+		for (const key in memory) {
+			if (key === folderName || key.startsWith(folderName)) {
+				const isFolder = key.endsWith('/');
+				if (isFolder) {
+					const folder = memory[key];
+					for (const fileName in folder) {
+						if (!fileName.endsWith('/')) {
+							const file = folder[fileName];
+							filesInFolder.push({ id: file.id, name: fileName });
+						}
+					}
+				}
+			}
+		}
 
-        return filesInFolder;
-    } catch (error) {
-        console.error("Error fetching data:", error);
-        return null;
-    }
+		return filesInFolder;
+	} catch (error) {
+		console.error("Error fetching data:", error);
+		return null;
+	}
 }
 
 function justConfirm(title, message, modal) {
@@ -1383,13 +1353,13 @@ async function loadtaskspanel() {
 	} else {
 		appbarelement.style.display = "flex"
 	}
-	x.forEach(async function(app, index) {
+	x.forEach(async function (app, index) {
 		console.log("she's here: " + app)
 		// Create a div element for the app shortcut
 		var appShortcutDiv = document.createElement("biv");
 		appShortcutDiv.className = "app-shortcut tooltip adock sizableuielement";
 
-		appShortcutDiv.addEventListener("click", function() {
+		appShortcutDiv.addEventListener("click", function () {
 			putwinontop('window' + wid[index]);
 			console.log(gid("window" + wid[index]))
 			winds[app + wid[index]] = Number(gid("window" + wid[index]).style.zIndex);
@@ -1473,71 +1443,71 @@ async function makewall(deid) {
 }
 
 async function remfile(ID) {
-    try {
-        await updateMemoryData();
-        
-        function removeFileFromFolder(folder) {
-            for (const [name, content] of Object.entries(folder)) {
-                if (name.endsWith('/')) {
-                    if (removeFileFromFolder(content)) return true;
-                } else if (content.id === ID) {
-                    delete folder[name];
-                    console.log("The file has been eliminated.");
-                    return true;
-                }
-            }
-            return false;
-        }
-        
-        let fileRemoved = removeFileFromFolder(memory);
+	try {
+		await updateMemoryData();
 
-        if (!fileRemoved) {
-            console.error(`File with ID "${ID}" not found.`);
-        } else {
-            await setdb('trojencat', 'rom', memory);
-        }
-    } catch (error) {
-        console.error("Error fetching or updating data:", error);
-    }
+		function removeFileFromFolder(folder) {
+			for (const [name, content] of Object.entries(folder)) {
+				if (name.endsWith('/')) {
+					if (removeFileFromFolder(content)) return true;
+				} else if (content.id === ID) {
+					delete folder[name];
+					console.log("The file has been eliminated.");
+					return true;
+				}
+			}
+			return false;
+		}
+
+		let fileRemoved = removeFileFromFolder(memory);
+
+		if (!fileRemoved) {
+			console.error(`File with ID "${ID}" not found.`);
+		} else {
+			await setdb('trojencat', 'rom', memory);
+		}
+	} catch (error) {
+		console.error("Error fetching or updating data:", error);
+	}
 }
 
 async function remfolder(folderPath) {
-    try {
-        await updateMemoryData()
-        
-        // Split the folderPath into parts
-        let parts = folderPath.split('/').filter(part => part);
-        let current = memory;
-        let parent = null;
-        let key = null;
-        
-        // Traverse the path to find the folder
-        for (let i = 0; i < parts.length; i++) {
-            let part = parts[i] + '/';
-            if (current.hasOwnProperty(part)) {
-                parent = current;
-                key = part;
-                current = current[part];
-            } else {
-                console.error(`Folder "${folderPath}" not found.`);
-                return;
-            }
-        }
+	try {
+		await updateMemoryData()
 
-        // Remove only the specified subfolder and its contents
-        if (parent && key) {
-            delete parent[key];
-            console.log(`Folder "${folderPath}" and its contents successfully removed.`);
-        } else {
-            console.error(`Unable to delete folder "${folderPath}".`);
-            return;
-        }
+		// Split the folderPath into parts
+		let parts = folderPath.split('/').filter(part => part);
+		let current = memory;
+		let parent = null;
+		let key = null;
 
-        // Update the memory database
-        await setdb('trojencat', 'rom', memory);
-    } catch (error) {
-        console.error("Error removing folder:", error);
-    }
+		// Traverse the path to find the folder
+		for (let i = 0; i < parts.length; i++) {
+			let part = parts[i] + '/';
+			if (current.hasOwnProperty(part)) {
+				parent = current;
+				key = part;
+				current = current[part];
+			} else {
+				console.error(`Folder "${folderPath}" not found.`);
+				return;
+			}
+		}
+
+		// Remove only the specified subfolder and its contents
+		if (parent && key) {
+			delete parent[key];
+			console.log(`Folder "${folderPath}" and its contents successfully removed.`);
+		} else {
+			console.error(`Unable to delete folder "${folderPath}".`);
+			return;
+		}
+
+		// Update the memory database
+		await setdb('trojencat', 'rom', memory);
+	} catch (error) {
+		console.error("Error removing folder:", error);
+	}
 }
 
 
@@ -1641,110 +1611,110 @@ function getfourthdimension() {
 }
 
 async function prepareArrayToSearch() {
-    let arrayToSearch = [];
-    const folderstosearch = await getFolderNames();
-    
-    for (const [index, item] of folderstosearch.entries()) {
-        const x = await getFileNamesByFolder(item);
-        arrayToSearch = arrayToSearch.concat(x);
-    }
-    
-    fileslist = arrayToSearch;
+	let arrayToSearch = [];
+	const folderstosearch = await getFolderNames();
+
+	for (const [index, item] of folderstosearch.entries()) {
+		const x = await getFileNamesByFolder(item);
+		arrayToSearch = arrayToSearch.concat(x);
+	}
+
+	fileslist = arrayToSearch;
 }
 
 // Function to handle the search logic
 async function strtappse(event) {
-    if (fileslist.length === 0) {
-        await prepareArrayToSearch();
-    }
-    
-    const searchValue = gid("strtsear").value.toLowerCase();
-    if (searchValue.length == 0) {
-        return;
-    }
+	if (fileslist.length === 0) {
+		await prepareArrayToSearch();
+	}
 
-    const abracadra = await getSetting("smartsearch");
+	const searchValue = gid("strtsear").value.toLowerCase();
+	if (searchValue.length == 0) {
+		return;
+	}
+
+	const abracadra = await getSetting("smartsearch");
 	console.log(abracadra)
-    
-    if (event.key === "Enter") {
-        event.preventDefault();
-        if (searchValue == "i love nova") {
-            gid("searchwindow").close();
-            notify("hmm", "you're really goofy...", "Nova just replied you:");
-            really = true;
-        }
 
-        let maxSimilarity = 0.5;
-        let appToOpen = null;
+	if (event.key === "Enter") {
+		event.preventDefault();
+		if (searchValue == "i love nova") {
+			gid("searchwindow").close();
+			notify("hmm", "you're really goofy...", "Nova just replied you:");
+			really = true;
+		}
 
-        fileslist.forEach(item => {
-            const itemName = item.name.toLowerCase();
-            if (!abracadra) {
-                if (itemName.startsWith(searchValue)) {
-                    appToOpen = item;
-                    return false;
-                }
-            } else {
-                const similarity = calculateSimilarity(itemName, searchValue);
-                if (similarity > maxSimilarity) {
-                    maxSimilarity = similarity;
-                    appToOpen = item;
-                }
-            }
-        });
+		let maxSimilarity = 0.5;
+		let appToOpen = null;
 
-        if (appToOpen) {
-            openfile(appToOpen.id);
-        }
-        return;
-    }
+		fileslist.forEach(item => {
+			const itemName = item.name.toLowerCase();
+			if (!abracadra) {
+				if (itemName.startsWith(searchValue)) {
+					appToOpen = item;
+					return false;
+				}
+			} else {
+				const similarity = calculateSimilarity(itemName, searchValue);
+				if (similarity > maxSimilarity) {
+					maxSimilarity = similarity;
+					appToOpen = item;
+				}
+			}
+		});
 
-    gid("strtappsugs").innerHTML = "";
-    let elements = 0;
-    const itemsWithSimilarity = [];
+		if (appToOpen) {
+			openfile(appToOpen.id);
+		}
+		return;
+	}
 
-    fileslist.forEach(item => {
-        const itemName = item.name.toLowerCase();
-        if (!abracadra) {
-            if (itemName.startsWith(searchValue)) {
-                itemsWithSimilarity.push({ item, similarity: 1 });
-            }
-        } else {
-            const similarity = calculateSimilarity(itemName, searchValue);
-            if (similarity >= 0.2) {
-                itemsWithSimilarity.push({ item, similarity });
-            }
-        }
-    });
+	gid("strtappsugs").innerHTML = "";
+	let elements = 0;
+	const itemsWithSimilarity = [];
 
-    itemsWithSimilarity.sort((a, b) => b.similarity - a.similarity);
+	fileslist.forEach(item => {
+		const itemName = item.name.toLowerCase();
+		if (!abracadra) {
+			if (itemName.startsWith(searchValue)) {
+				itemsWithSimilarity.push({ item, similarity: 1 });
+			}
+		} else {
+			const similarity = calculateSimilarity(itemName, searchValue);
+			if (similarity >= 0.2) {
+				itemsWithSimilarity.push({ item, similarity });
+			}
+		}
+	});
 
-    let mostRelevantItem;
-    itemsWithSimilarity.forEach((entry, index) => {
-        const { item } = entry;
+	itemsWithSimilarity.sort((a, b) => b.similarity - a.similarity);
 
-        if (index === 0) {
-            mostRelevantItem = item;
-        }
+	let mostRelevantItem;
+	itemsWithSimilarity.forEach((entry, index) => {
+		const { item } = entry;
 
-        const newElement = document.createElement("div");
-        newElement.innerHTML = "<div>" + ((appicns[item.name] != undefined) ? appicns[item.name] : defaultAppIcon) + " " + item.name + "</div>" + `<span class="material-icons" onclick="openapp('${item.name}', '${item.id}')">arrow_outward</span>`;
-        gid("strtappsugs").appendChild(newElement);
-        elements++;
-    });
+		if (index === 0) {
+			mostRelevantItem = item;
+		}
 
-    if (elements > 0) {
-		
-	document.getElementsByClassName("previewsside")[0].style.display = "flex";
-        const appfound = mostRelevantItem;
-        gid('seprw-icon').innerHTML = (appicns[appfound.name] != undefined) ? appicns[appfound.name] : defaultAppIcon;
-        gid('seprw-appname').innerText = appfound.name;
-        gid('seprw-openb').onclick = function() {
-            openfile(appfound.id);
-        };
-    }
+		const newElement = document.createElement("div");
+		newElement.innerHTML = "<div>" + ((appicns[item.name] != undefined) ? appicns[item.name] : defaultAppIcon) + " " + item.name + "</div>" + `<span class="material-icons" onclick="openapp('${item.name}', '${item.id}')">arrow_outward</span>`;
+		gid("strtappsugs").appendChild(newElement);
+		elements++;
+	});
 
-    gid("strtappsugs").style.display = elements > 0 ? "block" : "none";
+	if (elements > 0) {
+
+		document.getElementsByClassName("previewsside")[0].style.display = "flex";
+		const appfound = mostRelevantItem;
+		gid('seprw-icon').innerHTML = (appicns[appfound.name] != undefined) ? appicns[appfound.name] : defaultAppIcon;
+		gid('seprw-appname').innerText = appfound.name;
+		gid('seprw-openb').onclick = function () {
+			openfile(appfound.id);
+		};
+	}
+
+	gid("strtappsugs").style.display = elements > 0 ? "block" : "none";
 }
 
 function calculateSimilarity(string1, string2) {
@@ -1769,20 +1739,20 @@ function calculateSimilarity(string1, string2) {
 
 async function getFolderNames() {
 	try {
-        await updateMemoryData()
-        const folderNames = [];
+		await updateMemoryData()
+		const folderNames = [];
 
-        for (const key in memory) {
-            if (key.endsWith('/')) {
-                folderNames.push(key);
-            }
-        }
+		for (const key in memory) {
+			if (key.endsWith('/')) {
+				folderNames.push(key);
+			}
+		}
 
-        return folderNames;
-    } catch (error) {
-        console.error("Error fetching data:", error);
-        return null;
-    }
+		return folderNames;
+	} catch (error) {
+		console.error("Error fetching data:", error);
+		return null;
+	}
 }
 
 function containsSmallSVGElement(str) {
@@ -1873,18 +1843,18 @@ async function openfile(x) {
 
 		if (mm.type == "app") {
 			await openapp(mm.fileName, unid);
-		} else if (getbaseflty(mm.type) == "image"  || getbaseflty(mm.type) == "video"  || getbaseflty(mm.type) == "music" ) {
+		} else if (getbaseflty(mm.type) == "image" || getbaseflty(mm.type) == "video" || getbaseflty(mm.type) == "music") {
 			openlaunchprotocol("media", { "lclfile": unid, "shrinkray": true });
 		} else {
-			if (mm.type == "html" ) {
+			if (mm.type == "html") {
 				openlaunchprotocol("studio", { "lclfile": unid });
-			} else if (mm.type == "osl" ) {
+			} else if (mm.type == "osl") {
 				runAsOSL(mm.content)
-			} else if (mm.type == "lnk" ) {
+			} else if (mm.type == "lnk") {
 				console.log("lnk")
 				let z = JSON.parse(mm.content);
 				openfile(z.open)
-			} else if (mm.type == "wasm" ) {
+			} else if (mm.type == "wasm") {
 				runAsWasm(mm.content)
 			} else {
 				openlaunchprotocol("text", { "lclfile": unid });
@@ -1897,10 +1867,10 @@ async function openfile(x) {
 }
 
 async function dewallblur() {
-		if (!await getSetting("focusMode")) {
-			gid("bgimage").style.filter = "blur(0px)";
-			return;
-		}
+	if (!await getSetting("focusMode")) {
+		gid("bgimage").style.filter = "blur(0px)";
+		return;
+	}
 	if (nowapp != "" && nowapp != undefined) {
 		gid("bgimage").style.filter = "blur(5px)";
 	} else {
@@ -1909,64 +1879,64 @@ async function dewallblur() {
 }
 
 async function checksnapping(x, event) {
-    if (await getSetting("wsnapping") != true) {
-        return;
-    }
-    var cursorX = event.clientX;
-    var cursorY = event.clientY;
+	if (await getSetting("wsnapping") != true) {
+		return;
+	}
+	var cursorX = event.clientX;
+	var cursorY = event.clientY;
 
-    var viewportWidthInPixels = window.innerWidth;
-    var viewportHeightInPixels = window.innerHeight;
+	var viewportWidthInPixels = window.innerWidth;
+	var viewportHeightInPixels = window.innerHeight;
 
-    var VWInPixels = (3 * viewportWidthInPixels) / 100;
-    var VHInPixels = (3 * viewportHeightInPixels) / 100;
+	var VWInPixels = (3 * viewportWidthInPixels) / 100;
+	var VHInPixels = (3 * viewportHeightInPixels) / 100;
 
-    if (fulsapp) {
-        x.classList.add("snapping");
-        x.getElementsByClassName("flbtn")[0].innerHTML = "open_in_full";
-        x.style = 'left: calc(50vw - 33.5vw); top: calc(50vh - 35vh); width: 65vw; height: 70vh; z-index: 0;';
-        fulsapp = false;
-        setTimeout(() => {
-            x.classList.remove("snapping");
-        }, 1000);
-    }
+	if (fulsapp) {
+		x.classList.add("snapping");
+		x.getElementsByClassName("flbtn")[0].innerHTML = "open_in_full";
+		x.style = 'left: calc(50vw - 33.5vw); top: calc(50vh - 35vh); width: 65vw; height: 70vh; z-index: 0;';
+		fulsapp = false;
+		setTimeout(() => {
+			x.classList.remove("snapping");
+		}, 1000);
+	}
 
-    if (cursorY < VHInPixels || (viewportHeightInPixels - cursorY) < VHInPixels) {
-        x.classList.add("snapping");
-        x.style.width = "calc(100% - 0px)";
-        x.style.height = "calc(100% - 60px)";
-        x.style.top = "0";
-        x.style.right = "0";
-        x.style.left = "0";
+	if (cursorY < VHInPixels || (viewportHeightInPixels - cursorY) < VHInPixels) {
+		x.classList.add("snapping");
+		x.style.width = "calc(100% - 0px)";
+		x.style.height = "calc(100% - 60px)";
+		x.style.top = "0";
+		x.style.right = "0";
+		x.style.left = "0";
 
-        fulsapp = true;
-        x.getElementsByClassName("flbtn")[0].innerHTML = "close_fullscreen";
-        setTimeout(() => {
-            x.classList.remove("snapping");
-        }, 1000);
-    }
+		fulsapp = true;
+		x.getElementsByClassName("flbtn")[0].innerHTML = "close_fullscreen";
+		setTimeout(() => {
+			x.classList.remove("snapping");
+		}, 1000);
+	}
 
-    // left
-    if (cursorX < VWInPixels) {
-        x.classList.add("snapping");
-        x.style = "left: 0; top: 0; width: calc(50% - 0px); height: calc(100% - 50px);";
-        fulsapp = true;
-        x.getElementsByClassName("flbtn")[0].innerHTML = "open_in_full";
-        setTimeout(() => {
-            x.classList.remove("snapping");
-        }, 1000);
-    }
+	// left
+	if (cursorX < VWInPixels) {
+		x.classList.add("snapping");
+		x.style = "left: 0; top: 0; width: calc(50% - 0px); height: calc(100% - 50px);";
+		fulsapp = true;
+		x.getElementsByClassName("flbtn")[0].innerHTML = "open_in_full";
+		setTimeout(() => {
+			x.classList.remove("snapping");
+		}, 1000);
+	}
 
-    // right
-    if ((viewportWidthInPixels - cursorX) < VWInPixels) {
-        x.classList.add("snapping");
-        x.style = "right: 0; top: 0; width: calc(50% - 0px); height: calc(100% - 50px);";
-        fulsapp = true;
-        x.getElementsByClassName("flbtn")[0].innerHTML = "open_in_full";
-        setTimeout(() => {
-            x.classList.remove("snapping");
-        }, 1000);
-    }
+	// right
+	if ((viewportWidthInPixels - cursorX) < VWInPixels) {
+		x.classList.add("snapping");
+		x.style = "right: 0; top: 0; width: calc(50% - 0px); height: calc(100% - 50px);";
+		fulsapp = true;
+		x.getElementsByClassName("flbtn")[0].innerHTML = "open_in_full";
+		setTimeout(() => {
+			x.classList.remove("snapping");
+		}, 1000);
+	}
 }
 
 let countdown, countdown2;
@@ -2059,7 +2029,7 @@ function notify(title, description, appname) {
 		// Set the zIndex
 		document.getElementById("notification").style.zIndex = maxWindValue + 1;
 		document.getElementById("notification").style.display = "block";
-		setTimeout(function() {
+		setTimeout(function () {
 			document.getElementById("notification").style.display = "none";
 		}, 5000);
 	} else {
@@ -2101,14 +2071,14 @@ function runAsWasm(content) {
 		}
 	`;
 	div.appendChild(script);
-	
+
 
 	openwindow("Nova Wasm Runner", div.innerHTML);
 }
 
 
 // hotkeys
-document.addEventListener('keydown', function(event) {
+document.addEventListener('keydown', function (event) {
 	if (event.ctrlKey && (event.key === 'f' || event.keyCode === 70)) {
 		event.preventDefault();
 		openapp('files', 1);
@@ -2120,7 +2090,7 @@ document.addEventListener('keydown', function(event) {
 });
 
 
-document.addEventListener('keydown', function(event) {
+document.addEventListener('keydown', function (event) {
 	if (event.key === 'Escape') {
 		var appdmod = document.getElementById('appdmod');
 		if (appdmod && appdmod.open) {
@@ -2129,7 +2099,7 @@ document.addEventListener('keydown', function(event) {
 	}
 });
 
-document.addEventListener('keydown', function(event) {
+document.addEventListener('keydown', function (event) {
 	if (event.shiftKey && event.key === 'Tab') {
 		event.preventDefault();
 		opensearchpanel();
@@ -2154,12 +2124,12 @@ async function genTaskBar() {
 			}));
 
 			x = x.filter(item => item);
-			
+
 		}
 		let index = 0;
-		x.forEach(async function(app, index) {
+		x.forEach(async function (app, index) {
 			index++
-			gid("struploadtasnr").innerHTML = "Loading TaskBar... ("+x.length/index*100+"%)"
+			gid("struploadtasnr").innerHTML = "Loading TaskBar... (" + x.length / index * 100 + "%)"
 			var islnk = false;
 			// Create a div element for the app shortcut
 			var appShortcutDiv = document.createElement("biv");
@@ -2173,45 +2143,23 @@ async function genTaskBar() {
 			}
 
 			appShortcutDiv.setAttribute("onclick", "openfile('" + app.id + "')");
-			// Create a span element for the app icon
 			var iconSpan = document.createElement("span");
 
-			// Fetch the content asynchronously using getFileById
-			const content = app;
-
+		if (!appicns[app.fileName]) {
 			// Unshrink the content
-			const unshrunkContent = unshrinkbsf(content.content);
+			const unshrunkContent = unshrinkbsf(app.content);
 
-			// Create a temporary div to parse the content
-			const tempElement = document.createElement('div');
-			tempElement.innerHTML = unshrunkContent;
+			// Use the getAppIcon function to fetch the icon
+			const icon = getAppIcon(unshrunkContent, app.fileName);
 
-			// Get all meta tags
-			const metaTags = tempElement.getElementsByTagName('meta');
-
-			// Create an object to store meta tag data
-			let metaTagData = null;
-
-			// Iterate through meta tags and extract data
-			Array.from(metaTags).forEach(tag => {
-				const tagName = tag.getAttribute('name');
-				const tagContent = tag.getAttribute('content');
-				if (tagName === 'nova-icon' && tagContent) {
-					metaTagData = tagContent;
-				}
-			});
-
-			if (typeof metaTagData === "string") {
-				if (containsSmallSVGElement(metaTagData)) {
-					iconSpan.innerHTML = metaTagData;
-				} else {
-
-					iconSpan.innerHTML = defaultAppIcon;
-				}
+			if (icon) {
+				iconSpan.innerHTML = icon;
 			} else {
 				iconSpan.innerHTML = defaultAppIcon;
 			}
-
+		} else {
+			iconSpan.innerHTML = appicns[app.fileName];
+		}
 
 			var tooltisp = document.createElement("span");
 			tooltisp.className = "tooltiptext";
@@ -2229,7 +2177,7 @@ async function genTaskBar() {
 makedialogclosable('searchwindow');
 prepareArrayToSearch()
 async function opensearchpanel() {
-	gid('searchwindow').showModal() 
+	gid('searchwindow').showModal()
 	if (await getSetting("smartsearch")) {
 		gid('searchiconthingy').style = `background: linear-gradient(-34deg, #79afff, #f66eff);opacity: 1; color: white;padding: 0.1rem 0.3rem; margin: 0.3rem; border-radius: 0.5rem;aspect-ratio: 1 / 1;display: grid;cursor: default; margin-right: 0.5rem;box-shadow: 0 0 6px inset #ffffff6b;`
 	} else {
@@ -2255,54 +2203,54 @@ function mtpetxt(str) {
 	try {
 		const parts = str.split('.');
 		return parts.length > 1 ? parts.pop() : '';
-	}catch(err) {
+	} catch (err) {
 		console.error(err)
 	}
 }
 
 function ptypext(str) {
-			try {
-				const parts = str.split('.');
-				return parts.length > 1 ? parts.pop() : '';
-			}catch(err) {
-				console.log(err)
-			}
-		}
+	try {
+		const parts = str.split('.');
+		return parts.length > 1 ? parts.pop() : '';
+	} catch (err) {
+		console.log(err)
+	}
+}
 
-		function getbaseflty(ext) {
-			if (mtpetxt(ext) != '') {
-				ext = mtpetxt(ext);
-			}
-    switch (ext) {
-        case 'mp3':
-        case 'mpeg':
-        case 'wav':
-        case 'flac':
-            return 'music';
-        
-        case 'mp4':
-        case 'avi':
-        case 'mov':
-        case 'mkv':
-            return 'video';
-        
-        case 'jpg':
-        case 'jpeg':
-        case 'png':
-        case 'gif':
-        case 'bmp':
+function getbaseflty(ext) {
+	if (mtpetxt(ext) != '') {
+		ext = mtpetxt(ext);
+	}
+	switch (ext) {
+		case 'mp3':
+		case 'mpeg':
+		case 'wav':
+		case 'flac':
+			return 'music';
+
+		case 'mp4':
+		case 'avi':
+		case 'mov':
+		case 'mkv':
+			return 'video';
+
+		case 'jpg':
+		case 'jpeg':
+		case 'png':
+		case 'gif':
+		case 'bmp':
 		case 'webp':
-            return 'image';
-        
-        case 'txt':
-        case 'doc':
-        case 'docx':
-        case 'pdf':
-        case 'html':
-            return 'document';
+			return 'image';
+
+		case 'txt':
+		case 'doc':
+		case 'docx':
+		case 'pdf':
+		case 'html':
+			return 'document';
 
 		case 'app':
-            return 'app';
+			return 'app';
 
 		case 'cpp':
 		case 'py':
@@ -2310,26 +2258,26 @@ function ptypext(str) {
 		case 'js':
 		case 'json':
 			return 'code'
-        
+
 		case 'html':
 			return 'webpage'
 
-        default:
-            return ext;
-    }
+		default:
+			return ext;
+	}
 }
 
 function basename(str) {
-    try {
-        const parts = str.split('.');
-        if (parts.length > 1) {
-            parts.pop(); // Remove the extension
-            return parts.join('.'); // Rejoin the remaining parts
-        }
-        return str; // No extension present
-    } catch (err) {
-        console.log(err);
-    }
+	try {
+		const parts = str.split('.');
+		if (parts.length > 1) {
+			parts.pop(); // Remove the extension
+			return parts.join('.'); // Rejoin the remaining parts
+		}
+		return str; // No extension present
+	} catch (err) {
+		console.log(err);
+	}
 }
 
 function closeallwindows() {
@@ -2352,7 +2300,7 @@ async function checkifpassright() {
 	} else {
 		gid("loginform1").classList.add("thatsnotrightcls");
 		gid("loginform1").value = '';
-		setTimeout(function() {
+		setTimeout(function () {
 			gid("loginform1").classList.remove("thatsnotrightcls");
 		}, 1000)
 	}

@@ -1048,6 +1048,27 @@ nav info {
 	transition: .2s;
 }
 
+#loginmod small {
+	display: block;
+    margin-top: 2rem;
+	cursor: pointer;
+	opacity: 0.7;
+}
+
+#loginmod .backbtnuserspg {
+	    display: flex;
+    align-items: center;
+    margin-top: 2rem;
+    background: #ffffff1a;
+    color: white;
+    border-radius: 2rem;
+    padding: 0.3rem 0.9rem;
+    padding-left: 5px;
+    border: 1px solid #414141;
+    position: fixed;
+    bottom: 10vh;
+}
+
 .logincard button material-icons {
 	display: block;
 	text-align: center;
@@ -1898,5 +1919,5 @@ background: #5c8dab;
 
   .thatsnotrightcls {
 	animation: thatsnotright .2s 3 ease-out;
-	background-color: rgb(255, 185, 185);
+	background: rgb(255, 129, 129);
   }
