@@ -317,37 +317,46 @@ async function changePassword(oldPassword, newPassword) {
 
 function erdbsfull() {
     localStorage.removeItem('todo');
-	localStorage.removeItem('sets');
-	localStorage.removeItem('updver');
+    localStorage.removeItem('sets');
+    localStorage.removeItem('updver');
 
-	let indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
-	let dbName = 'trojencat';
-	let storeName = CurrentUsername;
-	let keyToRemove = 'rom';
+    let indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
+    let dbName = 'trojencat';
+    let storeName = CurrentUsername;
+    let keyToRemove = 'rom';
 
-	let request = indexedDB.open(dbName);
+    try {
+        let request = indexedDB.open(dbName);
 
-	request.onsuccess = function (event) {
-		let db = event.target.result;
+        request.onsuccess = function (event) {
+            let db = event.target.result;
 
-		let transaction = db.transaction(storeName, 'readwrite');
-		let objectStore = transaction.objectStore(storeName);
+            if (db.objectStoreNames.contains(storeName)) {
+                let transaction = db.transaction(storeName, 'readwrite');
+                let objectStore = transaction.objectStore(storeName);
 
-		let deleteRequest = objectStore.delete(keyToRemove);
+                let deleteRequest = objectStore.delete(keyToRemove);
 
-		deleteRequest.onsuccess = function (event) {
-			console.log("Key 'rom' removed successfully");
+                deleteRequest.onsuccess = function (event) {
+                    console.log("Key 'rom' removed successfully");
+                    localStorage.removeItem("qsets");
+                    location.reload();
+                };
 
-			localStorage.removeItem("qsets")
-			location.reload()
-		};
+                deleteRequest.onerror = function (event) {
+                    console.error("Error removing key 'rom':", event.target.errorCode);
+                };
+            } else {
+                console.warn(`Object store '${storeName}' not found`);
+                localStorage.removeItem("qsets");
+                location.reload();
+            }
+        };
 
-		deleteRequest.onerror = function (event) {
-			console.error("Error removing key 'rom':", event.target.errorCode);
-		};
-	};
-
-	request.onerror = function (event) {
-		console.error("Error opening database:", event.target.errorCode);
-	};
+        request.onerror = function (event) {
+            console.error("Error opening database:", event.target.errorCode);
+        };
+    } catch (error) {
+        console.log(error);
+    }
 }
