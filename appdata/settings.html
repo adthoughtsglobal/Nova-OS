@@ -598,8 +598,8 @@
 			<button class="tablinks" onclick="openCity(event, 'perform'); updateFPS()"><i
 					class="material-icons">speed</i>
 				Performance</button>
-			<button class="tablinks" onclick="openCity(event, 'tbar')"><i class="material-icons">task</i>
-				Taskbar</button>
+			<button class="tablinks" onclick="openCity(event, 'password')"><i class="material-icons">task</i>
+				Password</button>
 			<button class="tablinks" onclick="openCity(event, 'exp'); defs(); gwall() "><i
 					class="material-icons">monitor</i>
 				Display</button>
@@ -1175,138 +1175,49 @@
 			</segr>
 		</div>
 
-		<div id="tbar" class="tabcontent">
-			<h1>TaskBar</h1>
-			<b>Apps Dock</b>
-			<p>Changes reset on rebooting Nova</p>
-			<script>
-				function updtsb(eve) {
-					let ele = eve.getElementsByClassName("theappname")[0].innerHTML;
-					console.log("ele: " + ele)
-				}
-			</script>
-			<div id="appdi">
-
-				<div class="appli" onclick="updtsb(this)">
-					<div class="checkbox-wrapper-46">
-						<input class="inp-cbx" id="cbx-fli" type="checkbox" disabled checked />
-						<label class="cbx" for="cbx-fli"><span>
-								<svg width="12px" height="10px" viewbox="0 0 12 10">
-									<polyline points="1.5 6 4.5 9 10.5 1"></polyline>
-								</svg></span><span class="theappname">Files</span>
-
-						</label>
-						<small style="margin-top: 5px;">Files cannot be removed.</small>
-					</div>
-				</div>
-				<div class="appli" onclick="updtsb(this)">
-					<div class="checkbox-wrapper-46">
-						<input class="inp-cbx" id="cbx-cam" type="checkbox" />
-						<label class="cbx" for="cbx-cam"><span>
-								<svg width="12px" height="10px" viewbox="0 0 12 10">
-									<polyline points="1.5 6 4.5 9 10.5 1"></polyline>
-								</svg></span><span class="theappname">Camera</span>
-						</label>
-					</div>
-				</div>
-				<div class="appli" onclick="updtsb(this)">
-					<div class="checkbox-wrapper-46">
-						<input class="inp-cbx" id="cbx-sets" type="checkbox" />
-						<label class="cbx" for="cbx-sets"><span>
-								<svg width="12px" height="10px" viewbox="0 0 12 10">
-									<polyline points="1.5 6 4.5 9 10.5 1"></polyline>
-								</svg></span><span class="theappname">Settings</span>
-						</label>
-					</div>
-				</div>
-				<div class="appli" onclick="updtsb(this)">
-					<div class="checkbox-wrapper-46">
-						<input class="inp-cbx" id="cbx-str" type="checkbox" />
-						<label class="cbx" for="cbx-str"><span>
-								<svg width="12px" height="10px" viewbox="0 0 12 10">
-									<polyline points="1.5 6 4.5 9 10.5 1"></polyline>
-								</svg></span><span class="theappname"> Store</span>
-						</label>
-					</div>
-				</div>
-
-				<!--
-				<div setting>
-					<div class="checkbox-wrapper-51">
-						<input type="checkbox" id="cbx-53" onclick="toggleatbr()" role="submit">
-						<label for="cbx-53" class="toggle">
-							<span>
-								<svg width="10px" height="10px" viewBox="0 0 10 10">
-									<path
-										d="M5,1 L5,1 C2.790861,1 1,2.790861 1,5 L1,5 C1,7.209139 2.790861,9 5,9 L5,9 C7.209139,9 9,7.209139 9,5 L9,5 C9,2.790861 7.209139,1 5,1 L5,9 L5,1 Z">
-									</path>
-								</svg>
-							</span>
-						</label>
-					</div>
-					<b>In App TaskBar</b>
-					<p>Show TaskBar while on an app fullscreen</p>
-
-				</div>
-				<script>
-					if (localStorage.getItem("tsets")) {
-							if (JSON.parse(localStorage.getItem("tsets")).tbsh) {
-					document.getElementById("cbx-53").checked = false;
-							} else {
-								document.getElementById("cbx-53").checked = true;
-							}
-						}
-					function toggleatbr() {
-						var tbsh = localStorage.getItem("tsets.tbsh");
-
-						if (document.getElementById("cbx-53").checked) {
-							document.getElementById("cbx-53").checked = true;
-							localStorage.setItem("tsets.tbsh", true);
-						} else {
-							document.getElementById("cbx-53").checked = false;
-							localStorage.setItem("tsets.tbsh", false);
-							window.parent.checktaskbar();
-						}
+		<div id="password" class="tabcontent">
+			<h1>Password</h1>
+			<segr>
+				<style>
+					#changpassthingy {
+						display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
 					}
-				</script>
--->
+					</style>
+			<div setting id="changpassthingy">
+				<b id="passstat"></b>
+				<button onclick="chstpass()">Continue</button>
 			</div>
-			<button onclick="sytb()">Save</button><br>
-
-
+		</segr>
 			<script>
-				function sytb() {
-					let tbtb = "";
-					const pref = `<div app-shortcut="" onclick="openapp('`
-					const suff = `</span>
-			</div>`
-					if (document.getElementById("cbx-fli").checked) {
-						tbtb += pref + `files', 1)">
-				<span ic="" class="material-icons">
-					folder` + suff
-					}
-					if (document.getElementById("cbx-cam").checked) {
-						tbtb += pref + `camera', 1)">
-						<span ic="" class="material-icons">
-							camera` + suff
-					}
-					if (document.getElementById("cbx-sets").checked) {
-						tbtb += pref + `settings', 1)">
-						<span ic="" class="material-icons">
-							settings` + suff
-					}
-					if (document.getElementById("cbx-str").checked) {
-						tbtb += pref + `store', 1)">
-						<span ic="" class="material-icons">
-							store` + suff
-					}
-					localStorage.setItem("sets", tbtb)
-					window.top.reloadTaskbar();
+				if (window.parent.password == 'nova') {
+					document.getElementById("passstat").innerHTML = "Set a password for your device:";
+				} else {
+					document.getElementById("passstat").innerHTML = "Change your password";
 				}
-
+				async function chstpass() {
+					var setpass = '';
+					if (window.parent.password == 'nova') {
+						setpass = await window.parent.ask("Set a password: ", "")
+					} else {
+						setpass = await window.parent.ask("Choose an another password: ", window.parent.password);
+						if (setpass == window.parent.password) {
+							window.parent.say("That is your current password. Choose a different one.", "failed")
+							return;
+						}
+					}
+					if (await window.parent.justConfirm("Are you sure?","All your data will be lost if you forget this password. Re-encrypt all your files with this one?")) {
+							await window.parent.changePassword(window.parent.password, setpass);
+							await window.parent.say("Click OK when you are ready to restart your OS.")
+							window.parent.location.reload()
+					} else {
+						return;
+					}
+				}
 			</script>
-
-
+			
 		</div>
 
 		<div id="battery" class="tabcontent">

@@ -1,20 +1,19 @@
 var databaseName = 'trojencat';
 var CurrentUsername = 'user1';
-var password = "uwu";
-var magicString = "adthoughtsglobal";
+var password = "nova";
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
-// Function to open or create an IndexedDB database
 async function openDB(databaseName, version) {
     return new Promise((resolve, reject) => {
         const request = indexedDB.open(databaseName, version);
 
-        request.onupgradeneeded = (event) => {
+        request.onupgradeneeded = async (event) => {
             const db = event.target.result;
             if (!db.objectStoreNames.contains(CurrentUsername)) {
-                db.createObjectStore(CurrentUsername, { keyPath: 'key' }); // keyPath for unique key
+                db.createObjectStore(CurrentUsername, { keyPath: 'key' });
                 console.log(`Object store '${CurrentUsername}' created.`);
+                await saveMagicStringInLocalStorage(password);
             }
         };
 
@@ -51,7 +50,7 @@ async function encryptData(key, data) {
     const encrypted = await window.crypto.subtle.encrypt(
         { name: "AES-GCM", iv },
         key,
-        encoder.encode(magicString + data)
+        encoder.encode(data)
     );
 
     return {
@@ -71,12 +70,7 @@ async function decryptData(key, encryptedData) {
             data
         );
 
-        const decryptedText = decoder.decode(decrypted);
-        if (decryptedText.startsWith(magicString)) {
-            return decryptedText.slice(magicString.length);
-        } else {
-            throw new Error("Incorrect password or corrupted data");
-        }
+        return decoder.decode(decrypted);
     } catch (error) {
         console.error("Incorrect password or corrupted data");
         throw error;
@@ -137,6 +131,36 @@ async function getdb(databaseName, key) {
         });
     } catch (error) {
         console.error("Error in getdb function:", error);
+    }
+}
+
+async function saveMagicStringInLocalStorage(password) {
+    const cryptoKey = await getKey(password);
+    const encryptedMagicString = await encryptData(cryptoKey, "magicString");
+
+    localStorage.setItem('magicString', JSON.stringify(encryptedMagicString));
+}
+
+async function checkPassword(password) {
+    const encryptedMagicString = JSON.parse(localStorage.getItem('magicString'));
+    if (!encryptedMagicString) {
+        console.error("Magic string not found in localStorage");
+        return false;
+    }
+
+    const cryptoKey = await getKey(password);
+    try {
+        const decryptedMagicString = await decryptData(cryptoKey, encryptedMagicString);
+        if (decryptedMagicString === "magicString") {
+            console.log("Password verified successfully");
+            return true;
+        } else {
+            console.error("Password verification failed: Data corrupted");
+            return false;
+        }
+    } catch (error) {
+        console.error("Password verification failed:", error.message);
+        return false;
     }
 }
 
@@ -253,39 +277,40 @@ async function remSetting(key) {
     }
 }
 
-async function checkPassword(password) {
-    try {
-        const db = await openDB(databaseName, 1);
-        const transaction = db.transaction([CurrentUsername], 'readonly');
-        const store = transaction.objectStore(CurrentUsername);
-        const request = store.get('rom');
-
-        const result = await new Promise((resolve, reject) => {
-            request.onsuccess = () => resolve(request.result);
-            request.onerror = () => reject(request.error);
-        });
-
-        if (result) {
-            console.log("Data found for key 'rom':", result);
-            const cryptoKey = await getKey(password);
-
-            try {
-                const decryptedValue = await decryptData(cryptoKey, result.value);
-                console.log("Decrypted value:", decryptedValue);
-                
-                if (decryptedValue) { // Assuming the presence of decryptedValue means correct password
-                    return true;
-                }
-            } catch (decryptionError) {
-                console.error("Decryption error:", decryptionError);
-                return false; // Decryption error indicates incorrect password
-            }
-        } else {
-            console.log("Data not found for key 'rom'.");
-            return false;
-        }
-    } catch (error) {
-        console.error("Error in checkPassword function:", error);
+async function changePassword(oldPassword, newPassword) {
+    if (!(await checkPassword(oldPassword))) {
+        console.error("Old password is incorrect");
         return false;
     }
+
+    const db = await openDB(databaseName, 1);
+    const store = db.transaction([CurrentUsername], 'readonly').objectStore(CurrentUsername);
+
+    const oldKey = await getKey(oldPassword);
+    const newKey = await getKey(newPassword);
+
+    try {
+        const record = await new Promise((resolve, reject) => {
+            const getRequest = store.get('rom');
+            getRequest.onsuccess = () => resolve(getRequest.result);
+            getRequest.onerror = () => reject(getRequest.error);
+        });
+
+        if (!record || !record.value) {
+            console.error("Failed to retrieve data for key: rom");
+            return false;
+        }
+
+        const decryptedValue = await decryptData(oldKey, record.value);
+        const encryptedValue = await encryptData(newKey, decryptedValue);
+        await setdb(databaseName, 'rom', encryptedValue);
+        
+    } catch (error) {
+        console.error("Failed to re-encrypt data for key: rom", error);
+        return false;
+    }
+
+    await saveMagicStringInLocalStorage(newPassword);
+    console.log("Password changed successfully");
+    return true;
 }

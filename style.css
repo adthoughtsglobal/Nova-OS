@@ -1045,6 +1045,7 @@ nav info {
     border: none;
     background: #ffffffc2;
     font-size: 0.8rem;
+	transition: .2s;
 }
 
 .logincard button material-icons {
@@ -1884,4 +1885,18 @@ background: #5c8dab;
 	100% {
 	  box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0);
 	}
+  }
+
+  @keyframes thatsnotright {
+	25% {
+		transform: translateX(-5px);
+	}
+	75% {
+		transform: translateX(5px);
+	}
+  }
+
+  .thatsnotrightcls {
+	animation: thatsnotright .2s 3 ease-out;
+	background-color: rgb(255, 185, 185);
   }

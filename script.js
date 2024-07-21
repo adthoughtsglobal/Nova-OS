@@ -1,6 +1,8 @@
 var batteryLevel, winds = {}, rp, flwint = true, memory, _nowapp, stx = gid("startuptx"), fulsapp = false, nowappdo, appsHistory = [], nowwindow, appicns = {}, dev = true, appfound = 'files', fileslist = [], qsetscache = {};
 var really = false;
 var novaFeaturedImage = `https://images.unsplash.com/photo-1716980197262-ce400709bf0d?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D`;
+
+document.getElementById("bgimage").src= novaFeaturedImage;
 var defAppsList = [
 	"camera",
 	"clock",
@@ -38,6 +40,17 @@ Object.defineProperty(window, 'nowapp', {
 	}
 });
 
+async function showloginmod() {
+	closeElementedis()
+	gid('loginmod').showModal();
+	gid('loginform1').addEventListener("keydown", async function(event) {
+		if (event.key === 'Enter') {
+			event.preventDefault();
+			await checkifpassright();
+		}
+	});
+}
+
 // Check if the database 'trojencat' exists
 getdb('trojencat', 'rom')
 	.then(async (result) => {
@@ -45,29 +58,11 @@ getdb('trojencat', 'rom')
 		try {
 			if (result !== null) {
 				memory = result;
-				async function fetchDataAndUpdate() {
-					let localupdatedataver = localStorage.getItem("updver");
-					let fetchupdatedata = await fetch("versions.json");
-
-					if (fetchupdatedata.ok) {
-						let fetchupdatedataver = (await fetchupdatedata.json()).osver;
-
-						if (localupdatedataver !== fetchupdatedataver) {
-							if (await justConfirm("Update default apps?", "Your default apps are old. Update them to access new features and fixes.")) {
-								await installdefaultapps();
-							} else {
-								say("You can always update app on settings app/Preferances")
-							}
-						}
-					} else {
-						console.error("Failed to fetch data from the server.");
-					}
-				}
-
-				fetchDataAndUpdate();
+				await showloginmod();
+				
 			} else {
 				await say(`<h2>Terms of service and License</h2><p>By using Nova OS, you agree to the <a href="https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use">Adthoughtsglobal Nova Terms of Use</a>. <be><small>We do not collect your personal information. <br>Read the terms clearly before use.</small>`);
-
+				await say(`<h2>Your default password</h2><p>The default password for ${CurrentUsername} is 'nova'. You can change this in settings.</p>`);
 				gid("startup").showModal();
 				stx.innerHTML = "Preparing memory"
 				// If the 'rom' key doesn't exist, assign a random array to the 'memory' list
@@ -104,13 +99,15 @@ getdb('trojencat', 'rom')
 
 	})
 	.then(() => {
-		startup()
+		
 	})
-	.catch((error) => {
+	.catch(async (error) => {
 		console.error('Error retrieving data from the database:', error);
+		await showloginmod()
 	});
 
 	async function startup() {
+		gid("edison").showModal();
 		console.log("INITIAL SETUP");
 		const start = performance.now();
 		try { qsetsRefresh(); } 
@@ -140,6 +137,26 @@ getdb('trojencat', 'rom')
 		const end = performance.now();
 
 console.log(`Execution time: ${end - start} milliseconds`);
+async function fetchDataAndUpdate() {
+	let localupdatedataver = localStorage.getItem("updver");
+	let fetchupdatedata = await fetch("versions.json");
+
+	if (fetchupdatedata.ok) {
+		let fetchupdatedataver = (await fetchupdatedata.json()).osver;
+
+		if (localupdatedataver !== fetchupdatedataver) {
+			if (await justConfirm("Update default apps?", "Your default apps are old. Update them to access new features and fixes.")) {
+				await installdefaultapps();
+			} else {
+				say("You can always update app on settings app/Preferances")
+			}
+		}
+	} else {
+		console.error("Failed to fetch data from the server.");
+	}
+}
+
+fetchDataAndUpdate();
 	}
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -679,30 +696,37 @@ function flwin(x) {
 }
 
 function getAppIcon(unshrunkContent, appname) {
-	if (!appicns[appname]) {
-		console.log("Fetching icon")
-		const tempElement = document.createElement('div');
-		tempElement.innerHTML = unshrunkContent;
-		const metaTags = tempElement.getElementsByTagName('meta');
-		let metaTagData = null;
-		Array.from(metaTags).forEach(tag => {
-			const tagName = tag.getAttribute('name');
-			const tagContent = tag.getAttribute('content');
-			if (tagName === 'nova-icon' && tagContent) {
-				metaTagData = tagContent;
-			}
-		});
-		if (typeof metaTagData === "string" && containsSmallSVGElement(metaTagData)) {
-			appicns[appname] = metaTagData;
-			return metaTagData;
-		} else {
-			return null;
-		}
+    if (!appicns[appname]) {
+        console.log("Fetching icon");
+        const tempElement = document.createElement('div');
+        tempElement.innerHTML = decodeBase64Content(unshrunkContent);
+        const metaTags = tempElement.getElementsByTagName('meta');
+        let metaTagData = null;
+        Array.from(metaTags).forEach(tag => {
+            const tagName = tag.getAttribute('name');
+            const tagContent = tag.getAttribute('content');
+            if (tagName === 'nova-icon' && tagContent) {
+                metaTagData = tagContent;
+            }
+        });
+        if (typeof metaTagData === "string" && containsSmallSVGElement(metaTagData)) {
+            appicns[appname] = metaTagData;
+            return metaTagData;
+        } else {
+            return null;
+        }
+    } else {
+        return appicns[appname];
+    }
+}
 
-	} else {
-		metaTagData = appicns[appname];
-	}
-
+// Function to check and decode Base64 content with marker
+function decodeBase64Content(str) {
+    const marker = 'data:image/svg+xml;base64,';
+    if (str.startsWith(marker)) {
+        return atob(str.slice(marker.length));
+    }
+    return str;
 }
 
 function getAppTheme(unshrunkContent) {
@@ -901,34 +925,48 @@ function openwindow(title, cont, ic, theme) {
 
 	function loadIframeContent(windowLoader, windowContent, iframe) {
 		var iframe = document.createElement("iframe");
-            var contentString = content.toString();
+var contentString = content.toString();
 
-            // Create a Blob from the content string
-            var blob = new Blob([contentString], { type: 'text/html' });
+// Function to check if a string is Base64 encoded
+function isBase64(str) {
+    try {
+        return btoa(atob(str)) === str;
+    } catch (err) {
+        return false;
+    }
+}
 
-            // Create a URL for the Blob
-            var blobURL = URL.createObjectURL(blob);
+// Decode the content string if it's Base64 encoded
+if (isBase64(contentString)) {
+    contentString = atob(contentString);
+}
 
-            iframe.onload = function() {
-                var doc = iframe.contentDocument || iframe.contentWindow.document;
-				
-			iframe.contentWindow.myWindow = {
-				"element":windowDiv,
-				"titleElement":windowtitlespan
-			};
+// Create a Blob from the content string
+var blob = new Blob([contentString], { type: 'text/html' });
 
-                // Check if the content string contains the function greenflag
-                if (contentString.includes(`function greenflag()`)) {
-                    attemptGreenFlag(windowLoader, windowContent, iframe);
-                } else {
-                    windowLoader.remove();
-                }
-            };
+// Create a URL for the Blob
+var blobURL = URL.createObjectURL(blob);
 
-            // Set the src of the iframe to the Blob URL
-            iframe.src = blobURL;
+iframe.onload = function() {
+    var doc = iframe.contentDocument || iframe.contentWindow.document;
+	
+	iframe.contentWindow.myWindow = {
+		"element": windowDiv,
+		"titleElement": windowtitlespan
+	};
 
-            windowContent.appendChild(iframe);
+    // Check if the content string contains the function greenflag
+    if (contentString.includes(`function greenflag()`)) {
+        attemptGreenFlag(windowLoader, windowContent, iframe);
+    } else {
+        windowLoader.remove();
+    }
+};
+
+// Set the src of the iframe to the Blob URL
+iframe.src = blobURL;
+
+windowContent.appendChild(iframe);
         }
 
 	function attemptGreenFlag(windowLoader, windowContent, iframe) {
@@ -1055,36 +1093,21 @@ for (let part of parts) {
 }
 
 
-async function createFile(folderName2, fileName, type, content, metadata) {
-	let folderName = folderName2.replace(/\/$/, ''); 
-	let fileName2;
-	if (type) {
-		fileName2 = `${fileName}.${type}`;
-	} else {
-		if (mtpetxt(fileName) && mtpetxt(fileName) != "") {
-			fileName2 = fileName
-		} else {
-			say("Cannot find file extension. Can't create file.", "failed");
-			return;
-		}
-	}
-    if (!metadata) {
-        metadata = {};
-    }
-    await updateMemoryData()
+async function createFile(folderName2, fileName, type, content, metadata = {}) {
+    let folderName = folderName2.replace(/\/$/, '');
+    let fileName2 = type ? `${fileName}.${type}` : (mtpetxt(fileName) || (() => { say("Cannot find file extension. Can't create file.", "failed"); return; })());
+
+    if (!fileName2) return;
+
+    await updateMemoryData();
     let folder = createFolderStructure(folderName);
 
     try {
         if (type === "app") {
             let appData = await getFileByPath(`Apps/${fileName2}`);
             if (appData) {
-                const newData = {
-                    metadata: metadata,
-                    content: content,
-                    fileName: fileName2,
-                    type: type
-                };
-                await updateFile("Apps", appData.id, newData);
+                content = btoa(content); // Encode HTML content as Base64
+                await updateFile("Apps", appData.id, { metadata, content, fileName: fileName2, type });
                 return;
             }
         }
@@ -1092,24 +1115,15 @@ async function createFile(folderName2, fileName, type, content, metadata) {
         let existingFile = Object.values(folder).find(file => file.fileName === fileName2);
         if (existingFile) {
             console.log(`File "${fileName2}" exists in "${folderName}". Updating...`);
-            const newData = {
-                metadata: metadata,
-                content: content,
-                fileName: fileName2,
-                type: type
-            };
-            await updateFile(folderName, existingFile.id, newData);
+            content = btoa(content); // Encode content as Base64
+            await updateFile(folderName, existingFile.id, { metadata, content, fileName: fileName2, type });
         } else {
             let uid = genUID();
             metadata.datetime = getfourthdimension();
             metadata = JSON.stringify(metadata);
+            content = btoa(content); // Encode content as Base64
 
-            folder[fileName2] = {
-                id: uid,
-                type: type,
-                content: content,
-                metadata: metadata
-            };
+            folder[fileName2] = { id: uid, type, content, metadata };
             console.log(`File "${fileName2}" created in "${folderName}".`);
             await setdb('trojencat', 'rom', memory);
         }
@@ -1557,7 +1571,7 @@ async function initialiseOS() {
 async function installdefaultapps() {
 	gid("startup").showModal();
 
-	const maxRetries = 3;
+	const maxRetries = 2;
 
 	async function updateApp(appName, attempt = 1) {
 		try {
@@ -2327,4 +2341,19 @@ function closeallwindows() {
 		delete winds[taskName + taskId];
 	});
 	gid("closeallwinsbtn").checked = true;
+}
+
+async function checkifpassright() {
+	var trypass = gid("loginform1").value;
+	if (await checkPassword(trypass)) {
+		gid('loginmod').close();
+		startup();
+		password = trypass;
+	} else {
+		gid("loginform1").classList.add("thatsnotrightcls");
+		gid("loginform1").value = '';
+		setTimeout(function() {
+			gid("loginform1").classList.remove("thatsnotrightcls");
+		}, 1000)
+	}
 }

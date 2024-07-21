@@ -42,10 +42,10 @@
 			<h1 class="gradient-text">Platinum</h1>
 		</dialog>
 		<script>
+			gid("edison").showModal();
 			function gid(x) {
 				return document.getElementById(x);
 			}
-			gid("edison").showModal()
 		</script>
 
 		<noscript>
@@ -201,7 +201,7 @@
 			<span class="logincardwelt">Welcome Back!</span>
 			<div id="loginform">
 				<input placeholder="Enter your password" id="loginform1" type="password">
-				<button><span class="material-icons">
+				<button onclick="checkifpassright()"><span class="material-icons">
 					chevron_right
 				</span></button>
 			</div>
