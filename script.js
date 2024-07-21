@@ -1509,10 +1509,8 @@ async function remfolder(folderPath) {
 	}
 }
 
-
-
-
 async function initialiseOS() {
+	await saveMagicStringInLocalStorage(password);
 	let settings = JSON.stringify({
 		"focusMode": false,
 		"darkMode": false,
@@ -1581,6 +1579,7 @@ async function installdefaultapps() {
 		console.error("Failed to fetch data from the server.");
 	}
 	gid("startup").close();
+	genTaskBar()
 }
 
 async function getFileByPath(filePath) {
@@ -2292,6 +2291,7 @@ function closeallwindows() {
 }
 
 async function checkifpassright() {
+	lethalpasswordtimes = true;
 	var trypass = gid("loginform1").value;
 	if (await checkPassword(trypass)) {
 		gid('loginmod').close();
@@ -2304,4 +2304,5 @@ async function checkifpassright() {
 			gid("loginform1").classList.remove("thatsnotrightcls");
 		}, 1000)
 	}
+	lethalpasswordtimes = false;
 }

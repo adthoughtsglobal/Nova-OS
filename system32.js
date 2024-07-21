@@ -3,6 +3,7 @@ var CurrentUsername = 'user1';
 var password = "nova";
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
+var lethalpasswordtimes = false;
 
 async function openDB(databaseName, version) {
     return new Promise((resolve, reject) => {
@@ -109,7 +110,13 @@ async function decryptData(key, encryptedData) {
 
         return decoder.decode(decrypted);
     } catch (error) {
-        console.error("Incorrect password or corrupted data");
+        console.error("Incorrect password or corrupted data", password, error);
+        if (!lethalpasswordtimes && !await checkPassword(password)) {
+            document.body.innerHTML = `<div style="padding: 2rem;"><hitbx class="hitbox" title="time">
+						<span id="time-display">time</span><br>
+						<span id="date-display">date</span>
+					</hitbx><h1>System Error</h1><p>We have found that<br>Your System is running on an incorrect password or corrupted data. This is what you can do about it:<br><br><button onclick="erdbsfull()">Erase all data</button><button onclick="location.reload()">Reload System</button></div><br><br>`;
+        }
         throw error;
     }
 }
@@ -315,16 +322,17 @@ async function remSetting(key) {
 }
 
 async function changePassword(oldPassword, newPassword) {
+    lethalpasswordtimes = true;
     if (!(await checkPassword(oldPassword))) {
         console.error("Old password is incorrect");
         return false;
     }
 
-    const db = await openDB(databaseName, 1);
-    const store = db.transaction([CurrentUsername], 'readonly').objectStore(CurrentUsername);
-
     const oldKey = await getKey(oldPassword);
     const newKey = await getKey(newPassword);
+
+    const db = await openDB(databaseName, 1);
+    const store = db.transaction([CurrentUsername], 'readonly').objectStore(CurrentUsername);
 
     try {
         const record = await new Promise((resolve, reject) => {
@@ -348,13 +356,15 @@ async function changePassword(oldPassword, newPassword) {
     }
 
     await saveMagicStringInLocalStorage(newPassword);
+    password = newPassword;
     console.log("Password changed successfully");
+    lethalpasswordtimes = false;
     return true;
 }
 
 function erdbsfull() {
     localStorage.removeItem('todo');
-    localStorage.removeItem('sets');
+    localStorage.removeItem('magicString');
     localStorage.removeItem('updver');
 
     let indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;

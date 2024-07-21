@@ -598,8 +598,8 @@
 			<button class="tablinks" onclick="openCity(event, 'perform'); updateFPS()"><i
 					class="material-icons">speed</i>
 				Performance</button>
-			<button class="tablinks" onclick="openCity(event, 'password')"><i class="material-icons">task</i>
-				Password</button>
+			<button class="tablinks" onclick="openCity(event, 'password')"><i class="material-icons">security</i>
+				Security</button>
 			<button class="tablinks" onclick="openCity(event, 'exp'); defs(); gwall() "><i
 					class="material-icons">monitor</i>
 				Display</button>
@@ -681,6 +681,9 @@
 					let items = {};
 					for (let i = 0; i < localStorage.length; i++) {
 						let key = localStorage.key(i);
+						if (key == "magicString") {
+							continue;
+						}
 						items[key] = localStorage.getItem(key);
 						const elem = document.createElement("div");
 						elem.classList = "lclstr";
