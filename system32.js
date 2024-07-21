@@ -10,12 +10,49 @@ async function openDB(databaseName, version) {
 
         request.onupgradeneeded = async (event) => {
             const db = event.target.result;
+
             if (!db.objectStoreNames.contains(CurrentUsername)) {
                 db.createObjectStore(CurrentUsername, { keyPath: 'key' });
                 console.log(`Object store '${CurrentUsername}' created.`);
                 await saveMagicStringInLocalStorage(password);
             }
         };
+
+        request.onsuccess = async (event) => {
+            const db = event.target.result;
+
+            if (db.version > 1) {
+                const dataToPreserve = await readAllData(db, CurrentUsername);
+                db.close();
+
+                const deleteRequest = indexedDB.deleteDatabase(databaseName);
+                deleteRequest.onsuccess = () => {
+                    const resetRequest = indexedDB.open(databaseName, 1);
+
+                    resetRequest.onupgradeneeded = (resetEvent) => {
+                        const newDb = resetEvent.target.result;
+                        const objectStore = newDb.createObjectStore(CurrentUsername, { keyPath: 'key' });
+                        dataToPreserve.forEach(item => objectStore.add(item));
+                    };
+
+                    resetRequest.onsuccess = (resetEvent) => resolve(resetEvent.target.result);
+                    resetRequest.onerror = (resetEvent) => reject(resetEvent.target.error);
+                };
+                deleteRequest.onerror = (deleteEvent) => reject(deleteEvent.target.error);
+            } else {
+                resolve(db);
+            }
+        };
+
+        request.onerror = (event) => reject(event.target.error);
+    });
+}
+
+async function readAllData(db, storeName) {
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction(storeName, 'readonly');
+        const objectStore = transaction.objectStore(storeName);
+        const request = objectStore.getAll();
 
         request.onsuccess = (event) => resolve(event.target.result);
         request.onerror = (event) => reject(event.target.error);
