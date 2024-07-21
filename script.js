@@ -87,10 +87,9 @@ getdb('trojencat', 'rom')
 					"Desktop/": {}
 				};
 
+				console.log("init from preset")
 				// Save the default array to the 'rom' key in the 'trojencat' database
-				setdb('trojencat', 'rom', memory);
-				initialiseOS()
-
+				setdb('trojencat', 'rom', memory).then(initialiseOS())
 			}
 		} catch (error) {
 			console.error('Error in database operations:', error);
@@ -1514,7 +1513,7 @@ async function remfolder(folderPath) {
 
 
 async function initialiseOS() {
-	let x = {
+	let settings = JSON.stringify({
 		"focusMode": false,
 		"darkMode": false,
 		"wsnapping": true,
@@ -1522,20 +1521,21 @@ async function initialiseOS() {
 		"defFileLayout": "List",
 		"timefrmt": "12 Hour",
 		"defSearchEngine": "NWP"
-	}
-	let qsets = JSON.stringify(x);
-	resetSettings(qsets);
-	await installdefaultapps().then(async () => {
-		let x = await getFileNamesByFolder("Apps")
-		if (defAppsList.length != x.length) {
-			stx.innerHTML = "Nova is updating..."
-			await installdefaultapps().then(() => {
-				startup();
-			})
-		} else {
-			startup();
-		}
 	});
+	resetSettings(settings);
+
+	startup()
+		.then(() => installdefaultapps())
+		.then(() => getFileNamesByFolder("Apps"))
+		.then(fileNames => {
+			if (defAppsList.length !== fileNames.length) {
+				stx.innerHTML = "Nova is updating...";
+				return installdefaultapps();
+			}
+		})
+		.catch(error => {
+			console.error("Error during initialization:", error);
+		});
 }
 
 async function installdefaultapps() {
@@ -1570,7 +1570,7 @@ async function installdefaultapps() {
 	// Update each app sequentially
 	for (let i = 0; i < defAppsList.length; i++) {
 		await updateApp(defAppsList[i]);
-		stx.innerHTML = "Installing " + defAppsList[i] + " (" + Math.round((i + 1) / defAppsList.length * 100) + "%)";
+		stx.innerHTML = "Installing Apps (" + Math.round((i + 1) / defAppsList.length * 100) + "%)";
 	}
 	let fetchupdatedata = await fetch("versions.json");
 
