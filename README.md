@@ -1,6 +1,11 @@
+# NovaOS 1.7 is outdated.
+Will be soon upgraded to NovaOS 2. NovaOS 2 will not read file systems created by NovaOS 1.7 or below.
+NovaOS 2 will include:
+1. Local account system
+2. Better filesystem
+NovaOS 2 is still under development. We are making it better each day. I'll make the update when NovaOS 2 is ready for this challenge.
 
-
-# Well this is Nova OS
+# This is Nova OS
 and it's a Web OS, that's made for you.
 
 We've been and will be making Nova OS to create a web operating system that does what you want it to, simple and fast. Nova OS has been and will be evolving into the OS that you've predicted would exist in the far future. 
