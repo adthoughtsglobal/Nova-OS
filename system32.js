@@ -3,7 +3,7 @@ var CurrentUsername = 'user1';
 var password = "nova";
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
-var lethalpasswordtimes = false;
+var lethalpasswordtimes = true;
 
 async function openDB(databaseName, version) {
     return new Promise((resolve, reject) => {
@@ -111,7 +111,7 @@ async function decryptData(key, encryptedData) {
         return decoder.decode(decrypted);
     } catch (error) {
         console.error("Incorrect password or corrupted data", password, error);
-        if (!lethalpasswordtimes && !await checkPassword(password)) {
+        if (!lethalpasswordtimes) {
             document.body.innerHTML = `<div style="padding: 2rem;"><hitbx class="hitbox" title="time">
 						<span id="time-display">time</span><br>
 						<span id="date-display">date</span>
@@ -160,8 +160,10 @@ async function getdb(databaseName, key) {
                 if (request.result) {
                     try {
                         const cryptoKey = await getKey(password);
+                        console.log(request.result.value);
                         const decryptedValue = await decryptData(cryptoKey, request.result.value);
-                        resolve(JSON.parse(decryptedValue));
+                        const memory = JSON.parse(decryptedValue);
+                        resolve(memory); // Directly resolve as a plain object
                     } catch (error) {
                         console.error("Decryption error:", error);
                         reject(error);
@@ -178,6 +180,19 @@ async function getdb(databaseName, key) {
     }
 }
 
+function convertToMap(obj) {
+    if (typeof obj !== 'object' || obj === null) {
+        return obj;
+    }
+
+    const map = new Map();
+    for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            map.set(key, convertToMap(obj[key]));
+        }
+    }
+    return map;
+}
 async function saveMagicStringInLocalStorage(password) {
     const cryptoKey = await getKey(password);
     const encryptedMagicString = await encryptData(cryptoKey, "magicString");
@@ -221,13 +236,12 @@ async function updateMemoryData() {
     if (MemoryTimeCache === null || (getTime() - MemoryTimeCache) >= 5000) {
         if (!isFetchingMemory) {
             isFetchingMemory = true;
-            console.log("Catching Memory", getTime() - (MemoryTimeCache || getTime()));
-            await getdb('trojencat', 'rom').then(result => {
-                memory = result;
+            console.log("Getting Memory");
+            await getdb('trojencat', 'rom', "").then(result => {
                 MemoryTimeCache = getTime();
                 isFetchingMemory = false;
             }).catch(err => {
-                console.error("Failed to fetch memory data:", err);
+                console.error("Memory data unreadable");
                 isFetchingMemory = false;
             });
         }
@@ -248,16 +262,16 @@ async function getdbWithDefault(databaseName, storeName, key, defaultValue) {
                 if (result) {
                     resolve(result.value);
                 } else {
-                    console.log(`Key '${key}' not found. Returning default value.`);
-                    resolve(defaultValue); // Return default value if key is not found
+                    console.log(`Not found: '${key}'`);
+                    resolve(defaultValue);
                 }
             };
 
             request.onerror = () => reject(request.error);
         });
     } catch (error) {
-        console.error("Failed to get data:", error);
-        return defaultValue; // Return default value on error
+        console.error("Failed:", error);
+        return defaultValue;
     }
 }
 
@@ -271,14 +285,14 @@ async function getSetting(key) {
             return undefined;
         }
     } catch (error) {
-        console.log(error);
+        console.log("Error getting settings");
     }
 }
 
 async function setSetting(key, value) {
     await updateMemoryData();
     try {
-        if (!memory["System/"]["preferences.json"]) {
+        if ("preferences.json" in (memory?.["System"]?.["/"] || {})) {
            await createFile("System/", "preferences.json", false, "{}")
         }
         let preferences = JSON.parse(memory["System/"]["preferences.json"]["content"]);
@@ -286,7 +300,7 @@ async function setSetting(key, value) {
         memory["System/"]["preferences.json"]["content"] = JSON.stringify(preferences);
         await setdb('trojencat', 'rom', memory);
     } catch (error) {
-        console.log(error);
+        console.log("error setting settings");
     }
 }
 
@@ -301,7 +315,7 @@ async function resetSettings(value) {
         memory["System/"]["preferences.json"]["content"] = JSON.stringify(preferences);
         await setdb('trojencat', 'rom', memory);
     } catch (error) {
-        console.log(error);
+        console.log("Error resetting settings");
     }
 }
 
@@ -317,24 +331,33 @@ async function remSetting(key) {
             }
         }
     } catch (error) {
-        console.log(error);
+        console.log("error removing settings");
     }
 }
 
 async function changePassword(oldPassword, newPassword) {
+    console.log("Starting password change process...");
     lethalpasswordtimes = true;
-    if (!(await checkPassword(oldPassword))) {
+
+    console.log("Checking old password...");
+    const isOldPasswordCorrect = await checkPassword(oldPassword);
+    console.log(`Old password check result: ${isOldPasswordCorrect}`);
+    if (!isOldPasswordCorrect) {
         console.error("Old password is incorrect");
+        lethalpasswordtimes = false;
         return false;
     }
 
+    console.log("Old password is correct. Retrieving keys...");
     const oldKey = await getKey(oldPassword);
     const newKey = await getKey(newPassword);
 
+    console.log("Opening database...");
     const db = await openDB(databaseName, 1);
     const store = db.transaction([CurrentUsername], 'readonly').objectStore(CurrentUsername);
 
     try {
+        console.log("Retrieving record from the database...");
         const record = await new Promise((resolve, reject) => {
             const getRequest = store.get('rom');
             getRequest.onsuccess = () => resolve(getRequest.result);
@@ -342,25 +365,34 @@ async function changePassword(oldPassword, newPassword) {
         });
 
         if (!record || !record.value) {
-            console.error("Failed to retrieve data for key: rom");
+            console.error("Failed to retrieve data");
+            lethalpasswordtimes = false;
             return false;
         }
 
+        console.log("Decrypting data with old key...");
         const decryptedValue = await decryptData(oldKey, record.value);
-        const encryptedValue = await encryptData(newKey, decryptedValue);
-        await setdb(databaseName, 'rom', encryptedValue);
-        
+        console.log(`Decrypted value: ${JSON.stringify(decryptedValue)}`);
+
+        console.log("Encrypting data with new key...");
+        password = newPassword;
+
+        await setdb(databaseName, 'rom', decryptedValue);
+
     } catch (error) {
-        console.error("Failed to re-encrypt data for key: rom", error);
+        console.error("Failed to re-encrypt data", error);
+        lethalpasswordtimes = false;
         return false;
     }
 
+    console.log("Saving new password to local storage...");
     await saveMagicStringInLocalStorage(newPassword);
-    password = newPassword;
-    console.log("Password changed successfully");
+    
+    console.log("Password changed successfully.");
     lethalpasswordtimes = false;
     return true;
 }
+
 
 function erdbsfull() {
     localStorage.removeItem('todo');
@@ -385,16 +417,16 @@ function erdbsfull() {
                 let deleteRequest = objectStore.delete(keyToRemove);
 
                 deleteRequest.onsuccess = function (event) {
-                    console.log("Key 'rom' removed successfully");
+                    console.log("Key 'rom' removed.");
                     localStorage.removeItem("qsets");
                     location.reload();
                 };
 
                 deleteRequest.onerror = function (event) {
-                    console.error("Error removing key 'rom':", event.target.errorCode);
+                    console.error("Error removing rom:", event.target.errorCode);
                 };
             } else {
-                console.warn(`Object store '${storeName}' not found`);
+                console.warn(`Store not found: '${storeName}'`);
                 localStorage.removeItem("qsets");
                 location.reload();
             }

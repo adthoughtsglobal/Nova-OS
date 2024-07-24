@@ -1,5 +1,5 @@
 var batteryLevel, winds = {}, rp, flwint = true, memory, _nowapp, stx = gid("startuptx"), fulsapp = false, nowappdo, appsHistory = [], nowwindow, appicns = {}, dev = true, appfound = 'files', fileslist = [], qsetscache = {};
-var really = false;
+var really = false, initmenuload = true;
 var novaFeaturedImage = `https://images.unsplash.com/photo-1716980197262-ce400709bf0d?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D`;
 
 document.getElementById("bgimage").src = novaFeaturedImage;
@@ -65,31 +65,7 @@ getdb('trojencat', 'rom')
 				await say(`<h2>Your default password</h2><p>The default password for ${CurrentUsername} is 'nova'. You can change this in settings.</p>`);
 				gid("startup").showModal();
 				stx.innerHTML = "Preparing memory"
-				// If the 'rom' key doesn't exist, assign a random array to the 'memory' list
-				const memory = {
-					"Downloads/": {
-						"Welcome.txt": {
-							"id": "sibq81",
-							"content": "Welcome to Nova OS! Thank you for using this OS, we believe that we have made this 'software' as the most efficient for your daily usage. If not, kindly reach us https://adthoughtsglobal.github.io and connect via the available options, we will respond you back! Enjoy!"
-						},
-						"Basic Help.txt": {
-							"id": "hejid3",
-							"content": "Please visit the Nova wiki page on GitHub to learn how to use Nova if you seem to struggle using it. You can find it at: https://github.com/adthoughtsglobal/Nova-OS/wiki/"
-						},
-						"Subfolder/": {
-							"Subfile.txt": {
-								"id": "1283jh",
-								"content": "This is a file inside a subfolder."
-							}
-						}
-					},
-					"Apps/": {},
-					"Desktop/": {}
-				};
-
-				console.log("init from preset")
-				// Save the default array to the 'rom' key in the 'trojencat' database
-				setdb('trojencat', 'rom', memory).then(initialiseOS())
+				.then(initialiseOS())
 			}
 		} catch (error) {
 			console.error('Error in database operations:', error);
@@ -107,7 +83,7 @@ getdb('trojencat', 'rom')
 
 async function startup() {
 	gid("edison").showModal();
-	console.log("INITIAL SETUP");
+	console.log("Startup");
 	const start = performance.now();
 	try { qsetsRefresh(); }
 	catch (err) { console.error("qsetsRefresh error:", err); }
@@ -135,7 +111,7 @@ async function startup() {
 	} catch (err) { console.error("dod error:", err); }
 	const end = performance.now();
 
-	console.log(`Execution time: ${end - start} milliseconds`);
+	console.log(`Startup ended: ${(end - start).toFixed(2)}ms`);
 	async function fetchDataAndUpdate() {
 		let localupdatedataver = localStorage.getItem("updver");
 		let fetchupdatedata = await fetch("versions.json");
@@ -163,7 +139,6 @@ document.addEventListener("DOMContentLoaded", function () {
 	var bgImage = document.getElementById("bgimage");
 
 	bgImage.addEventListener("click", function () {
-		console.log("BG CLICK");
 		nowapp = '';
 		dewallblur();
 	});
@@ -174,9 +149,7 @@ var condition = true;
 try {
 	qsetsRefresh()
 	condition = getSetting("timefrmt") == '24 Hour' ? false : true;
-} catch (error) {
-	console.log("safe error: " + error)
-}
+} catch {}
 
 function updateTime() {
 	const now = new Date();
@@ -209,6 +182,17 @@ async function openn() {
 
 	let x = await getFileNamesByFolder("Apps");
 	x.sort((a, b) => a.name.localeCompare(b.name));
+	if (x.length == 0 && initmenuload) {
+		initmenuload = false
+		gid("appdmod").close()
+		let choicetoreinst = await justConfirm(`Re-initialize OS?`,`Did the OS initialization fail? if yes, we can re-initialize your OS and install all the default apps. \n\nNovaOS did not find any apps while initial load of Nova Menu. \n\nre-initializing your OS may delete your data.`)
+		if (choicetoreinst) {
+			initialiseOS()
+		}
+		return;
+	}
+	
+	initmenuload = false
 	Promise.all(x.map(async (app) => {
 		// Create a div element for the app shortcut
 		var appShortcutDiv = document.createElement("div");
@@ -405,7 +389,7 @@ function updateBattery() {
 	} else if ('battery' in navigator) {
 		batteryPromise = Promise.resolve(navigator.battery);
 	} else {
-		console.log('Battery API not supported.');
+		console.log('No Battery API');
 		gid("batterydisdiv").style.display = "none";
 		return;
 	}
@@ -445,7 +429,7 @@ function updateBattery() {
 			}
 		}
 	}).catch(function (error) {
-		console.log("Battery information not available: " + error);
+		console.log("Battery Error: " + error);
 
 	});
 }
@@ -1050,25 +1034,42 @@ async function createFolder(folderName) {
 				current[part] = {};
 			}
 			current = current[part];
-
-			console.log(current);
 		}
 
 		await setdb('trojencat', 'rom', memory);
-		console.log(`Folder "${folderName}" created successfully.`);
+		console.log(`Created: "${folderName}"`);
 	} catch (error) {
 		console.error("Error creating folder:", error);
 	}
 }
 
+function folderExists(folderName) {
+    let parts = folderName.replace(/\/$/, '').split('/');
+    let current = memory;
+
+    for (let part of parts) {
+        part += '/';
+        if (!current[part]) {
+            return false;
+        }
+        current = current[part];
+    }
+
+    return true;
+}
 
 async function createFile(folderName2, fileName, type, content, metadata = {}) {
-	let folderName = folderName2.replace(/\/$/, '');
-	let fileName2 = type ? `${fileName}.${type}` : (mtpetxt(fileName) || (() => { say("Cannot find file extension. Can't create file.", "failed"); return; })());
+    let folderName = folderName2.replace(/\/$/, '');
+    let fileName2 = type ? `${fileName}.${type}` : (fileName|| (() => { say("Cannot find file extension. Can't create file.", "failed"); return; })());
 
-	if (!fileName2) return;
+    if (!fileName2) return;
 
-	await updateMemoryData();
+    await updateMemoryData();
+
+    if (!folderExists(folderName)) {
+        await createFolder(folderName);
+    }
+
 	let folder = createFolderStructure(folderName);
 
 	try {
@@ -1083,7 +1084,7 @@ async function createFile(folderName2, fileName, type, content, metadata = {}) {
 
 		let existingFile = Object.values(folder).find(file => file.fileName === fileName2);
 		if (existingFile) {
-			console.log(`File "${fileName2}" exists in "${folderName}". Updating...`);
+			console.log(`Updating "${folderName}"/"${fileName2}"`);
 			content = btoa(content); // Encode content as Base64
 			await updateFile(folderName, existingFile.id, { metadata, content, fileName: fileName2, type });
 		} else {
@@ -1093,7 +1094,7 @@ async function createFile(folderName2, fileName, type, content, metadata = {}) {
 			content = btoa(content); // Encode content as Base64
 
 			folder[fileName2] = { id: uid, type, content, metadata };
-			console.log(`File "${fileName2}" created in "${folderName}".`);
+			console.log(`Created "${folderName}"/"${fileName2}"`);
 			await setdb('trojencat', 'rom', memory);
 		}
 	} catch (error) {
@@ -1163,9 +1164,9 @@ async function updateFile(folderName, fileId, newData) {
 			}
 
 			await setdb('trojencat', 'rom', memory);
-			console.log(`File "${fileToUpdate.fileName}" has been updated.`);
+			console.log(`Modified: "${fileToUpdate.fileName}"`);
 		} else {
-			console.log(`File with ID "${fileId}" not found in "${folderName}". Creating a new one...`);
+			console.log(`Creating New: "${fileId}"`);
 			targetFolder[newData.fileName || `NewFile_${fileId}`] = {
 				id: fileId,
 				metadata: newData.metadata ? JSON.stringify(newData.metadata) : '',
@@ -1346,21 +1347,18 @@ async function loadtaskspanel() {
 	let x = Object.keys(winds).map(key => key.slice(0, -6));
 	let wid = Object.keys(winds).map(key => key.slice(-6));
 
-	console.log(x);
 	if (x.length == 0) {
 		appbarelement.style.display = "none"
 	} else {
 		appbarelement.style.display = "flex"
 	}
 	x.forEach(async function (app, index) {
-		console.log("she's here: " + app)
 		// Create a div element for the app shortcut
 		var appShortcutDiv = document.createElement("biv");
 		appShortcutDiv.className = "app-shortcut tooltip adock sizableuielement";
 
 		appShortcutDiv.addEventListener("click", function () {
 			putwinontop('window' + wid[index]);
-			console.log(gid("window" + wid[index]))
 			winds[app + wid[index]] = Number(gid("window" + wid[index]).style.zIndex);
 		})
 
@@ -1433,7 +1431,7 @@ function unshrinkbsf(compressedStr) {
 }
 
 async function makewall(deid) {
-	console.log("the wallpaper lol: " + deid)
+	console.log("Wallpaper: " + deid)
 	let x = await getFileById(deid);
 	x = x.content
 	x = unshrinkbsf(x)
@@ -1451,7 +1449,7 @@ async function remfile(ID) {
 					if (removeFileFromFolder(content)) return true;
 				} else if (content.id === ID) {
 					delete folder[name];
-					console.log("The file has been eliminated.");
+					console.log("File eliminated.");
 					return true;
 				}
 			}
@@ -1496,7 +1494,7 @@ async function remfolder(folderPath) {
 		// Remove only the specified subfolder and its contents
 		if (parent && key) {
 			delete parent[key];
-			console.log(`Folder "${folderPath}" and its contents successfully removed.`);
+			console.log(`Folder Eliminated: "${folderPath}"`);
 		} else {
 			console.error(`Unable to delete folder "${folderPath}".`);
 			return;
@@ -1510,7 +1508,31 @@ async function remfolder(folderPath) {
 }
 
 async function initialiseOS() {
-	await saveMagicStringInLocalStorage(password);
+	const memory = {
+		"Downloads/": {
+			"Welcome.txt": {
+				"id": "sibq81",
+				"content": "Welcome to Nova OS! Thank you for using this OS, we believe that we have made this 'software' as the most efficient for your daily usage. If not, kindly reach us https://adthoughtsglobal.github.io and connect via the available options, we will respond you back! Enjoy!"
+			},
+			"Basic Help.txt": {
+				"id": "hejid3",
+				"content": "Please visit the Nova wiki page on GitHub to learn how to use Nova if you seem to struggle using it. You can find it at: https://github.com/adthoughtsglobal/Nova-OS/wiki/"
+			},
+			"Subfolder/": {
+				"Subfile.txt": {
+					"id": "1283jh",
+					"content": "This is a file inside a subfolder."
+				}
+			}
+		},
+		"Apps/": {},
+		"Desktop/": {}
+	};
+
+	console.log("Init from preset")
+
+	setdb('trojencat', 'rom', memory).then(async function () {
+		await saveMagicStringInLocalStorage(password);
 	let settings = JSON.stringify({
 		"focusMode": false,
 		"darkMode": false,
@@ -1520,20 +1542,21 @@ async function initialiseOS() {
 		"timefrmt": "12 Hour",
 		"defSearchEngine": "NWP"
 	});
-	resetSettings(settings);
-
-	startup()
-		.then(() => installdefaultapps())
-		.then(() => getFileNamesByFolder("Apps"))
-		.then(fileNames => {
-			if (defAppsList.length !== fileNames.length) {
-				stx.innerHTML = "Nova is updating...";
-				return installdefaultapps();
-			}
-		})
-		.catch(error => {
-			console.error("Error during initialization:", error);
-		});
+	resetSettings(settings)
+	.then(async () => await installdefaultapps())
+	.then(async () => getFileNamesByFolder("Apps"))
+	.then(async (fileNames) => {
+		if (defAppsList.length !== fileNames.length) {
+			stx.innerHTML = "Nova is updating...";
+			return installdefaultapps();
+		}
+	})
+	.catch(error => {
+		console.error("Error during initialization:", error);
+	})
+	.then(() => startup())
+	})
+	
 }
 
 async function installdefaultapps() {
@@ -1552,11 +1575,11 @@ async function installdefaultapps() {
 			const fileContent = await response.text();
 
 			createFile("Apps", appName, "app", fileContent);
-			console.log(appName + " has been updated to genZ.");
+			console.log(appName + " modified");
 		} catch (error) {
 			console.error("Error updating " + appName + ":", error.message);
 			if (attempt < maxRetries) {
-				console.log("Retrying update for " + appName + " (attempt " + (attempt + 1) + ")");
+				console.log("Retrying update: " + appName + " (attempt " + (attempt + 1) + ")");
 				await updateApp(appName, attempt + 1);
 			} else {
 				console.error("Max retries reached for " + appName + ". Skipping update.");
@@ -1633,7 +1656,6 @@ async function strtappse(event) {
 	}
 
 	const abracadra = await getSetting("smartsearch");
-	console.log(abracadra)
 
 	if (event.key === "Enter") {
 		event.preventDefault();
@@ -1767,24 +1789,18 @@ function hideMenu() {
 }
 
 async function moveFileToFolder(flid, dest) {
-	console.log("Moving file id: " + flid + " to folder: " + dest);
+	console.log("Moving file: " + flid + " to: " + dest);
 
 	let fileToMove = await getFileById(flid);
-	console.log("Got them: " + JSON.stringify(fileToMove));
 
 	await createFile(dest, fileToMove.fileName, fileToMove.type, fileToMove.content, fileToMove.metadata);
-	console.log("File born in folder: " + dest);
 
-	console.log("Eliminating file: " + flid);
 	await remfile(flid);
-	console.log("File eleminated successfully");
 }
 
 
 function rightClick(e) {
 	e.preventDefault();
-
-	console.log(e.target.closest('.hitbox'));
 
 	if (gid(
 		"contextMenu").style.display == "block")
@@ -1836,8 +1852,6 @@ async function openfile(x) {
 			console.error("Error: File not found");
 			return;
 		}
-
-		console.log("ya", mm, (mm.fileName))
 		mm.type = ptypext(mm.fileName);
 
 		if (mm.type == "app") {
@@ -1850,7 +1864,6 @@ async function openfile(x) {
 			} else if (mm.type == "osl") {
 				runAsOSL(mm.content)
 			} else if (mm.type == "lnk") {
-				console.log("lnk")
 				let z = JSON.parse(mm.content);
 				openfile(z.open)
 			} else if (mm.type == "wasm") {
@@ -2117,7 +2130,6 @@ async function genTaskBar() {
 
 			x = await Promise.all(y.map(async (item) => {
 				if (item.name === "files.app" || item.name === "settings.app" || item.name === "store.app") {
-					console.log(`Found ${item.name}`);
 					return item;
 				}
 			}));
@@ -2211,9 +2223,7 @@ function ptypext(str) {
 	try {
 		const parts = str.split('.');
 		return parts.length > 1 ? parts.pop() : '';
-	} catch (err) {
-		console.log(err)
-	}
+	} catch {}
 }
 
 function getbaseflty(ext) {
@@ -2274,9 +2284,7 @@ function basename(str) {
 			return parts.join('.'); // Rejoin the remaining parts
 		}
 		return str; // No extension present
-	} catch (err) {
-		console.log(err);
-	}
+	} catch {}
 }
 
 function closeallwindows() {
@@ -2295,8 +2303,8 @@ async function checkifpassright() {
 	var trypass = gid("loginform1").value;
 	if (await checkPassword(trypass)) {
 		gid('loginmod').close();
-		startup();
 		password = trypass;
+		startup();
 	} else {
 		gid("loginform1").classList.add("thatsnotrightcls");
 		gid("loginform1").value = '';
