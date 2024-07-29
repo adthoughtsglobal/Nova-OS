@@ -51,62 +51,43 @@ async function showloginmod() {
 	});
 }
 
-// Check if the database 'trojencat' exists
-getdb('trojencat', 'rom')
-	.then(async (result) => {
-		gid('startupterms').innerHTML += "<span>Checking database...</span>";
-		try {
-			if (result !== null) {
-				memory = result;
-				await showloginmod();
-
-			} else {
-				await say(`<h2>Terms of service and License</h2><p>By using Nova OS, you agree to the <a href="https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use">Adthoughtsglobal Nova Terms of Use</a>. <be><small>We do not collect your personal information. <br>Read the terms clearly before use.</small>`);
-				await say(`<h2>Your default password</h2><p>The default password for ${CurrentUsername} is 'nova'. You can change this in settings.</p>`);
-				gid("startup").showModal();
-				stx.innerHTML = "Preparing memory"
-				.then(initialiseOS())
-			}
-		} catch (error) {
-			console.error('Error in database operations:', error);
-		}
-
-
-	})
-	.then(() => {
-
-	})
-	.catch(async (error) => {
-		console.error('Error retrieving data from the database:', error);
-		await showloginmod()
-	});
+function setsrtpprgbr(val) {
+    let progressBar = document.getElementById('progress-bar');
+    let width = val;
+    progressBar.style.width = width + '%';
+}
 
 async function startup() {
 	gid("edison").showModal();
 	console.log("Startup");
+	setsrtpprgbr(0)
 	const start = performance.now();
 	try { qsetsRefresh(); }
 	catch (err) { console.error("qsetsRefresh error:", err); }
 
 	try {
-		gid('startupterms').innerHTML += "<span>Initialising clock...</span>";
+		gid('startupterms').innerHTML = "Initialising clock...";
+		setsrtpprgbr(10)
 		await updateTime();
 	} catch (err) { console.error("updateTime error:", err); }
 
 	try {
-		gid('startupterms').innerHTML += "<span>Checking themes...</span>";
+		gid('startupterms').innerHTML = "Checking themes...";
+		setsrtpprgbr(20)
 		setInterval(updateTime, 1000);
 		await checkdmode();
 	} catch (err) { console.error("checkdmode error:", err); }
 
 	try {
-		gid('startupterms').innerHTML += "<span id='struploadtasnr'>Loading TaskBar... (0%)</span>";
+		gid('startupterms').innerHTML = "<span id='struploadtasnr'>Loading TaskBar... (0%)</span>";
 		await genTaskBar();
+		setsrtpprgbr(65)
 	} catch (err) { console.error("genTaskBar error:", err); }
 
 	try {
 		await dod();
-		gid('startupterms').innerHTML += "<span>Startup completed...</span>";
+		setsrtpprgbr(100)
+		gid('startupterms').innerHTML = "Startup completed";
 		closeElementedis();
 	} catch (err) { console.error("dod error:", err); }
 	const end = performance.now();
@@ -134,8 +115,34 @@ async function startup() {
 	fetchDataAndUpdate();
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-	console.log("DOMCL")
+document.addEventListener("DOMContentLoaded", async function () {
+	console.log("DOMCL");
+	
+// Check if the database 'trojencat' exists
+await getdb('trojencat', 'rom')
+.then(async (result) => {
+	gid('startupterms').innerHTML += "<span>Checking database...</span>";
+	try {
+		if (result !== null) {
+			await showloginmod();
+
+		} else {
+			await say(`<h2>Terms of service and License</h2><p>By using Nova OS, you agree to the <a href="https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use">Adthoughtsglobal Nova Terms of Use</a>. <be><small>We do not collect your personal information. <br>Read the terms clearly before use.</small>`);
+			await say(`<h2>Your default password</h2><p>The default password for ${CurrentUsername} is 'nova'. You can change this in settings.</p>`);
+			gid("startup").showModal();
+			stx.innerHTML = "Preparing memory"
+			initialiseOS();
+		}
+	} catch (error) {
+		console.error('Error in database operations:', error);
+	}
+
+
+})
+.catch(async (error) => {
+	console.error('Error retrieving data from the database:', error);
+	await showloginmod()
+});
 	var bgImage = document.getElementById("bgimage");
 
 	bgImage.addEventListener("click", function () {
@@ -1036,7 +1043,7 @@ async function createFolder(folderName) {
 			current = current[part];
 		}
 
-		await setdb('trojencat', 'rom', memory);
+		await setdb(memory);
 		console.log(`Created: "${folderName}"`);
 	} catch (error) {
 		console.error("Error creating folder:", error);
@@ -1095,7 +1102,7 @@ async function createFile(folderName2, fileName, type, content, metadata = {}) {
 
 			folder[fileName2] = { id: uid, type, content, metadata };
 			console.log(`Created "${folderName}"/"${fileName2}"`);
-			await setdb('trojencat', 'rom', memory);
+			await setdb(memory);
 		}
 	} catch (error) {
 		console.error("Error creating file:", error);
@@ -1163,7 +1170,7 @@ async function updateFile(folderName, fileId, newData) {
 				delete fileLocation.parent[fileLocation.key];
 			}
 
-			await setdb('trojencat', 'rom', memory);
+			await setdb(memory);
 			console.log(`Modified: "${fileToUpdate.fileName}"`);
 		} else {
 			console.log(`Creating New: "${fileId}"`);
@@ -1173,7 +1180,7 @@ async function updateFile(folderName, fileId, newData) {
 				content: newData.content || '',
 				type: newData.type || ''
 			};
-			await setdb('trojencat', 'rom', memory);
+			await setdb(memory);
 		}
 	} catch (error) {
 		console.error("Error updating file:", error);
@@ -1461,7 +1468,7 @@ async function remfile(ID) {
 		if (!fileRemoved) {
 			console.error(`File with ID "${ID}" not found.`);
 		} else {
-			await setdb('trojencat', 'rom', memory);
+			await setdb(memory);
 		}
 	} catch (error) {
 		console.error("Error fetching or updating data:", error);
@@ -1501,7 +1508,7 @@ async function remfolder(folderPath) {
 		}
 
 		// Update the memory database
-		await setdb('trojencat', 'rom', memory);
+		await setdb(memory);
 	} catch (error) {
 		console.error("Error removing folder:", error);
 	}
@@ -1512,11 +1519,7 @@ async function initialiseOS() {
 		"Downloads/": {
 			"Welcome.txt": {
 				"id": "sibq81",
-				"content": "Welcome to Nova OS! Thank you for using this OS, we believe that we have made this 'software' as the most efficient for your daily usage. If not, kindly reach us https://adthoughtsglobal.github.io and connect via the available options, we will respond you back! Enjoy!"
-			},
-			"Basic Help.txt": {
-				"id": "hejid3",
-				"content": "Please visit the Nova wiki page on GitHub to learn how to use Nova if you seem to struggle using it. You can find it at: https://github.com/adthoughtsglobal/Nova-OS/wiki/"
+				"content": "Welcome to Nova OS! kindly reach us https://adthoughtsglobal.github.io and connect via the available options, we will respond you back! Enjoy!"
 			},
 			"Subfolder/": {
 				"Subfile.txt": {
@@ -1525,13 +1528,12 @@ async function initialiseOS() {
 				}
 			}
 		},
-		"Apps/": {},
-		"Desktop/": {}
+		"Apps/": {}
 	};
 
 	console.log("Init from preset")
 
-	setdb('trojencat', 'rom', memory).then(async function () {
+	setdb(memory).then(async function () {
 		await saveMagicStringInLocalStorage(password);
 	let settings = JSON.stringify({
 		"focusMode": false,

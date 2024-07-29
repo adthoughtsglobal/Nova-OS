@@ -33,13 +33,14 @@
 	<div class="container2">
 		<img id="bgimage" class="layer44" onerror="this.innerHTML = 'ok'">
 		<dialog id="edison">
-			<div id="startupterms">
-				Fetching local databases...
-				<span>Initialising...</span>
+			<div class="edisonrl">
+				<img src="N.webp" alt="Nova">
+				<div class="progress-container">
+					<div class="progress-bar" id="progress-bar"></div>
+				</div>
+				<div id="startupterms">Loading NovaOS</div>
 			</div>
-			<img src="N.webp" alt="Nova">
-			<div class="loader5345"></div>
-			<h1 class="gradient-text">Platinum</h1>
+			
 		</dialog>
 		<script>
 			gid("edison").showModal();

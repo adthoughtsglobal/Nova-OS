@@ -7,45 +7,45 @@ var lethalpasswordtimes = true;
 
 async function openDB(databaseName, version) {
     return new Promise((resolve, reject) => {
-        const request = indexedDB.open(databaseName, version);
+	  const request = indexedDB.open(databaseName, version);
 
-        request.onupgradeneeded = async (event) => {
-            const db = event.target.result;
+	  request.onupgradeneeded = async (event) => {
+		const db = event.target.result;
 
-            if (!db.objectStoreNames.contains(CurrentUsername)) {
-                db.createObjectStore(CurrentUsername, { keyPath: 'key' });
-                console.log(`Object store '${CurrentUsername}' created.`);
-                await saveMagicStringInLocalStorage(password);
-            }
-        };
+		if (!db.objectStoreNames.contains("dataStore")) {
+		    db.createObjectStore("dataStore", { keyPath: 'key' });
+		    console.log(`Object store created.`);
+		    await saveMagicStringInLocalStorage(password);
+		}
+	  };
 
-        request.onsuccess = async (event) => {
-            const db = event.target.result;
+	  request.onsuccess = async (event) => {
+		const db = event.target.result;
 
-            if (db.version > 1) {
-                const dataToPreserve = await readAllData(db, CurrentUsername);
-                db.close();
+		if (db.version > 1) {
+		    const dataToPreserve = await readAllData(db, 'dataStore');
+		    db.close();
 
-                const deleteRequest = indexedDB.deleteDatabase(databaseName);
-                deleteRequest.onsuccess = () => {
-                    const resetRequest = indexedDB.open(databaseName, 1);
+		    const deleteRequest = indexedDB.deleteDatabase(databaseName);
+		    deleteRequest.onsuccess = () => {
+			  const resetRequest = indexedDB.open(databaseName, 1);
 
-                    resetRequest.onupgradeneeded = (resetEvent) => {
-                        const newDb = resetEvent.target.result;
-                        const objectStore = newDb.createObjectStore(CurrentUsername, { keyPath: 'key' });
-                        dataToPreserve.forEach(item => objectStore.add(item));
-                    };
+			  resetRequest.onupgradeneeded = (resetEvent) => {
+				const newDb = resetEvent.target.result;
+				const objectStore = newDb.createObjectStore('dataStore', { keyPath: CurrentUsername });
+				dataToPreserve.forEach(item => objectStore.add(item));
+			  };
 
-                    resetRequest.onsuccess = (resetEvent) => resolve(resetEvent.target.result);
-                    resetRequest.onerror = (resetEvent) => reject(resetEvent.target.error);
-                };
-                deleteRequest.onerror = (deleteEvent) => reject(deleteEvent.target.error);
-            } else {
-                resolve(db);
-            }
-        };
+			  resetRequest.onsuccess = (resetEvent) => resolve(resetEvent.target.result);
+			  resetRequest.onerror = (resetEvent) => reject(resetEvent.target.error);
+		    };
+		    deleteRequest.onerror = (deleteEvent) => reject(deleteEvent.target.error);
+		} else {
+		    resolve(db);
+		}
+	  };
 
-        request.onerror = (event) => reject(event.target.error);
+	  request.onerror = (event) => reject(event.target.error);
     });
 }
 
@@ -121,62 +121,64 @@ async function decryptData(key, encryptedData) {
     }
 }
 
-async function setdb(databaseName, key, value) {
+async function setdb(value) {
+	var databaseName = 'trojencat', key = 'dataStore';
     try {
-        const db = await openDB(databaseName, 1);
-        const cryptoKey = await getKey(password);
-        const encryptedValue = await encryptData(cryptoKey, JSON.stringify(value));
+	  const db = await openDB(databaseName, 1, {
+		upgrade(db) {
+		    if (!db.objectStoreNames.contains('dataStore')) {
+			  db.createObjectStore('dataStore', { keyPath: 'CurrentUsername' });
+		    }
+		}
+	  });
 
-        const transaction = db.transaction([CurrentUsername], 'readwrite');
-        const store = transaction.objectStore(CurrentUsername);
-        const putRequest = store.put({ key, value: encryptedValue });
+	  const cryptoKey = await getKey(password);
+	  const encryptedValue = await encryptData(cryptoKey, JSON.stringify(value));
 
-        await new Promise((resolve, reject) => {
-            putRequest.onsuccess = resolve;
-            putRequest.onerror = () => reject(putRequest.error);
-        });
+	  const transaction = db.transaction('dataStore', 'readwrite');
+	  const store = transaction.objectStore('dataStore');
+	  store.put({ key: CurrentUsername, value: encryptedValue } );
 
-        await new Promise((resolve, reject) => {
-            transaction.oncomplete = resolve;
-            transaction.onerror = () => reject(transaction.error);
-            transaction.onabort = () => reject(transaction.error);
-        });
+	  await new Promise((resolve, reject) => {
+		transaction.oncomplete = resolve;
+		transaction.onerror = () => reject(transaction.error);
+		transaction.onabort = () => reject(transaction.error);
+	  });
 
-        console.log(`Data for key '${key}' saved successfully.`);
+	  console.log(`Data for key '${key}' saved successfully.`);
     } catch (error) {
-        console.error("Error in setdb function:", error);
+	  console.error("Error in setdb function:", error);
     }
 }
 
-async function getdb(databaseName, key) {
+async function getdb() {
     try {
-        const db = await openDB(databaseName, 1);
-        const transaction = db.transaction([CurrentUsername], 'readonly');
-        const store = transaction.objectStore(CurrentUsername);
-        const request = store.get(key);
+	  const db = await openDB(databaseName, 1);
+	  const transaction = db.transaction('dataStore', 'readonly');
+	  const store = transaction.objectStore('dataStore');
+	  const request = store.get(CurrentUsername);
 
-        return new Promise((resolve, reject) => {
-            request.onsuccess = async () => {
-                if (request.result) {
-                    try {
-                        const cryptoKey = await getKey(password);
-                        console.log(request.result.value);
-                        const decryptedValue = await decryptData(cryptoKey, request.result.value);
-                        const memory = JSON.parse(decryptedValue);
-                        resolve(memory); // Directly resolve as a plain object
-                    } catch (error) {
-                        console.error("Decryption error:", error);
-                        reject(error);
-                    }
-                } else {
-                    resolve(null);
-                }
-            };
+	  return new Promise((resolve, reject) => {
+		request.onsuccess = async () => {
+		    if (request.result) {
+			  try {
+				const cryptoKey = await getKey(password);
+				const decryptedValue = await decryptData(cryptoKey, request.result.value);
+				memory = parseEscapedJsonString(decryptedValue);
+				resolve(memory);
+			  } catch (error) {
+				console.error("Decryption error:", error);
+				reject(error);
+			  }
+		    } else {
+			  resolve(null);
+		    }
+		};
 
-            request.onerror = () => reject(request.error);
-        });
+		request.onerror = () => reject(request.error);
+	  });
     } catch (error) {
-        console.error("Error in getdb function:", error);
+	  console.error("Error in getdb function:", error);
     }
 }
 
@@ -223,6 +225,29 @@ async function checkPassword(password) {
     }
 }
 
+async function getallusers() {
+    try {
+	  const db = await openDB(databaseName, 1);
+	  const transaction = db.transaction('dataStore', 'readonly');
+	  const store = transaction.objectStore('dataStore');
+	  const request = store.getAllKeys();
+
+	    return new Promise((resolve, reject) => {
+		  request.onsuccess = async (event) => {
+		    const result = await event.target.result;
+		    
+		    resolve(result);
+		  };
+		  request.onerror = () => {
+		    
+		    reject(request.error);
+		  };
+		});
+    } catch (error) {
+	  console.error("Error in getAllKeysFromStore function:", error);
+    }
+}
+
 // settings store functions
 
 var MemoryTimeCache = null;
@@ -237,7 +262,7 @@ async function updateMemoryData() {
         if (!isFetchingMemory) {
             isFetchingMemory = true;
             console.log("Getting Memory");
-            await getdb('trojencat', 'rom', "").then(result => {
+            await getdb().then(result => {
                 MemoryTimeCache = getTime();
                 isFetchingMemory = false;
             }).catch(err => {
@@ -247,31 +272,48 @@ async function updateMemoryData() {
         }
     }
 }
+function parseEscapedJsonString(escapedString) {
 
-async function getdbWithDefault(databaseName, storeName, key, defaultValue) {
+    // Remove the leading and trailing escaped quotes if they exist
+    let leadingTrailingRemoved = escapedString.replace(/^"(.*)"$/, '$1');
+    
+    // Correctly handle multiple escapes
+    let cleanedString = leadingTrailingRemoved;
+    
+    console.log('simpleparse string:', JSON.parse(cleanedString));
+
     try {
-        const db = await ensureObjectStore(databaseName, storeName);
-        const transaction = db.transaction([storeName], 'readonly');
-        const store = transaction.objectStore(storeName);
+        return JSON.parse(cleanedString);
+    } catch (e) {
+        console.error('Invalid JSON string:', e);
+        return null;
+    }
+}
 
-        return new Promise((resolve, reject) => {
-            const request = store.get(key);
+  async function getdbWithDefault(databaseName, storeName, key, defaultValue) {
+    try {
+	  const db = await ensureObjectStore(databaseName, storeName);
+	  const transaction = db.transaction([storeName], 'readonly');
+	  const store = transaction.objectStore(storeName);
 
-            request.onsuccess = () => {
-                const result = request.result;
-                if (result) {
-                    resolve(result.value);
-                } else {
-                    console.log(`Not found: '${key}'`);
-                    resolve(defaultValue);
-                }
-            };
+	  return new Promise((resolve, reject) => {
+		const request = store.get(key);
 
-            request.onerror = () => reject(request.error);
-        });
+		request.onsuccess = () => {
+		    const result = request.result;
+		    if (result) {
+			  resolve(result.value);
+		    } else {
+			  
+			  resolve(defaultValue);
+		    }
+		};
+
+		request.onerror = () => reject(request.error);
+	  });
     } catch (error) {
-        console.error("Failed:", error);
-        return defaultValue;
+	  
+	  return defaultValue;
     }
 }
 
@@ -298,7 +340,7 @@ async function setSetting(key, value) {
         let preferences = JSON.parse(memory["System/"]["preferences.json"]["content"]);
         preferences[key] = value;
         memory["System/"]["preferences.json"]["content"] = JSON.stringify(preferences);
-        await setdb('trojencat', 'rom', memory);
+        await setdb(memory);
     } catch (error) {
         console.log("error setting settings");
     }
@@ -313,7 +355,7 @@ async function resetSettings(value) {
         let preferences = JSON.parse(memory["System/"]["preferences.json"]["content"]);
         preferences = value;
         memory["System/"]["preferences.json"]["content"] = JSON.stringify(preferences);
-        await setdb('trojencat', 'rom', memory);
+        await setdb(memory);
     } catch (error) {
         console.log("Error resetting settings");
     }
@@ -327,7 +369,7 @@ async function remSetting(key) {
             if (preferences[key]) {
                 delete preferences[key];
                 memory["System/"]["preferences.json"]["content"] = JSON.stringify(preferences);
-                await setdb('trojencat', 'rom', memory);
+                await setdb(memory);
             }
         }
     } catch (error) {
@@ -336,106 +378,89 @@ async function remSetting(key) {
 }
 
 async function changePassword(oldPassword, newPassword) {
-    console.log("Starting password change process...");
+    
     lethalpasswordtimes = true;
-
-    console.log("Checking old password...");
+    
     const isOldPasswordCorrect = await checkPassword(oldPassword);
-    console.log(`Old password check result: ${isOldPasswordCorrect}`);
+    
     if (!isOldPasswordCorrect) {
-        console.error("Old password is incorrect");
-        lethalpasswordtimes = false;
-        return false;
+	  
+	  lethalpasswordtimes = false;
+	  return false;
     }
 
-    console.log("Old password is correct. Retrieving keys...");
+    
     const oldKey = await getKey(oldPassword);
     const newKey = await getKey(newPassword);
 
-    console.log("Opening database...");
+    
     const db = await openDB(databaseName, 1);
-    const store = db.transaction([CurrentUsername], 'readonly').objectStore(CurrentUsername);
+    const store = db.transaction('dataStore', 'readonly').objectStore('dataStore');
 
     try {
-        console.log("Retrieving record from the database...");
-        const record = await new Promise((resolve, reject) => {
-            const getRequest = store.get('rom');
-            getRequest.onsuccess = () => resolve(getRequest.result);
-            getRequest.onerror = () => reject(getRequest.error);
-        });
+	  
+	  const record = await new Promise((resolve, reject) => {
+		const getRequest = store.get(CurrentUsername);
+		getRequest.onsuccess = () => resolve(getRequest.result);
+		getRequest.onerror = () => reject(getRequest.error);
+	  });
 
-        if (!record || !record.value) {
-            console.error("Failed to retrieve data");
-            lethalpasswordtimes = false;
-            return false;
-        }
+	  if (!record || !record.value) {
+		
+		lethalpasswordtimes = false;
+		return false;
+	  }
 
-        console.log("Decrypting data with old key...");
-        const decryptedValue = await decryptData(oldKey, record.value);
-        console.log(`Decrypted value: ${JSON.stringify(decryptedValue)}`);
+	  
+	  const decryptedValue = await decryptData(oldKey, record.value);
+	  console.log(`Decrypted value: ${JSON.stringify(decryptedValue)}`);
 
-        console.log("Encrypting data with new key...");
-        password = newPassword;
+	  
+	  password = newPassword;
 
-        await setdb(databaseName, 'rom', decryptedValue);
+	  await setdb(decryptedValue);
 
     } catch (error) {
-        console.error("Failed to re-encrypt data", error);
-        lethalpasswordtimes = false;
-        return false;
+	  
+	  lethalpasswordtimes = false;
+	  return false;
     }
 
-    console.log("Saving new password to local storage...");
-    await saveMagicStringInLocalStorage(newPassword);
     
-    console.log("Password changed successfully.");
+    await saveMagicStringInLocalStorage(newPassword);
+
+    
     lethalpasswordtimes = false;
     return true;
 }
+
 
 
 function erdbsfull() {
     localStorage.removeItem('todo');
     localStorage.removeItem('magicString');
     localStorage.removeItem('updver');
+    localStorage.removeItem('qsets');
 
     let indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
     let dbName = 'trojencat';
-    let storeName = CurrentUsername;
-    let keyToRemove = 'rom';
 
     try {
-        let request = indexedDB.open(dbName);
+	  let deleteRequest = indexedDB.deleteDatabase(dbName);
 
-        request.onsuccess = function (event) {
-            let db = event.target.result;
+	  deleteRequest.onsuccess = function (event) {
+		
+		location.reload();
+	  };
 
-            if (db.objectStoreNames.contains(storeName)) {
-                let transaction = db.transaction(storeName, 'readwrite');
-                let objectStore = transaction.objectStore(storeName);
+	  deleteRequest.onerror = function (event) {
+		
+	  };
 
-                let deleteRequest = objectStore.delete(keyToRemove);
-
-                deleteRequest.onsuccess = function (event) {
-                    console.log("Key 'rom' removed.");
-                    localStorage.removeItem("qsets");
-                    location.reload();
-                };
-
-                deleteRequest.onerror = function (event) {
-                    console.error("Error removing rom:", event.target.errorCode);
-                };
-            } else {
-                console.warn(`Store not found: '${storeName}'`);
-                localStorage.removeItem("qsets");
-                location.reload();
-            }
-        };
-
-        request.onerror = function (event) {
-            console.error("Error opening database:", event.target.errorCode);
-        };
+	  deleteRequest.onblocked = function () {
+		
+	  };
     } catch (error) {
-        console.log(error);
+	  
     }
 }
