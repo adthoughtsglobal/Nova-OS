@@ -1,4 +1,4 @@
-var batteryLevel, winds = {}, rp, flwint = true, memory, _nowapp, stx = gid("startuptx"), fulsapp = false, nowappdo, appsHistory = [], nowwindow, appicns = {}, dev = true, appfound = 'files', fileslist = [], qsetscache = {};
+var batteryLevel, winds = {}, rp, flwint = true, memory, _nowapp, fulsapp = false, nowappdo, appsHistory = [], nowwindow, appicns = {}, dev = true, appfound = 'files', fileslist = [], qsetscache = {};
 var really = false, initmenuload = true;
 var novaFeaturedImage = `https://images.unsplash.com/photo-1716980197262-ce400709bf0d?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D`;
 
@@ -103,6 +103,7 @@ async function startup() {
 			if (localupdatedataver !== fetchupdatedataver) {
 				if (await justConfirm("Update default apps?", "Your default apps are old. Update them to access new features and fixes.")) {
 					await installdefaultapps();
+					startup();
 				} else {
 					say("You can always update app on settings app/Preferances")
 				}
@@ -129,8 +130,6 @@ await getdb('trojencat', 'rom')
 		} else {
 			await say(`<h2>Terms of service and License</h2><p>By using Nova OS, you agree to the <a href="https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use">Adthoughtsglobal Nova Terms of Use</a>. <be><small>We do not collect your personal information. <br>Read the terms clearly before use.</small>`);
 			await say(`<h2>Your default password</h2><p>The default password for ${CurrentUsername} is 'nova'. You can change this in settings.</p>`);
-			gid("startup").showModal();
-			stx.innerHTML = "Preparing memory"
 			initialiseOS();
 		}
 	} catch (error) {
@@ -587,7 +586,9 @@ async function dod() {
 		let unshrinkbsfX = unshrinkbsf(x.content);
 		document.getElementById('bgimage').src = `url("` + unshrinkbsfX + `")`;
 	} else {
-		document.getElementById("bgimage").src = novaFeaturedImage;
+		if (document.getElementById("bgimage").src != novaFeaturedImage) {
+			document.getElementById("bgimage").src = novaFeaturedImage;
+		}
 
 	}
 	document.getElementById("bgimage").onerror = async function () {
@@ -606,6 +607,7 @@ function closeElementedis() {
 
 	setTimeout(function () {
 		element.close()
+		element.classList.remove("closeEffect");
 	}, 1000);
 }
 
@@ -1549,7 +1551,6 @@ async function initialiseOS() {
 	.then(async () => getFileNamesByFolder("Apps"))
 	.then(async (fileNames) => {
 		if (defAppsList.length !== fileNames.length) {
-			stx.innerHTML = "Nova is updating...";
 			return installdefaultapps();
 		}
 	})
@@ -1606,8 +1607,7 @@ async function installdefaultapps() {
 	} else {
 		console.error("Failed to fetch data from the server.");
 	}
-	closeElementedis()
-	genTaskBar()
+	
 }
 
 async function getFileByPath(filePath) {
