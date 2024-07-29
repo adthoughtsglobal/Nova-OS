@@ -24,18 +24,6 @@ jobs:
           curl -H "Content-Type: application/json" \
           -X POST \
           -d '{
-                "embeds": [
-                  {
-                    "title": "Update in Dev Version",
-                    "description": "## '"$COMMIT_MESSAGE"'",
-                    "url": "'"$COMMIT_URL"'",
-                    "timestamp": "'"$TIMESTAMP"'",
-                    "author": {
-                      "name": "'"$AUTHOR_NAME"'",
-                      "icon_url": "'"$AUTHOR_AVATAR"'"
-                    },
-                    "color": 5814783
-                  }
-                ]
+                "content": ":done: '"$COMMIT_MESSAGE"' - <'"$COMMIT_URL"'>"
               }' \
           $DISCORD_WEBHOOK_URL

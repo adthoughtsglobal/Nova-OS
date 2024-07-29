@@ -1067,9 +1067,20 @@ function folderExists(folderName) {
     return true;
 }
 
+function isBase64(str) {
+    try {
+        return btoa(atob(str)) === str;
+    } catch (err) {
+        return false;
+    }
+}
+
 async function createFile(folderName2, fileName, type, content, metadata = {}) {
     let folderName = folderName2.replace(/\/$/, '');
-    let fileName2 = type ? `${fileName}.${type}` : (fileName|| (() => { say("Cannot find file extension. Can't create file.", "failed"); return; })());
+    let fileName2 = type ? `${fileName}.${type}` : (fileName || (() => { 
+        console.log("Cannot find file extension. Can't create file."); 
+        return; 
+    })());
 
     if (!fileName2) return;
 
@@ -1079,37 +1090,37 @@ async function createFile(folderName2, fileName, type, content, metadata = {}) {
         await createFolder(folderName);
     }
 
-	let folder = createFolderStructure(folderName);
+    let folder = createFolderStructure(folderName);
 
-	try {
-		if (type === "app") {
-			let appData = await getFileByPath(`Apps/${fileName2}`);
-			if (appData) {
-				content = btoa(content); // Encode HTML content as Base64
-				await updateFile("Apps", appData.id, { metadata, content, fileName: fileName2, type });
-				return;
-			}
-		}
+    try {
+        if (type === "app") {
+            let appData = await getFileByPath(`Apps/${fileName2}`);
+            if (appData) {
+                content = isBase64(content) ? content : btoa(content); // Encode HTML content as Base64 if not already
+                await updateFile("Apps", appData.id, { metadata, content, fileName: fileName2, type });
+                return;
+            }
+        }
 
-		let existingFile = Object.values(folder).find(file => file.fileName === fileName2);
-		if (existingFile) {
-			console.log(`Updating "${folderName}"/"${fileName2}"`);
-			content = btoa(content); // Encode content as Base64
-			await updateFile(folderName, existingFile.id, { metadata, content, fileName: fileName2, type });
-		} else {
-			let uid = genUID();
-			metadata.datetime = getfourthdimension();
-			metadata = JSON.stringify(metadata);
-			content = btoa(content); // Encode content as Base64
+        let existingFile = Object.values(folder).find(file => file.fileName === fileName2);
+        if (existingFile) {
+            console.log(`Updating "${folderName}"/"${fileName2}"`);
+            content = isBase64(content) ? content : btoa(content); // Encode content as Base64 if not already
+            await updateFile(folderName, existingFile.id, { metadata, content, fileName: fileName2, type });
+        } else {
+            let uid = genUID();
+            metadata.datetime = getfourthdimension();
+            metadata = JSON.stringify(metadata);
+            content = isBase64(content) ? content : btoa(content); // Encode content as Base64 if not already
 
-			folder[fileName2] = { id: uid, type, content, metadata };
-			console.log(`Created "${folderName}"/"${fileName2}"`);
-			await setdb(memory);
-		}
-	} catch (error) {
-		console.error("Error creating file:", error);
-		return null;
-	}
+            folder[fileName2] = { id: uid, type, content, metadata };
+            console.log(`Created "${folderName}"/"${fileName2}"`);
+            await setdb(memory);
+        }
+    } catch (error) {
+        console.error("Error creating file:", error);
+        return null;
+    }
 }
 
 // Simulate creating a folder

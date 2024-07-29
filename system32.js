@@ -316,36 +316,41 @@ function parseEscapedJsonString(escapedString) {
 	  return defaultValue;
     }
 }
-
 async function getSetting(key) {
-    await updateMemoryData()
+    await updateMemoryData();
     try {
-        if (memory["System/"]["preferences.json"]) {
-            let preferences = JSON.parse(memory["System/"]["preferences.json"]["content"]);
-            return preferences[key];
-        } else {
-            return undefined;
+        if (!memory["System/"]) {
+            memory["System/"] = {};
         }
+        if (!memory["System/"]["preferences.json"]) {
+            await createFile("System/", "preferences.json", "json", "{}");
+        }
+        let preferencesContent = atob(memory["System/"]["preferences.json"]["content"]);
+        let preferences = JSON.parse(preferencesContent);
+        return preferences[key];
     } catch (error) {
-        console.log("Error getting settings");
+        console.log("Error getting settings", error);
     }
 }
 
 async function setSetting(key, value) {
     await updateMemoryData();
     try {
-        if ("preferences.json" in (memory?.["System"]?.["/"] || {})) {
-           await createFile("System/", "preferences.json", false, "{}")
+        if (!memory["System/"]) {
+            memory["System/"] = {};
         }
-        let preferences = JSON.parse(memory["System/"]["preferences.json"]["content"]);
+        if (!memory["System/"]["preferences.json"]) {
+            await createFile("System/", "preferences.json", "json", "{}");
+        }
+        let preferencesContent = atob(memory["System/"]["preferences.json"]["content"]);
+        let preferences = JSON.parse(preferencesContent);
         preferences[key] = value;
-        memory["System/"]["preferences.json"]["content"] = JSON.stringify(preferences);
+        memory["System/"]["preferences.json"]["content"] = btoa(JSON.stringify(preferences));
         await setdb(memory);
     } catch (error) {
-        console.log("error setting settings");
+        console.log("Error setting settings", error);
     }
 }
-
 async function resetSettings(value) {
     await updateMemoryData();
     try {
