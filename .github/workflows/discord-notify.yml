@@ -24,6 +24,6 @@ jobs:
           curl -H "Content-Type: application/json" \
           -X POST \
           -d '{
-                "content": ":done: '"$COMMIT_MESSAGE"' - <'"$COMMIT_URL"'>"
+                "content": ":magic_wand: '"$COMMIT_MESSAGE"' [View](<'"$COMMIT_URL"'>")
               }' \
           $DISCORD_WEBHOOK_URL
