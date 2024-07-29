@@ -88,7 +88,7 @@ async function startup() {
 		await dod();
 		setsrtpprgbr(100)
 		gid('startupterms').innerHTML = "Startup completed";
-		closeElementedis();
+		setTimeout(closeElementedis ,1000)
 	} catch (err) { console.error("dod error:", err); }
 	const end = performance.now();
 
@@ -1562,7 +1562,7 @@ async function initialiseOS() {
 }
 
 async function installdefaultapps() {
-	gid("startup").showModal();
+	gid("edison").showModal()
 
 	const maxRetries = 2;
 
@@ -1593,7 +1593,10 @@ async function installdefaultapps() {
 	// Update each app sequentially
 	for (let i = 0; i < defAppsList.length; i++) {
 		await updateApp(defAppsList[i]);
-		stx.innerHTML = "Installing Apps (" + Math.round((i + 1) / defAppsList.length * 100) + "%)";
+		if (gid('startupterms')) {
+			gid('startupterms').innerText = "Installing Apps"
+		}
+		setsrtpprgbr(Math.round((i + 1) / defAppsList.length * 100));
 	}
 	let fetchupdatedata = await fetch("versions.json");
 
@@ -1603,7 +1606,7 @@ async function installdefaultapps() {
 	} else {
 		console.error("Failed to fetch data from the server.");
 	}
-	gid("startup").close();
+	closeElementedis()
 	genTaskBar()
 }
 
