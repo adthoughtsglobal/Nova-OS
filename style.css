@@ -1893,7 +1893,7 @@ background: #5c8dab;
 	width: 50%;
     max-width: 150px;
     background-color: #141414;
-    border-radius: 2rem;
+    border-radius: 1rem;
     margin-bottom: 1rem;
 }
 
@@ -1904,6 +1904,7 @@ background: #5c8dab;
     border-radius: 10px 0 0 10px;
     box-shadow: 0px 0px 10px #3aff7c;
     transition: width 0.5s ease;
+	border-radius: 1rem;
 }
 
 .edisonrl {
