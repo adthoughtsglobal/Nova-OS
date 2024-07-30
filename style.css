@@ -1890,7 +1890,7 @@ background: #5c8dab;
   }
 
   .progress-container {
-	width: 50%;
+	width: 0;
     max-width: 150px;
     background-color: #141414;
     border-radius: 1rem;

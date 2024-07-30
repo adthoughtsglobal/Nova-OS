@@ -133,7 +133,8 @@ async function setdb(value) {
 	  });
 
 	  const cryptoKey = await getKey(password);
-	  const encryptedValue = await encryptData(cryptoKey, JSON.stringify(value));
+      const compresseddata = compressString(JSON.stringify(value))
+	  const encryptedValue = await encryptData(cryptoKey, compresseddata);
 
 	  const transaction = db.transaction('dataStore', 'readwrite');
 	  const store = transaction.objectStore('dataStore');
@@ -164,7 +165,7 @@ async function getdb() {
 			  try {
 				const cryptoKey = await getKey(password);
 				const decryptedValue = await decryptData(cryptoKey, request.result.value);
-				memory = parseEscapedJsonString(decryptedValue);
+				memory = parseEscapedJsonString(decompressString(decryptedValue));
 				resolve(memory);
 			  } catch (error) {
 				console.error("Decryption error:", error);
@@ -180,6 +181,15 @@ async function getdb() {
     } catch (error) {
 	  console.error("Error in getdb function:", error);
     }
+}
+
+function compressString(input) {
+    return LZUTF8.compress(input, { outputEncoding: 'Base64' });
+}
+
+// Function to decompress a string
+function decompressString(compressed) {
+    return LZUTF8.decompress(compressed, { inputEncoding: 'Base64' });
 }
 
 function convertToMap(obj) {
@@ -316,15 +326,22 @@ function parseEscapedJsonString(escapedString) {
 	  return defaultValue;
     }
 }
-async function getSetting(key) {
+async function ensurePreferencesFileExists() {
     await updateMemoryData();
     try {
         if (!memory["System/"]) {
-            memory["System/"] = {};
-        }
-        if (!memory["System/"]["preferences.json"]) {
-            await createFile("System/", "preferences.json", "json", "{}");
-        }
+        memory["System/"] = {};
+    }
+    if (!memory["System/"]["preferences.json"]) {
+        await createFile("System/", "preferences.json", false, btoa('{}'));
+    }
+} catch (err){}
+}
+
+async function getSetting(key) {
+    try {
+        if (!memory) {return}
+        await ensurePreferencesFileExists();
         let preferencesContent = atob(memory["System/"]["preferences.json"]["content"]);
         let preferences = JSON.parse(preferencesContent);
         return preferences[key];
@@ -334,14 +351,9 @@ async function getSetting(key) {
 }
 
 async function setSetting(key, value) {
-    await updateMemoryData();
     try {
-        if (!memory["System/"]) {
-            memory["System/"] = {};
-        }
-        if (!memory["System/"]["preferences.json"]) {
-            await createFile("System/", "preferences.json", "json", "{}");
-        }
+        if (!memory) {return}
+        await ensurePreferencesFileExists();
         let preferencesContent = atob(memory["System/"]["preferences.json"]["content"]);
         let preferences = JSON.parse(preferencesContent);
         preferences[key] = value;
@@ -351,18 +363,16 @@ async function setSetting(key, value) {
         console.log("Error setting settings", error);
     }
 }
+
 async function resetSettings(value) {
-    await updateMemoryData();
     try {
-        if (!memory["System/"]["preferences.json"]) {
-            memory["System/"]["preferences.json"] = { content: '{}', id: genUID() };
-        }
-        let preferences = JSON.parse(memory["System/"]["preferences.json"]["content"]);
-        preferences = value;
-        memory["System/"]["preferences.json"]["content"] = JSON.stringify(preferences);
+        if (!memory) {return}
+        await ensurePreferencesFileExists();
+        let preferences = value;
+        memory["System/"]["preferences.json"]["content"] = btoa(JSON.stringify(preferences));
         await setdb(memory);
     } catch (error) {
-        console.log("Error resetting settings");
+        console.log("Error resetting settings", error);
     }
 }
 

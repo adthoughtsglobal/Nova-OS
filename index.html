@@ -17,9 +17,10 @@
   <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.js"></script>
 	<!--NovaOS scripts-->
 	<script src="nova.js" defer></script>
-	<script src="edgecases.js" defer></script>
-	<script src="scripties.js" defer></script>
+	<script src="scripts/edgecases.js" defer></script>
+	<script src="scripts/scripties.js" defer></script>
 	<script src="script.js" defer></script>
+	<script src="scripts/LZ-utf8.js" defer></script>
 	<!--PWA Manifest-->
 	<link href="webmanifest.json" rel="manifest">
 	<!--Google Icons-->
@@ -44,6 +45,7 @@
 		</dialog>
 		<script>
 			gid("edison").showModal();
+			document.querySelector('.progress-container').style.width = "50%";
 			function gid(x) {
 				return document.getElementById(x);
 			}
