@@ -1486,7 +1486,7 @@
 							fileElement.setAttribute("unid", item.id || '');
 							fileElement.setAttribute("draggable", !item.name.endsWith('/'));
 
-							fileElement.setAttribute("onclick", "slfile(this);");
+							fileElement.setAttribute("onclick", "slfile(this, '"+item.id+"');");
 							if (!item.name.endsWith('/')) {
 								fileElement.setAttribute("ondragstart", "dragfl(event, this)");
 							}
@@ -1513,7 +1513,7 @@
 							fileElement.classList.add("file");
 							fileElement.setAttribute(flmode, '');
 							fileElement.setAttribute("unid", item.id || '');
-							fileElement.setAttribute("onclick", "slfile(this)");
+							fileElement.setAttribute("onclick", "slfile(this, '"+item.id+"')");
 
 							// Assuming metadata is stored as a JSON object within the file
 							let metadata = {};
@@ -1572,7 +1572,7 @@
 			});
 		}
 
-		async function slfile(y) {
+		async function slfile(y, z) {
 			let x = y;
 			if (x.id === "slfile") {
 				if (x.getAttribute("unid") === null || x.getAttribute("unid") === "") {
@@ -1580,7 +1580,7 @@
 					listFiles(currentPath + folderPath)
 					return;
 				}
-				openfile(x);
+				openfile(z);
 			} else {
 
 				if (document.getElementById("slfile")) { document.getElementById("slfile").id = null; }
@@ -1686,14 +1686,15 @@ drive_file_move
 			}
 		}
 
-		async function openfile(x, rt) {
+		async function openfile(x) {
+			console.log("filesapp defaul openfile: "+ x)
 			if (sessiontype == "opener") {
 				localStorage.setItem("todo", JSON.stringify({ "type": "opentotext", "lclfile": x.getAttribute("unid") }));
 				window.parent.clwin(myWindow)
 				return;
 			}
 
-			window.parent.openfile(x, rt)
+			window.parent.openfile(x)
 		}
 
 		async function renamef(x) {
