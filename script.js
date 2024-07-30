@@ -56,7 +56,7 @@ function setsrtpprgbr(val) {
     let width = val;
     progressBar.style.width = width + '%';
 }
-
+  
 async function startup() {
 	gid("edison").showModal();
 	console.log("Startup");
