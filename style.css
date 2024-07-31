@@ -13,19 +13,26 @@
 
 /* Track */
 ::-webkit-scrollbar-track {
-	background: #818181;
-	border-radius: 5px;
+	background: #3131315c;
+    border-radius: 5px;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-	background: #2b2b2b;
-	border-radius: 5px;
+	background: #75757575;
+    border-radius: 5px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-	background: #434343;
+	background: #727272;
+	cursor: grab;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:active {
+	background: #727272;
+	cursor: grabbing;
 }
 
 html {
@@ -1270,6 +1277,7 @@ nav info {
 #nova-copilot-window {
 	outline: none;
     min-width: 200px;
+    max-width: 80vw;
     border-radius: 0.5rem;
     padding: 0.3rem;
     box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
@@ -1311,10 +1319,11 @@ nav info {
 	}
 
 	#nvacoplt-messages {
-		padding: 0.5rem;
-		padding-bottom: 1.5rem;
-		max-height: 50vh;
-		overflow-y: scroll;
+		padding: 0.3rem;
+        margin: 0.2rem;
+        padding-bottom: 1.5rem;
+        max-height: 50vh;
+        overflow-y: scroll;
 	}
 
 	.usermsg {
