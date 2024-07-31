@@ -810,89 +810,100 @@
 			margin-bottom: 13px;
 		">Import your files</span>
 			<small cv><span class="material-symbols-rounded im">lock</span>Files won't leave your device.</small>
-			<input type="file" id="filupin" /><br>
+			<input type="file" id="filupin" multiple/><br>
 			<button onclick="fupit()" id="fupibu">
-				Import This File
+				Import These
 			</button>
 		</div>
 		<script>
 			const dbChangeEvent = new Event('dbchange');
-			function triggerDBChange() {
-				document.dispatchEvent(dbChangeEvent);
-			}
 
-			var out;
+function triggerDBChange() {
+  document.dispatchEvent(dbChangeEvent);
+}
 
-			function fupit() {
-				document.getElementById("fupibu").innerHTML = "Importing...";
-				const fileInput = document.getElementById('filupin');
-				const file = fileInput.files[0];
+async function fupit() {
+  document.getElementById("fupibu").innerHTML = "Importing...";
+  const fileInput = document.getElementById('filupin');
+  const files = fileInput.files;
 
-				if (file) {
-					const workerCode = `
-          onmessage = function(event) {
-            const file = event.data;
-            const chunkSize = 1024 * 1024; // 1MB chunks
-            const fileReader = new FileReader();
-            let offset = 0;
+  if (files.length === 0) return;
 
-            fileReader.onload = function(e) {
-              postMessage({ chunk: e.target.result, offset: offset });
+  const workerCode = `
+    onmessage = function(event) {
+      const file = event.data.file;
+      const chunkSize = event.data.chunkSize;
+      const delay = event.data.delay;
+      const fileReader = new FileReader();
+      let offset = 0;
 
-              offset += chunkSize;
-              if (offset < file.size) {
-                readNextChunk();
-              } else {
-                postMessage({ done: true });
-              }
-            };
+      function readNextChunk() {
+        const chunk = file.slice(offset, offset + chunkSize);
+        fileReader.readAsArrayBuffer(chunk);
+      }
 
-            function readNextChunk() {
-              const chunk = file.slice(offset, offset + chunkSize);
-              fileReader.readAsArrayBuffer(chunk);
-            }
+      fileReader.onload = async function(e) {
+        postMessage({ chunk: e.target.result, offset: offset });
 
-            readNextChunk();
+        offset += chunkSize;
+        if (offset < file.size) {
+          setTimeout(readNextChunk, delay); // Delay between chunks
+        } else {
+          postMessage({ done: true });
+        }
+      };
+
+      readNextChunk();
+    };
+  `;
+
+  const workerBlob = new Blob([workerCode], { type: 'application/javascript' });
+
+  async function processFile(file, chunkSize, delay) {
+    return new Promise((resolve) => {
+      const worker = new Worker(URL.createObjectURL(workerBlob));
+      let combinedChunks = [];
+
+      worker.onmessage = function(event) {
+        if (event.data.done) {
+          const combined = new Blob(combinedChunks, { type: file.type });
+          const reader = new FileReader();
+
+          reader.onload = async function(e) {
+            const out = e.target.result;
+            const type = file.type || 'txt';
+            const folderName = 'Downloads/';
+            const md = { "via": "imported" };
+
+            const shrinkedOut = await window.parent.shrinkbsf(out);
+
+            await window.parent.createFile(folderName, window.parent.basename(file.name), mtpetxt(type), shrinkedOut, md);
+
+            resolve();
           };
-        `;
 
-					const workerBlob = new Blob([workerCode], { type: 'application/javascript' });
-					const worker = new Worker(URL.createObjectURL(workerBlob));
+          reader.readAsDataURL(combined);
+        } else {
+          combinedChunks.push(event.data.chunk);
+        }
+      };
 
-					let combinedChunks = [];
+      worker.postMessage({ file, chunkSize, delay });
+    });
+  }
 
-					worker.onmessage = function (event) {
-						if (event.data.done) {
-							const combined = new Blob(combinedChunks, { type: file.type });
-							const reader = new FileReader();
+  const chunkSize = 1024 * 1024; // 1MB chunks
+  const delay = 100; // 100ms delay between chunks
 
-							reader.onload = function (e) {
-								const out = e.target.result;
-								const type = file.type || 'txt';
-								const folderName = 'Downloads/';
-								const md = { "via": "imported" };
+  for (let i = 0; i < files.length; i++) {
+    await processFile(files[i], chunkSize, delay);
+  }
 
-								const shrinkedOut = window.parent.shrinkbsf(out);
-
-								window.parent.createFile(folderName, window.parent.basename(file.name), mtpetxt(type), shrinkedOut, md)
-									.then(function () {
-										document.getElementById("fupibu").innerHTML = "File Saved, Close";
-										document.getElementById("fupibu").onclick = function () {
-											document.getElementById("upmod").close();
-										};
-									});
-							};
-
-							reader.readAsDataURL(combined);
-						} else {
-							combinedChunks.push(event.data.chunk);
-						}
-					};
-
-					worker.postMessage(file);
-				}
-			}
-
+  document.getElementById("fupibu").innerHTML = "File(s) Saved, Close";
+  document.getElementById("fupibu").onclick = function() {
+    document.getElementById("upmod").close();
+  };
+}
 
 			function getBase64(file) {
 				var reader = new FileReader();
