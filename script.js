@@ -763,7 +763,7 @@ async function fetchData(url) {
 	}
 }
 var content;
-function openwindow(title, cont, ic, theme) {
+function openwindow(title, cont, ic, theme, appid) {
 	appsHistory.push(title)
 	if (appsHistory.length > 5) {
 		appsHistory = appsHistory.slice(-5);
@@ -923,7 +923,8 @@ function openwindow(title, cont, ic, theme) {
 
 			iframe.contentWindow.myWindow = {
 				"element": windowDiv,
-				"titleElement": windowtitlespan
+				"titleElement": windowtitlespan,
+				"appID":appid
 			};
 
 			// Check if the content string contains the function greenflag
@@ -1943,16 +1944,10 @@ document.addEventListener('click', (event) => {
 
 async function openfile(x) {
 	console.log("opening: " + x)
+	let unid= x;
 	try {
-		let unid;
-		if (x instanceof Element || (x.nodeType && x.nodeType === 1)) {
-			unid = x.getAttribute("unid");
-		} else {
-			unid = x;
-		}
-
 		if (!unid) {
-			console.error("Error: 'unid' attribute not found");
+			console.error("Error: 'unid' not found");
 			return;
 		}
 
@@ -1985,7 +1980,7 @@ async function openfile(x) {
 				if (!appIdToOpen) {
 					say('No apps in your system can open this file type.', "failed")
 				} else {
-					openlaunchprotocol(appIdToOpen, unid);
+					openlaunchprotocol(appIdToOpen, JSON.stringify({"lclfile": unid}));
 				}
 			}
 		}

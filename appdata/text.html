@@ -182,7 +182,7 @@
             window.addEventListener('storage', async (event) => {
                 if (event.key === 'todo') {
 
-                    if (JSON.parse(localStorage.getItem("todo")).type == "opentotext") {
+                    if (JSON.parse(localStorage.getItem("todo")).appname == myWindow.appID) {
                         console.log('Loading todo');
 
                         const file = await window.parent.getFileById(JSON.parse(localStorage.getItem("todo")).lclfile);
