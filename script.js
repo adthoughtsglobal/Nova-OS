@@ -2429,3 +2429,115 @@ async function checkifpassright() {
 	}
 	lethalpasswordtimes = false;
 }
+
+var chat;
+function resetchat() {
+	chat  = [{"role":"system","content":"You are NovaOS Copilot Assistant. NovaOS is a web OS that lets your run html apps and manage a local filesystem. You cannot use newlines (\n)"}];
+}
+resetchat()
+
+const nvacopilot = {
+  message: function(content, role) {
+	const messagesContainer = document.getElementById("nvacoplt-messages");
+
+	const messageDiv = document.createElement("div");
+	messageDiv.classList.add("usermsg");
+
+	if (role === "bot") {
+	  messageDiv.classList.add("bot");
+	}
+
+	const navDiv = document.createElement("div");
+	navDiv.classList.add("usermsg-nav");
+	const icon = document.createElement("i");
+	icon.classList.add("material-icons");
+	icon.textContent = role === "bot" ? "auto_awesome" : "account_circle";
+	navDiv.appendChild(icon);
+
+	const contentDiv = document.createElement("div");
+	contentDiv.classList.add("usermsg-content");
+	contentDiv.innerHTML = markdownToHTML(content);
+
+	messageDiv.appendChild(navDiv);
+	messageDiv.appendChild(contentDiv);
+
+	messagesContainer.appendChild(messageDiv);
+	  messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  }
+};
+
+nvacopilot.message("Hi there!", "user");
+nvacopilot.message("Hello! How can I help you today?", "bot");
+
+const sendMessage = () => {
+  const messageInput = document.getElementById("nvacoplt-msginput");
+  const messageContent = messageInput.value.trim();
+
+  if (!messageContent) return;
+
+  chat.push({"role": "user", "content": messageContent});
+  nvacopilot.message(messageContent, "user");
+  messageInput.value = "";
+
+  const payload = {
+	messages: chat,
+	model: 'blackbox'
+  };
+
+  fetch('https://ai.milosantos.com/blackbox', {
+	method: 'POST',
+	headers: { 'Content-Type': 'application/json' },
+	body: JSON.stringify(payload)
+  })
+  .then(response => response.json())
+  .then(data => {
+	const responseMessage = data.choices[0].message.content;
+
+	chat.push({"role": "assistant", "content": responseMessage});
+	nvacopilot.message(responseMessage, "bot");
+	if(responseMessage.includes("simply") || (responseMessage.includes("can") && (responseMessage.includes("by")))) {
+		
+nvacopilot.message("<small>Be aware following my instructions, i may make mistakes.</small>", "bot");
+	}
+  })
+  .catch(error => {
+	console.error('Error:', error);
+	const errorMessage = 'An error occurred. Please try again.';
+
+	chat.push({"role": "assistant", "content": errorMessage});
+	nvacopilot.message(errorMessage, "bot");
+  });
+};
+
+  document.getElementById("nvacoplt-msginput").addEventListener("keypress", e => {
+	if (e.key === "Enter") sendMessage();
+  });
+  document.querySelector(".nvacoplt-sndbtn").addEventListener("click", sendMessage);
+
+function markdownToHTML(markdown) {
+  let html = markdown;
+
+  html = html.replace(/(\*\*)(.*?)\1/g, '<strong>$2</strong>');
+
+  html = html.replace(/(\*|_)(.*?)\1/g, '<em>$2</em>');
+
+  html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+  html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+  html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+
+  html = html.replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>');
+
+  html = html.replace(/^\s*[-+*] (.*$)/gim, '<li>$1</li>');
+
+	  html = html.replace(/```([^`]+)```/g, '<codeblock>$1</codeblock>');
+	
+	  html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+  html = html.replace(/\[(.*?)\]\((.*?)\)/gim, '<a href="$2">$1</a>');
+
+  html = html.replace(/  \n/g, '<br>');
+
+  html = html.replace(/(<li>.*<\/li>)/gim, '<ul>$1</ul>');
+
+  return html.trim();
+}

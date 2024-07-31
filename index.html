@@ -96,8 +96,14 @@
 				</g>
 			</your>
 			<your navobj onclick="opensearchpanel()">
-				<span ic class="material-icons searchbtnac">
+				<span ic class="material-icons searchbtnac directxicons">
 					search
+				</span>
+			</your>
+			<your navobj onclick="
+gid('nova-copilot-window').showModal()">
+				<span ic class="material-icons searchbtnac directxicons">
+					auto_awesome
 				</span>
 			</your>
 			<info navobj>
@@ -289,6 +295,26 @@
 				<a id="seprw-appname">Copilot</a>
 				<button id="seprw-openb">Open</button>
 			</div>
+		</div>
+	</dialog>
+
+	<dialog id="nova-copilot-window">
+		<div class="nvacoplt-nav">
+			<div class="left">
+				<span>Copilot</span>
+				<small>Powered By VerAI</small>
+			</div>
+			<div class="right">
+				<i class="material-icons" onclick="resetchat()">refresh</i>
+				<i class="material-icons" onclick="gid('nova-copilot-window').close()">close</i>
+			</div>
+		</div>
+		<div id="nvacoplt-messages">
+			
+		</div>
+		<div class="messageinput">
+			<input id="nvacoplt-msginput" placeholder="Send A Message..." maxlength="450">
+			<button class="nvacoplt-sndbtn"><i class="material-icons">send</i></button>
 		</div>
 	</dialog>
 </body>

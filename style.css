@@ -1248,23 +1248,6 @@ nav info {
 	display: flex;
 }
 
-#chatcont {
-	flex-grow: 3;
-	height: 0;
-	display: flex;
-	flex-direction: column;
-	overflow-y: scroll;
-	padding-bottom: 15px;
-}
-
-.messagecont {
-	background: #212121;
-	flex-grow: 1;
-	height: 0;
-	display: flex;
-	padding: 6px;
-}
-
 .rightsidesmadivs {
 	display: flex;
 	flex-direction: column;
@@ -1280,39 +1263,162 @@ nav info {
 	color: white;
 }
 
-.messagecont button {
-	border-radius: 4px !important;
-	margin: 0 !important;
-	padding: 0 !important;
-	flex-grow: 1;
+.directxicons {
+    font-size: 1rem !important;
 }
 
-#chatcont .chmess {
-	padding: 5px 10px;
-	margin: 5px;
-	background-color: #2f2f2f;
-	border-radius: 10px;
-	display: block;
-	width: fit-content;
-	width: -moz-fit-content;
-	animation: lisamess .2s ease-out;
-}
-
-#chatcont .chmess.user {
-	float: right;
-	background: #405269;
-}
-
-@keyframes lisamess {
-	0% {
-		transform: translateY(10px);
+#nova-copilot-window {
+	outline: none;
+    min-width: 200px;
+    border-radius: 0.5rem;
+    padding: 0.3rem;
+    box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+    background-color: rgb(28 28 28 / 79%);
+    backdrop-filter: blur(0.5rem);
+    color: white;
+    border: none;
+    user-select: none;
+    margin-bottom: 60px;
+    font-size: 0.8rem;
+	
+	.nvacoplt-nav {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		padding: 0.3rem 0.5rem;
+		border-radius: 0.5rem;
+		background: #91919117;
 	}
-	75% {
-		transform: translateY(-3px);
+
+	.left {
+		display: flex;
+		flex-direction: column;
 	}
-	100% {
+
+	.left small {
+		opacity: 0.5;
+		font-size: 0.7rem;
+	}
+	
+	.nvacoplt-nav i {
+		opacity: 0.5;
+		cursor: pointer;
+		transition: .2s;
+	}
+	.nvacoplt-nav i:hover {
+		opacity: 1;
+	}
+
+	#nvacoplt-messages {
+		padding: 0.5rem;
+		padding-bottom: 1.5rem;
+		max-height: 50vh;
+		overflow-y: scroll;
+	}
+
+	.usermsg {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
+
+		.usermsg-nav {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border-radius: 0.5rem;
+			margin: 6px 0;
+			opacity: 0.5;
+		}
+
+		.usermsg-nav i {
+			font-size: 19px;
+		}
+
+		.usermsg-content {
+			background: #4d4d4d;
+			color: white;
+			padding: 0.4rem 0.7rem;
+			border-radius: 1rem;
+			max-width: 70%;
+			animation: message .3s ease-out;
+			user-select: text;
+			accent-color: #7abfff;
+		}
+	}
+
+	.usermsg.bot {
+		align-items: flex-start;
+
+		.usermsg-content {
+			background: #465055;
+			animation: messagebot .2s ease-out;
+		}
+	}
+
+
+	.messageinput {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: nowrap;
+		justify-content: space-between;
+		align-items: stretch;
+		gap: 0.3rem;
+	}
+
+	input#nvacoplt-msginput {
+		border: none;
+		padding: 0;
+		font-family: inherit;
+		outline: none;
+		flex: 1;
+		color: white;
+		padding-left: 0.5rem;
+		background: #80808036;
+		border-radius: 0.5rem;
+	}
+
+	.nvacoplt-sndbtn {
+		background: #80808036;
+		border: none;
+		color: inherit;
+		display: flex;
+		padding: 0.5rem;
+		border-radius: 0.5rem;
+	}
+
+	.nvacoplt-sndbtn i {
+		font-size:1rem;
+	}
+}
+
+@keyframes message {
+	from {
+		opacity: 0;
+		transform: scale(0.5) translate(50%, -50%);
+	}
+	to {
+		opacity: 1;
 		transform: none;
 	}
+}
+
+@keyframes messagebot {
+	from {
+		opacity: 0;
+		transform: scale(0.5) translate(-50%, 50%);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+codeblock {
+	font-family: monospace;
+	display: block;
+	background-color: #101010;
+	color: white;
 }
 
 [zz21] {
