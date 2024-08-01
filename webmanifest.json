@@ -2,6 +2,7 @@
   "manifest_version": 3,
   "name": "Nova OS",
   "short_name": "NovaOS",
+  "description": "Nova OS is an innovative operating system for managing and accessing your applications seamlessly with a modern interface.",
   "theme_color": "#fff",
   "background_color": "#fff",
   "display": "fullscreen",
@@ -11,6 +12,18 @@
     {
       "src": "N.webp",
       "sizes": "512x512",
+      "type": "image/webp"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "https://media.discordapp.net/attachments/1236996990664052758/1264571257219973181/image.png?ex=66acdbc2&is=66ab8a42&hm=b4856aafff5f9ace4e43a1a61f8657f586f4bc2c782d4b1bead158f87391c3e9&=&format=webp&quality=lossless&width=503&height=423",
+      "sizes": "503x423",
+      "type": "image/webp"
+    },
+    {
+      "src": "https://media.discordapp.net/attachments/1237013370180337684/1254771927306735687/image.png?ex=66accdec&is=66ab7c6c&hm=2c53639edb60d7fb47496372584598ace20a8e19d31c39375a07ad4cabfc2a00&=&format=webp&quality=lossless&width=494&height=236",
+      "sizes": "494x236",
       "type": "image/webp"
     }
   ]

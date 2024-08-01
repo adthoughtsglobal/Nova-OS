@@ -182,11 +182,11 @@
             window.addEventListener('storage', async (event) => {
                 if (event.key === 'todo') {
 
-                    if (JSON.parse(localStorage.getItem("todo")).appname == myWindow.appID) {
+                    if (myWindow.params.appid == myWindow.appID) {
                         console.log('Loading todo');
 
-                        const file = await window.parent.getFileById(JSON.parse(localStorage.getItem("todo")).lclfile);
-                        readthefile(file)
+                        const file = await window.parent.getFileById(myWindow.params.data);
+                        readthefile(file);
                     }
                 }
             });
@@ -263,17 +263,14 @@
             var sbtn = document.getElementById("sbtn");
             var disp = document.getElementById("thedisplay")
             disp.focus()
-            var todo = localStorage.getItem("todo");
 
             var defile
             try {
-                let parsedTodo = JSON.parse(todo);
 
-                if (parsedTodo.appname === "text" && parsedTodo.data && parsedTodo.data.lclfile) {
-                    const theID = parsedTodo.data.lclfile;
-                    defile = theID;
-                    const file = await window.parent.getFileById(theID);
-                    readthefile(file, parsedTodo)
+                if (myWindow.params.appid == myWindow.appID) {
+                    defile = myWindow.params.data;
+                    const file = await window.parent.getFileById(defile);
+                    readthefile(file)
 
                 } else {
                     document.getElementById("thedisplay").value = "Please open the files app to read a file from your system memory.";
@@ -284,7 +281,7 @@
 
         }
 
-        function readthefile(file, parsedTodo) {
+        function readthefile(file) {
             if (file.type == "application/json") {
                 file.content = formatJS(JSON.stringify(jsonFromDataURI(file.content)))
             }
