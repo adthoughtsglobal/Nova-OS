@@ -27,7 +27,6 @@
 			max-height: 95vh;
 			border-radius:0.5rem;
 			transform: scaleX(1);
-			/* Initial scaling without mirroring */
 			transition: 0.2s ease-in-out;
 		}
 
@@ -59,7 +58,7 @@
 			display: inline-flex;
 		}
 
-		#mirror-btn {
+		#mirror-btn, #flashlight-btn {
 			padding: 4px 7px;
 			aspect-ratio: 1 / 1;
 			display: inline-grid;
@@ -72,7 +71,7 @@
 			align-items: center;
 		}
 
-		#mirror-btn span {
+		#mirror-btn span, #flashlight-btn span {
 			font-size: 1rem !important;
 			opacity: 0.6;
 		}
@@ -109,6 +108,9 @@
 	<button id="mirror-btn" onclick="toggleMirror()"><span class="material-icons">
 			360
 		</span></button>
+	<button id="flashlight-btn" onclick="toggleFlashlight()"><span class="material-icons">
+			flash_on
+		</span></button>
 		<select id="timer-select" >
 		<option selected value="0">0s</option>
 		<option value="3000">3s</option>
@@ -122,6 +124,8 @@
 
 	<script>
 		let isMirrored = false;
+		let isFlashlightOn = false;
+		let currentStream = null;
 
 		async function getVideoSources() {
 			const devices = await navigator.mediaDevices.enumerateDevices();
@@ -149,8 +153,7 @@
 			cameraSelect.addEventListener('change', async () => {
 				const selectedCameraId = cameraSelect.value;
 				try {
-					const stream = await navigator.mediaDevices.getUserMedia({video: {deviceId: selectedCameraId}});
-					video.srcObject = stream;
+					await startStream(selectedCameraId);
 					resetMirror();
 				} catch (error) {
 					console.error('Error accessing camera:', error);
@@ -159,8 +162,7 @@
 
 			const defaultCameraId = cameras[0].deviceId;
 			try {
-				const stream = await navigator.mediaDevices.getUserMedia({video: {deviceId: defaultCameraId}});
-				video.srcObject = stream;
+				await startStream(defaultCameraId);
 			} catch (error) {
 				console.error('Error accessing default camera:', error);
 				let x = await window.parent.justConfirm("Can't Get Camera", "Your device seem to say that there's no camera, Should we try again harder?");
@@ -168,6 +170,21 @@
 					startCamera();
 				}
 			}
+		}
+
+		async function startStream(deviceId) {
+			const video = document.getElementById('video');
+			if (currentStream) {
+				currentStream.getTracks().forEach(track => track.stop());
+			}
+			const stream = await navigator.mediaDevices.getUserMedia({
+				video: {
+					deviceId: deviceId,
+					advanced: [{torch: isFlashlightOn}]
+				}
+			});
+			video.srcObject = stream;
+			currentStream = stream;
 		}
 
 		function toggleMirror() {
@@ -182,6 +199,24 @@
 			video.style.transform = 'scaleX(1)';
 		}
 
+		async function toggleFlashlight() {
+			isFlashlightOn = !isFlashlightOn;
+			const flashlightBtn = document.getElementById('flashlight-btn');
+			flashlightBtn.innerHTML = `<span class="material-icons">${isFlashlightOn ? 'flash_off' : 'flash_on'}</span>`;
+
+			if (currentStream) {
+				const track = currentStream.getVideoTracks()[0];
+				try {
+					await track.applyConstraints({
+						advanced: [{torch: isFlashlightOn}]
+					});
+				} catch (error) {
+					console.error('Flashlight not supported:', error);
+					window.parent.justConfirm("Flashlight Error", "It seems your device doesn't support flashlight control.");
+				}
+			}
+		}
+
 		function greenflag() {
 			startCamera()
 		}
@@ -191,20 +226,16 @@
 			const canvas = document.createElement('canvas');
 			const ctx = canvas.getContext('2d');
 
-			// Set canvas dimensions to match video dimensions
 			canvas.width = video.videoWidth;
 			canvas.height = video.videoHeight;
 
-			// Apply mirror effect if needed
 			if (isMirrored) {
 				ctx.translate(canvas.width, 0);
 				ctx.scale(-1, 1);
 			}
 
-			// Draw video frame onto canvas
 			ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-			// Convert canvas content to base64-encoded PNG
 			var dataUrl;
 			var condition = true;
 			try {
@@ -219,13 +250,11 @@
 				console.log("safe error: " + error);
 			}
 
-
 			return dataUrl;
 		}
 
 		function capture(obj) {
 		setTimeout(()=> {
-		
 			const video = document.getElementById('video');
 			video.style.filter = "brightness(5)"
 			let cakebuff = obj.innerHTML;
@@ -250,28 +279,21 @@
 				console.log("safe error: " + error);
 			}
 			function createFileWithTimestamp() {
-    // Get the current date and time
     let now = new Date();
 
-    // Format the timestamp
     let year = now.getFullYear();
-    let month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    let month = String(now.getMonth() + 1).padStart(2, '0');
     let day = String(now.getDate()).padStart(2, '0');
     let hours = String(now.getHours()).padStart(2, '0');
     let minutes = String(now.getMinutes()).padStart(2, '0');
 
-    // Combine into a formatted string
     let timestamp = `${year}-${month}-${day}, ${hours}:${minutes}`;
 
-    // Insert the timestamp into the 'captured' string
     let capturedString = `captured_${timestamp}`;
 
-
-    // Call the createFile function with the formatted string
     window.parent.createFile("Media", capturedString, FileFormat, x, y);
 }
 
-// Call the function to see it in action
 createFileWithTimestamp();
 			obj.innerHTML = cakebuff;
 			setTimeout(() => {

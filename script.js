@@ -1,5 +1,5 @@
 var batteryLevel, winds = {}, rp, flwint = true, memory, _nowapp, fulsapp = false, nowappdo, appsHistory = [], nowwindow, appicns = {}, dev = true, appfound = 'files', fileslist = [], qsetscache = {};
-var really = false, initmenuload = true, fileTypeAssociations = {}, Gtodo;
+var really = false, initmenuload = true, fileTypeAssociations = {}, Gtodo, notifLog = {};
 var novaFeaturedImage = `https://images.unsplash.com/photo-1716980197262-ce400709bf0d?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D`;
 
 document.getElementById("bgimage").src = novaFeaturedImage;
@@ -1579,14 +1579,17 @@ async function strtappse(event) {
 	});
 
 	if (elements > 0) {
-
+		gid("partrecentapps").style.display = "none";
 		document.getElementsByClassName("previewsside")[0].style.display = "flex";
+		gid("seapppreview").style.display = "block";
 		const appfound = mostRelevantItem;
 		gid('seprw-icon').innerHTML = (appicns[appfound.name] != undefined) ? appicns[appfound.name] : defaultAppIcon;
 		gid('seprw-appname').innerText = appfound.name;
 		gid('seprw-openb').onclick = function () {
 			openfile(appfound.id);
 		};
+	} else {
+		gid("partrecentapps").style.display = "block";
 	}
 
 	gid("strtappsugs").style.display = elements > 0 ? "block" : "none";
@@ -1855,6 +1858,35 @@ function notify(title, description, appname) {
 	} else {
 		console.error("One or more DOM elements not found.");
 	}
+    const notificationID = genUID();
+    notifLog[notificationID] = { title, description, appname };
+}
+
+function displayNotifications() {
+    const notifList = document.getElementById("notiflist");
+    notifList.innerHTML = "";
+
+    Object.values(notifLog).forEach(({ title, description, appname }) => {
+        const notifDiv = document.createElement("div");
+        notifDiv.className = "notification";
+
+        const titleDiv = document.createElement("div");
+        titleDiv.className = "notifTitle";
+        titleDiv.innerText = title;
+
+        const descDiv = document.createElement("div");
+        descDiv.className = "notifDesc";
+        descDiv.innerText = description;
+
+        const appNameDiv = document.createElement("div");
+        appNameDiv.className = "notifAppName";
+        appNameDiv.innerText = appname;
+
+        notifDiv.appendChild(titleDiv);
+        notifDiv.appendChild(descDiv);
+        notifDiv.appendChild(appNameDiv);
+        notifList.appendChild(notifDiv);
+    });
 }
 
 function runAsOSL(content) {
@@ -2004,8 +2036,11 @@ async function opensearchpanel() {
 		gid("strtsear").focus()
 	}
 	gid("strtsear").value = "";
-	document.getElementsByClassName("previewsside")[0].style.display = "none";
-	loadrecentapps()
+	loadrecentapps();
+	displayNotifications();
+	
+	gid("seapppreview").style.display = "none";
+	
 	if (appsHistory.length > 0) {
 		gid("partrecentapps").style.display = "block";
 	} else {
