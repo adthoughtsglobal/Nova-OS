@@ -133,7 +133,14 @@ async function setdb(value) {
 	  });
 
 	  const cryptoKey = await getKey(password);
-      const compresseddata = compressString(JSON.stringify(value))
+      const compresseddata = compressString(JSON.stringify(value));
+const originalLength = JSON.stringify(value).length;
+const compressedLength = compresseddata.length;
+const spaceSaved = originalLength - compressedLength;
+const percentSaved = (spaceSaved / originalLength) * 100;
+
+console.log("Space saved: " + spaceSaved + " (" + percentSaved.toFixed(2) + "%)");
+
 	  const encryptedValue = await encryptData(cryptoKey, compresseddata);
 
 	  const transaction = db.transaction('dataStore', 'readwrite');

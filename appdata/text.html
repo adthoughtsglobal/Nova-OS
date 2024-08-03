@@ -175,6 +175,9 @@
         </div>
         <button onclick="toggleDarkMode()" class="navbutton">Dark Mode</button>
         <script>
+            var mode = "new";
+            var currentfileID = null;
+
             function openfromfiles() {
                 window.parent.openlaunchprotocol("files", { "type": "open" })
             }
@@ -202,6 +205,7 @@
                     window.parent.createFile("Documents", y, false, document.getElementById("thedisplay").value)
                 }
                 sbtn.innerHTML = 'Save';
+                mode = "edit";
             }
 
             function toggleDarkMode() {
@@ -282,13 +286,22 @@
         }
 
         function readthefile(file) {
-            if (file.type == "application/json") {
-                file.content = formatJS(JSON.stringify(jsonFromDataURI(file.content)))
+            console.log(file)
+            currentfileID = file.id;
+            mode = "edit"
+
+            file.type = window.parent.mtpetxt(file.fileName)
+
+            file.content = atob(file.content);
+            if (file.type == "json") {
+                const contentString = JSON.stringify(file.content);
+                const formattedString = contentString.slice(1, -1);
+                file.content = formatJS(formattedString)
             }
 
             if (file && file.content) {
                 myWindow.titleElement.innerText = file.fileName;
-                document.getElementById("thedisplay").value = window.parent.unshrinkbsf(file.content)
+                document.getElementById("thedisplay").value = file.content;
                 console.log("0002");
                 localStorage.setItem("todo", "");
             } else {

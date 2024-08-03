@@ -870,10 +870,6 @@ async function createFile(folderName2, fileName, type, content, metadata = {}) {
             content = isBase64(content) ? content : btoa(content);
             await updateFile(folderName, existingFile.id, { metadata, content, fileName: fileName2, type });
 
-            // If updating an app file, extract and register capabilities using appId
-            if (type === "app") {
-                extractAndRegisterCapabilities(existingFile.id, content);
-            }
         } else {
             let uid = genUID();
             metadata.datetime = getfourthdimension();
@@ -884,10 +880,6 @@ async function createFile(folderName2, fileName, type, content, metadata = {}) {
             console.log(`Created "${folderName}"/"${fileName2}"`);
             await setdb(memory);
 
-            // If creating a new app file, extract and register capabilities using appId
-            if (type === "app") {
-                extractAndRegisterCapabilities(uid, content);
-            }
         }
     } catch (error) {
         console.error("Error creating file:", error);
