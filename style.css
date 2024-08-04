@@ -1666,7 +1666,7 @@ background: #5c8dab;
     width: 0;
     display: flex;
     flex-direction: column;
-    padding: 2rem 0;
+    padding: 1rem;
     align-items: center;
     justify-content: center;
     transition: 0.3s;
@@ -1693,10 +1693,12 @@ background: #5c8dab;
     color: inherit;
     padding: 0.3rem 0.7rem;
     border: none;
-    box-shadow: 0 2px 0.3rem #8787876b;
+    box-shadow: 0 2px 0.3rem #02020242;
     border-radius: 1rem;
-    margin-top: 0.5rem;
     cursor: pointer;
+    display: block;
+    margin: auto;
+    margin-top: 0.5rem;
 }
 
 #seprw-openb:hover {
@@ -2044,3 +2046,17 @@ background: #5c8dab;
     align-items: center;
     justify-content: center;
 }
+
+.bsod {
+
+	button {
+		background: #2f425b;
+		margin-right: 0.3rem;
+		border: none;
+		border-radius: 0.5rem;
+		padding: 0.5rem 1rem;
+		font-size: 1rem;
+		color: white;
+	}
+}
+

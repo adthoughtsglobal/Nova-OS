@@ -112,7 +112,7 @@ async function decryptData(key, encryptedData) {
     } catch (error) {
         console.error("Incorrect password or corrupted data", password, error);
         if (!lethalpasswordtimes) {
-            document.body.innerHTML = `<div style="padding: 2rem;"><hitbx class="hitbox" title="time">
+            document.body.innerHTML = `<div style="padding: 2rem;" class="bsod"><hitbx class="hitbox" title="time">
 						<span id="time-display">time</span><br>
 						<span id="date-display">date</span>
 					</hitbx><h1>System Error</h1><p>We have found that<br>Your System is running on an incorrect password or corrupted data. This is what you can do about it:<br><br><button onclick="erdbsfull()">Erase all data</button><button onclick="location.reload()">Reload System</button></div><br><br>`;
@@ -134,12 +134,6 @@ async function setdb(value) {
 
 	  const cryptoKey = await getKey(password);
       const compresseddata = compressString(JSON.stringify(value));
-const originalLength = JSON.stringify(value).length;
-const compressedLength = compresseddata.length;
-const spaceSaved = originalLength - compressedLength;
-const percentSaved = (spaceSaved / originalLength) * 100;
-
-console.log("Space saved: " + spaceSaved + " (" + percentSaved.toFixed(2) + "%)");
 
 	  const encryptedValue = await encryptData(cryptoKey, compresseddata);
 
@@ -290,19 +284,13 @@ async function updateMemoryData() {
     }
 }
 function parseEscapedJsonString(escapedString) {
-
-    // Remove the leading and trailing escaped quotes if they exist
-    let leadingTrailingRemoved = escapedString.replace(/^"(.*)"$/, '$1');
-    
-    // Correctly handle multiple escapes
-    let cleanedString = leadingTrailingRemoved;
-    
-    console.log('simpleparse string:', JSON.parse(cleanedString));
+    if (escapedString.startsWith('"') && escapedString.endsWith('"')) {
+        escapedString = escapedString.slice(1, -1);
+    }
 
     try {
-        return JSON.parse(cleanedString);
-    } catch (e) {
-        console.error('Invalid JSON string:', e);
+        return JSON.parse(escapedString);
+    } catch {
         return null;
     }
 }

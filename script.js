@@ -90,13 +90,13 @@ async function startup() {
 		async function loadFileTypeAssociations() {
 			const associations = await getSetting('fileTypeAssociations');
 			fileTypeAssociations = associations || {};
-			// await cleanupInvalidAssociations();
+			await cleanupInvalidAssociations();
 		}
 
 		loadFileTypeAssociations();
 		setsrtpprgbr(100)
 		gid('startupterms').innerHTML = "Startup completed";
-		setTimeout(closeElementedis, 1000)
+		setTimeout(closeElementedis, 500)
 	} catch (err) { console.error("dod error:", err); }
 
 	const end = performance.now();
@@ -281,12 +281,13 @@ async function loadrecentapps() {
 	gid("serrecentapps").innerHTML = ``
 	if (appsHistory.length < 1) {
 		gid("partrecentapps").style.display = "none";
+		gid("serrecentapps").innerHTML = `No recent apps`
 		return;
 	} else {
 		gid("partrecentapps").style.display = "block";
 	}
 	let x = await getFileNamesByFolder("Apps");
-	x.reverse()
+	x.reverse();
 	Promise.all(x.map(async (app) => {
 		if (!appsHistory.includes(app.name)) {
 			return
@@ -835,6 +836,7 @@ function isBase64(str) {
 }
 
 async function createFile(folderName2, fileName, type, content, metadata = {}) {
+	let thefileidomg;
     let folderName = folderName2.replace(/\/$/, '');
     let fileName2 = type ? `${fileName}.${type}` : (fileName || (() => {
         console.log("Cannot find file extension. Can't create file.");
@@ -857,7 +859,7 @@ async function createFile(folderName2, fileName, type, content, metadata = {}) {
             if (appData) {
                 content = isBase64(content) ? content : btoa(content);
                 await updateFile("Apps", appData.id, { metadata, content, fileName: fileName2, type });
-
+				thefileidomg = appData.id;
                 // Extract capabilities from the meta tag and register them using appId
                 extractAndRegisterCapabilities(appData.id, content);
                 return;
@@ -869,18 +871,20 @@ async function createFile(folderName2, fileName, type, content, metadata = {}) {
             console.log(`Updating "${folderName}"/"${fileName2}"`);
             content = isBase64(content) ? content : btoa(content);
             await updateFile(folderName, existingFile.id, { metadata, content, fileName: fileName2, type });
-
+			thefileidomg = existingFile.id;
         } else {
             let uid = genUID();
             metadata.datetime = getfourthdimension();
             metadata = JSON.stringify(metadata);
+			extractAndRegisterCapabilities(uid, content);
             content = isBase64(content) ? content : btoa(content);
-
+			
             folder[fileName2] = { id: uid, type, content, metadata };
             console.log(`Created "${folderName}"/"${fileName2}"`);
             await setdb(memory);
-
+			thefileidomg = uid;
         }
+		return thefileidomg || null;
     } catch (error) {
         console.error("Error creating file:", error);
         return null;
@@ -892,6 +896,8 @@ async function extractAndRegisterCapabilities(appId, content) {
         if (isBase64(content)) {
             content = atob(content);
         }
+
+		console.log(content.substring(0, 100));
 
         let parser = new DOMParser();
         let doc = parser.parseFromString(content, "text/html");
@@ -931,7 +937,7 @@ async function cleanupInvalidAssociations() {
 }
 
 async function getAllValidAppIds() {
-    const appsFolder = await getFileByPath('Apps/');
+    const appsFolder = await getFileNamesByFolder('Apps/');
     return Object.keys(appsFolder || {}).map(appFileName => appsFolder[appFileName].id);
 }
 
@@ -1582,6 +1588,7 @@ async function strtappse(event) {
 		};
 	} else {
 		gid("partrecentapps").style.display = "block";
+		gid("seapppreview").style.display = "none";
 	}
 
 	gid("strtappsugs").style.display = elements > 0 ? "block" : "none";
@@ -2037,6 +2044,7 @@ async function opensearchpanel() {
 		gid("partrecentapps").style.display = "block";
 	} else {
 		gid("partrecentapps").style.display = "none";
+		document.querySelector(".previewsside").style.display = "none";
 	}
 }
 

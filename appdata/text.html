@@ -187,7 +187,6 @@
 
                     if (myWindow.params.appid == myWindow.appID) {
                         console.log('Loading todo');
-
                         const file = await window.parent.getFileById(myWindow.params.data);
                         readthefile(file);
                     }
@@ -196,14 +195,19 @@
 
             async function savetx(x) {
                 sbtn.innerHTML = '* Saving';
-                if (x == 1) {
-                    window.parent.createFile("Documents", "Untitled", "txt", document.getElementById("thedisplay").value)
-                } else if (x != "custom") {
-                    window.parent.createFile("Documents", "Untitled", x, document.getElementById("thedisplay").value)
+                if (mode = "edit") {
+                    
                 } else {
-                    let y = await window.parent.ask("Enter a file name:", "untitled.txt");
-                    window.parent.createFile("Documents", y, false, document.getElementById("thedisplay").value)
+                    if (x == 1) {
+                        window.parent.createFile("Documents", "Untitled", "txt", document.getElementById("thedisplay").value)
+                    } else if (x != "custom") {
+                        window.parent.createFile("Documents", "Untitled", x, document.getElementById("thedisplay").value)
+                    } else {
+                        let y = await window.parent.ask("Enter a file name:", "untitled.txt");
+                        window.parent.createFile("Documents", y, false, document.getElementById("thedisplay").value)
+                    }
                 }
+               
                 sbtn.innerHTML = 'Save';
                 mode = "edit";
             }
