@@ -1002,7 +1002,8 @@ nav info {
 }
 
 #loginmod .logincard {
-	height: 100%;
+	height: 0;
+	flex: 0;
     display: grid;
     justify-content: center;
     align-items: center;
@@ -1042,6 +1043,7 @@ nav info {
     border: 1px solid #414141;
     position: fixed;
     bottom: 10vh;
+	animation: appshow 0.5s 1;
 }
 
 .logincard button material-icons {
@@ -2060,3 +2062,76 @@ background: #5c8dab;
 	}
 }
 
+.loginscontain {
+	display:flex;
+	flex-direction: column;
+	height: 100%;
+
+	.logincard, .userselect {
+		height: 0;
+		overflow: hidden;
+        flex: 1;
+        transition: .2s ease-out;
+	}
+}
+
+.userselect {
+	display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+	.user {
+		width: 75px;
+        overflow: hidden;
+        height: fit-content;
+        text-overflow: ellipsis;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+		gap: 0.3rem;
+		padding: 0.5rem;
+        align-items: center;
+		border-radius: 0.5rem;
+		transition: .2s;
+		cursor: pointer;
+
+		.icon {
+			height: 2rem;
+            object-fit: contain;
+            background: rgb(205 205 205 / 30%);
+            border-radius: 0.3rem;
+            padding: 0.3rem;
+            aspect-ratio: 1 / 1;
+            margin-bottom: 0.3rem;
+		}
+	}
+
+	.user:hover {
+		background: #80808052;
+		transform: scale(1.1);
+		box-shadow: #0000002f;
+	}
+
+	.newusbtn {
+		background: #ffffff1a;
+		color: white;
+		border-radius: 2rem;
+		padding: 0.3rem 0.6rem;
+		padding-right: 0.5rem;
+		border: 1px solid #55555582;
+		display: flex;
+		flex-direction: row;
+		margin-top: 1rem;
+	}
+}
+
+#userschooser {
+	display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    height: fit-content;
+    align-items: center;
+
+	
+}

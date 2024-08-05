@@ -13,8 +13,8 @@
 	<!--Jquery-->
 	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 	<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css">
-	
-  <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.js"></script>
+
+	<script src="https://code.jquery.com/ui/1.13.3/jquery-ui.js"></script>
 	<!--NovaOS scripts-->
 	<script src="nova.js" defer></script>
 	<script src="scripts/edgecases.js" defer></script>
@@ -42,7 +42,7 @@
 				</div>
 				<div id="startupterms">Loading NovaOS</div>
 			</div>
-			
+
 		</dialog>
 		<script>
 			gid("edison").showModal();
@@ -207,18 +207,34 @@ gid('nova-copilot-window').showModal()">
 		</ul>
 	</div>
 	<dialog id="loginmod">
-		<div class="logincard">
-			<span class="logincardwelt">Welcome Back!</span>
-			<div id="loginform">
-				<input placeholder="Enter your password" id="loginform1" type="password">
-				<button onclick="checkifpassright()"><span class="material-icons">
-					chevron_right
-				</span></button>
+		<div class="loginscontain">
+			<div class="userselect">
+				<h1>Continue As</h1>
+				<div id="userschooser">
+					
+				</div>
+				<div class="user newusbtn">
+					<span class="material-icons">
+						add
+					</span>
+					<div class="name">
+						New
+					</div>
+				</div>
 			</div>
-			<small><a onclick="erdbsfull()">Remove User</a></small>
-			<button class="backbtnuserspg"><span class="material-icons">
-				chevron_left
-			</span> Login to a different account</button>
+			<div class="logincard">
+				<span class="logincardwelt">Welcome Back!</span>
+				<div id="loginform">
+					<input placeholder="Enter your password" id="loginform1" type="password">
+					<button onclick="checkifpassright()"><span class="material-icons">
+							chevron_right
+						</span></button>
+				</div>
+				<small><a onclick="erdbsfull()">Remove User</a></small>
+				<button class="backbtnuserspg" onclick="loginscreenbackbtn()"><span class="material-icons">
+						chevron_left
+					</span> Login to a different account</button>
+			</div>
 		</div>
 	</dialog>
 	<dialog id="sleepwindow">
@@ -281,7 +297,7 @@ gid('nova-copilot-window').showModal()">
 				</div>
 				<div class="strtappsugs" id="strtappsugs">
 				</div>
-				
+
 				<div id="notiflist">
 					No new notifications
 				</div>
@@ -314,7 +330,7 @@ gid('nova-copilot-window').showModal()">
 			</div>
 		</div>
 		<div id="nvacoplt-messages">
-			
+
 		</div>
 		<div class="messageinput">
 			<input id="nvacoplt-msginput" placeholder="Send A Message..." maxlength="450">

@@ -196,7 +196,7 @@
             async function savetx(x) {
                 sbtn.innerHTML = '* Saving';
                 if (mode = "edit") {
-                    
+
                 } else {
                     if (x == 1) {
                         window.parent.createFile("Documents", "Untitled", "txt", document.getElementById("thedisplay").value)
@@ -232,16 +232,28 @@
             }
 
             // Extract the JSON data
-            const jsonData = splitDataURI[1];
+            let jsonData = splitDataURI[1];
+
+            if (isBase64(jsonData)) {
+                jsonData = window.atob(jsonData)
+            }
 
             // Decode the JSON data
-            const decodedData = decodeURIComponent(window.atob(jsonData));
+            const decodedData = decodeURIComponent(jsonData);
 
             // Parse the decoded JSON data into a JavaScript object
             const jsonObject = JSON.parse(decodedData);
 
             return jsonObject;
         }
+
+        function isBase64(str) {
+	try {
+		return btoa(atob(str)) === str;
+	} catch (err) {
+		return false;
+	}
+}
 
         function formatJS(code) {
             let formattedCode = '';

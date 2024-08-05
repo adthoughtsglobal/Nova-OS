@@ -40,8 +40,49 @@ Object.defineProperty(window, 'nowapp', {
 	}
 });
 
+function loginscreenbackbtn() {
+	document.getElementsByClassName("backbtnuserspg")[0].style.display = "none";
+	document.getElementsByClassName("userselect")[0].style.flex = "1";
+	document.getElementsByClassName("logincard")[0].style.flex = "0";
+}
+
 async function showloginmod() {
-	closeElementedis()
+	closeElementedis();
+	document.getElementsByClassName("backbtnuserspg")[0].style.display = "none";
+
+	function createUserDivs(users) {
+		const usersChooser = document.getElementById('userschooser');
+		const defaultIcon = 'https://cdn-novaos-server.milosantos.com/user-icon.png'; // Default icon URL
+	  
+		users.forEach(cacusername => {
+		  const userDiv = document.createElement('div');
+		  userDiv.className = 'user';
+		  userDiv.addEventListener("mouseup", function () {
+			username = cacusername;
+			document.getElementsByClassName("backbtnuserspg")[0].style.display = "flex";
+			document.getElementsByClassName("userselect")[0].style.flex = "0";
+			document.getElementsByClassName("logincard")[0].style.flex = "1";
+
+			gid("loginform1").focus();
+		  })
+	  
+		  const img = document.createElement('img');
+		  img.className = 'icon';
+		  img.src = defaultIcon;
+	  
+		  const nameDiv = document.createElement('div');
+		  nameDiv.className = 'name';
+		  nameDiv.textContent = cacusername;
+	  
+		  userDiv.appendChild(img);
+		  userDiv.appendChild(nameDiv);
+		  usersChooser.appendChild(userDiv);
+		});
+	  }
+
+	  let users = await getallusers();
+	  createUserDivs(users)
+
 	gid('loginmod').showModal();
 	gid('loginform1').addEventListener("keydown", async function (event) {
 		if (event.key === 'Enter') {
