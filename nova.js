@@ -35,7 +35,7 @@ var novaos = {
     return genUID();
   },
   roturConnect: function () {
-    var ws = new WebSocket("wss://rotur.milosantos.com");
+    var ws = new WebSocket("https://rotur.mistium.com/");
     ws.onopen = function () {
       ws.send("NovaOS connected to Rotur");
     };
@@ -79,7 +79,7 @@ var rotur = {
     } catch(err) {
 console.error(err)
     }
-    ws = new WebSocket("wss://rotur.milosantos.com");
+    ws = new WebSocket("wss://rotur.mistium.com/");
     var altwssend = ws.send;
 
     ws.send = function (str) {

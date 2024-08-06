@@ -58,7 +58,7 @@ async function showloginmod() {
 		  const userDiv = document.createElement('div');
 		  userDiv.className = 'user';
 		  userDiv.addEventListener("mouseup", function () {
-			username = cacusername;
+			CurrentUsername = cacusername;
 			document.getElementsByClassName("backbtnuserspg")[0].style.display = "flex";
 			document.getElementsByClassName("userselect")[0].style.flex = "0";
 			document.getElementsByClassName("logincard")[0].style.flex = "1";
