@@ -1,10 +1,3 @@
-# NovaOS 1.7 is outdated.
-Will be soon upgraded to NovaOS 2. NovaOS 2 will not read file systems created by NovaOS 1.7 or below.
-NovaOS 2 will include:
-1. Local account system
-2. Better filesystem
-NovaOS 2 is still under development. We are making it better each day. I'll make the update when NovaOS 2 is ready for this challenge.
-
 # This is Nova OS
 and it's a Web OS, that's made for you.
 
@@ -13,7 +6,7 @@ We are creating this for everyone, confident that no one will ever need to 'lear
 ## Introducing Nova OS
 ![image](https://github.com/adthoughtsglobal/Nova-OS/assets/123654929/4d4a994e-2704-441e-904c-d513b7eaec48)
 
-Nova is a web-based operating system that has an App Ecosystem powered by a community of Creators like you.
+NovaOS is a web-based operating system that has an App Ecosystem powered by a community of Creators like you.
 # [Use Nova here](https://adthoughtsglobal.github.io/Nova-OS/)
 
 # A Friendly OS that's always with you.
@@ -38,3 +31,10 @@ Nova runs without any ads, and we never deal with your data. If you consider sup
 </p>
 
 NovaOS is still being developed, currently, as any WebOS, its nowhere as powerful as traditional operating systems.
+
+# NovaOS 1.7 is outdated.
+Will be soon upgraded to NovaOS 2. NovaOS 2 will not read file systems created by NovaOS 1.7 or below.
+NovaOS 2 will include:
+1. Local account system
+2. Better filesystem
+NovaOS 2 is still under development. We are making it better each day. I'll make the update when NovaOS 2 is ready for this challenge.
