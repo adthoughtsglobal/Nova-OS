@@ -597,7 +597,6 @@ nav info {
     overflow-y: scroll;
     overflow-x: hidden;
     max-height: 30vh;
-    margin-top: 10px;
     padding-right: 5px;
 }
 
@@ -2134,4 +2133,15 @@ background: #5c8dab;
     align-items: center;
 
 	
+}
+
+.strtappsugs strong {
+    opacity: 0.5;
+    font-size: 0.7rem;
+    font-weight: normal;
+    margin: 0.3rem 0;
+    padding: 0.2rem;
+    border-bottom: 1px solid lightgrey;
+    display: block;
+    width: 100%;
 }

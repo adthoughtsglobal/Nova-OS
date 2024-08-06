@@ -1539,32 +1539,42 @@ function getfourthdimension() {
 
 async function prepareArrayToSearch() {
 	let arrayToSearch = [];
-	const folderstosearch = await getFolderNames();
 
-	for (const [index, item] of folderstosearch.entries()) {
-		const x = await getFileNamesByFolder(item);
-		arrayToSearch = arrayToSearch.concat(x);
+	function scanFolder(folderPath, folderContents) {
+		for (const name in folderContents) {
+			const fullPath = `${folderPath}${name}`;
+			const item = folderContents[name];
+
+			if (item.id) {
+				arrayToSearch.push({ name, id: item.id, type: "file", path: folderPath });
+			} else {
+				arrayToSearch.push({ name: name, type: "folder", path: folderPath });
+				scanFolder(fullPath, item);
+			}
+		}
+	}
+
+	for (const folder in memory) {
+		scanFolder(folder, memory[folder]);
 	}
 
 	fileslist = arrayToSearch;
 }
 
-// Function to handle the search logic
 async function strtappse(event) {
 	if (fileslist.length === 0) {
 		await prepareArrayToSearch();
 	}
 
 	const searchValue = gid("strtsear").value.toLowerCase();
-	if (searchValue.length == 0) {
-		return;
-	}
+	if (searchValue.length === 0) return;
 
 	const abracadra = await getSetting("smartsearch");
 
 	if (event.key === "Enter") {
 		event.preventDefault();
-		if (searchValue == "i love nova") {
+
+		if (searchValue === "i love nova") {
 			gid("searchwindow").close();
 			notify("hmm", "you're really goofy...", "Nova just replied you:");
 			really = true;
@@ -1575,12 +1585,10 @@ async function strtappse(event) {
 
 		fileslist.forEach(item => {
 			const itemName = item.name.toLowerCase();
-			if (!abracadra) {
-				if (itemName.startsWith(searchValue)) {
-					appToOpen = item;
-					return false;
-				}
-			} else {
+			if (item.type === "folder" || (!abracadra && itemName.startsWith(searchValue))) {
+				appToOpen = item;
+				return false;
+			} else if (abracadra) {
 				const similarity = calculateSimilarity(itemName, searchValue);
 				if (similarity > maxSimilarity) {
 					maxSimilarity = similarity;
@@ -1594,59 +1602,78 @@ async function strtappse(event) {
 		}
 		return;
 	}
-
-	gid("strtappsugs").innerHTML = "";
 	let elements = 0;
-	const itemsWithSimilarity = [];
+const itemsWithSimilarity = [];
 
-	fileslist.forEach(item => {
-		const itemName = item.name.toLowerCase();
+// Filter and sort items based on similarity
+fileslist.forEach(item => {
+	const itemName = item.name.toLowerCase();
+	let similarity = 1;
+
+	// Check if item is not a folder (folders end with '/')
+	if (!itemName.endsWith('/')) {
 		if (!abracadra) {
 			if (itemName.startsWith(searchValue)) {
-				itemsWithSimilarity.push({ item, similarity: 1 });
+				itemsWithSimilarity.push({ item, similarity });
 			}
 		} else {
-			const similarity = calculateSimilarity(itemName, searchValue);
+			similarity = calculateSimilarity(itemName, searchValue);
 			if (similarity >= 0.2) {
 				itemsWithSimilarity.push({ item, similarity });
 			}
 		}
-	});
+	}
+});
 
-	itemsWithSimilarity.sort((a, b) => b.similarity - a.similarity);
+itemsWithSimilarity.sort((a, b) => b.similarity - a.similarity);
 
-	let mostRelevantItem;
-	itemsWithSimilarity.forEach((entry, index) => {
-		const { item } = entry;
+// Group results by path
+const groupedResults = itemsWithSimilarity.reduce((acc, { item }) => {
+	const path = item.path || '';
+	if (!acc[path]) acc[path] = [];
+	acc[path].push(item);
+	return acc;
+}, {});
 
-		if (index === 0) {
-			mostRelevantItem = item;
-		}
+// Clear previous search suggestions
+gid("strtappsugs").innerHTML = "";
+
+// Display grouped results
+let mostRelevantItem = null;
+Object.keys(groupedResults).forEach(path => {
+	const items = groupedResults[path];
+	const pathElement = document.createElement("div");
+	pathElement.innerHTML = `<strong>${path}</strong>`;
+	gid("strtappsugs").appendChild(pathElement);
+
+	items.forEach(item => {
+		if (!mostRelevantItem) mostRelevantItem = item; // Set mostRelevantItem if not set
 
 		const newElement = document.createElement("div");
-		newElement.innerHTML = "<div>" + ((appicns[item.name] != undefined) ? appicns[item.name] : defaultAppIcon) + " " + item.name + "</div>" + `<span class="material-icons" onclick="openapp('${item.name}', '${item.id}')">arrow_outward</span>`;
+		newElement.innerHTML = "<div>" + ((appicns[item.name] != undefined) ? appicns[item.name] : defaultAppIcon) + " " + item.name + "</div>" + `<span class="material-icons" onclick="openfile('${item.id}')">arrow_outward</span>`;
 		gid("strtappsugs").appendChild(newElement);
 		elements++;
 	});
+});
 
-	if (elements > 0) {
-		gid("partrecentapps").style.display = "none";
-		document.getElementsByClassName("previewsside")[0].style.display = "flex";
-		gid("seapppreview").style.display = "block";
-		const appfound = mostRelevantItem;
-		gid('seprw-icon').innerHTML = (appicns[appfound.name] != undefined) ? appicns[appfound.name] : defaultAppIcon;
-		gid('seprw-appname').innerText = appfound.name;
-		gid('seprw-openb').onclick = function () {
-			openfile(appfound.id);
-		};
-	} else {
-		gid("partrecentapps").style.display = "block";
-		gid("seapppreview").style.display = "none";
-	}
+// Handle the most relevant item
+if (mostRelevantItem) {
+	gid("partrecentapps").style.display = "none";
+	document.getElementsByClassName("previewsside")[0].style.display = "flex";
+	gid("seapppreview").style.display = "block";
 
-	gid("strtappsugs").style.display = elements > 0 ? "block" : "none";
+	gid('seprw-icon').innerHTML = (appicns[mostRelevantItem.name] != undefined) ? appicns[mostRelevantItem.name] : defaultAppIcon;
+	gid('seprw-appname').innerText = mostRelevantItem.name;
+	gid('seprw-openb').onclick = function () {
+		openfile(mostRelevantItem.id);
+	};
+} else {
+	gid("partrecentapps").style.display = "block";
+	gid("seapppreview").style.display = "none";
 }
 
+gid("strtappsugs").style.display = elements > 0 ? "block" : "none";
+}
 function calculateSimilarity(string1, string2) {
 	const m = string1.length;
 	const n = string2.length;
