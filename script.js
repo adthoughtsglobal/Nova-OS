@@ -57,14 +57,22 @@ async function showloginmod() {
 		users.forEach(cacusername => {
 		  const userDiv = document.createElement('div');
 		  userDiv.className = 'user';
-		  userDiv.addEventListener("mouseup", function () {
+		  userDiv.tabIndex = 0;
+		  const selectUser = function() {
 			CurrentUsername = cacusername;
 			document.getElementsByClassName("backbtnuserspg")[0].style.display = "flex";
 			document.getElementsByClassName("userselect")[0].style.flex = "0";
 			document.getElementsByClassName("logincard")[0].style.flex = "1";
-
 			gid("loginform1").focus();
-		  })
+		  };
+		
+		  userDiv.addEventListener("mouseup", selectUser);
+		
+		  userDiv.addEventListener("keydown", function (event) {
+			if (event.key === "Enter") {
+			  selectUser();
+			}
+		  });
 	  
 		  const img = document.createElement('img');
 		  img.className = 'icon';
@@ -81,7 +89,11 @@ async function showloginmod() {
 	  }
 
 	  let users = await getallusers();
-	  createUserDivs(users)
+	  createUserDivs(users);
+
+	  if (users.length > 0) {
+		document.querySelector('.user').focus();
+	  }	  
 
 	gid('loginmod').showModal();
 	gid('loginform1').addEventListener("keydown", async function (event) {
@@ -1992,9 +2004,16 @@ document.addEventListener('keydown', function (event) {
 });
 
 document.addEventListener('keydown', function (event) {
-	if (event.shiftKey && event.key === 'Tab') {
+	if (event.ctrlKey && event.key === '/') {
 		event.preventDefault();
 		opensearchpanel();
+	}
+});
+
+document.addEventListener('keydown', function (event) {
+	if (event.ctrlKey && event.key === ' ') {
+		event.preventDefault();
+		openn();
 	}
 });
 
