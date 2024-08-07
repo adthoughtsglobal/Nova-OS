@@ -308,7 +308,7 @@
 
             file.type = window.parent.mtpetxt(file.fileName)
 
-            file.content = atob(file.content);
+            file.content = isBase64(file.content) ? atob(file.content) : file.content;
             if (file.type == "json") {
                 const contentString = JSON.stringify(file.content);
                 const formattedString = contentString.slice(1, -1);

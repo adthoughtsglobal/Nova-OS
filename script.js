@@ -22,8 +22,8 @@ gid("nowrunninapps").style.display = "none";
 
 const rllog = console.log;
 
-function qsetsRefresh() {
-	updateMemoryData()
+async function qsetsRefresh() {
+	await updateMemoryData()
 }
 
 gid('seprw-openb').onclick = function () {
@@ -52,6 +52,7 @@ async function showloginmod() {
 
 	function createUserDivs(users) {
 		const usersChooser = document.getElementById('userschooser');
+		usersChooser.innerHTML = '';
 		const defaultIcon = 'https://cdn-novaos-server.milosantos.com/user-icon.png'; // Default icon URL
 	  
 		users.forEach(cacusername => {
@@ -59,7 +60,9 @@ async function showloginmod() {
 		  userDiv.className = 'user';
 		  userDiv.tabIndex = 0;
 		  const selectUser = function() {
+			memory = null;
 			CurrentUsername = cacusername;
+			getdb()
 			document.getElementsByClassName("backbtnuserspg")[0].style.display = "flex";
 			document.getElementsByClassName("userselect")[0].style.flex = "0";
 			document.getElementsByClassName("logincard")[0].style.flex = "1";
@@ -115,7 +118,7 @@ async function startup() {
 	console.log("Startup");
 	setsrtpprgbr(0)
 	const start = performance.now();
-	try { qsetsRefresh(); }
+	try { await qsetsRefresh(); }
 	catch (err) { console.error("qsetsRefresh error:", err); }
 
 	try {
@@ -647,7 +650,7 @@ async function dod() {
 
 	if (x != undefined) {
 		let unshrinkbsfX = unshrinkbsf(x.content);
-		document.getElementById('bgimage').src = `url("` + unshrinkbsfX + `")`;
+		document.getElementById('bgimage').src = unshrinkbsfX;
 	} else {
 		if (document.getElementById("bgimage").src != novaFeaturedImage) {
 			document.getElementById("bgimage").src = novaFeaturedImage;
@@ -889,14 +892,14 @@ function isBase64(str) {
 }
 
 async function createFile(folderName2, fileName, type, content, metadata = {}) {
-	let thefileidomg;
-    let folderName = folderName2.replace(/\/$/, '');
-    let fileName2 = type ? `${fileName}.${type}` : (fileName || (() => {
-        console.log("Cannot find file extension. Can't create file.");
-        return;
-    })());
+    let fileId;
+    const folderName = folderName2.replace(/\/$/, '');
+    const fileName2 = type ? `${fileName}.${type}` : fileName;
 
-    if (!fileName2) return;
+    if (!fileName2) {
+        console.log("Cannot find file extension. Can't create file.");
+        return null;
+    }
 
     await updateMemoryData();
 
@@ -904,40 +907,39 @@ async function createFile(folderName2, fileName, type, content, metadata = {}) {
         await createFolder(folderName);
     }
 
-    let folder = createFolderStructure(folderName);
+    const folder = createFolderStructure(folderName);
 
     try {
+        // Convert raw text to base64 if content is not in a specific format
+        const isFormatSpecific = content.startsWith("data:");
+        if (!isFormatSpecific && typeof content === 'string') {
+            content = btoa(content);
+        }
+
         if (type === "app") {
-            let appData = await getFileByPath(`Apps/${fileName2}`);
+            const appData = await getFileByPath(`Apps/${fileName2}`);
             if (appData) {
-                content = isBase64(content) ? content : btoa(content);
                 await updateFile("Apps", appData.id, { metadata, content, fileName: fileName2, type });
-				thefileidomg = appData.id;
-                // Extract capabilities from the meta tag and register them using appId
                 extractAndRegisterCapabilities(appData.id, content);
-                return;
+                return appData.id || null;
             }
         }
 
-        let existingFile = Object.values(folder).find(file => file.fileName === fileName2);
+        const existingFile = Object.values(folder).find(file => file.fileName === fileName2);
         if (existingFile) {
-            console.log(`Updating "${folderName}"/"${fileName2}"`);
-            content = isBase64(content) ? content : btoa(content);
+            console.log(`Updating "${folderName}/${fileName2}"`);
             await updateFile(folderName, existingFile.id, { metadata, content, fileName: fileName2, type });
-			thefileidomg = existingFile.id;
+            fileId = existingFile.id;
         } else {
-            let uid = genUID();
+            const uid = genUID();
             metadata.datetime = getfourthdimension();
-            metadata = JSON.stringify(metadata);
-			extractAndRegisterCapabilities(uid, content);
-            content = isBase64(content) ? content : btoa(content);
-			
-            folder[fileName2] = { id: uid, type, content, metadata };
-            console.log(`Created "${folderName}"/"${fileName2}"`);
+            const metadataStr = JSON.stringify(metadata);
+            folder[fileName2] = { id: uid, type, content, metadata: metadataStr };
+            console.log(`Created "${folderName}/${fileName2}"`);
             await setdb(memory);
-			thefileidomg = uid;
+            fileId = uid;
         }
-		return thefileidomg || null;
+        return fileId || null;
     } catch (error) {
         console.error("Error creating file:", error);
         return null;
@@ -1306,20 +1308,12 @@ function ask(question, preset) {
 
 var dev;
 
-// Compression
 function shrinkbsf(str) {
-
-	const compressed = pako.deflate(str, { to: 'string' });
-	return compressed;
+	return str;
 }
 
-// Decompression
 function unshrinkbsf(compressedStr) {
-	try {
-		return pako.inflate(compressedStr, { to: 'string' });
-	} catch (error) {
 		return compressedStr;
-	}
 }
 
 async function makewall(deid) {
@@ -2353,4 +2347,14 @@ function markdownToHTML(markdown) {
   html = html.replace(/(<li>.*<\/li>)/gim, '<ul>$1</ul>');
 
   return html.trim();
+}
+
+function logoutofnova() {
+	memory = null;
+	CurrentUsername = null;
+	password = null;
+	closeallwindows();
+	showloginmod();
+	lethalpasswordtimes = true;
+	loginscreenbackbtn();
 }

@@ -10,7 +10,6 @@ async function openlaunchprotocol(appid, data) {
 
 
 async function openfile(x) {
-    var dataavailable = {};
 	console.log("opening: " + x)
 	let unid= x;
 	try {
@@ -135,13 +134,20 @@ function openwindow(title, cont, ic, theme, appid, params) {
 	}
 	windowHeader.setAttribute("title", title + winuid)
 	windowHeader.addEventListener("mouseup", function (event) {
+		let target = event.target;
+		while (target) {
+			if (target.classList && target.classList.contains('clwin')) {
+				return;
+			}
+			target = target.parentElement;
+		}
 		checksnapping(windowDiv, event);
 	});
+	
 
-	windowHeader.addEventListener("mousedown", function (event) {
+	windowDiv.addEventListener("mousedown", function (event) {
 		putwinontop('window' + winuid);
 		winds[title + winuid] = windowDiv.style.zIndex;
-
 	});
 
 	var ibtnsside = document.createElement("div");
@@ -204,6 +210,15 @@ function openwindow(title, cont, ic, theme, appid, params) {
 			contentString = atob(contentString);
 		}
 
+		const script = `
+        <script>
+            document.addEventListener('mousedown', function(event) {
+                window.parent.postMessage({ type: 'iframeClick', iframeId: '${winuid}' }, '*');
+            });
+        </script>
+    `;
+    contentString = contentString.replace('</body>', script + '</body>');
+
 		// Create a Blob from the content string
 		var blob = new Blob([contentString], { type: 'text/html' });
 
@@ -211,8 +226,6 @@ function openwindow(title, cont, ic, theme, appid, params) {
 		var blobURL = URL.createObjectURL(blob);
 
 		iframe.onload = function () {
-			var doc = iframe.contentDocument || iframe.contentWindow.document;
-
 			iframe.contentWindow.myWindow = {
 				element: windowDiv,
 				titleElement: windowtitlespan,
@@ -220,34 +233,20 @@ function openwindow(title, cont, ic, theme, appid, params) {
 				...(params && { params })
 			};
 
-			// Check if the content string contains the function greenflag
-			if (contentString.includes(`function greenflag()`)) {
-				attemptGreenFlag(windowLoader, windowContent, iframe);
-			} else {
-				windowLoader.remove();
-			}
+			try { iframe.contentWindow.greenflag(); } catch {}
+			
+			windowLoader.remove();
 		};
 
-		// Set the src of the iframe to the Blob URL
 		iframe.src = blobURL;
 
 		windowContent.appendChild(iframe);
-	}
-
-	function attemptGreenFlag(windowLoader, windowContent, iframe) {
-		try {
-			iframe.contentWindow.greenflag();
-			windowLoader.style.display = "none";
-			windowLoader.remove();
-		} catch (error) {
-			console.log(error)
-			if (!String(error.message).includes('greenflag')) {
-				windowLoader.style.display = "none";
-				return;
+		window.addEventListener('message', function(event) {
+			if (event.data.type === 'iframeClick' && event.data.iframeId === winuid) {
+				putwinontop('window' + winuid);
+				winds[title + winuid] = windowDiv.style.zIndex;
 			}
-
-
-		}
+		});
 	}
 
 	nowwindow = 'window' + winuid;
@@ -279,13 +278,13 @@ async function openapp(x, od) {
         const fetchDataAndSave = async (x) => {
             try {
                 var y;
-                if (od != 1) {
-                    y = await getFileById(od)
-                    y = unshrinkbsf(y.content)
-                } else {
-                    y = await fetchData("appdata/" + x + ".html");
-                    await createFile("Apps", x, "app", y);
-                }
+                if (od == 1) {
+					y = await fetchData("appdata/" + x + ".html");
+                    od = await createFile("Apps", x, "app", y);
+                } 
+
+				y = await getFileById(od)
+				y = unshrinkbsf(y.content)
     
                 // Assuming you have a predefined function openwindow
                 openwindow(x, y, getAppIcon(y, x), getAppTheme(y), od, Gtodo);

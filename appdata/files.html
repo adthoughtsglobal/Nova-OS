@@ -861,37 +861,40 @@ async function fupit() {
 
   async function processFile(file, chunkSize, delay) {
     return new Promise((resolve) => {
-      const worker = new Worker(URL.createObjectURL(workerBlob));
-      let combinedChunks = [];
+        const worker = new Worker(URL.createObjectURL(workerBlob));
+        const combinedChunks = [];
 
-      worker.onmessage = function(event) {
-        if (event.data.done) {
-          const combined = new Blob(combinedChunks, { type: file.type });
-          const reader = new FileReader();
+        worker.onmessage = async function(event) {
+            if (event.data.done) {
+                const combined = new Blob(combinedChunks, { type: file.type });
+                const reader = new FileReader();
 
-          reader.onload = async function(e) {
-            const out = e.target.result;
-            const type = file.type || 'txt';
-            const folderName = 'Downloads/';
-            const md = { "via": "imported" };
+                reader.onload = async function(e) {
+                    let content = e.target.result;
+                    const type = file.type || 'txt';
+                    const folderName = 'Downloads/';
+                    const metadata = { "via": "imported" };
 
-            const shrinkedOut = await window.parent.shrinkbsf(out);
+                    // Convert raw text to base64 if content is not in a specific format
+                    const isFormatSpecific = content.startsWith("data:");
+                    if (!isFormatSpecific) {
+                        content = btoa(content);
+                    }
 
-            await window.parent.createFile(folderName, window.parent.basename(file.name), mtpetxt(type), shrinkedOut, md);
+                    await window.parent.createFile(folderName, window.parent.basename(file.name), mtpetxt(type), content, metadata);
 
-            resolve();
-          };
+                    resolve();
+                };
 
-          reader.readAsDataURL(combined);
-        } else {
-          combinedChunks.push(event.data.chunk);
-        }
-      };
+                reader.readAsDataURL(combined);
+            } else {
+                combinedChunks.push(event.data.chunk);
+            }
+        };
 
-      worker.postMessage({ file, chunkSize, delay });
+        worker.postMessage({ file, chunkSize, delay });
     });
-  }
-
+}
   const chunkSize = 1024 * 1024; // 1MB chunks
   const delay = 100; // 100ms delay between chunks
 
