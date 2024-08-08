@@ -892,12 +892,11 @@ function isBase64(str) {
 }
 
 async function createFile(folderName2, fileName, type, content, metadata = {}) {
-    let fileId;
     const folderName = folderName2.replace(/\/$/, '');
     const fileName2 = type ? `${fileName}.${type}` : fileName;
 
     if (!fileName2) {
-        console.log("Cannot find file extension. Can't create file.");
+        console.log("Cannot find file name. Can't create file.");
         return null;
     }
 
@@ -910,36 +909,42 @@ async function createFile(folderName2, fileName, type, content, metadata = {}) {
     const folder = createFolderStructure(folderName);
 
     try {
-        // Convert raw text to base64 if content is not in a specific format
-        const isFormatSpecific = content.startsWith("data:");
-        if (!isFormatSpecific && typeof content === 'string') {
-            content = btoa(content);
-        }
+        // Create a Blob from the content
+        const blob = new Blob([content], { type: 'application/octet-stream' });
 
-        if (type === "app") {
-            const appData = await getFileByPath(`Apps/${fileName2}`);
-            if (appData) {
-                await updateFile("Apps", appData.id, { metadata, content, fileName: fileName2, type });
-                extractAndRegisterCapabilities(appData.id, content);
-                return appData.id || null;
+        // Create a URL for the Blob and convert to Base64
+        const reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onloadend = async function () {
+            const base64data = reader.result.split(',')[1]; // Extract Base64 string from Data URL
+
+            if (type === "app" && fileName2.endsWith(".app")) {
+				console.log("App file to be created!")
+                const appData = await getFileByPath(`Apps/${fileName2}`);
+                if (appData) {
+                    await updateFile("Apps", appData.id, { metadata, content: base64data, fileName: fileName2, type });
+                    extractAndRegisterCapabilities(appData.id, base64data);
+                    return appData.id || null;
+                }
             }
-        }
 
-        const existingFile = Object.values(folder).find(file => file.fileName === fileName2);
-        if (existingFile) {
-            console.log(`Updating "${folderName}/${fileName2}"`);
-            await updateFile(folderName, existingFile.id, { metadata, content, fileName: fileName2, type });
-            fileId = existingFile.id;
-        } else {
-            const uid = genUID();
-            metadata.datetime = getfourthdimension();
-            const metadataStr = JSON.stringify(metadata);
-            folder[fileName2] = { id: uid, type, content, metadata: metadataStr };
-            console.log(`Created "${folderName}/${fileName2}"`);
-            await setdb(memory);
-            fileId = uid;
-        }
-        return fileId || null;
+            const existingFile = Object.values(folder).find(file => file.fileName === fileName2);
+            if (existingFile) {
+                console.log(`Updating "${folderName}/${fileName2}"`);
+                await updateFile(folderName, existingFile.id, { metadata, content: base64data, fileName: fileName2, type });
+                return existingFile.id;
+            } else {
+                const uid = genUID();
+                metadata.datetime = getfourthdimension();
+                folder[fileName2] = { id: uid, type, content: base64data, metadata: JSON.stringify(metadata) };
+                console.log(`Created "${folderName}/${fileName2}"`);
+				if (type === "app" && fileName2.endsWith(".app")) {
+					extractAndRegisterCapabilities(uid, base64data);
+				}
+                await setdb(memory);
+                return uid;
+            }
+        };
     } catch (error) {
         console.error("Error creating file:", error);
         return null;
@@ -947,6 +952,7 @@ async function createFile(folderName2, fileName, type, content, metadata = {}) {
 }
 
 async function extractAndRegisterCapabilities(appId, content) {
+	console.log("EX CAPABLE:" + appId)
     try {
         if (isBase64(content)) {
             content = atob(content);

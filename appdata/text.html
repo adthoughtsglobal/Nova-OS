@@ -302,28 +302,43 @@
         }
 
         function readthefile(file) {
-            console.log(file)
-            currentfileID = file.id;
-            mode = "edit"
+    console.log(file);
+    currentfileID = file.id;
+    mode = "edit";
 
-            file.type = window.parent.mtpetxt(file.fileName)
+    // Detect and handle MIME type prefix
+    const mimePrefix = file.content.match(/^data:([^;]+);base64,/);
+    if (mimePrefix) {
+        file.type = mimePrefix[1];
+        file.content = file.content.replace(/^data:[^;]+;base64,/, '');
+    } else {
+        file.type = window.parent.mtpetxt(file.fileName);
+    }
 
-            file.content = isBase64(file.content) ? atob(file.content) : file.content;
-            if (file.type == "json") {
-                const contentString = JSON.stringify(file.content);
-                const formattedString = contentString.slice(1, -1);
-                file.content = formatJS(formattedString)
-            }
+    // Decode Base64 content if necessary
+    if (isBase64(file.content)) {
+        file.content = atob(file.content);
+    }
 
-            if (file && file.content) {
-                myWindow.titleElement.innerText = file.fileName;
-                document.getElementById("thedisplay").value = file.content;
-                console.log("0002");
-                localStorage.setItem("todo", "");
-            } else {
-                console.error("0004");
-            }
+    // Process content based on file type
+    if (file.type === "application/json" || file.type === "json") {
+        try {
+            file.content = JSON.stringify(JSON.parse(file.content), null, 2); // Format JSON with indentation
+        } catch (e) {
+            console.error("Error parsing JSON content", e);
         }
+    }
+
+    // Update UI
+    if (file && file.content) {
+        myWindow.titleElement.innerText = file.fileName;
+        document.getElementById("thedisplay").value = file.content;
+        console.log("Content displayed successfully");
+        localStorage.setItem("todo", "");
+    } else {
+        console.error("Error displaying content");
+    }
+}
     </script>
 </body>
 

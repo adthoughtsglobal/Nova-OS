@@ -325,20 +325,29 @@ async function ensurePreferencesFileExists() {
     await updateMemoryData();
     try {
         if (!memory["System/"]) {
-        memory["System/"] = {};
+            memory["System/"] = {};
+        }
+        if (!memory["System/"]["preferences.json"]) {
+            const defaultContent = btoa(JSON.stringify({})); // Encode an empty object
+            await createFile("System/", "preferences.json", false, `data:application/json;base64,${defaultContent}`);
+        }
+    } catch (err) {
+        console.log("Error ensuring preferences file exists", err);
     }
-    if (!memory["System/"]["preferences.json"]) {
-        await createFile("System/", "preferences.json", false, btoa('{}'));
-    }
-} catch (err){}
 }
 
 async function getSetting(key) {
     try {
-        if (!memory) {return}
+        if (!memory) return;
+
         await ensurePreferencesFileExists();
-        let preferencesContent = atob(memory["System/"]["preferences.json"]["content"]);
-        let preferences = JSON.parse(preferencesContent);
+        let content = memory["System/"]["preferences.json"]["content"];
+        
+        if (!content) return; // Return undefined if content is empty
+
+        // Extract Base64 content from the MIME type prefix
+        let base64Content = content.split(",")[1];
+        let preferences = JSON.parse(atob(base64Content)); // Decode and parse the Base64 content
         return preferences[key];
     } catch (error) {
         console.log("Error getting settings", error);
@@ -347,18 +356,28 @@ async function getSetting(key) {
 
 async function setSetting(key, value) {
     try {
-        if (!memory) {return}
+        if (!memory) return;
+
         await ensurePreferencesFileExists();
-        let preferencesContent = atob(memory["System/"]["preferences.json"]["content"]);
-        let preferences = JSON.parse(preferencesContent);
+        let content = memory["System/"]["preferences.json"]["content"];
+        
+        let base64Content = "";
+        let preferences = {};
+
+        if (content) {
+            base64Content = content.split(",")[1]; // Extract Base64 content from the MIME type prefix
+            preferences = JSON.parse(atob(base64Content));
+        }
+
         preferences[key] = value;
-        memory["System/"]["preferences.json"]["content"] = btoa(JSON.stringify(preferences));
+
+        // Prepend MIME type prefix when saving
+        memory["System/"]["preferences.json"]["content"] = `data:application/json;base64,${btoa(JSON.stringify(preferences))}`;
         await setdb(memory);
     } catch (error) {
         console.log("Error setting settings", error);
     }
 }
-
 async function resetSettings(value) {
     try {
         if (!memory) {return}
