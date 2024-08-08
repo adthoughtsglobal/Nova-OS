@@ -196,18 +196,9 @@ function openwindow(title, cont, ic, theme, appid, params) {
 		var iframe = document.createElement("iframe");
 		var contentString = content.toString();
 
-		// Function to check if a string is Base64 encoded
-		function isBase64(str) {
-			try {
-				return btoa(atob(str)) === str;
-			} catch (err) {
-				return false;
-			}
-		}
-
 		// Decode the content string if it's Base64 encoded
 		if (isBase64(contentString)) {
-			contentString = atob(contentString);
+			contentString = decodeBase64Content(contentString);
 		}
 
 		const script = `
