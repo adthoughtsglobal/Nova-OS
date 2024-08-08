@@ -755,7 +755,17 @@ function getAppIcon(unshrunkContent, appname) {
 
 // Function to check and decode Base64 content with marker
 function decodeBase64Content(str) {
-	return atob(str);
+    // Check if the string starts with a data URL prefix
+    const base64Prefix = ';base64,';
+    const prefixIndex = str.indexOf(base64Prefix);
+
+    if (prefixIndex !== -1) {
+        // Strip the prefix and decode the Base64 content
+        str = str.substring(prefixIndex + base64Prefix.length);
+    }
+
+    // Decode the Base64 content
+    return atob(str);
 }
 
 function getAppTheme(unshrunkContent) {
@@ -885,11 +895,46 @@ function folderExists(folderName) {
 }
 
 function isBase64(str) {
-	try {
-		return btoa(atob(str)) === str;
-	} catch (err) {
-		return false;
-	}
+    try {
+        // Function to validate Base64 string
+        function validateBase64(data) {
+            // Ensure the string has the correct Base64 character set
+            const base64Pattern = /^[A-Za-z0-9+/=]+$/;
+            if (!base64Pattern.test(data)) {
+                return false;
+            }
+
+            // Add padding if necessary
+            const padding = data.length % 4;
+            if (padding > 0) {
+                data += '='.repeat(4 - padding);
+            }
+
+            // Attempt to decode the Base64 string
+            atob(data);
+            return true;
+        }
+
+        // Check without MIME type prefix
+        if (validateBase64(str)) {
+            return true;
+        }
+
+        // Check if the string starts with a MIME type prefix
+        const base64Prefix = 'data:';
+        const base64Delimiter = ';base64,';
+        if (str.startsWith(base64Prefix)) {
+            const delimiterIndex = str.indexOf(base64Delimiter);
+            if (delimiterIndex !== -1) {
+                const base64Data = str.substring(delimiterIndex + base64Delimiter.length);
+                return validateBase64(base64Data);
+            }
+        }
+
+        return false;
+    } catch (err) {
+        return false;
+    }
 }
 
 async function createFile(folderName2, fileName, type, content, metadata = {}) {
@@ -910,45 +955,57 @@ async function createFile(folderName2, fileName, type, content, metadata = {}) {
     const folder = createFolderStructure(folderName);
 
     try {
-        // Create a Blob from the content
-        const blob = new Blob([content], { type: 'application/octet-stream' });
+        let base64data = isBase64(content) ? content : '';
 
-        // Create a URL for the Blob and convert to Base64
-        const reader = new FileReader();
-        reader.readAsDataURL(blob);
-        reader.onloadend = async function () {
-            const base64data = reader.result.split(',')[1]; // Extract Base64 string from Data URL
+        if (!base64data) {
+            // Create a Blob from the content
+            const mimeType = type ? `application/${type}` : 'application/octet-stream';
+            const blob = new Blob([content], { type: mimeType });
 
-            if (type === "app" && fileName2.endsWith(".app")) {
-				console.log("App file to be created!")
-                const appData = await getFileByPath(`Apps/${fileName2}`);
-                if (appData) {
-                    await updateFile("Apps", appData.id, { metadata, content: base64data, fileName: fileName2, type });
-                    extractAndRegisterCapabilities(appData.id, base64data);
-                    return appData.id || null;
-                }
-            }
+            // Create a URL for the Blob and convert to Base64
+            const reader = new FileReader();
+            reader.readAsDataURL(blob);
+            reader.onloadend = async function () {
+                base64data = reader.result; // Use the full Data URL with prefix
 
-            const existingFile = Object.values(folder).find(file => file.fileName === fileName2);
-            if (existingFile) {
-                console.log(`Updating "${folderName}/${fileName2}"`);
-                await updateFile(folderName, existingFile.id, { metadata, content: base64data, fileName: fileName2, type });
-                return existingFile.id;
-            } else {
-                const uid = genUID();
-                metadata.datetime = getfourthdimension();
-                folder[fileName2] = { id: uid, type, content: base64data, metadata: JSON.stringify(metadata) };
-                console.log(`Created "${folderName}/${fileName2}"`);
-				if (type === "app" && fileName2.endsWith(".app")) {
-					extractAndRegisterCapabilities(uid, base64data);
-				}
-                await setdb(memory);
-                return uid;
-            }
-        };
+                await handleFile(folder, folderName, fileName2, base64data, type, metadata);
+            };
+        } else {
+            await handleFile(folder, folderName, fileName2, base64data, type, metadata);
+        }
     } catch (error) {
         console.error("Error creating file:", error);
         return null;
+    }
+
+    // Helper function to handle file creation or update
+    async function handleFile(folder, folderName, fileName2, base64data, type, metadata) {
+        if (type === "app" && fileName2.endsWith(".app")) {
+            console.log("App file to be created!");
+            const appData = await getFileByPath(`Apps/${fileName2}`);
+            if (appData) {
+                await updateFile("Apps", appData.id, { metadata, content: base64data, fileName: fileName2, type });
+                extractAndRegisterCapabilities(appData.id, base64data);
+                return appData.id || null;
+            }
+        }
+
+        const existingFile = Object.values(folder).find(file => file.fileName === fileName2);
+        if (existingFile) {
+            console.log(`Updating "${folderName}/${fileName2}"`);
+            await updateFile(folderName, existingFile.id, { metadata, content: base64data, fileName: fileName2, type });
+            return existingFile.id;
+        } else {
+            const uid = genUID();
+            metadata.datetime = getfourthdimension();
+            folder[fileName2] = { id: uid, type, content: base64data, metadata: JSON.stringify(metadata) };
+            console.log(`Created "${folderName}/${fileName2}"`);
+            if (type === "app" && fileName2.endsWith(".app")) {
+                extractAndRegisterCapabilities(uid, base64data);
+            }
+            await setdb(memory);
+            return uid;
+        }
     }
 }
 
@@ -956,7 +1013,7 @@ async function extractAndRegisterCapabilities(appId, content) {
 	console.log("EX CAPABLE:" + appId)
     try {
         if (isBase64(content)) {
-            content = atob(content);
+            content = decodeBase64Content(content);
         }
 
 		console.log(content.substring(0, 100));
