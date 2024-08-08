@@ -187,6 +187,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	// Check if the database 'trojencat' exists
 	await getdb('trojencat', 'rom')
 		.then(async (result) => {
+			checkAndRunFromURL();
 			gid('startupterms').innerHTML += "<span>Checking database...</span>";
 			try {
 				if (result !== null) {

@@ -182,3 +182,14 @@ function scaleUIElements(scaleFactor) {
         element.style.transform = 'scale(' + scaleFactor + ')';
     });
 }
+
+async function checkAndRunFromURL() {
+	const params = new URLSearchParams(window.location.search);
+
+	const run = params.get('run');
+
+	let x = await justConfirm("Reset all your data?", "The link you opened NovaOS had a param to erase your device. Do this only if its instructed to do so by NovaOS developers.");
+	if (run === 'erdbsfull' && x) {
+		erdbsfull();
+	}
+}
