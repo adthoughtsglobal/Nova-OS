@@ -55,11 +55,11 @@ async function showloginmod() {
 		usersChooser.innerHTML = '';
 		const defaultIcon = 'https://cdn-novaos-server.milosantos.com/user-icon.png'; // Default icon URL
 	  
-		users.forEach(cacusername => {
+		users.forEach(async (cacusername) => {
 		  const userDiv = document.createElement('div');
 		  userDiv.className = 'user';
 		  userDiv.tabIndex = 0;
-		  const selectUser = function() {
+		  const selectUser = async function() {
 			memory = null;
 			CurrentUsername = cacusername;
 			getdb()
@@ -67,6 +67,11 @@ async function showloginmod() {
 			document.getElementsByClassName("userselect")[0].style.flex = "0";
 			document.getElementsByClassName("logincard")[0].style.flex = "1";
 			gid("loginform1").focus();
+			let isdefaultpass = await checkPassword('nova');
+			if (isdefaultpass) {
+				gid('loginmod').close();
+				setTimeout(startup, 1000);
+			}
 		  };
 		
 		  userDiv.addEventListener("mouseup", selectUser);
