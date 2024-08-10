@@ -136,7 +136,7 @@ function openwindow(title, cont, ic, theme, appid, params) {
 	windowHeader.addEventListener("mouseup", function (event) {
 		let target = event.target;
 		while (target) {
-			if (target.classList && target.classList.contains('clwin')) {
+			if (target.classList && target.classList.contains('wincl')) {
 				return;
 			}
 			target = target.parentElement;
