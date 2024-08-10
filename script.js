@@ -62,16 +62,19 @@ async function showloginmod() {
 		  const selectUser = async function() {
 			memory = null;
 			CurrentUsername = cacusername;
-			getdb()
-			document.getElementsByClassName("backbtnuserspg")[0].style.display = "flex";
-			document.getElementsByClassName("userselect")[0].style.flex = "0";
-			document.getElementsByClassName("logincard")[0].style.flex = "1";
-			gid("loginform1").focus();
-			let isdefaultpass = await checkPassword('nova');
+			let isdefaultpass
+			try {
+				isdefaultpass = await checkPassword('nova');
+			} catch(err) {}
 			if (isdefaultpass) {
 				gid('loginmod').close();
-				setTimeout(startup, 1000);
+				setTimeout(startup, 500);
 			}
+
+			document.getElementsByClassName("backbtnuserspg")[0].style.display = "flex";
+				document.getElementsByClassName("userselect")[0].style.flex = "0";
+				document.getElementsByClassName("logincard")[0].style.flex = "1";
+				gid("loginform1").focus();
 		  };
 		
 		  userDiv.addEventListener("mouseup", selectUser);
@@ -1801,16 +1804,31 @@ async function moveFileToFolder(flid, dest) {
 function rightClick(e) {
 	e.preventDefault();
 
-	if (gid(
-		"contextMenu").style.display == "block")
-		hideMenu();
-	else {
-		var menu = document
-			.getElementById("contextMenu")
+	let menu = document.getElementById("contextMenu");
 
+	if (menu.style.display === "block") {
+		hideMenu();
+	} else {
 		menu.style.display = 'block';
-		menu.style.left = e.pageX + "px";
-		menu.style.top = e.pageY + "px";
+
+		// Get the computed width and height of the context menu
+		let menuWidth = menu.offsetWidth;
+		let menuHeight = menu.offsetHeight;
+
+		// Calculate the positions considering the viewport boundaries
+		let posX = e.pageX;
+		let posY = e.pageY;
+
+		if ((posX + menuWidth) > window.innerWidth) {
+			posX = window.innerWidth - menuWidth;
+		}
+
+		if ((posY + menuHeight) > window.innerHeight) {
+			posY = window.innerHeight - menuHeight;
+		}
+
+		menu.style.left = posX + "px";
+		menu.style.top = posY + "px";
 	}
 }
 

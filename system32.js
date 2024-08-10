@@ -407,63 +407,28 @@ async function remSetting(key) {
 }
 
 async function changePassword(oldPassword, newPassword) {
-    
     lethalpasswordtimes = true;
-    
-    const isOldPasswordCorrect = await checkPassword(oldPassword);
-    
-    if (!isOldPasswordCorrect) {
-	  
-	  lethalpasswordtimes = false;
-	  return false;
+
+    if (!await checkPassword(oldPassword)) {
+        lethalpasswordtimes = false;
+        return false;
     }
-
-    
-    const oldKey = await getKey(oldPassword);
-    const newKey = await getKey(newPassword);
-
-    
-    const db = await openDB(databaseName, 1);
-    const store = db.transaction('dataStore', 'readonly').objectStore('dataStore');
 
     try {
-	  
-	  const record = await new Promise((resolve, reject) => {
-		const getRequest = store.get(CurrentUsername);
-		getRequest.onsuccess = () => resolve(getRequest.result);
-		getRequest.onerror = () => reject(getRequest.error);
-	  });
+        memory = await getdb();
+        password = newPassword;
+        await setdb(memory);
 
-	  if (!record || !record.value) {
-		
-		lethalpasswordtimes = false;
-		return false;
-	  }
-
-	  
-	  const decryptedValue = await decryptData(oldKey, record.value);
-	  console.log(`Decrypted value: ${JSON.stringify(decryptedValue)}`);
-
-	  
-	  password = newPassword;
-
-	  await setdb(decryptedValue);
+        await saveMagicStringInLocalStorage(newPassword);
 
     } catch (error) {
-	  
-	  lethalpasswordtimes = false;
-	  return false;
+        lethalpasswordtimes = false;
+        return false;
     }
 
-    
-    await saveMagicStringInLocalStorage(newPassword);
-
-    
     lethalpasswordtimes = false;
     return true;
 }
-
-
 
 function erdbsfull() {
     localStorage.removeItem('todo');

@@ -341,19 +341,19 @@ nav info {
 }
 
 .app-shortcut .appname {
-	margin-top: 13px;
-	color: white;
-	display: block;
-	border-radius: 10px;
-	font-size: 11px;
-	text-overflow: ellipsis;
-	overflow: hidden;
-	white-space: nowrap;
-	text-align: center;
-	padding: 1px 5px;
-	background: #1f1f1fa1;
-	max-width: 46px;
-	text-transform: capitalize;
+	margin-top: 0.5rem;
+    color: white;
+    display: block;
+    border-radius: 10px;
+    font-size: 11px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    text-align: center;
+    padding: 0.1rem 0.5rem;
+    background: #1f1f1f42;
+    max-width: 46px;
+    text-transform: capitalize;
 }
 
 #installer {
@@ -659,16 +659,16 @@ nav info {
 
 .context-menu { 
 	position: absolute;
-	text-align: center;
-	background: #5d5d5d;
-	color: white;
-	border-radius: 7px;
-	box-shadow: 0px 3px 5px 0px #0000002f;
-	overflow: hidden;
-	border: 1px solid #858585;
-	animation: pop3 .2s ease-out;
-	z-index: 99;
-	padding: 2px;
+    text-align: center;
+    background: #2a2929;
+    border: 1px solid #4b4b4b;
+    color: white;
+    border-radius: 0.3rem;
+    box-shadow: 0px 3px 5px 0px #0000005c;
+    overflow: hidden;
+    animation: pop3 .2s ease-out;
+    z-index: 99;
+    font-size: 0.7rem;
 } 
 
 @keyframes pop3 {
@@ -703,16 +703,22 @@ nav info {
 .context-menu ul li a { 
 	text-decoration: none;
 	color: white;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+	gap:0.2rem;
+	padding: 2px;
 } 
 
 .context-menu ul li:hover { 
-	background-color: #737373;
+	background-color: #353535;
 } 
 
 .context-menu ul li a .material-icons { 
-	font-size: 17px;
-	transform: translate(4px, 3px);
-	margin-right: 6px;
+	font-size: 0.8rem;
+    border-right: 1px solid grey;
+    padding-right: 3px;
+	padding-left: 2px;
 }
 
 .notifbtn {
