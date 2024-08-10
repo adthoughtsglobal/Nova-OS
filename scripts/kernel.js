@@ -279,11 +279,10 @@ async function openapp(x, od) {
                 if (od == 1) {
 					y = await fetchData("appdata/" + x + ".html");
                     od = await createFile("Apps", x, "app", y);
-                } 
-
-				y = await getFileById(od)
-				y = unshrinkbsf(y.content)
-    
+                } else {
+					y = await getFileById(od)
+					y = y.content
+				}
                 // Assuming you have a predefined function openwindow
                 openwindow(x, y, getAppIcon(y, x), getAppTheme(y), od, Gtodo);
             } catch (error) {

@@ -6,16 +6,15 @@ document.getElementById("bgimage").src = novaFeaturedImage;
 var defAppsList = [
 	"camera",
 	"clock",
-	"files",
 	"media",
-	"settings",
-	"store",
-	"text",
-	"studio",
 	"gallery",
-	"wiki",
 	"browser",
-	"calculator"
+	"studio",
+	"calculator",
+	"text",
+	"store",
+	"files",
+	"settings",
 ];
 
 gid("nowrunninapps").style.display = "none";
@@ -279,7 +278,7 @@ async function openn() {
 		// Create a div element for the app shortcut
 		var appShortcutDiv = document.createElement("div");
 		appShortcutDiv.className = "app-shortcut tooltip sizableuielement";
-		appShortcutDiv.setAttribute("onclick", "openfile('" + app.name + "', '" + app.id + "')");
+		appShortcutDiv.setAttribute("onclick", "openfile('" + app.id + "')");
 
 		// Create a span element for the app icon
 		var iconSpan = document.createElement("span");
@@ -760,19 +759,18 @@ function getAppIcon(unshrunkContent, appname) {
 	return null;
 }
 
-// Function to check and decode Base64 content with marker
 function decodeBase64Content(str) {
     // Check if the string starts with a data URL prefix
     const base64Prefix = ';base64,';
     const prefixIndex = str.indexOf(base64Prefix);
 
     if (prefixIndex !== -1) {
-        // Strip the prefix and decode the Base64 content
+        // Strip the prefix
         str = str.substring(prefixIndex + base64Prefix.length);
     }
 
-    // Decode the Base64 content
-    return atob(str);
+    // Decode only if the string is a valid Base64
+    return isBase64(str) ? atob(str) : str;
 }
 
 function getAppTheme(unshrunkContent) {
@@ -1520,7 +1518,7 @@ async function installdefaultapps() {
 	} else {
 		console.error("Failed to fetch data from the server.");
 	}
-
+	closeElementedis()
 }
 
 async function getFileByPath(filePath) {
