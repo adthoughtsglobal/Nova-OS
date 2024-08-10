@@ -121,36 +121,75 @@ async function decryptData(key, encryptedData) {
     }
 }
 
-async function setdb(value) {
-	var databaseName = 'trojencat', key = 'dataStore';
+let batchQueue = [];
+let batchTimeout = null;
+const batchInterval = 500; // Time interval for batching in milliseconds
+
+async function flushBatch() {
+    const databaseName = 'trojencat';
+    const key = 'dataStore';
+
     try {
-	  const db = await openDB(databaseName, 1, {
-		upgrade(db) {
-		    if (!db.objectStoreNames.contains('dataStore')) {
-			  db.createObjectStore('dataStore', { keyPath: 'CurrentUsername' });
-		    }
-		}
-	  });
+        const db = await openDB(databaseName, 1, {
+            upgrade(db) {
+                if (!db.objectStoreNames.contains(key)) {
+                    db.createObjectStore(key, { keyPath: 'CurrentUsername' });
+                }
+            }
+        });
 
-	  const cryptoKey = await getKey(password);
-      const compresseddata = compressString(JSON.stringify(value));
+        // Process all batchQueue items before starting the transaction
+        const processedBatch = await Promise.all(batchQueue.map(async ({ value }) => {
+            try {
+                const cryptoKey = await getKey(password);
+                const compresseddata = compressString(JSON.stringify(value));
+                const encryptedValue = await encryptData(cryptoKey, compresseddata);
+                return { encryptedValue };  // Prepare the data for the transaction
+            } catch (error) {
+                console.error("Error processing batch item:", error);
+                return null;  // Skip this item if an error occurs
+            }
+        }));
 
-	  const encryptedValue = await encryptData(cryptoKey, compresseddata);
+        // Start the transaction and store the pre-processed data
+        const transaction = db.transaction(key, 'readwrite');
+        const store = transaction.objectStore(key);
 
-	  const transaction = db.transaction('dataStore', 'readwrite');
-	  const store = transaction.objectStore('dataStore');
-	  store.put({ key: CurrentUsername, value: encryptedValue } );
+        processedBatch.forEach(({ encryptedValue }, index) => {
+            if (encryptedValue) {
+                store.put({ key: CurrentUsername, value: encryptedValue });
+                batchQueue[index].resolve();  // Resolve the original promise
+            } else {
+                batchQueue[index].reject(new Error("Failed to process batch item"));
+            }
+        });
 
-	  await new Promise((resolve, reject) => {
-		transaction.oncomplete = resolve;
-		transaction.onerror = () => reject(transaction.error);
-		transaction.onabort = () => reject(transaction.error);
-	  });
+        await transaction.complete;
 
-	  console.log(`Data for key '${key}' saved successfully.`);
+        console.log(`Batch of ${processedBatch.length} operations saved successfully.`);
+        batchQueue = [];
     } catch (error) {
-	  console.error("Error in setdb function:", error);
+        console.error("Error in flushBatch function:", error);
+    } finally {
+        batchTimeout = null;
     }
+}
+
+function setdb(value) {
+    return new Promise((resolve, reject) => {
+        batchQueue.push({ value, resolve, reject });
+
+        if (!batchTimeout) {
+            batchTimeout = setTimeout(async () => {
+                try {
+                    await flushBatch();
+                    resolve(); 
+                } catch (error) {
+                    reject(error);
+                }
+            }, batchInterval);
+        }
+    });
 }
 
 async function getdb() {
@@ -273,10 +312,10 @@ async function updateMemoryData() {
         if (!isFetchingMemory) {
             isFetchingMemory = true;
             console.log("Getting Memory");
-            await getdb().then(result => {
+            await getdb().then(() => {
                 MemoryTimeCache = getTime();
                 isFetchingMemory = false;
-            }).catch(err => {
+            }).catch(() => {
                 console.error("Memory data unreadable");
                 isFetchingMemory = false;
             });

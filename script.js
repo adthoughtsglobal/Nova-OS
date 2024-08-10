@@ -62,11 +62,13 @@ async function showloginmod() {
 		  const selectUser = async function() {
 			memory = null;
 			CurrentUsername = cacusername;
-			let isdefaultpass
+			let isdefaultpass;
 			try {
 				isdefaultpass = await checkPassword('nova');
 			} catch(err) {}
+
 			if (isdefaultpass) {
+				await getdb();
 				gid('loginmod').close();
 				setTimeout(startup, 500);
 			}
@@ -126,7 +128,7 @@ async function startup() {
 	console.log("Startup");
 	setsrtpprgbr(0)
 	const start = performance.now();
-	try { await qsetsRefresh(); }
+	try { await updateMemoryData() }
 	catch (err) { console.error("qsetsRefresh error:", err); }
 
 	try {
@@ -658,15 +660,12 @@ async function dod() {
 	}
 
 	if (x != undefined) {
+		console.log("wallpaper defined", x)
 		let unshrinkbsfX = unshrinkbsf(x.content);
 		document.getElementById('bgimage').src = unshrinkbsfX;
-	} else {
-		if (document.getElementById("bgimage").src != novaFeaturedImage) {
-			document.getElementById("bgimage").src = novaFeaturedImage;
-		}
-
 	}
 	document.getElementById("bgimage").onerror = async function () {
+		console.log("wallpaper error")
 		document.getElementById("bgimage").src = novaFeaturedImage;
 		if (await getSetting("wall")) {
 			remSetting("wall");
@@ -1147,6 +1146,9 @@ async function updateFile(folderName, fileId, newData) {
 }
 
 async function getFileById(id) {
+	if (!id) {
+return undefined;
+	}
 	await updateMemoryData();
 	function searchFolder(folder) {
 		for (let key in folder) {
