@@ -79,95 +79,89 @@
 	</div>
 
 	<script>
-		
+
 		var disp;
 		async function greenflag() {
-			var todo = localStorage.getItem("todo");
-			disp = document.getElementById("displays"); // Fix variable scope
 			try {
-				const parsedTodo = JSON.parse(todo);
+				var file = await window.parent.getFileById(myWindow.params.data);;
+				disp = document.getElementById("displays"); 
 
-				if (parsedTodo.appname === "media" && parsedTodo.data && parsedTodo.data.lclfile) {
-					const theID = parsedTodo.data.lclfile;
-					const file = await window.parent.getFileById(theID);
+				if (file && file.content) {
+					document.getElementById("tils").innerText = file.fileName;
+					file.content = file.content;
+					const type = file.type || 'application/octet-stream';
+					const base64Content = file.content;
 
-					if (file && file.content) {
-						document.getElementById("tils").innerText = file.fileName;
-						file.content = window.parent.unshrinkbsf(file.content);
-						const type = file.type || 'application/octet-stream';
-						const base64Content = file.content;
-
-						if (window.parent.getbaseflty(file.fileName) == "image" ) {
-							disp.innerHTML = `<img id="thedisplay" alt="Nova" src="">`;
-							document.getElementById("thedisplay").src = `${base64Content}`;
-						} else if (window.parent.getbaseflty(file.fileName) == "music" ) {
-							disp.innerHTML = `<audio controls>
+					if (window.parent.getbaseflty(file.fileName) == "image") {
+						disp.innerHTML = `<img id="thedisplay" alt="Nova" src="">`;
+						document.getElementById("thedisplay").src = `${base64Content}`;
+					} else if (window.parent.getbaseflty(file.fileName) == "music") {
+						disp.innerHTML = `<audio controls>
 									<source src="" type="audio/mp3" id="thedisplay">
 									Your browser does not support the audio tag.
 								</audio>`;
-							document.getElementById("thedisplay").src = `${base64Content}`;
-						} else if (window.parent.getbaseflty(file.fileName) == "video" ) {
-							disp.innerHTML = `<video controls width="400" height="300" id="thedisplay">
+						document.getElementById("thedisplay").src = `${base64Content}`;
+					} else if (window.parent.getbaseflty(file.fileName) == "video") {
+						disp.innerHTML = `<video controls width="400" height="300" id="thedisplay">
 												<source src="" type="video/mp4" id="thesource">
 												Your browser does not support the video tag.
 											  </video>`;
 
-											  var blob = dataURItoBlob(base64Content);
-var videoFile = new File([blob], "video.mp4", { type: "video/mp4" });
-var videoElement = document.getElementById("thesource");
-const base64Video = URL.createObjectURL(videoFile);
-playBase64Chunks(videoElement, base64Video);
-						} else {
-							document.getElementById("thedisplay").alt = "Please open the files app to read a file from your system memory.";
-						}
+						var blob = dataURItoBlob(base64Content);
+						var videoFile = new File([blob], "video.mp4", { type: "video/mp4" });
+						var videoElement = document.getElementById("thesource");
+						const base64Video = URL.createObjectURL(videoFile);
+						playBase64Chunks(videoElement, base64Video);
+					} else {
+						document.getElementById("thedisplay").alt = "Please open the files app to read a file from your system memory.";
 					}
 				}
 			} catch (error) {
-				console.error("Error parsing todo JSON:", error);
+				console.error("Error parsing todofile JSON:", error);
 			}
 		}
 
 		function dataURItoBlob(dataURI) {
-    var byteString = atob(dataURI.split(',')[1]);
-    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-    var ab = new ArrayBuffer(byteString.length);
-    var ia = new Uint8Array(ab);
-    for (var i = 0; i < byteString.length; i++) {
-        ia[i] = byteString.charCodeAt(i);
-    }
-    return new Blob([ab], { type: mimeString });
-}
+			var byteString = atob(dataURI.split(',')[1]);
+			var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+			var ab = new ArrayBuffer(byteString.length);
+			var ia = new Uint8Array(ab);
+			for (var i = 0; i < byteString.length; i++) {
+				ia[i] = byteString.charCodeAt(i);
+			}
+			return new Blob([ab], { type: mimeString });
+		}
 
-function playBase64Chunks(videoElement, base64Video) {
-      videoElement.src = base64Video;
-      videoElement.addEventListener('loadedmetadata', () => {
-        const duration = videoElement.duration;
-        const chunkSize = 10; // chunk size in seconds
-        let currentTime = 0;
+		function playBase64Chunks(videoElement, base64Video) {
+			videoElement.src = base64Video;
+			videoElement.addEventListener('loadedmetadata', () => {
+				const duration = videoElement.duration;
+				const chunkSize = 10; // chunk size in seconds
+				let currentTime = 0;
 
-        function playNextChunk() {
-          if (currentTime >= duration) {
-            console.log("Video finished");
-            return;
-          }
+				function playNextChunk() {
+					if (currentTime >= duration) {
+						console.log("Video finished");
+						return;
+					}
 
-          const nextTime = Math.min(currentTime + chunkSize, duration);
-          videoElement.currentTime = currentTime;
-          videoElement.play();
+					const nextTime = Math.min(currentTime + chunkSize, duration);
+					videoElement.currentTime = currentTime;
+					videoElement.play();
 
-          const playChunkInterval = setInterval(() => {
-            if (videoElement.currentTime >= nextTime) {
-              videoElement.pause();
-              currentTime = nextTime;
-              clearInterval(playChunkInterval);
-              playNextChunk();
-            }
-          }, 100);
-        }
+					const playChunkInterval = setInterval(() => {
+						if (videoElement.currentTime >= nextTime) {
+							videoElement.pause();
+							currentTime = nextTime;
+							clearInterval(playChunkInterval);
+							playNextChunk();
+						}
+					}, 100);
+				}
 
-        playNextChunk();
-      });
-    }
+				playNextChunk();
+			});
+		}
 
 	</script>
 </body>

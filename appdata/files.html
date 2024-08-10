@@ -1656,7 +1656,7 @@ delete
 									construction
 									</span> Open in studio</a>` : ''}
 									
-									<a onclick="openfile(document.getElementById('`+ x.id + `'), 'text')"><span class="material-symbols-rounded">
+									<a onclick="openfile('`+ x.getAttribute("unid") + `', 'any')"><span class="material-symbols-rounded">
 open_in_new
 </span> Open as text</a>
 									<a onclick="renamef(document.getElementById('`+ x.id + `'))"><span class="material-symbols-rounded">
@@ -1700,16 +1700,16 @@ drive_file_move
 			}
 		}
 
-		async function openfile(x) {
-			console.log("filesapp defaul openfile: "+ x)
-			if (sessiontype == "opener") {
-				localStorage.setItem("todo", JSON.stringify({ "type": "opentotext", "lclfile": x.getAttribute("unid") }));
-				window.parent.clwin(myWindow)
-				return;
-			}
+		async function openfile(...args) {
+    console.log("filesapp default openfile: ", args[0]);
+    if (sessiontype == "opener") {
+        localStorage.setItem("todo", JSON.stringify({ "type": "opentotext", "lclfile": args[0].getAttribute("unid") }));
+        window.parent.clwin(myWindow);
+        return;
+    }
 
-			window.parent.openfile(x)
-		}
+    window.parent.openfile(...args);
+}
 
 		async function renamef(x) {
 			document.getElementById("fileinfobn").style.opacity = 1;

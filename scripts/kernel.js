@@ -9,7 +9,7 @@ async function openlaunchprotocol(appid, data) {
 }
 
 
-async function openfile(x) {
+async function openfile(x, all) {
 	console.log("opening: " + x)
 	let unid= x;
 	try {
@@ -27,6 +27,12 @@ async function openfile(x) {
 		// extract type from file extension
 		mm.type = ptypext(mm.fileName);
 
+		if (all == 'any') {
+            appIdToOpen = fileTypeAssociations['all'] || null;
+			openlaunchprotocol(appIdToOpen, unid);
+			return;
+		}
+
 		if (mm.type == "app") {
 			// run the app if it is one
 			await openapp(mm.fileName, unid);
@@ -43,7 +49,8 @@ async function openfile(x) {
             appIdToOpen = fileTypeAssociations[fileExtension] || null;
 		
 			if (!appIdToOpen) {
-				say('No apps in your system can open this file type.', "failed")
+					appIdToOpen = fileTypeAssociations['all'] || null;
+					openlaunchprotocol(appIdToOpen, unid);
 			} else {
 				openlaunchprotocol(appIdToOpen, unid);
 			}

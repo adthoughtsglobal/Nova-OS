@@ -1043,10 +1043,15 @@ async function extractAndRegisterCapabilities(appId, content) {
 
 async function registerApp(appId, capabilities) {
     for (let fileType of capabilities) {
-        fileTypeAssociations[fileType] = appId;
+        if (fileType === "all") {
+            fileTypeAssociations["all"] = appId;
+        } else {
+            fileTypeAssociations[fileType] = appId;
+        }
     }
     await setSetting('fileTypeAssociations', fileTypeAssociations);
 }
+
 
 async function cleanupInvalidAssociations() {
     const validAppIds = await getAllValidAppIds();
@@ -1215,55 +1220,24 @@ async function getFileNamesByFolder(folderName) {
 	}
 }
 
-function justConfirm(title, message, modal) {
+function justConfirm(title, message) {
 	return new Promise((resolve) => {
-		if (!modal) {
-			modal = document.createElement('dialog');
-			modal.classList.add('modal');
-			modal.id = "NaviconfDia";
-		}
+		const modal = document.querySelector("#NaviconfDia");
+		modal.querySelector('h1').textContent = title;
+		modal.querySelector('p').innerHTML = message;
 
-		const modalContent = document.createElement('div');
-		modalContent.classList.add('modal-content');
-		const bigtitle = document.createElement('h1');
-		bigtitle.textContent = title;
-		modalContent.appendChild(bigtitle);
-
-		const promptMessage = document.createElement('p');
-		promptMessage.innerHTML = message;
-		modalContent.appendChild(promptMessage);
-
-		let buttonContainer = modal.querySelector('.button-container');
-		if (!buttonContainer) {
-			buttonContainer = document.createElement('div');
-			buttonContainer.classList.add('button-container');
-			buttonContainer.style.display = 'flex';
-			modalContent.appendChild(buttonContainer);
-		} else {
-			buttonContainer.innerHTML = ''; // Clear existing buttons
-		}
-
-		const yesButton = document.createElement('button');
-		yesButton.textContent = 'Yes';
-		yesButton.addEventListener('click', () => {
+		const yesButton = modal.querySelector('.yes-button');
+		yesButton.onclick = () => {
 			modal.close();
 			resolve(true);
-		});
-		buttonContainer.appendChild(yesButton);
+		};
 
-		const noButton = document.createElement('button');
-		noButton.textContent = 'No';
-		noButton.classList += "notbn"
-		noButton.addEventListener('click', () => {
+		const noButton = modal.querySelector('.notbn');
+		noButton.onclick = () => {
 			modal.close();
 			resolve(false);
-		});
-		buttonContainer.appendChild(noButton);
+		};
 
-		modal.appendChild(modalContent);
-		if (!modal.open) {
-			document.body.appendChild(modal);
-		}
 		modal.showModal();
 	});
 }

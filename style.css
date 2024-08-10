@@ -69,7 +69,7 @@ dialog {
 	object-position: center;
 	height: 100vh;
 	width: 100%;
-	transition: 3s;
+    transition: 0.2s;
 	z-index: -1;
 	border: none;
 }
@@ -435,6 +435,11 @@ nav info {
 	background: transparent;
 }
 
+.appdmodestuff {
+	display: flex;
+	flex-direction: column;
+}
+
 .strtsearcont {
 	display: flex;
 	margin: 0 10px;
@@ -653,6 +658,7 @@ nav info {
 	overflow-y: scroll;
 	text-align: left;
 	display: flex;
+	flex: 1;
 	flex-wrap: wrap;
 	justify-content: center;
 }
