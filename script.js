@@ -279,7 +279,7 @@ async function openn() {
 		// Create a div element for the app shortcut
 		var appShortcutDiv = document.createElement("div");
 		appShortcutDiv.className = "app-shortcut tooltip sizableuielement";
-		appShortcutDiv.setAttribute("onclick", "openapp('" + app.name + "', '" + app.id + "')");
+		appShortcutDiv.setAttribute("onclick", "openfile('" + app.name + "', '" + app.id + "')");
 
 		// Create a span element for the app icon
 		var iconSpan = document.createElement("span");
@@ -1151,33 +1151,31 @@ async function updateFile(folderName, fileId, newData) {
 }
 
 async function getFileById(id) {
-	if (!id) {
-return undefined;
-	}
+	if (!id) return undefined;
 	await updateMemoryData();
-	function searchFolder(folder) {
+	
+	function searchFolder(folder, currentPath = '') {
 		for (let key in folder) {
 			if (typeof folder[key] === 'object' && folder[key] !== null) {
+				const newPath = currentPath + key;
 				if (folder[key].id === id) {
 					return {
 						fileName: key,
 						id: folder[key].id,
 						content: folder[key].content,
-						metadata: folder[key].metadata
+						metadata: folder[key].metadata,
+						path: currentPath
 					};
 				} else if (key.endsWith('/')) {
-					const result = searchFolder(folder[key]);
-					if (result) {
-						return result;
-					}
+					const result = searchFolder(folder[key], newPath);
+					if (result) return result;
 				}
 			}
 		}
 		return null;
 	}
 
-	const result = searchFolder(memory);
-	return result;
+	return searchFolder(memory);
 }
 
 
@@ -1241,7 +1239,6 @@ function justConfirm(title, message) {
 		modal.showModal();
 	});
 }
-
 
 function say(message, status) {
 	return new Promise((resolve) => {
@@ -1462,16 +1459,7 @@ async function initialiseOS() {
 
 	setdb(memory).then(async function () {
 		await saveMagicStringInLocalStorage(password);
-		let settings = JSON.stringify({
-			"focusMode": false,
-			"darkMode": false,
-			"wsnapping": true,
-			"CamImgFormat": "PNG",
-			"defFileLayout": "List",
-			"timefrmt": "12 Hour",
-			"defSearchEngine": "NWP"
-		});
-		resetSettings(settings)
+		await ensurePreferencesFileExists()
 			.then(async () => await installdefaultapps())
 			.then(async () => getFileNamesByFolder("Apps"))
 			.then(async (fileNames) => {

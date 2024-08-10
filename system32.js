@@ -367,7 +367,15 @@ async function ensurePreferencesFileExists() {
             memory["System/"] = {};
         }
         if (!memory["System/"]["preferences.json"]) {
-            const defaultContent = btoa(JSON.stringify({'system':'nova'})); // Encode an empty object
+            const defaultContent = btoa(JSON.stringify({
+                "defFileLayout": "List",
+                "wsnapping": true,
+                "smartsearch": true,
+                "CamImgFormat": "WEBP",
+                "defSearchEngine": "Bing",
+                "darkMode": true,
+                "simpleMode": true
+              })); 
             await createFile("System/", "preferences.json", false, `data:application/json;base64,${defaultContent}`);
         }
     } catch (err) {
