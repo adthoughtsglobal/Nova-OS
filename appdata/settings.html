@@ -598,8 +598,8 @@
 			<button class="tablinks" onclick="openCity(event, 'perform'); updateFPS()"><i
 					class="material-icons">speed</i>
 				Performance</button>
-			<button class="tablinks" onclick="openCity(event, 'password')"><i class="material-icons">security</i>
-				Security</button>
+			<button class="tablinks" onclick="openCity(event, 'password')"><i class="material-icons">person</i>
+				User</button>
 			<button class="tablinks" onclick="openCity(event, 'exp'); defs(); gwall() "><i
 					class="material-icons">monitor</i>
 				Display</button>
@@ -722,12 +722,11 @@
 					border-radius: 0.5rem;
 				}
 
-				#fpsprof {
+				.bigtext {
 					font-size: 10vw;
 					display: inline-block;
 					width: fit-content;
 					margin: 0;
-
 				}
 
 				#fpsprof::after {
@@ -743,7 +742,7 @@
 				}
 			</style>
 			<h1>Performance</h1>
-			<h1 id="fpsprof">0</h1>
+			<h1 id="fpsprof" class="bigtext">0</h1>
 			<br>
 			<canvas id="fpsCanvas" width="400" height="200"></canvas>
 			<small>
@@ -1204,7 +1203,7 @@
 			<h1>Password</h1>
 			<segr>
 				<style>
-					#changpassthingy {
+					#password [setting] {
 						display: flex;
     flex-direction: row;
     align-items: center;
@@ -1215,8 +1214,13 @@
 				<b id="passstat"></b>
 				<button onclick="chstpass()">Continue</button>
 			</div>
+			<div setting>
+				<b id="userstatsi">Signed in as user1</b>
+				<button onclick="window.parent.logoutofnova()">Sign Out</button>
+			</div>
 		</segr>
 			<script>
+				document.getElementById("userstatsi").innerHTML = 'Signed in as ' + window.parent.CurrentUsername;
 				if (window.parent.password == 'nova') {
 					document.getElementById("passstat").innerHTML = "Set a password for your device:";
 				} else {

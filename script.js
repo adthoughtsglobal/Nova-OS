@@ -1,5 +1,5 @@
 var batteryLevel, winds = {}, rp, flwint = true, memory, _nowapp, fulsapp = false, nowappdo, appsHistory = [], nowwindow, appicns = {}, dev = true, appfound = 'files', fileslist = [], qsetscache = {};
-var really = false, initmenuload = true, fileTypeAssociations = {}, Gtodo, notifLog = {};
+var really = false, initmenuload = true, fileTypeAssociations = {}, Gtodo, notifLog = {}, initialization = false;
 var novaFeaturedImage = `https://images.unsplash.com/photo-1716980197262-ce400709bf0d?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D`;
 
 document.getElementById("bgimage").src = novaFeaturedImage;
@@ -67,9 +67,8 @@ async function showloginmod() {
 			} catch(err) {}
 
 			if (isdefaultpass) {
-				await getdb();
 				gid('loginmod').close();
-				setTimeout(startup, 500);
+				startup()
 			}
 
 			document.getElementsByClassName("backbtnuserspg")[0].style.display = "flex";
@@ -146,6 +145,7 @@ async function startup() {
 	try {
 		gid('startupterms').innerHTML = "<span id='struploadtasnr'>Loading TaskBar...</span>";
 		await genTaskBar();
+		await loadtaskspanel();
 		setsrtpprgbr(65)
 	} catch (err) { console.error("genTaskBar error:", err); }
 
@@ -161,7 +161,7 @@ async function startup() {
 		loadFileTypeAssociations();
 		setsrtpprgbr(100)
 		gid('startupterms').innerHTML = "Startup completed";
-		setTimeout(closeElementedis, 500)
+		closeElementedis()
 	} catch (err) { console.error("dod error:", err); }
 
 	const end = performance.now();
@@ -1154,18 +1154,18 @@ async function getFileById(id) {
 	
 	function searchFolder(folder, currentPath = '') {
 		for (let key in folder) {
-			if (typeof folder[key] === 'object' && folder[key] !== null) {
-				const newPath = currentPath + key;
-				if (folder[key].id === id) {
+			const item = folder[key];
+			if (item && typeof item === 'object') {
+				if (item.id === id) {
 					return {
 						fileName: key,
-						id: folder[key].id,
-						content: folder[key].content,
-						metadata: folder[key].metadata,
+						id: item.id,
+						content: item.content,
+						metadata: item.metadata,
 						path: currentPath
 					};
 				} else if (key.endsWith('/')) {
-					const result = searchFolder(folder[key], newPath);
+					const result = searchFolder(item, currentPath + key);
 					if (result) return result;
 				}
 			}
@@ -1278,43 +1278,46 @@ function say(message, status) {
 }
 
 async function loadtaskspanel() {
-	let appbarelement = gid("nowrunninapps")
+	let appbarelement = gid("nowrunninapps");
+	appbarelement.innerHTML = "";
 
-	appbarelement.innerHTML = ""
-	let x = Object.keys(winds).map(key => key.slice(0, -6));
-	let wid = Object.keys(winds).map(key => key.slice(-6));
+	if (Object.keys(winds).length == 0) {
+		appbarelement.style.display = "none";
+		return;
+	} 
+	
+	// Filter out keys for existing windows
+	let validKeys = Object.keys(winds).filter(key => gid("window" + key.slice(-6)) !== null);
+	let x = validKeys.map(key => key.slice(0, -6));
+	let wid = validKeys.map(key => key.slice(-6));
 
-	if (x.length == 0) {
-		appbarelement.style.display = "none"
+	if (x.length === 0) {
+		appbarelement.style.display = "none";
 	} else {
-		appbarelement.style.display = "flex"
+		appbarelement.style.display = "flex";
 	}
-	x.forEach(async function (app, index) {
-		// Create a div element for the app shortcut
-		var appShortcutDiv = document.createElement("biv");
+
+	x.forEach(async (app, index) => {
+		let appShortcutDiv = document.createElement("biv");
 		appShortcutDiv.className = "app-shortcut tooltip adock sizableuielement";
 
 		appShortcutDiv.addEventListener("click", function () {
 			putwinontop('window' + wid[index]);
 			winds[app + wid[index]] = Number(gid("window" + wid[index]).style.zIndex);
-		})
+		});
 
-		// Create a span element for the app icon
-		var iconSpan = document.createElement("span");
-		iconSpan.innerHTML = (appicns[app]) ? appicns[app] : defaultAppIcon;
+		let iconSpan = document.createElement("span");
+		iconSpan.innerHTML = appicns[app] || defaultAppIcon;
 
-		var tooltisp = document.createElement("span");
+		let tooltisp = document.createElement("span");
 		tooltisp.className = "tooltiptext";
 		tooltisp.innerHTML = app;
 
-		// Append both spans to the app shortcut container
 		appShortcutDiv.appendChild(iconSpan);
 		appShortcutDiv.appendChild(tooltisp);
 
 		appbarelement.appendChild(appShortcutDiv);
-	})
-
-	scaleUIElements(await getSetting("UISizing"))
+	});
 }
 
 function ask(question, preset) {
@@ -1437,6 +1440,7 @@ async function remfolder(folderPath) {
 }
 
 async function initialiseOS() {
+	initialization = true
 	const memory = {
 		"Downloads/": {
 			"Welcome.txt": {
@@ -1468,7 +1472,10 @@ async function initialiseOS() {
 			.catch(error => {
 				console.error("Error during initialization:", error);
 			})
-			.then(() => startup())
+			.then(() => {
+				startup();
+				initialization = false;
+			})
 	})
 
 }
@@ -1518,7 +1525,10 @@ async function installdefaultapps() {
 	} else {
 		console.error("Failed to fetch data from the server.");
 	}
-	closeElementedis()
+
+	if (initialization) {
+		closeElementedis();
+	}	
 }
 
 async function getFileByPath(filePath) {
@@ -2004,9 +2014,9 @@ function displayNotifications() {
         appNameDiv.className = "notifAppName";
         appNameDiv.innerText = appname;
 
+        notifDiv.appendChild(appNameDiv);
         notifDiv.appendChild(titleDiv);
         notifDiv.appendChild(descDiv);
-        notifDiv.appendChild(appNameDiv);
         notifList.appendChild(notifDiv);
     });
 }
@@ -2401,9 +2411,8 @@ function markdownToHTML(markdown) {
 function logoutofnova() {
 	memory = null;
 	CurrentUsername = null;
-	password = null;
+	password = 'nova';
 	closeallwindows();
 	showloginmod();
 	lethalpasswordtimes = true;
-	loginscreenbackbtn();
-}
+	loginscreenba

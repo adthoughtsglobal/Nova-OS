@@ -174,12 +174,11 @@ window.fetch = async function(...args) {
 };
 
 function scaleUIElements(scaleFactor) {
-    // Select all elements with the class 'sizableuielement'
-    var elements = document.querySelectorAll('.sizableuielement');
+    var elements = document.querySelectorAll('.scalableui');
     
     // Loop through each element and apply the scale transform
     elements.forEach(function(element) {
-        element.style.transform = 'scale(' + scaleFactor + ')';
+        element.style.zoom = scaleFactor;
     });
 }
 

@@ -62,142 +62,131 @@ async function openfile(x, all) {
 }
 
 function openwindow(title, cont, ic, theme, appid, params) {
-	appsHistory.push(title)
-	if (appsHistory.length > 5) {
-		appsHistory = appsHistory.slice(-5);
-	}
+    appsHistory.push(title);
+    if (appsHistory.length > 5) {
+        appsHistory = appsHistory.slice(-5);
+    }
 
-	if (winds.length > 3) {
-		notify("Over 100 tabs is open.", "Even if your pc can handle it - this is cringe.")
-	}
+    if (winds.length > 3) {
+        notify("Over 100 tabs is open.", "Even if your pc can handle it - this is cringe.");
+    }
 
-	content = cont
-	if (content == undefined) {
-		content = "<center><h1>Unavailable</h1>App Data cannot be read.</center>";
-	}
+    content = cont;
+    if (content == undefined) {
+        content = "<center><h1>Unavailable</h1>App Data cannot be read.</center>";
+    }
 
-	let winuid = genUID();
-	winds[title + winuid] = 1;
+    let winuid = genUID();
+    winds[title + winuid] = 1;
 
-	// Create the window element
-	var windowDiv = document.createElement("div");
-	windowDiv.id = "window" + winuid;
+    // Create the window element
+    var windowDiv = document.createElement("div");
+    windowDiv.id = "window" + winuid;
+    windowDiv.setAttribute("data-winds", title + winuid);
+    windowDiv.onclick = function () {
+        nowapp = title;
+        dewallblur();
+    };
+    nowapp = title;
+    dewallblur();
+    windowDiv.classList += "window";
 
+    let isitmob = window.innerWidth <= 500;
 
-	windowDiv.setAttribute("data-winds", title + winuid);
-	windowDiv.onclick = function () {
-		nowapp = title;
-		dewallblur();
-	}
-	nowapp = title;
-	dewallblur();
-	windowDiv.classList += "window";
+    if (!isitmob) {
+        windowDiv.style = `left: calc(50vw - 33.5vw); top: calc(50vh - 35vh); width: 65vw; height: 70vh; z-index: 0;`;
+        let computedStyle = getComputedStyle(windowDiv);
+        let currentLeft = parseFloat(computedStyle.left);
+        let currentTop = parseFloat(computedStyle.top);
+        let newLeft = `calc(50vw - 33.5vw + ${5 * Object.keys(winds).length}px)`;
+        let newTop = `calc(50vh - 35vh + ${5 * Object.keys(winds).length}px)`;
+        windowDiv.style.left = newLeft;
+        windowDiv.style.top = newTop;
+    } else {
+        windowDiv.style.left = 0;
+        windowDiv.style.top = 0;
+        windowDiv.style.width = 'calc(100% - 0px)';
+        windowDiv.style.height = 'calc(100% - 58px)';
+    }
 
-	let isitmob = window.innerWidth <= 500;
+    // Create the window header
+    var windowHeader = document.createElement("div");
+    windowHeader.id = "window" + winuid + "header";
+    windowHeader.classList += "windowheader";
+    let windowdataspan = document.createElement("div");
+    windowdataspan.classList += "windowdataspan";
+    windowdataspan.innerHTML = ic != null ? ic : "";
+    let windowtitlespan = document.createElement("div");
+    windowtitlespan.innerHTML += toTitleCase(basename(title));
+    windowdataspan.appendChild(windowtitlespan);
+    windowHeader.appendChild(windowdataspan);
+    if (theme != null) {
+        windowHeader.style.backgroundColor = theme;
+        windowDiv.style.border = `1px solid ` + theme;
+        if (isDark(theme)) {
+            windowHeader.style.color = "white";
+        } else {
+            windowHeader.style.color = "black";
+        }
+    }
+    windowHeader.setAttribute("title", title + winuid);
+    windowHeader.addEventListener("mouseup", function (event) {
+        let target = event.target;
+        while (target) {
+            if (target.classList && target.classList.contains('wincl')) {
+                return;
+            }
+            target = target.parentElement;
+        }
+        checksnapping(windowDiv, event);
+    });
 
-	if (!isitmob) {
-		windowDiv.style = 'left: calc(50vw - 33.5vw); top: calc(50vh - 35vh); width: 65vw; height: 70vh; z-index: 0;';
+    windowDiv.addEventListener("mousedown", function (event) {
+        putwinontop('window' + winuid);
+        winds[title + winuid] = windowDiv.style.zIndex;
+    });
 
-		// Get the computed style of the windowDiv
-		let computedStyle = getComputedStyle(windowDiv);
+    var ibtnsside = document.createElement("div");
+    ibtnsside.classList += "ibtnsside";
 
-		// Get the current positions calculated by the browser
-		let currentLeft = parseFloat(computedStyle.left);
-		let currentTop = parseFloat(computedStyle.top);
+    var flButton = document.createElement("span");
+    flButton.classList.add("material-symbols-rounded", "wincl", "flbtn");
+    flButton.style = `padding: 4px 5px; font-size: 8px !important;`;
+    flButton.textContent = "open_in_full";
+    flButton.onclick = function () {
+        flwin(flButton);
+    };
 
-		// Update the positions
-		let newLeft = `calc(50vw - 33.5vw + ${5 * Object.keys(winds).length}px)`;
-		let newTop = `calc(50vh - 35vh + ${5 * Object.keys(winds).length}px)`;
+    // Create the close button in the header
+    var closeButton = document.createElement("span");
+    closeButton.classList.add("material-symbols-rounded", "wincl");
+    closeButton.textContent = "close";
+    closeButton.onclick = function () {
+        setTimeout(function () {
+            dewallblur();
+        }, 500);
+        clwin("window" + winuid);
+        delete winds[title + winuid];
+        loadtaskspanel();
+    };
 
-		windowDiv.style.left = newLeft;
-		windowDiv.style.top = newTop;
+    // Append the close button to the header
+    ibtnsside.appendChild(closeButton);
+    if (!isitmob) {
+        ibtnsside.appendChild(flButton);
+    }
 
-	} else {
-		windowDiv.style.left = 0;
-		windowDiv.style.top = 0;
-		windowDiv.style.width = 'calc(100% - 0px)';
-		windowDiv.style.height = 'calc(100% - 58px)';
-	}
+    windowHeader.appendChild(ibtnsside);
 
-	// Create the window header
-	var windowHeader = document.createElement("div");
-	windowHeader.id = "window" + winuid + "header"
-	windowHeader.classList += "windowheader";
-	let windowdataspan = document.createElement("div");
-	windowdataspan.classList += "windowdataspan";
-	windowdataspan.innerHTML = ic != null ? ic : "";
-	let windowtitlespan = document.createElement("div");
-	windowtitlespan.innerHTML += toTitleCase(basename(title));
-	windowdataspan.appendChild(windowtitlespan);
-	windowHeader.appendChild(windowdataspan);
-	if (theme != null) {
-		windowHeader.style.backgroundColor = theme;
-		windowDiv.style.border = `1px solid ` + theme;
-		if (isDark(theme)) {
-			windowHeader.style.color = "white";
-		} else {
-			windowHeader.style.color = "black";
-		}
-	}
-	windowHeader.setAttribute("title", title + winuid)
-	windowHeader.addEventListener("mouseup", function (event) {
-		let target = event.target;
-		while (target) {
-			if (target.classList && target.classList.contains('wincl')) {
-				return;
-			}
-			target = target.parentElement;
-		}
-		checksnapping(windowDiv, event);
-	});
-	
+    var windowContent = document.createElement("div");
+    windowContent.classList += "windowcontent";
 
-	windowDiv.addEventListener("mousedown", function (event) {
-		putwinontop('window' + winuid);
-		winds[title + winuid] = windowDiv.style.zIndex;
-	});
-
-	var ibtnsside = document.createElement("div");
-	ibtnsside.classList += "ibtnsside"
-
-	var flButton = document.createElement("span");
-	flButton.classList.add("material-symbols-rounded", "wincl", "flbtn");
-	flButton.style = `    padding: 4px 5px;
-    font-size: 8px !important;`;
-	flButton.textContent = "open_in_full";
-	flButton.onclick = function () {
-		flwin(flButton);
-	};
-
-	// Create the close button in the header
-	var closeButton = document.createElement("span");
-	closeButton.classList.add("material-symbols-rounded", "wincl");
-	closeButton.textContent = "close";
-	closeButton.onclick = function () {
-		setTimeout(function () {
-			dewallblur();
-		}, 500);
-		clwin("window" + winuid);
-		delete winds[title + winuid];
-		loadtaskspanel()
-	};
-
-	// Append the close button to the header
-	ibtnsside.appendChild(closeButton);
-	if (!isitmob) { ibtnsside.appendChild(flButton); }
-
-	windowHeader.appendChild(ibtnsside);
-
-	var windowContent = document.createElement("div");
-	windowContent.classList += "windowcontent";
-
-	var windowLoader = document.createElement("div");
-	windowLoader.classList += "windowloader";
-	var loaderdiv = document.createElement("div");
-	loaderdiv.classList = "loader33";
-	windowLoader.innerHTML = appicns[title] ? appicns[title] : defaultAppIcon;
-	windowLoader.appendChild(loaderdiv);
-
+    var windowLoader = document.createElement("div");
+    windowLoader.classList += "windowloader";
+    var loaderdiv = document.createElement("div");
+    loaderdiv.classList = "loader33";
+    windowLoader.innerHTML = appicns[title] ? appicns[title] : defaultAppIcon;
+    windowLoader.appendChild(loaderdiv);
 
 	function loadIframeContent(windowLoader, windowContent, iframe) {
 		var iframe = document.createElement("iframe");
@@ -207,16 +196,6 @@ function openwindow(title, cont, ic, theme, appid, params) {
 		if (isBase64(contentString)) {
 			contentString = decodeBase64Content(contentString);
 		}
-
-		const script = `
-        <script>
-            document.addEventListener('mousedown', function(event) {
-                window.parent.postMessage({ type: 'iframeClick', iframeId: '${winuid}' }, '*');
-            });
-        </script>
-    `;
-    contentString = contentString.replace('</body>', script + '</body>');
-
 		// Create a Blob from the content string
 		var blob = new Blob([contentString], { type: 'text/html' });
 
@@ -224,6 +203,14 @@ function openwindow(title, cont, ic, theme, appid, params) {
 		var blobURL = URL.createObjectURL(blob);
 
 		iframe.onload = function () {
+			const script = document.createElement('script');
+    script.innerHTML = `
+        document.addEventListener('mousedown', function(event) {
+            window.parent.postMessage({ type: 'iframeClick', iframeId: '${winuid}' }, '*');
+        });
+    `;
+    iframe.contentDocument.body.appendChild(script);
+
 			iframe.contentWindow.myWindow = {
 				element: windowDiv,
 				titleElement: windowtitlespan,
