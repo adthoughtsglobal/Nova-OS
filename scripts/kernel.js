@@ -87,6 +87,7 @@ function openwindow(title, cont, ic, theme, appid, params) {
         nowapp = title;
         dewallblur();
     };
+
     nowapp = title;
     dewallblur();
     windowDiv.classList += "window";
@@ -95,9 +96,6 @@ function openwindow(title, cont, ic, theme, appid, params) {
 
     if (!isitmob) {
         windowDiv.style = `left: calc(50vw - 33.5vw); top: calc(50vh - 35vh); width: 65vw; height: 70vh; z-index: 0;`;
-        let computedStyle = getComputedStyle(windowDiv);
-        let currentLeft = parseFloat(computedStyle.left);
-        let currentTop = parseFloat(computedStyle.top);
         let newLeft = `calc(50vw - 33.5vw + ${5 * Object.keys(winds).length}px)`;
         let newTop = `calc(50vh - 35vh + ${5 * Object.keys(winds).length}px)`;
         windowDiv.style.left = newLeft;
@@ -108,6 +106,12 @@ function openwindow(title, cont, ic, theme, appid, params) {
         windowDiv.style.width = 'calc(100% - 0px)';
         windowDiv.style.height = 'calc(100% - 58px)';
     }
+
+    (async function () {
+        let x = await getSetting("WindowBgColor");
+        console.log(x);
+        windowDiv.style.background = (x) ? x : 'transparent';
+    })();    
 
     // Create the window header
     var windowHeader = document.createElement("div");

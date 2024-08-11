@@ -53,58 +53,60 @@ async function showloginmod() {
 		const usersChooser = document.getElementById('userschooser');
 		usersChooser.innerHTML = '';
 		const defaultIcon = 'https://cdn-novaos-server.milosantos.com/user-icon.png'; // Default icon URL
-	  
+
 		users.forEach(async (cacusername) => {
-		  const userDiv = document.createElement('div');
-		  userDiv.className = 'user';
-		  userDiv.tabIndex = 0;
-		  const selectUser = async function() {
-			memory = null;
-			CurrentUsername = cacusername;
-			let isdefaultpass;
-			try {
-				isdefaultpass = await checkPassword('nova');
-			} catch(err) {}
+			const userDiv = document.createElement('div');
+			userDiv.className = 'user';
+			userDiv.tabIndex = 0;
+			const selectUser = async function () {
+				memory = null;
+				CurrentUsername = cacusername;
+				let isdefaultpass;
+				try {
+					isdefaultpass = await checkPassword('nova');
+				} catch (err) { }
 
-			if (isdefaultpass) {
-				gid('loginmod').close();
-				startup()
-			}
+				if (isdefaultpass) {
+					gid('loginmod').close();
+					gid('edison').showModal();
+					await getdb();
+					startup()
+				}
 
-			document.getElementsByClassName("backbtnuserspg")[0].style.display = "flex";
+				document.getElementsByClassName("backbtnuserspg")[0].style.display = "flex";
 				document.getElementsByClassName("userselect")[0].style.flex = "0";
 				document.getElementsByClassName("logincard")[0].style.flex = "1";
 				gid("loginform1").focus();
-		  };
-		
-		  userDiv.addEventListener("mouseup", selectUser);
-		
-		  userDiv.addEventListener("keydown", function (event) {
-			if (event.key === "Enter") {
-			  selectUser();
-			}
-		  });
-	  
-		  const img = document.createElement('img');
-		  img.className = 'icon';
-		  img.src = defaultIcon;
-	  
-		  const nameDiv = document.createElement('div');
-		  nameDiv.className = 'name';
-		  nameDiv.textContent = cacusername;
-	  
-		  userDiv.appendChild(img);
-		  userDiv.appendChild(nameDiv);
-		  usersChooser.appendChild(userDiv);
+			};
+
+			userDiv.addEventListener("mouseup", selectUser);
+
+			userDiv.addEventListener("keydown", function (event) {
+				if (event.key === "Enter") {
+					selectUser();
+				}
+			});
+
+			const img = document.createElement('img');
+			img.className = 'icon';
+			img.src = defaultIcon;
+
+			const nameDiv = document.createElement('div');
+			nameDiv.className = 'name';
+			nameDiv.textContent = cacusername;
+
+			userDiv.appendChild(img);
+			userDiv.appendChild(nameDiv);
+			usersChooser.appendChild(userDiv);
 		});
-	  }
+	}
 
-	  let users = await getallusers();
-	  createUserDivs(users);
+	let users = await getallusers();
+	createUserDivs(users);
 
-	  if (users.length > 0) {
+	if (users.length > 0) {
 		document.querySelector('.user').focus();
-	  }	  
+	}
 
 	gid('loginmod').showModal();
 	gid('loginform1').addEventListener("keydown", async function (event) {
@@ -595,7 +597,7 @@ async function dod() {
 			// Create a div element for the app shortcut
 			var appShortcutDiv = document.createElement("div");
 			appShortcutDiv.className = "app-shortcut sizableuielement";
-			appShortcutDiv.setAttribute("onclick", "openfile('"+app.id+"')");
+			appShortcutDiv.setAttribute("onclick", "openfile('" + app.id + "')");
 			appShortcutDiv.setAttribute("unid", app.id);
 
 
@@ -760,17 +762,17 @@ function getAppIcon(unshrunkContent, appname) {
 }
 
 function decodeBase64Content(str) {
-    // Check if the string starts with a data URL prefix
-    const base64Prefix = ';base64,';
-    const prefixIndex = str.indexOf(base64Prefix);
+	// Check if the string starts with a data URL prefix
+	const base64Prefix = ';base64,';
+	const prefixIndex = str.indexOf(base64Prefix);
 
-    if (prefixIndex !== -1) {
-        // Strip the prefix
-        str = str.substring(prefixIndex + base64Prefix.length);
-    }
+	if (prefixIndex !== -1) {
+		// Strip the prefix
+		str = str.substring(prefixIndex + base64Prefix.length);
+	}
 
-    // Decode only if the string is a valid Base64
-    return isBase64(str) ? atob(str) : str;
+	// Decode only if the string is a valid Base64
+	return isBase64(str) ? atob(str) : str;
 }
 
 function getAppTheme(unshrunkContent) {
@@ -900,174 +902,174 @@ function folderExists(folderName) {
 }
 
 function isBase64(str) {
-    try {
-        // Function to validate Base64 string
-        function validateBase64(data) {
-            // Ensure the string has the correct Base64 character set
-            const base64Pattern = /^[A-Za-z0-9+/=]+$/;
-            if (!base64Pattern.test(data)) {
-                return false;
-            }
+	try {
+		// Function to validate Base64 string
+		function validateBase64(data) {
+			// Ensure the string has the correct Base64 character set
+			const base64Pattern = /^[A-Za-z0-9+/=]+$/;
+			if (!base64Pattern.test(data)) {
+				return false;
+			}
 
-            // Add padding if necessary
-            const padding = data.length % 4;
-            if (padding > 0) {
-                data += '='.repeat(4 - padding);
-            }
+			// Add padding if necessary
+			const padding = data.length % 4;
+			if (padding > 0) {
+				data += '='.repeat(4 - padding);
+			}
 
-            // Attempt to decode the Base64 string
-            atob(data);
-            return true;
-        }
+			// Attempt to decode the Base64 string
+			atob(data);
+			return true;
+		}
 
-        // Check without MIME type prefix
-        if (validateBase64(str)) {
-            return true;
-        }
+		// Check without MIME type prefix
+		if (validateBase64(str)) {
+			return true;
+		}
 
-        // Check if the string starts with a MIME type prefix
-        const base64Prefix = 'data:';
-        const base64Delimiter = ';base64,';
-        if (str.startsWith(base64Prefix)) {
-            const delimiterIndex = str.indexOf(base64Delimiter);
-            if (delimiterIndex !== -1) {
-                const base64Data = str.substring(delimiterIndex + base64Delimiter.length);
-                return validateBase64(base64Data);
-            }
-        }
+		// Check if the string starts with a MIME type prefix
+		const base64Prefix = 'data:';
+		const base64Delimiter = ';base64,';
+		if (str.startsWith(base64Prefix)) {
+			const delimiterIndex = str.indexOf(base64Delimiter);
+			if (delimiterIndex !== -1) {
+				const base64Data = str.substring(delimiterIndex + base64Delimiter.length);
+				return validateBase64(base64Data);
+			}
+		}
 
-        return false;
-    } catch (err) {
-        return false;
-    }
+		return false;
+	} catch (err) {
+		return false;
+	}
 }
 
 async function createFile(folderName2, fileName, type, content, metadata = {}) {
-    const folderName = folderName2.replace(/\/$/, '');
-    const fileName2 = type ? `${fileName}.${type}` : fileName;
+	const folderName = folderName2.replace(/\/$/, '');
+	const fileName2 = type ? `${fileName}.${type}` : fileName;
 
-    if (!fileName2) {
-        console.log("Cannot find file name. Can't create file.");
-        return null;
-    }
+	if (!fileName2) {
+		console.log("Cannot find file name. Can't create file.");
+		return null;
+	}
 
-    await updateMemoryData();
+	await updateMemoryData();
 
-    if (!folderExists(folderName)) {
-        await createFolder(folderName);
-    }
+	if (!folderExists(folderName)) {
+		await createFolder(folderName);
+	}
 
-    const folder = createFolderStructure(folderName);
+	const folder = createFolderStructure(folderName);
 
-    try {
-        let base64data = isBase64(content) ? content : '';
+	try {
+		let base64data = isBase64(content) ? content : '';
 
-        if (!base64data) {
-            // Create a Blob from the content
-            const mimeType = type ? `application/${type}` : 'application/octet-stream';
-            const blob = new Blob([content], { type: mimeType });
+		if (!base64data) {
+			// Create a Blob from the content
+			const mimeType = type ? `application/${type}` : 'application/octet-stream';
+			const blob = new Blob([content], { type: mimeType });
 
-            // Create a URL for the Blob and convert to Base64
-            const reader = new FileReader();
-            reader.readAsDataURL(blob);
-            reader.onloadend = async function () {
-                base64data = reader.result; // Use the full Data URL with prefix
+			// Create a URL for the Blob and convert to Base64
+			const reader = new FileReader();
+			reader.readAsDataURL(blob);
+			reader.onloadend = async function () {
+				base64data = reader.result; // Use the full Data URL with prefix
 
-                await handleFile(folder, folderName, fileName2, base64data, type, metadata);
-            };
-        } else {
-            await handleFile(folder, folderName, fileName2, base64data, type, metadata);
-        }
-    } catch (error) {
-        console.error("Error creating file:", error);
-        return null;
-    }
+				await handleFile(folder, folderName, fileName2, base64data, type, metadata);
+			};
+		} else {
+			await handleFile(folder, folderName, fileName2, base64data, type, metadata);
+		}
+	} catch (error) {
+		console.error("Error creating file:", error);
+		return null;
+	}
 
-    // Helper function to handle file creation or update
-    async function handleFile(folder, folderName, fileName2, base64data, type, metadata) {
-        if (type === "app" && fileName2.endsWith(".app")) {
-            console.log("App file to be created!");
-            const appData = await getFileByPath(`Apps/${fileName2}`);
-            if (appData) {
-                await updateFile("Apps", appData.id, { metadata, content: base64data, fileName: fileName2, type });
-                extractAndRegisterCapabilities(appData.id, base64data);
-                return appData.id || null;
-            }
-        }
+	// Helper function to handle file creation or update
+	async function handleFile(folder, folderName, fileName2, base64data, type, metadata) {
+		if (type === "app" && fileName2.endsWith(".app")) {
+			console.log("App file to be created!");
+			const appData = await getFileByPath(`Apps/${fileName2}`);
+			if (appData) {
+				await updateFile("Apps", appData.id, { metadata, content: base64data, fileName: fileName2, type });
+				extractAndRegisterCapabilities(appData.id, base64data);
+				return appData.id || null;
+			}
+		}
 
-        const existingFile = Object.values(folder).find(file => file.fileName === fileName2);
-        if (existingFile) {
-            console.log(`Updating "${folderName}/${fileName2}"`);
-            await updateFile(folderName, existingFile.id, { metadata, content: base64data, fileName: fileName2, type });
-            return existingFile.id;
-        } else {
-            const uid = genUID();
-            metadata.datetime = getfourthdimension();
-            folder[fileName2] = { id: uid, type, content: base64data, metadata: JSON.stringify(metadata) };
-            console.log(`Created "${folderName}/${fileName2}"`);
-            if (type === "app" && fileName2.endsWith(".app")) {
-                extractAndRegisterCapabilities(uid, base64data);
-            }
-            await setdb(memory);
-            return uid;
-        }
-    }
+		const existingFile = Object.values(folder).find(file => file.fileName === fileName2);
+		if (existingFile) {
+			console.log(`Updating "${folderName}/${fileName2}"`);
+			await updateFile(folderName, existingFile.id, { metadata, content: base64data, fileName: fileName2, type });
+			return existingFile.id;
+		} else {
+			const uid = genUID();
+			metadata.datetime = getfourthdimension();
+			folder[fileName2] = { id: uid, type, content: base64data, metadata: JSON.stringify(metadata) };
+			console.log(`Created "${folderName}/${fileName2}"`);
+			if (type === "app" && fileName2.endsWith(".app")) {
+				extractAndRegisterCapabilities(uid, base64data);
+			}
+			await setdb(memory);
+			return uid;
+		}
+	}
 }
 
 async function extractAndRegisterCapabilities(appId, content) {
 	console.log("EX CAPABLE:" + appId)
-    try {
-        if (isBase64(content)) {
-            content = decodeBase64Content(content);
-        }
+	try {
+		if (isBase64(content)) {
+			content = decodeBase64Content(content);
+		}
 
 		console.log(content.substring(0, 100));
 
-        let parser = new DOMParser();
-        let doc = parser.parseFromString(content, "text/html");
-        let metaTag = doc.querySelector('meta[name="capabilities"]');
+		let parser = new DOMParser();
+		let doc = parser.parseFromString(content, "text/html");
+		let metaTag = doc.querySelector('meta[name="capabilities"]');
 
-        if (metaTag) {
-            let capabilities = metaTag.getAttribute("content").split(',');
-            await registerApp(appId, capabilities);
-            console.log(`Registered capabilities for app ID: ${appId}`);
-        } else {
-            console.log(`No capabilities meta tag found for app ID: ${appId}`);
-        }
-    } catch (error) {
-        console.error("Error extracting and registering capabilities:", error);
-    }
+		if (metaTag) {
+			let capabilities = metaTag.getAttribute("content").split(',');
+			await registerApp(appId, capabilities);
+			console.log(`Registered capabilities for app ID: ${appId}`);
+		} else {
+			console.log(`No capabilities meta tag found for app ID: ${appId}`);
+		}
+	} catch (error) {
+		console.error("Error extracting and registering capabilities:", error);
+	}
 }
 
 async function registerApp(appId, capabilities) {
-    for (let fileType of capabilities) {
-        if (fileType === "all") {
-            fileTypeAssociations["all"] = appId;
-        } else {
-            fileTypeAssociations[fileType] = appId;
-        }
-    }
-    await setSetting('fileTypeAssociations', fileTypeAssociations);
+	for (let fileType of capabilities) {
+		if (fileType === "all") {
+			fileTypeAssociations["all"] = appId;
+		} else {
+			fileTypeAssociations[fileType] = appId;
+		}
+	}
+	await setSetting('fileTypeAssociations', fileTypeAssociations);
 }
 
 
 async function cleanupInvalidAssociations() {
-    const validAppIds = await getAllValidAppIds();
+	const validAppIds = await getAllValidAppIds();
 
-    for (let fileType in fileTypeAssociations) {
-        let appId = fileTypeAssociations[fileType];
-        if (!validAppIds.includes(appId)) {
-            delete fileTypeAssociations[fileType];
-        }
-    }
+	for (let fileType in fileTypeAssociations) {
+		let appId = fileTypeAssociations[fileType];
+		if (!validAppIds.includes(appId)) {
+			delete fileTypeAssociations[fileType];
+		}
+	}
 
-    await setSetting('fileTypeAssociations', fileTypeAssociations);
-    console.log('Cleanup completed: Invalid app associations removed.');
+	await setSetting('fileTypeAssociations', fileTypeAssociations);
+	console.log('Cleanup completed: Invalid app associations removed.');
 }
 
 async function getAllValidAppIds() {
-    const appsFolder = await getFileNamesByFolder('Apps/');
-    return Object.keys(appsFolder || {}).map(appFileName => appsFolder[appFileName].id);
+	const appsFolder = await getFileNamesByFolder('Apps/');
+	return Object.keys(appsFolder || {}).map(appFileName => appsFolder[appFileName].id);
 }
 
 
@@ -1151,7 +1153,7 @@ async function updateFile(folderName, fileId, newData) {
 async function getFileById(id) {
 	if (!id) return undefined;
 	await updateMemoryData();
-	
+
 	function searchFolder(folder, currentPath = '') {
 		for (let key in folder) {
 			const item = folder[key];
@@ -1284,8 +1286,8 @@ async function loadtaskspanel() {
 	if (Object.keys(winds).length == 0) {
 		appbarelement.style.display = "none";
 		return;
-	} 
-	
+	}
+
 	// Filter out keys for existing windows
 	let validKeys = Object.keys(winds).filter(key => gid("window" + key.slice(-6)) !== null);
 	let x = validKeys.map(key => key.slice(0, -6));
@@ -1359,7 +1361,7 @@ function shrinkbsf(str) {
 }
 
 function unshrinkbsf(compressedStr) {
-		return compressedStr;
+	return compressedStr;
 }
 
 async function makewall(deid) {
@@ -1509,58 +1511,62 @@ async function installdefaultapps() {
 
 	}
 
-	// Update each app sequentially
-	for (let i = 0; i < defAppsList.length; i++) {
-		await updateApp(defAppsList[i]);
-		if (gid('startupterms')) {
-			gid('startupterms').innerText = "Installing Apps"
+	await getdb().then(async () => {
+		// Update each app sequentially
+		for (let i = 0; i < defAppsList.length; i++) {
+			await updateApp(defAppsList[i]);
+			if (gid('startupterms')) {
+				gid('startupterms').innerText = "Installing Apps"
+			}
+			setsrtpprgbr(Math.round((i + 1) / defAppsList.length * 100));
 		}
-		setsrtpprgbr(Math.round((i + 1) / defAppsList.length * 100));
-	}
-	let fetchupdatedata = await fetch("versions.json");
+		let fetchupdatedata = await fetch("versions.json");
 
-	if (fetchupdatedata.ok) {
-		let fetchupdatedataver = (await fetchupdatedata.json()).osver;
-		localStorage.setItem("updver", fetchupdatedataver);
-	} else {
-		console.error("Failed to fetch data from the server.");
-	}
+		if (fetchupdatedata.ok) {
+			let fetchupdatedataver = (await fetchupdatedata.json()).osver;
+			localStorage.setItem("updver", fetchupdatedataver);
+		} else {
+			console.error("Failed to fetch data from the server.");
+		}
 
-	if (initialization) {
-		closeElementedis();
-	}	
+		if (!initialization) {
+			closeElementedis();
+		}
+	})
+
+
 }
 
 async function getFileByPath(filePath) {
-    await updateMemoryData();
-    let parts = filePath.split('/');
-    let current = memory;
+	await updateMemoryData();
+	let parts = filePath.split('/');
+	let current = memory;
 
-    for (let i = 0; i < parts.length; i++) {
-        let part = parts[i];
-        
-        // If it's a folder and not the last part, descend into it
-        if (part.endsWith('/') && part in current && i !== parts.length - 1) {
-            current = current[part];
-        } else if (part in current) {
-            current = current[part];
-        } else {
-            return null;
-        }
-    }
-    
-    // If current is an object and contains nested files, return their names and IDs
-    if (typeof current === 'object' && current !== null && !Array.isArray(current)) {
-        let result = [];
-        for (let key in current) {
-            if (current[key].id) {
-                result.push({ name: key, id: current[key].id });
-            }
-        }
-        return result.length > 0 ? result : current;
-    }
-    
-    return current;
+	for (let i = 0; i < parts.length; i++) {
+		let part = parts[i];
+
+		// If it's a folder and not the last part, descend into it
+		if (part.endsWith('/') && part in current && i !== parts.length - 1) {
+			current = current[part];
+		} else if (part in current) {
+			current = current[part];
+		} else {
+			return null;
+		}
+	}
+
+	// If current is an object and contains nested files, return their names and IDs
+	if (typeof current === 'object' && current !== null && !Array.isArray(current)) {
+		let result = [];
+		for (let key in current) {
+			if (current[key].id) {
+				result.push({ name: key, id: current[key].id });
+			}
+		}
+		return result.length > 0 ? result : current;
+	}
+
+	return current;
 }
 
 function getfourthdimension() {
@@ -1641,76 +1647,76 @@ async function strtappse(event) {
 		return;
 	}
 	let elements = 0;
-const itemsWithSimilarity = [];
+	const itemsWithSimilarity = [];
 
-// Filter and sort items based on similarity
-fileslist.forEach(item => {
-	const itemName = item.name.toLowerCase();
-	let similarity = 1;
+	// Filter and sort items based on similarity
+	fileslist.forEach(item => {
+		const itemName = item.name.toLowerCase();
+		let similarity = 1;
 
-	// Check if item is not a folder (folders end with '/')
-	if (!itemName.endsWith('/')) {
-		if (!abracadra) {
-			if (itemName.startsWith(searchValue)) {
-				itemsWithSimilarity.push({ item, similarity });
-			}
-		} else {
-			similarity = calculateSimilarity(itemName, searchValue);
-			if (similarity >= 0.2) {
-				itemsWithSimilarity.push({ item, similarity });
+		// Check if item is not a folder (folders end with '/')
+		if (!itemName.endsWith('/')) {
+			if (!abracadra) {
+				if (itemName.startsWith(searchValue)) {
+					itemsWithSimilarity.push({ item, similarity });
+				}
+			} else {
+				similarity = calculateSimilarity(itemName, searchValue);
+				if (similarity >= 0.2) {
+					itemsWithSimilarity.push({ item, similarity });
+				}
 			}
 		}
-	}
-});
-
-itemsWithSimilarity.sort((a, b) => b.similarity - a.similarity);
-
-// Group results by path
-const groupedResults = itemsWithSimilarity.reduce((acc, { item }) => {
-	const path = item.path || '';
-	if (!acc[path]) acc[path] = [];
-	acc[path].push(item);
-	return acc;
-}, {});
-
-// Clear previous search suggestions
-gid("strtappsugs").innerHTML = "";
-
-// Display grouped results
-let mostRelevantItem = null;
-Object.keys(groupedResults).forEach(path => {
-	const items = groupedResults[path];
-	const pathElement = document.createElement("div");
-	pathElement.innerHTML = `<strong>${path}</strong>`;
-	gid("strtappsugs").appendChild(pathElement);
-
-	items.forEach(item => {
-		if (!mostRelevantItem) mostRelevantItem = item; // Set mostRelevantItem if not set
-
-		const newElement = document.createElement("div");
-		newElement.innerHTML = "<div>" + ((appicns[item.name] != undefined) ? appicns[item.name] : defaultAppIcon) + " " + item.name + "</div>" + `<span class="material-icons" onclick="openfile('${item.id}')">arrow_outward</span>`;
-		gid("strtappsugs").appendChild(newElement);
-		elements++;
 	});
-});
 
-// Handle the most relevant item
-if (mostRelevantItem) {
-	gid("partrecentapps").style.display = "none";
-	document.getElementsByClassName("previewsside")[0].style.display = "flex";
-	gid("seapppreview").style.display = "block";
+	itemsWithSimilarity.sort((a, b) => b.similarity - a.similarity);
 
-	gid('seprw-icon').innerHTML = (appicns[mostRelevantItem.name] != undefined) ? appicns[mostRelevantItem.name] : defaultAppIcon;
-	gid('seprw-appname').innerText = mostRelevantItem.name;
-	gid('seprw-openb').onclick = function () {
-		openfile(mostRelevantItem.id);
-	};
-} else {
-	gid("partrecentapps").style.display = "block";
-	gid("seapppreview").style.display = "none";
-}
+	// Group results by path
+	const groupedResults = itemsWithSimilarity.reduce((acc, { item }) => {
+		const path = item.path || '';
+		if (!acc[path]) acc[path] = [];
+		acc[path].push(item);
+		return acc;
+	}, {});
 
-gid("strtappsugs").style.display = elements > 0 ? "block" : "none";
+	// Clear previous search suggestions
+	gid("strtappsugs").innerHTML = "";
+
+	// Display grouped results
+	let mostRelevantItem = null;
+	Object.keys(groupedResults).forEach(path => {
+		const items = groupedResults[path];
+		const pathElement = document.createElement("div");
+		pathElement.innerHTML = `<strong>${path}</strong>`;
+		gid("strtappsugs").appendChild(pathElement);
+
+		items.forEach(item => {
+			if (!mostRelevantItem) mostRelevantItem = item; // Set mostRelevantItem if not set
+
+			const newElement = document.createElement("div");
+			newElement.innerHTML = "<div>" + ((appicns[item.name] != undefined) ? appicns[item.name] : defaultAppIcon) + " " + item.name + "</div>" + `<span class="material-icons" onclick="openfile('${item.id}')">arrow_outward</span>`;
+			gid("strtappsugs").appendChild(newElement);
+			elements++;
+		});
+	});
+
+	// Handle the most relevant item
+	if (mostRelevantItem) {
+		gid("partrecentapps").style.display = "none";
+		document.getElementsByClassName("previewsside")[0].style.display = "flex";
+		gid("seapppreview").style.display = "block";
+
+		gid('seprw-icon').innerHTML = (appicns[mostRelevantItem.name] != undefined) ? appicns[mostRelevantItem.name] : defaultAppIcon;
+		gid('seprw-appname').innerText = mostRelevantItem.name;
+		gid('seprw-openb').onclick = function () {
+			openfile(mostRelevantItem.id);
+		};
+	} else {
+		gid("partrecentapps").style.display = "block";
+		gid("seapppreview").style.display = "none";
+	}
+
+	gid("strtappsugs").style.display = elements > 0 ? "block" : "none";
 }
 function calculateSimilarity(string1, string2) {
 	const m = string1.length;
@@ -1990,35 +1996,35 @@ function notify(title, description, appname) {
 	} else {
 		console.error("One or more DOM elements not found.");
 	}
-    const notificationID = genUID();
-    notifLog[notificationID] = { title, description, appname };
+	const notificationID = genUID();
+	notifLog[notificationID] = { title, description, appname };
 }
 
 function displayNotifications() {
-    const notifList = document.getElementById("notiflist");
-    notifList.innerHTML = "";
+	const notifList = document.getElementById("notiflist");
+	notifList.innerHTML = "";
 
-    Object.values(notifLog).forEach(({ title, description, appname }) => {
-        const notifDiv = document.createElement("div");
-        notifDiv.className = "notification";
+	Object.values(notifLog).forEach(({ title, description, appname }) => {
+		const notifDiv = document.createElement("div");
+		notifDiv.className = "notification";
 
-        const titleDiv = document.createElement("div");
-        titleDiv.className = "notifTitle";
-        titleDiv.innerText = title;
+		const titleDiv = document.createElement("div");
+		titleDiv.className = "notifTitle";
+		titleDiv.innerText = title;
 
-        const descDiv = document.createElement("div");
-        descDiv.className = "notifDesc";
-        descDiv.innerText = description;
+		const descDiv = document.createElement("div");
+		descDiv.className = "notifDesc";
+		descDiv.innerText = description;
 
-        const appNameDiv = document.createElement("div");
-        appNameDiv.className = "notifAppName";
-        appNameDiv.innerText = appname;
+		const appNameDiv = document.createElement("div");
+		appNameDiv.className = "notifAppName";
+		appNameDiv.innerText = appname;
 
-        notifDiv.appendChild(appNameDiv);
-        notifDiv.appendChild(titleDiv);
-        notifDiv.appendChild(descDiv);
-        notifList.appendChild(notifDiv);
-    });
+		notifDiv.appendChild(appNameDiv);
+		notifDiv.appendChild(titleDiv);
+		notifDiv.appendChild(descDiv);
+		notifList.appendChild(notifDiv);
+	});
 }
 
 function runAsOSL(content) {
@@ -2177,9 +2183,9 @@ async function opensearchpanel() {
 	gid("strtsear").value = "";
 	loadrecentapps();
 	displayNotifications();
-	
+
 	gid("seapppreview").style.display = "none";
-	
+
 	if (appsHistory.length > 0) {
 		gid("partrecentapps").style.display = "block";
 	} else {
@@ -2298,114 +2304,114 @@ async function checkifpassright() {
 
 var chat;
 function resetchat() {
-	chat  = [{"role":"system","content":"You are NovaOS Copilot Assistant. NovaOS is a web OS that lets your run html apps and manage a local filesystem. You cannot use newlines (\n)"}];
+	chat = [{ "role": "system", "content": "You are NovaOS Copilot Assistant. NovaOS is a web OS that lets your run html apps and manage a local filesystem. You cannot use newlines (\n)" }];
 }
 resetchat()
 
 const nvacopilot = {
-  message: function(content, role) {
-	const messagesContainer = document.getElementById("nvacoplt-messages");
+	message: function (content, role) {
+		const messagesContainer = document.getElementById("nvacoplt-messages");
 
-	const messageDiv = document.createElement("div");
-	messageDiv.classList.add("usermsg");
+		const messageDiv = document.createElement("div");
+		messageDiv.classList.add("usermsg");
 
-	if (role === "bot") {
-	  messageDiv.classList.add("bot");
+		if (role === "bot") {
+			messageDiv.classList.add("bot");
+		}
+
+		const navDiv = document.createElement("div");
+		navDiv.classList.add("usermsg-nav");
+		const icon = document.createElement("i");
+		icon.classList.add("material-icons");
+		icon.textContent = role === "bot" ? "auto_awesome" : "account_circle";
+		navDiv.appendChild(icon);
+
+		const contentDiv = document.createElement("div");
+		contentDiv.classList.add("usermsg-content");
+		contentDiv.innerHTML = markdownToHTML(content);
+
+		messageDiv.appendChild(navDiv);
+		messageDiv.appendChild(contentDiv);
+
+		messagesContainer.appendChild(messageDiv);
+		messagesContainer.scrollTop = messagesContainer.scrollHeight;
 	}
-
-	const navDiv = document.createElement("div");
-	navDiv.classList.add("usermsg-nav");
-	const icon = document.createElement("i");
-	icon.classList.add("material-icons");
-	icon.textContent = role === "bot" ? "auto_awesome" : "account_circle";
-	navDiv.appendChild(icon);
-
-	const contentDiv = document.createElement("div");
-	contentDiv.classList.add("usermsg-content");
-	contentDiv.innerHTML = markdownToHTML(content);
-
-	messageDiv.appendChild(navDiv);
-	messageDiv.appendChild(contentDiv);
-
-	messagesContainer.appendChild(messageDiv);
-	  messagesContainer.scrollTop = messagesContainer.scrollHeight;
-  }
 };
 
 nvacopilot.message("Hi there!", "user");
 nvacopilot.message("Hello! How can I help you today?", "bot");
 
 const sendMessage = () => {
-  const messageInput = document.getElementById("nvacoplt-msginput");
-  const messageContent = messageInput.value.trim();
+	const messageInput = document.getElementById("nvacoplt-msginput");
+	const messageContent = messageInput.value.trim();
 
-  if (!messageContent) return;
+	if (!messageContent) return;
 
-  chat.push({"role": "user", "content": messageContent});
-  nvacopilot.message(messageContent, "user");
-  messageInput.value = "";
+	chat.push({ "role": "user", "content": messageContent });
+	nvacopilot.message(messageContent, "user");
+	messageInput.value = "";
 
-  const payload = {
-	messages: chat,
-	model: 'blackbox'
-  };
+	const payload = {
+		messages: chat,
+		model: 'blackbox'
+	};
 
-  fetch('https://ai.milosantos.com/blackbox', {
-	method: 'POST',
-	headers: { 'Content-Type': 'application/json' },
-	body: JSON.stringify(payload)
-  })
-  .then(response => response.json())
-  .then(data => {
-	const responseMessage = data.choices[0].message.content;
+	fetch('https://ai.milosantos.com/blackbox', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(payload)
+	})
+		.then(response => response.json())
+		.then(data => {
+			const responseMessage = data.choices[0].message.content;
 
-	chat.push({"role": "assistant", "content": responseMessage});
-	nvacopilot.message(responseMessage, "bot");
-	if(responseMessage.includes("simply") || (responseMessage.includes("can") && (responseMessage.includes("by")))) {
-		
-nvacopilot.message("<small>Be aware following my instructions, i may make mistakes.</small>", "bot");
-	}
-  })
-  .catch(error => {
-	console.error('Error:', error);
-	const errorMessage = 'An error occurred. Please try again.';
+			chat.push({ "role": "assistant", "content": responseMessage });
+			nvacopilot.message(responseMessage, "bot");
+			if (responseMessage.includes("simply") || (responseMessage.includes("can") && (responseMessage.includes("by")))) {
 
-	chat.push({"role": "assistant", "content": errorMessage});
-	nvacopilot.message(errorMessage, "bot");
-  });
+				nvacopilot.message("<small>Be aware following my instructions, i may make mistakes.</small>", "bot");
+			}
+		})
+		.catch(error => {
+			console.error('Error:', error);
+			const errorMessage = 'An error occurred. Please try again.';
+
+			chat.push({ "role": "assistant", "content": errorMessage });
+			nvacopilot.message(errorMessage, "bot");
+		});
 };
 
-  document.getElementById("nvacoplt-msginput").addEventListener("keypress", e => {
+document.getElementById("nvacoplt-msginput").addEventListener("keypress", e => {
 	if (e.key === "Enter") sendMessage();
-  });
-  document.querySelector(".nvacoplt-sndbtn").addEventListener("click", sendMessage);
+});
+document.querySelector(".nvacoplt-sndbtn").addEventListener("click", sendMessage);
 
 function markdownToHTML(markdown) {
-  let html = markdown;
+	let html = markdown;
 
-  html = html.replace(/(\*\*)(.*?)\1/g, '<strong>$2</strong>');
+	html = html.replace(/(\*\*)(.*?)\1/g, '<strong>$2</strong>');
 
-  html = html.replace(/(\*|_)(.*?)\1/g, '<em>$2</em>');
+	html = html.replace(/(\*|_)(.*?)\1/g, '<em>$2</em>');
 
-  html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
-  html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
-  html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+	html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+	html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+	html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
 
-  html = html.replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>');
+	html = html.replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>');
 
-  html = html.replace(/^\s*[-+*] (.*$)/gim, '<li>$1</li>');
+	html = html.replace(/^\s*[-+*] (.*$)/gim, '<li>$1</li>');
 
-	  html = html.replace(/```([^`]+)```/g, '<codeblock>$1</codeblock>');
-	
-	  html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+	html = html.replace(/```([^`]+)```/g, '<codeblock>$1</codeblock>');
 
-  html = html.replace(/\[(.*?)\]\((.*?)\)/gim, '<a href="$2">$1</a>');
+	html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
 
-  html = html.replace(/  \n/g, '<br>');
+	html = html.replace(/\[(.*?)\]\((.*?)\)/gim, '<a href="$2">$1</a>');
 
-  html = html.replace(/(<li>.*<\/li>)/gim, '<ul>$1</ul>');
+	html = html.replace(/  \n/g, '<br>');
 
-  return html.trim();
+	html = html.replace(/(<li>.*<\/li>)/gim, '<ul>$1</ul>');
+
+	return html.trim();
 }
 
 function logoutofnova() {
@@ -2415,4 +2421,5 @@ function logoutofnova() {
 	closeallwindows();
 	showloginmod();
 	lethalpasswordtimes = true;
-	loginscreenba
+	loginscreenbackbtn();
+}

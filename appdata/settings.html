@@ -158,23 +158,24 @@
 
 		td {
 			font-size: 10px;
-    padding-bottom: 0.5rem;
-    padding-top: 0.5rem;
-    vertical-align: top;
-    padding-right: 1rem;
-    border-bottom: 1px solid #292929;
+			padding-bottom: 0.5rem;
+			padding-top: 0.5rem;
+			vertical-align: top;
+			padding-right: 1rem;
+			border-bottom: 1px solid #292929;
 		}
 
-		td b, ul li {
+		td b,
+		ul li {
 			color: #b4d2ff;
-    background: #2d2d2d;
-    padding: 0.2rem 0.4rem;
-    border-radius: 0.3rem;
-	cursor: pointer;
+			background: #2d2d2d;
+			padding: 0.2rem 0.4rem;
+			border-radius: 0.3rem;
+			cursor: pointer;
 		}
 
 		ul {
-			
+
 			padding: 0;
 		}
 
@@ -1065,7 +1066,7 @@
 						// smartsearch
 						document.getElementById("cbx-69").addEventListener("change", function () {
 							let newValue2 = document.getElementById("cbx-69").checked;
-							window.parent.setSetting("smartsearch",newValue2 )
+							window.parent.setSetting("smartsearch", newValue2)
 							window.parent.qsetsRefresh()
 						});
 
@@ -1205,20 +1206,20 @@
 				<style>
 					#password [setting] {
 						display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
+						flex-direction: row;
+						align-items: center;
+						justify-content: space-between;
 					}
-					</style>
-			<div setting id="changpassthingy">
-				<b id="passstat"></b>
-				<button onclick="chstpass()">Continue</button>
-			</div>
-			<div setting>
-				<b id="userstatsi">Signed in as user1</b>
-				<button onclick="window.parent.logoutofnova()">Sign Out</button>
-			</div>
-		</segr>
+				</style>
+				<div setting id="changpassthingy">
+					<b id="passstat"></b>
+					<button onclick="chstpass()">Continue</button>
+				</div>
+				<div setting>
+					<b id="userstatsi">Signed in as user1</b>
+					<button onclick="window.parent.logoutofnova()">Sign Out</button>
+				</div>
+			</segr>
 			<script>
 				document.getElementById("userstatsi").innerHTML = 'Signed in as ' + window.parent.CurrentUsername;
 				if (window.parent.password == 'nova') {
@@ -1237,16 +1238,16 @@
 							return;
 						}
 					}
-					if (await window.parent.justConfirm("Are you sure?","All your data will be lost if you forget this password. Re-encrypt all your files with this one?")) {
-							await window.parent.changePassword(window.parent.password, setpass);
-							await window.parent.say("Click OK when you are ready to restart your OS.")
-							window.parent.location.reload()
+					if (await window.parent.justConfirm("Are you sure?", "All your data will be lost if you forget this password. Re-encrypt all your files with this one?")) {
+						await window.parent.changePassword(window.parent.password, setpass);
+						await window.parent.say("Click OK when you are ready to restart your OS.")
+						window.parent.location.reload()
 					} else {
 						return;
 					}
 				}
 			</script>
-			
+
 		</div>
 
 		<div id="battery" class="tabcontent">
@@ -1347,12 +1348,14 @@
 					</tr>
 					<tr>
 						<td>Libraries</td>
-						<td><ul>
-							<li onclick="openlink('https://nodeca.github.io/pako/')">Pako</li>
-							<li onclick="openlink('https://jquery.com/')">jquery</li>
-							<li onclick="openlink('https://fonts.google.com/')">Google Fonts</li>
-							<li>LZ-UTF8.js</li>
-						</ul></td>
+						<td>
+							<ul>
+								<li onclick="openlink('https://nodeca.github.io/pako/')">Pako</li>
+								<li onclick="openlink('https://jquery.com/')">jquery</li>
+								<li onclick="openlink('https://fonts.google.com/')">Google Fonts</li>
+								<li>LZ-UTF8.js</li>
+							</ul>
+						</td>
 					</tr>
 				</tbody>
 			</table>
@@ -1683,76 +1686,135 @@
 					</div>
 				</div>
 			</segr>
-			<h1>Wallpaper</h1>
+			<h1>Personalization</h1>
 			<segr>
-				<style>
-					#UISIZErangeslid {
-						width: 100%;
-					}
+				<div class="inpbox">
+					<span>Window Background color </span>
+					<div class="colorpickerbx">
+					<select id="windbgs" style="float: none;">
+						<option>transparent</option>
+						<option>#101010</option>
+						<option>Custom color</option>
+					</select>
+					<input type="color" id="colorPicker">
+					</div>
+				</div>
+			</segr>
+			<style>
 
-					.UISIZEslider-labels {
-						display: flex;
-						justify-content: space-between;
-						width: 100%;
-						margin-top: 0.5rem;
-					}
+				.colorpickerbx {
+					display: flex;
+    flex-direction: row;
+    gap: 0.3rem;
+    align-items: stretch;
+    margin-top: 0.5rem;
+    background: #1f1f1f;
+    border-radius: 0.5rem;
+    width: fit-content;
+    padding: 0.3rem;
 
-					.UISIZEslider-labels span {
-						opacity: 0.5;
-						font-size: 0.8rem;
-						width: 0;
-						text-align: center;
-						flex: 1;
-					}
+	select {
+		transform: none;
+	}
+				}
+				#colorPicker {
+					float: right;
+					display: none;
+				}
 
-					#cwallimg {
-						display: block;
-						height: 120px;
-						object-fit: contain;
-						aspect-ratio: 9 / 6;
-						margin: 10px 0;
-						background: black;
-						border-radius: 5px;
-						box-shadow: 0 5px 10px black;
-					}
-				</style>
-				<script>
-					async function gwall() {
-						let x = await window.parent.getFileById(await window.parent.getSetting("wall"));
+				#UISIZErangeslid {
+					width: 100%;
+				}
+
+				.UISIZEslider-labels {
+					display: flex;
+					justify-content: space-between;
+					width: 100%;
+					margin-top: 0.5rem;
+				}
+
+				.UISIZEslider-labels span {
+					opacity: 0.5;
+					font-size: 0.8rem;
+					width: 0;
+					text-align: center;
+					flex: 1;
+				}
+
+				#cwallimg {
+					display: block;
+					height: 120px;
+					object-fit: contain;
+					aspect-ratio: 9 / 6;
+					margin: 10px 0;
+					background: black;
+					border-radius: 5px;
+					box-shadow: 0 5px 10px black;
+				}
+			</style>
+			<script>
+				async function gwall() {
+					let x = null;
+					try {
+						x = await window.parent.getFileById(await window.parent.getSetting("wall"));
 						x = window.parent.unshrinkbsf(x.content);
 
-						// Create a new HTML image element
-						var img = new Image();
+					} catch (err) { }
 
-						// Set the image source
-						img.src = x;
-
-						// When the image is loaded
-						img.onload = function () {
-							// Create a canvas element
-							var canvas = document.createElement('canvas');
-							var ctx = canvas.getContext('2d');
-
-							// Set the canvas size to the original image dimensions
-							canvas.width = img.width;
-							canvas.height = img.height;
-
-							// Draw the image onto the canvas at original size
-							ctx.drawImage(img, 0, 0);
-
-							// Get the data URL of the canvas with reduced quality
-							var dataURL = canvas.toDataURL('image/jpeg', 0.1); // Adjust quality value as needed (0.1 is quite low)
-
-							// Set the src of the image element to the data URL
-							document.getElementById("cwallimg").src = dataURL;
-						};
+					if (x) {
+						document.getElementById("cwallimg").src = x;
+					} else {
+						document.getElementById("cwallimg").src = window.parent.novaFeaturedImage;
 					}
-				</script>
 
-				<div setting>
-					<span>Current Wallpaper</span>
-					<img src="N.webp" id="cwallimg">
-				</div>
+
+					let selinp = document.getElementById("windbgs");
+let colorInput = document.getElementById("colorPicker");
+
+(async function () {
+    try {
+        const savedValue = await window.parent.getSetting("WindowBgColor");
+        if (savedValue) {
+            if (savedValue === "#00000000") {
+                selinp.value = "#00000000";
+            } else if (savedValue === "#101010") {
+                selinp.value = "#101010";
+            } else {
+                selinp.value = "Custom color";
+                colorInput.value = savedValue;
+                colorInput.style.display = "inline-block";
+            }
+        }
+    } catch (error) {
+        console.error(error);
+    }
+})();
+
+selinp.addEventListener("change", function () {
+	console.log(selinp.value)
+    let newValue = selinp.value;
+    if (newValue === "#00000000") {
+        colorInput.style.display = "none";
+    } else if (newValue === "Custom color") {
+        colorInput.style.display = "inline-block";
+        newValue = colorInput.value;
+    } else {
+        colorInput.style.display = "none";
+    }
+    window.parent.setSetting("WindowBgColor", newValue);
+});
+
+colorInput.addEventListener("input", function () {
+    let newValue = colorInput.value;
+    window.parent.setSetting("WindowBgColor", newValue);
+});
+				}
+			</script>
+
+			<div setting>
+				<span>Current Wallpaper</span>
+				<img src="N.webp" id="cwallimg">
+			</div>
 
 			</segr>
 			<script defer>
