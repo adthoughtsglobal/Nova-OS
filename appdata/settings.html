@@ -609,6 +609,8 @@
 				Data Manager</button>
 			<button class="tablinks" onclick="openCity(event, 'defaults'); defs5(); defs2(); defs3()"><i
 					class="material-icons">settings</i> Preferances</button>
+			<button class="tablinks" onclick="openCity(event, 'defaultappsforfiles'); defs5(); defs2(); defs3()"><i
+					class="material-icons">open_in_browser</i> Defaults</button>
 			<button class="tablinks" onclick="openCity(event, 'about')"><i class="material-icons">info</i>
 				About</button>
 
@@ -1200,6 +1202,153 @@
 			</segr>
 		</div>
 
+		<div id="defaultappsforfiles" class="tabcontent">
+			<h1>Defaults</h1>
+			<p>Choose which app opens your file by default.</p>
+			<style>
+				#appfileassos {
+					svg {
+						height: 1.5rem;
+						max-width: 1.5rem;
+						background: #57575733;
+						padding: 3px;
+						min-width: 0.5rem;
+						border-radius: 0.3rem;
+					}
+
+					.table {
+						display: flex;
+						flex-direction: column;
+						width: 100%;
+						border: 1px solid #232323;
+						border-radius: 0.5rem;
+						overflow: hidden;
+					}
+
+					.header-row,
+					.row {
+						display: flex;
+						border-bottom: 1px solid #333333;
+						padding: 8px 0;
+					}
+
+					.header-row {
+						background-color: #252525;
+						font-weight: normal;
+						opacity: 0.7;
+						font-size: 0.7rem;
+					}
+
+					.cell {
+						padding: 8px;
+						display: flex;
+						align-items: center;
+						justify-content: flex-start;
+					}
+
+					.file-type-cell {
+						font-size: 1rem;
+					}
+
+					.file-type-header,
+					.file-type-cell {
+						flex: 1;
+						border-right: 1px solid #353535;
+						padding-left: 16px;
+					}
+
+					.default-app-header,
+					.default-app-cell {
+						flex: 2;
+						padding-left: 16px;
+						display: flex;
+						flex-direction: column;
+						align-items: flex-start;
+					}
+
+					.row:last-child {
+						border-bottom: none;
+					}
+
+					.subapps {
+						svg {
+							height: 1.3rem;
+						}
+
+						.material-icons {
+							color: #7b7b7b;
+							font-size: 1rem !important;
+							transform: translateY(-2px);
+							margin-right: 0.5rem;
+						}
+					}
+				}
+			</style>
+			<button onclick="rldfltyptable()" style="margin-bottom: 0.5rem;">Reload Table</button>
+			<div id="appfileassos">
+
+			</div>
+			<small style="margin-top: 0.5rem;">
+				<h3>Unable to find the app you looked for?</h3>
+				<p>Check if the app supports the file in its installed version, if yes, reinstall it with the NovaOS
+					files app and open this page again. Contact the Developer of the app if the issue presists.</p>
+			</small>
+			<script>
+				function rldfltyptable() {
+					const fileAssociations = window.parent.fileTypeAssociations;
+
+					function createTable(fileAssociations) {
+						const table = document.createElement('div');
+						table.className = 'table';
+
+						const headerRow = document.createElement('div');
+						headerRow.className = 'header-row';
+
+						const fileTypeHeader = document.createElement('div');
+						fileTypeHeader.className = 'header-cell file-type-header';
+						fileTypeHeader.textContent = 'File Extension';
+
+						const defaultAppHeader = document.createElement('div');
+						defaultAppHeader.className = 'header-cell default-app-header';
+						defaultAppHeader.textContent = 'Apps';
+
+						headerRow.appendChild(fileTypeHeader);
+						headerRow.appendChild(defaultAppHeader);
+						table.appendChild(headerRow);
+
+						for (const [extension, apps] of Object.entries(fileAssociations)) {
+							const row = document.createElement('div');
+							row.className = 'row';
+
+							const fileTypeCell = document.createElement('div');
+							fileTypeCell.className = 'cell file-type-cell';
+							fileTypeCell.textContent = extension;
+
+							const defaultAppCell = document.createElement('div');
+							defaultAppCell.className = 'cell default-app-cell';
+							let subappsContent = apps.length > 1 ?
+								`<div class="subapps"><span class="material-icons">extension</span>` +
+								apps.slice(1).map((app, index) => window.parent.getAppIcon(index + 1, app, true)).join(', ') +
+								`</div>` : '';
+
+							defaultAppCell.innerHTML = window.parent.getAppIcon(0, apps[0], true) + '<br>' + subappsContent;
+
+
+							row.appendChild(fileTypeCell);
+							row.appendChild(defaultAppCell);
+							table.appendChild(row);
+						}
+
+						return table;
+					}
+					document.getElementById('appfileassos').innerHTML = '';
+					document.getElementById('appfileassos').appendChild(createTable(fileAssociations));
+				}
+
+				rldfltyptable()
+			</script>
+		</div>
+
 		<div id="password" class="tabcontent">
 			<h1>Password</h1>
 			<segr>
@@ -1691,32 +1840,32 @@
 				<div class="inpbox">
 					<span>Window Background color </span>
 					<div class="colorpickerbx">
-					<select id="windbgs" style="float: none;">
-						<option>transparent</option>
-						<option>#101010</option>
-						<option>Custom color</option>
-					</select>
-					<input type="color" id="colorPicker">
+						<select id="windbgs" style="float: none;">
+							<option>transparent</option>
+							<option>#101010</option>
+							<option>Custom color</option>
+						</select>
+						<input type="color" id="colorPicker">
 					</div>
 				</div>
 			</segr>
 			<style>
-
 				.colorpickerbx {
 					display: flex;
-    flex-direction: row;
-    gap: 0.3rem;
-    align-items: stretch;
-    margin-top: 0.5rem;
-    background: #1f1f1f;
-    border-radius: 0.5rem;
-    width: fit-content;
-    padding: 0.3rem;
+					flex-direction: row;
+					gap: 0.3rem;
+					align-items: stretch;
+					margin-top: 0.5rem;
+					background: #1f1f1f;
+					border-radius: 0.5rem;
+					width: fit-content;
+					padding: 0.3rem;
 
-	select {
-		transform: none;
-	}
+					select {
+						transform: none;
+					}
 				}
+
 				#colorPicker {
 					float: right;
 					display: none;
@@ -1769,45 +1918,45 @@
 
 
 					let selinp = document.getElementById("windbgs");
-let colorInput = document.getElementById("colorPicker");
+					let colorInput = document.getElementById("colorPicker");
 
-(async function () {
-    try {
-        const savedValue = await window.parent.getSetting("WindowBgColor");
-        if (savedValue) {
-            if (savedValue === "#00000000") {
-                selinp.value = "#00000000";
-            } else if (savedValue === "#101010") {
-                selinp.value = "#101010";
-            } else {
-                selinp.value = "Custom color";
-                colorInput.value = savedValue;
-                colorInput.style.display = "inline-block";
-            }
-        }
-    } catch (error) {
-        console.error(error);
-    }
-})();
+					(async function () {
+						try {
+							const savedValue = await window.parent.getSetting("WindowBgColor");
+							if (savedValue) {
+								if (savedValue === "#00000000") {
+									selinp.value = "#00000000";
+								} else if (savedValue === "#101010") {
+									selinp.value = "#101010";
+								} else {
+									selinp.value = "Custom color";
+									colorInput.value = savedValue;
+									colorInput.style.display = "inline-block";
+								}
+							}
+						} catch (error) {
+							console.error(error);
+						}
+					})();
 
-selinp.addEventListener("change", function () {
-	console.log(selinp.value)
-    let newValue = selinp.value;
-    if (newValue === "#00000000") {
-        colorInput.style.display = "none";
-    } else if (newValue === "Custom color") {
-        colorInput.style.display = "inline-block";
-        newValue = colorInput.value;
-    } else {
-        colorInput.style.display = "none";
-    }
-    window.parent.setSetting("WindowBgColor", newValue);
-});
+					selinp.addEventListener("change", function () {
+						console.log(selinp.value)
+						let newValue = selinp.value;
+						if (newValue === "#00000000") {
+							colorInput.style.display = "none";
+						} else if (newValue === "Custom color") {
+							colorInput.style.display = "inline-block";
+							newValue = colorInput.value;
+						} else {
+							colorInput.style.display = "none";
+						}
+						window.parent.setSetting("WindowBgColor", newValue);
+					});
 
-colorInput.addEventListener("input", function () {
-    let newValue = colorInput.value;
-    window.parent.setSetting("WindowBgColor", newValue);
-});
+					colorInput.addEventListener("input", function () {
+						let newValue = colorInput.value;
+						window.parent.setSetting("WindowBgColor", newValue);
+					});
 				}
 			</script>
 

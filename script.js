@@ -293,7 +293,7 @@ async function openn() {
 			const unshrunkContent = unshrinkbsf(content.content);
 
 			// Use the getAppIcon function to fetch the icon
-			const icon = getAppIcon(unshrunkContent, app.name);
+			const icon = getAppIcon(unshrunkContent, app.id);
 
 			if (icon) {
 				iconSpan.innerHTML = icon;
@@ -738,8 +738,15 @@ function flwin(x) {
 	}, 1000);
 }
 
-function getAppIcon(unshrunkContent, appname) {
-	if (appicns[appname]) return appicns[appname];
+function getAppIcon(unshrunkContent, appid, jff) {
+	if (jff) {
+		if (appicns[appid]) {
+			return appicns[appid];
+		} else {
+			return defaultAppIcon;
+		};
+	}
+	if (appicns[appid]) return appicns[appid];
 
 	const decodedContent = decodeBase64Content(unshrunkContent);
 
@@ -754,7 +761,7 @@ function getAppIcon(unshrunkContent, appname) {
 
 	const metaTagContent = metaTag.getAttribute('content');
 	if (typeof metaTagContent === "string" && containsSmallSVGElement(metaTagContent)) {
-		appicns[appname] = metaTagContent;
+		appicns[appid] = metaTagContent;
 		return metaTagContent;
 	}
 
@@ -863,26 +870,49 @@ function genUID() {
 	return randomString;
 }
 
-async function createFolder(folderName) {
+async function createFolder(folderNames, folderData) {
 	try {
+		await updateMemoryData();
 
-		await updateMemoryData()
-		folderName = folderName.replace(/\/$/, ''); // Remove the trailing slash
-		let parts = folderName.split('/');
-		let current = memory;
+		// Ensure folderNames is an array
+		if (!(folderNames instanceof Set)) {
+			throw new Error('folderNames should be a Set');
+		}
+		
+		for (let folderName of folderNames) {
+			folderName = folderName.replace(/\/$/, ''); // Remove the trailing slash
+			let parts = folderName.split('/');
+			let current = memory;
 
-		for (let part of parts) {
-			part += '/';
-			if (!current[part]) {
-				current[part] = {};
+			for (let part of parts) {
+				part += '/';
+				if (!current[part]) {
+					current[part] = {};
+				}
+				current = current[part];
 			}
-			current = current[part];
 		}
 
+		// Function to recursively insert data into the memory object
+		function insertData(target, data) {
+			for (let key in data) {
+				if (typeof data[key] === 'object' && !data[key].hasOwnProperty('id')) {
+					if (!target[key + '/']) {
+						target[key + '/'] = {};
+					}
+					insertData(target[key + '/'], data[key]);
+				} else {
+					target[key] = data[key];
+				}
+			}
+		}
+
+		insertData(memory, folderData);
+
 		await setdb(memory);
-		console.log(`Created: "${folderName}"`);
+		console.log('Folders and data created successfully.');
 	} catch (error) {
-		console.error("Error creating folder:", error);
+		console.error("Error creating folders and data:", error);
 	}
 }
 
@@ -1017,54 +1047,59 @@ async function createFile(folderName2, fileName, type, content, metadata = {}) {
 }
 
 async function extractAndRegisterCapabilities(appId, content) {
-	console.log("EX CAPABLE:" + appId)
-	try {
+    console.log("EX CAPABLE:" + appId);
+    try {
+		if (!content) {
+			content = await window.parent.getFileById(appId);
+			content = content.content;
+		}
+
 		if (isBase64(content)) {
-			content = decodeBase64Content(content);
-		}
+            content = decodeBase64Content(content);
+        }
 
-		console.log(content.substring(0, 100));
+        console.log(content.substring(0, 100));
 
-		let parser = new DOMParser();
-		let doc = parser.parseFromString(content, "text/html");
-		let metaTag = doc.querySelector('meta[name="capabilities"]');
+        let parser = new DOMParser();
+        let doc = parser.parseFromString(content, "text/html");
+        let metaTag = doc.querySelector('meta[name="capabilities"]');
 
-		if (metaTag) {
-			let capabilities = metaTag.getAttribute("content").split(',');
-			await registerApp(appId, capabilities);
-			console.log(`Registered capabilities for app ID: ${appId}`);
-		} else {
-			console.log(`No capabilities meta tag found for app ID: ${appId}`);
-		}
-	} catch (error) {
-		console.error("Error extracting and registering capabilities:", error);
-	}
+        if (metaTag) {
+            let capabilities = metaTag.getAttribute("content").split(',');
+            await registerApp(appId, capabilities);
+            console.log(`Registered capabilities for app ID: ${appId}`);
+        } else {
+            console.log(`No capabilities meta tag found for app ID: ${appId}`);
+        }
+    } catch (error) {
+        console.error("Error extracting and registering capabilities:", error);
+    }
 }
 
 async function registerApp(appId, capabilities) {
-	for (let fileType of capabilities) {
-		if (fileType === "all") {
-			fileTypeAssociations["all"] = appId;
-		} else {
-			fileTypeAssociations[fileType] = appId;
-		}
-	}
-	await setSetting('fileTypeAssociations', fileTypeAssociations);
+    for (let fileType of capabilities) {
+        if (!fileTypeAssociations[fileType]) {
+            fileTypeAssociations[fileType] = [];
+        }
+        if (!fileTypeAssociations[fileType].includes(appId)) {
+            fileTypeAssociations[fileType].push(appId);
+        }
+    }
+    await setSetting('fileTypeAssociations', fileTypeAssociations);
 }
 
-
 async function cleanupInvalidAssociations() {
-	const validAppIds = await getAllValidAppIds();
+    const validAppIds = await getAllValidAppIds();
 
-	for (let fileType in fileTypeAssociations) {
-		let appId = fileTypeAssociations[fileType];
-		if (!validAppIds.includes(appId)) {
-			delete fileTypeAssociations[fileType];
-		}
-	}
+    for (let fileType in fileTypeAssociations) {
+        fileTypeAssociations[fileType] = fileTypeAssociations[fileType].filter(appId => validAppIds.includes(appId));
+        if (fileTypeAssociations[fileType].length === 0) {
+            delete fileTypeAssociations[fileType];
+        }
+    }
 
-	await setSetting('fileTypeAssociations', fileTypeAssociations);
-	console.log('Cleanup completed: Invalid app associations removed.');
+    await setSetting('fileTypeAssociations', fileTypeAssociations);
+    console.log('Cleanup completed: Invalid app associations removed.');
 }
 
 async function getAllValidAppIds() {
@@ -2144,7 +2179,7 @@ async function genTaskBar() {
 				const unshrunkContent = unshrinkbsf(app.content);
 
 				// Use the getAppIcon function to fetch the icon
-				const icon = getAppIcon(unshrunkContent, app.fileName);
+				const icon = getAppIcon(unshrunkContent, app.id);
 
 				if (icon) {
 					iconSpan.innerHTML = icon;

@@ -739,8 +739,8 @@
 
 		.thisfolderisempty {
 			padding-top: 3rem;
-    opacity: 0.5;
-    scale: 0.7;
+			opacity: 0.5;
+			scale: 0.7;
 		}
 	</style>
 	<script src="https://unpkg.com/interactjs/dist/interact.min.js"></script>
@@ -811,7 +811,7 @@
 			margin-bottom: 13px;
 		">Import your files</span>
 			<small cv><span class="material-symbols-rounded im">lock</span>Files won't leave your device.</small>
-			<input type="file" id="filupin" multiple/><br>
+			<input type="file" id="filupin" multiple /><br>
 			<button onclick="fupit()" id="fupibu">
 				Import These
 			</button>
@@ -819,18 +819,18 @@
 		<script>
 			const dbChangeEvent = new Event('dbchange');
 
-function triggerDBChange() {
-  document.dispatchEvent(dbChangeEvent);
-}
+			function triggerDBChange() {
+				document.dispatchEvent(dbChangeEvent);
+			}
 
-async function fupit() {
-  document.getElementById("fupibu").innerHTML = "Importing...";
-  const fileInput = document.getElementById('filupin');
-  const files = fileInput.files;
+			async function fupit() {
+				document.getElementById("fupibu").innerHTML = "Importing...";
+				const fileInput = document.getElementById('filupin');
+				const files = fileInput.files;
 
-  if (files.length === 0) return;
+				if (files.length === 0) return;
 
-  const workerCode = `
+				const workerCode = `
     onmessage = function(event) {
       const file = event.data.file;
       const chunkSize = event.data.chunkSize;
@@ -858,56 +858,56 @@ async function fupit() {
     };
   `;
 
-  const workerBlob = new Blob([workerCode], { type: 'application/javascript' });
+				const workerBlob = new Blob([workerCode], { type: 'application/javascript' });
 
-  async function processFile(file, chunkSize, delay) {
-    return new Promise((resolve) => {
-        const worker = new Worker(URL.createObjectURL(workerBlob));
-        const combinedChunks = [];
+				async function processFile(file, chunkSize, delay) {
+					return new Promise((resolve) => {
+						const worker = new Worker(URL.createObjectURL(workerBlob));
+						const combinedChunks = [];
 
-        worker.onmessage = async function(event) {
-            if (event.data.done) {
-                const combined = new Blob(combinedChunks, { type: file.type });
-                const reader = new FileReader();
+						worker.onmessage = async function (event) {
+							if (event.data.done) {
+								const combined = new Blob(combinedChunks, { type: file.type });
+								const reader = new FileReader();
 
-                reader.onload = async function(e) {
-                    let content = e.target.result;
-                    const type = file.type || 'txt';
-                    const folderName = 'Downloads/';
-                    const metadata = { "via": "imported" };
+								reader.onload = async function (e) {
+									let content = e.target.result;
+									const type = file.type || 'txt';
+									const folderName = 'Downloads/';
+									const metadata = { "via": "imported" };
 
-                    // Convert raw text to base64 if content is not in a specific format
-                    const isFormatSpecific = content.startsWith("data:");
-                    if (!isFormatSpecific) {
-                        content = btoa(content);
-                    }
+									// Convert raw text to base64 if content is not in a specific format
+									const isFormatSpecific = content.startsWith("data:");
+									if (!isFormatSpecific) {
+										content = btoa(content);
+									}
 
-                    await window.parent.createFile(folderName, window.parent.basename(file.name), mtpetxt(type), content, metadata);
+									await window.parent.createFile(folderName, window.parent.basename(file.name), mtpetxt(type), content, metadata);
 
-                    resolve();
-                };
+									resolve();
+								};
 
-                reader.readAsDataURL(combined);
-            } else {
-                combinedChunks.push(event.data.chunk);
-            }
-        };
+								reader.readAsDataURL(combined);
+							} else {
+								combinedChunks.push(event.data.chunk);
+							}
+						};
 
-        worker.postMessage({ file, chunkSize, delay });
-    });
-}
-  const chunkSize = 1024 * 1024; // 1MB chunks
-  const delay = 100; // 100ms delay between chunks
+						worker.postMessage({ file, chunkSize, delay });
+					});
+				}
+				const chunkSize = 1024 * 1024; // 1MB chunks
+				const delay = 100; // 100ms delay between chunks
 
-  for (let i = 0; i < files.length; i++) {
-    await processFile(files[i], chunkSize, delay);
-  }
+				for (let i = 0; i < files.length; i++) {
+					await processFile(files[i], chunkSize, delay);
+				}
 
-  document.getElementById("fupibu").innerHTML = "File(s) Saved, Close";
-  document.getElementById("fupibu").onclick = function() {
-    document.getElementById("upmod").close();
-  };
-}
+				document.getElementById("fupibu").innerHTML = "File(s) Saved, Close";
+				document.getElementById("fupibu").onclick = function () {
+					document.getElementById("upmod").close();
+				};
+			}
 
 			function getBase64(file) {
 				var reader = new FileReader();
@@ -1118,48 +1118,56 @@ async function fupit() {
 		}
 
 		.loader33 {
-	width: 5px;
-    height: 3px;
-    border-radius: 1rem;
-    display: block;
-    margin: 15px auto;
-    position: relative;
-    color: #ffffff;
-    left: -100px;
-    box-sizing: border-box;
-    animation: shadowRolling 2s linear infinite;
-	opacity: 0.5;
-  }
-  
-  @keyframes shadowRolling {
-	0% {
-	  box-shadow: 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
-	}
-	12% {
-	  box-shadow: 100px 0 white, 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
-	}
-	25% {
-	  box-shadow: 110px 0 white, 100px 0 white, 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
-	}
-	36% {
-	  box-shadow: 120px 0 white, 110px 0 white, 100px 0 white, 0px 0 rgba(255, 255, 255, 0);
-	}
-	50% {
-	  box-shadow: 130px 0 white, 120px 0 white, 110px 0 white, 100px 0 white;
-	}
-	62% {
-	  box-shadow: 200px 0 rgba(255, 255, 255, 0), 130px 0 white, 120px 0 white, 110px 0 white;
-	}
-	75% {
-	  box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 white, 120px 0 white;
-	}
-	87% {
-	  box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 white;
-	}
-	100% {
-	  box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0);
-	}
-  }
+			width: 5px;
+			height: 3px;
+			border-radius: 1rem;
+			display: block;
+			margin: 15px auto;
+			position: relative;
+			color: #ffffff;
+			left: -100px;
+			box-sizing: border-box;
+			animation: shadowRolling 2s linear infinite;
+			opacity: 0.5;
+		}
+
+		@keyframes shadowRolling {
+			0% {
+				box-shadow: 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+			}
+
+			12% {
+				box-shadow: 100px 0 white, 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+			}
+
+			25% {
+				box-shadow: 110px 0 white, 100px 0 white, 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+			}
+
+			36% {
+				box-shadow: 120px 0 white, 110px 0 white, 100px 0 white, 0px 0 rgba(255, 255, 255, 0);
+			}
+
+			50% {
+				box-shadow: 130px 0 white, 120px 0 white, 110px 0 white, 100px 0 white;
+			}
+
+			62% {
+				box-shadow: 200px 0 rgba(255, 255, 255, 0), 130px 0 white, 120px 0 white, 110px 0 white;
+			}
+
+			75% {
+				box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 white, 120px 0 white;
+			}
+
+			87% {
+				box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 white;
+			}
+
+			100% {
+				box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0);
+			}
+		}
 	</style>
 	<dialog id="makefiledia">
 		<div class="makefilediv">
@@ -1289,7 +1297,7 @@ async function fupit() {
 
 			try {
 				if (await window.parent.getSetting('defFileLayout')) {
-						changeview(await window.parent.getSetting('defFileLayout'))
+					changeview(await window.parent.getSetting('defFileLayout'))
 				}
 			} catch (error) {
 				console.error(error)
@@ -1403,7 +1411,7 @@ async function fupit() {
 			});
 		}
 		async function refresh() {
-				console.log("refresh called")
+			console.log("refresh called")
 			setTimeout(() => {
 				window.parent.getdb('trojencat', 'rom')
 					.then((result) => {
@@ -1501,7 +1509,7 @@ async function fupit() {
 							fileElement.setAttribute("unid", item.id || '');
 							fileElement.setAttribute("draggable", !item.name.endsWith('/'));
 
-							fileElement.setAttribute("onclick", "slfile(this, '"+item.id+"');");
+							fileElement.setAttribute("onclick", "slfile(this, '" + item.id + "');");
 							if (!item.name.endsWith('/')) {
 								fileElement.setAttribute("ondragstart", "dragfl(event, this)");
 							}
@@ -1528,7 +1536,7 @@ async function fupit() {
 							fileElement.classList.add("file");
 							fileElement.setAttribute(flmode, '');
 							fileElement.setAttribute("unid", item.id || '');
-							fileElement.setAttribute("onclick", "slfile(this, '"+item.id+"')");
+							fileElement.setAttribute("onclick", "slfile(this, '" + item.id + "')");
 
 							// Assuming metadata is stored as a JSON object within the file
 							let metadata = {};
@@ -1553,8 +1561,8 @@ async function fupit() {
 					fllist.innerHTML = `<center class='thisfolderisempty'><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="74.20199" height="94.1023" viewBox="0,0,74.20199,94.1023"><g transform="translate(-224.61774,-142.87893)"><g data-paper-data="{&quot;isPaintingLayer&quot;:true}" fill-rule="nonzero" stroke="#ffffff" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" style="mix-blend-mode: normal"><path d="M227.11774,158.26119c0,-7.11468 5.76758,-12.88226 12.88226,-12.88226c7.11468,0 12.88226,5.76758 12.88226,12.88226c0,7.11468 -5.76758,12.88226 -12.88226,12.88226c-7.11468,0 -12.88226,-5.76758 -12.88226,-12.88226z" fill="none" stroke-width="5" stroke-linecap="butt"/><path d="M244.56247,233.94447l9.12493,-32.20565l-8.58817,-28.98508" fill="none" stroke-width="5" stroke-linecap="round"/><path d="M253.6874,202.81234l17.71311,31.66888" fill="none" stroke-width="5" stroke-linecap="round"/><path d="M246.17275,178.6581l-7.51465,27.37481" fill="none" stroke-width="5" stroke-linecap="round"/><path d="M250.46684,179.73163l28.44833,-12.3455" fill="none" stroke-width="5" stroke-linecap="round"/><path d="M260.82196,192.96703l-1.81137,-23.54791l37.99776,-2.9229l1.81138,23.54791z" fill="#aa8b00" stroke-width="0" stroke-linecap="butt"/><path d="M256.80524,189.29958l2.20535,-19.88046l37.99776,-2.9229l-2.20535,19.53118z" fill="#ffcf00" stroke-width="0" stroke-linecap="butt"/><path d="M279.06646,168.81576l-0.1513,-1.42964" fill="none" stroke-width="5" stroke-linecap="round"/></g></g></svg><br>This folder is empty.</center>`;
 				}
 				try {
-				document.getElementById("listfilesloader").remove()
-				}catch {}
+					document.getElementById("listfilesloader").remove()
+				} catch { }
 			} else {
 				console.log("0003 b: no folder.");
 			}
@@ -1649,32 +1657,68 @@ delete
 </span> Delete</button>`;
 					}
 					try {
-						document.getElementById("fileinfobn").innerHTML += `<div class="dropup">
-								  <button class="dropbtn">More</button>
-								  <div class="dropup-content">
-									${window.parent.getbaseflty(mtpetxt(fileData.fileName)) == "image" ? '<a onclick="window.parent.makewall(\'' + x.getAttribute("unid") + '\')"><span class="material-symbols-rounded">wallpaper</span> Set As Wallpaper</a>' : ''}
-									${window.parent.getbaseflty(mtpetxt(fileData.fileName)) == "app" || window.parent.getbaseflty(mtpetxt(fileData.fileName)) == "osl" || window.parent.getbaseflty(mtpetxt(fileData.fileName)) == "wasm" ? `<a onclick="openfile(document.getElementById('` + x.id + `'), 'text/html')"><span class="material-symbols-rounded">
-									construction
-									</span> Open in studio</a>` : ''}
-									
-									<a onclick="openfile('`+ x.getAttribute("unid") + `', 'any')"><span class="material-symbols-rounded">
-open_in_new
-</span> Open as text</a>
-									<a onclick="renamef(document.getElementById('`+ x.id + `'))"><span class="material-symbols-rounded">
-save_as
-</span> Rename</a>
-									<a onclick="movefile(document.getElementById('`+ x.id + `'))"><span class="material-symbols-rounded">
-drive_file_move
-</span> Move</a>
-								  </div>
-								</div> `+ fileSize + ' ' + units[unitIndex]
+						const fileInfoContainer = document.getElementById("fileinfobn");
+
+						// Create the dropup container
+						const dropupDiv = document.createElement("div");
+						dropupDiv.className = "dropup";
+
+						// Create the drop button
+						const dropBtn = document.createElement("button");
+						dropBtn.className = "dropbtn";
+						dropBtn.textContent = "More";
+						dropupDiv.appendChild(dropBtn);
+
+						// Create the dropup content container
+						const dropupContentDiv = document.createElement("div");
+						dropupContentDiv.className = "dropup-content";
+
+						// Add "Set As Wallpaper" option if the file is an image
+						if (window.parent.getbaseflty(mtpetxt(fileData.fileName)) === "image") {
+							const wallpaperOption = document.createElement("a");
+							wallpaperOption.onclick = () => window.parent.makewall(x.getAttribute("unid"));
+							wallpaperOption.innerHTML = `<span class="material-symbols-rounded">wallpaper</span> Set As Wallpaper`;
+							dropupContentDiv.appendChild(wallpaperOption);
+						}
+
+						// Add "Reinstall application" option if the file is an app
+						if (ptypext(fileData.fileName) === "app") {
+							const reinstallOption = document.createElement("a");
+							reinstallOption.onclick = () => window.parent.extractAndRegisterCapabilities(x.getAttribute("unid"));
+							reinstallOption.innerHTML = `<span class="material-symbols-rounded">download</span> Reinstall application`;
+							dropupContentDiv.appendChild(reinstallOption);
+						}
+
+						// Add "Open as text" option
+						const openAsTextOption = document.createElement("a");
+						openAsTextOption.onclick = () => openfile(x.getAttribute("unid"), 'any');
+						openAsTextOption.innerHTML = `<span class="material-symbols-rounded">open_in_new</span> Open as text`;
+						dropupContentDiv.appendChild(openAsTextOption);
+
+						// Add "Rename" option
+						const renameOption = document.createElement("a");
+						renameOption.onclick = () => renamef(document.getElementById(x.id));
+						renameOption.innerHTML = `<span class="material-symbols-rounded">save_as</span> Rename`;
+						dropupContentDiv.appendChild(renameOption);
+
+						// Add "Move" option
+						const moveOption = document.createElement("a");
+						moveOption.onclick = () => movefile(document.getElementById(x.id));
+						moveOption.innerHTML = `<span class="material-symbols-rounded">drive_file_move</span> Move`;
+						dropupContentDiv.appendChild(moveOption);
+
+						// Append the dropup content to the dropup container
+						dropupDiv.appendChild(dropupContentDiv);
+
+						// Append the dropup container and file size information to the file info container
+						fileInfoContainer.appendChild(dropupDiv);
+						fileInfoContainer.innerHTML += fileSize + ' ' + units[unitIndex];
 
 					} catch (error) {
 						document.getElementById("fileinfobn").innerHTML += "Safe Error 0006";
 						window.parent.say(`<h1>File Error</h1><p>Nova files couldn't process that file</p><small>(Error 0006)</small>`, "warning")
 						refresh()
 						console.error("An error occurred:", error);
-
 					}
 
 				} else {
@@ -1702,15 +1746,15 @@ drive_file_move
 		}
 
 		async function openfile(...args) {
-    console.log("filesapp default openfile: ", args[0]);
-    if (sessiontype == "opener") {
-        localStorage.setItem("todo", JSON.stringify({ "type": "opentotext", "lclfile": args[0].getAttribute("unid") }));
-        window.parent.clwin(myWindow);
-        return;
-    }
+			console.log("filesapp default openfile: ", args[0]);
+			if (sessiontype == "opener") {
+				localStorage.setItem("todo", JSON.stringify({ "type": "opentotext", "lclfile": args[0].getAttribute("unid") }));
+				window.parent.clwin(myWindow);
+				return;
+			}
 
-    window.parent.openfile(...args);
-}
+			window.parent.openfile(...args);
+		}
 
 		async function renamef(x) {
 			document.getElementById("fileinfobn").style.opacity = 1;
@@ -1921,6 +1965,7 @@ drive_file_move
 
 
 		function mtpetxt(str) {
+			console.log(str)
 			try {
 				const parts = str.split('/');
 				return parts.length > 1 ? parts.pop() : '';

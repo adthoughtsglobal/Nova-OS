@@ -45,15 +45,19 @@ async function openfile(x, all) {
             // Not a .lnk file or an .osl file nor an .app file.
             let appIdToOpen = null;
             const fileExtension = mm.fileName.substring(mm.fileName.lastIndexOf('.'));
-
-            appIdToOpen = fileTypeAssociations[fileExtension] || null;
-		
-			if (!appIdToOpen) {
-					appIdToOpen = fileTypeAssociations['all'] || null;
-					openlaunchprotocol(appIdToOpen, unid);
-			} else {
-				openlaunchprotocol(appIdToOpen, unid);
-			}
+            
+            if (fileTypeAssociations[fileExtension] && fileTypeAssociations[fileExtension].length > 0) {
+                appIdToOpen = fileTypeAssociations[fileExtension][0];
+            } else if (fileTypeAssociations['all'] && fileTypeAssociations['all'].length > 0) {
+                appIdToOpen = fileTypeAssociations['all'][0];
+            }
+            
+            if (appIdToOpen) {
+                openlaunchprotocol(appIdToOpen, unid);
+            } else {
+                console.log(`No app found to open the file with extension: ${fileExtension}`);
+            }
+            
 		}
 	} catch (error) {
 		console.error(":( Error:", error);
