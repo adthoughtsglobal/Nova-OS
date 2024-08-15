@@ -22,7 +22,7 @@ gid("nowrunninapps").style.display = "none";
 const rllog = console.log;
 
 async function qsetsRefresh() {
-	await updateMemoryData()
+	return await updateMemoryData();
 }
 
 gid('seprw-openb').onclick = function () {
@@ -128,8 +128,7 @@ async function startup() {
 	console.log("Startup");
 	setsrtpprgbr(0)
 	const start = performance.now();
-	await updateMemoryData().then(async () =>{
-
+	updateMemoryData().then(async () =>{
 		try {
 			gid('startupterms').innerHTML = "Initialising clock...";
 			setsrtpprgbr(10)
@@ -144,6 +143,16 @@ async function startup() {
 	
 		try {
 			await dod();
+			await genTaskBar();
+
+			// Initialize the associations from settings
+		async function loadFileTypeAssociations() {
+			const associations = await getSetting('fileTypeAssociations');
+			fileTypeAssociations = associations || {};
+			await cleanupInvalidAssociations();
+		}
+	
+		await loadFileTypeAssociations();
 			
 			setsrtpprgbr(100)
 			gid('startupterms').innerHTML = "Startup completed";
@@ -175,15 +184,7 @@ async function startup() {
 	
 		fetchDataAndUpdate();
 		closeElementedis();
-		await genTaskBar();
-		// Initialize the associations from settings
-		async function loadFileTypeAssociations() {
-			const associations = await getSetting('fileTypeAssociations');
-			fileTypeAssociations = associations || {};
-			cleanupInvalidAssociations();
-		}
-	
-		await loadFileTypeAssociations();
+		
 	})
 
 }
@@ -192,28 +193,31 @@ document.addEventListener("DOMContentLoaded", async function () {
 	console.log("DOMCL");
 
 	// Check if the database 'trojencat' exists
-	await updateMemoryData()
-		.then(async (result) => {
-			checkAndRunFromURL();
-			gid('startupterms').innerHTML += "<span>Checking database...</span>";
-			try {
-				if (result !== null) {
-					await showloginmod();
+	updateMemoryData()
+    .then(async (result) => {
+        console.log("dat:", result);
+        checkAndRunFromURL();
+        gid('startupterms').innerHTML += "<span>Checking database...</span>";
 
-				} else {
-					await say(`<h2>Terms of service and License</h2><p>By using Nova OS, you agree to the <a href="https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use">Adthoughtsglobal Nova Terms of Use</a>. <br><small>We do not store your personal information. <br>Read the terms before use.</small>`);
-					initialiseOS();
-				}
-			} catch (error) {
-				console.error('Error in database operations:', error);
-			}
-
-
-		})
-		.catch(async (error) => {
-			console.error('Error retrieving data from the database:', error);
-			await showloginmod()
-		});
+        try {
+            if (result) {
+                await showloginmod();
+            } else {
+                await say(`
+                    <h2>Terms of service and License</h2>
+                    <p>By using Nova OS, you agree to the <a href="https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use">Adthoughtsglobal Nova Terms of Use</a>. 
+                    <br><small>We do not store your personal information. <br>Read the terms before use.</small></p>
+                `);
+                initialiseOS();
+            }
+        } catch (error) {
+            console.error('Error in database operations:', error);
+        }
+    })
+    .catch(async (error) => {
+        console.error('Error retrieving data from the database:', error);
+        await showloginmod(); // Await in case `showloginmod` is async
+    });
 	var bgImage = document.getElementById("bgimage");
 
 	bgImage.addEventListener("click", function () {
@@ -1218,11 +1222,12 @@ function makedialogclosable(ok) {
 		}
 	});
 }
+
 makedialogclosable('appdmod')
 
 async function getFileNamesByFolder(folderName) {
 	try {
-		await updateMemoryData()
+		await updateMemoryData();
 		const filesInFolder = [];
 
 		for (const key in memory) {
@@ -1335,6 +1340,7 @@ async function loadtaskspanel() {
 		appShortcutDiv.addEventListener("click", function () {
 			putwinontop('window' + wid[index]);
 			winds[app + wid[index]] = Number(gid("window" + wid[index]).style.zIndex);
+			gid('window' + wid[index]).style.display = "block";
 		});
 
 		let iconSpan = document.createElement("span");

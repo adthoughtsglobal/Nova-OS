@@ -301,6 +301,7 @@ async function getallusers() {
 // settings store functions
 let MemoryTimeCache = null;
 let isFetchingMemory = false;
+let cachedData = null;
 
 function getTime() {
     return Date.now();
@@ -311,7 +312,8 @@ async function fetchmmData() {
     try {
         const data = await getdb();  // Ensure getdb() is a working async function
         MemoryTimeCache = getTime();
-        return data ?? {};  // Use a fallback if data is undefined or null
+        cachedData = data;  // Store the fetched data in the cache
+        return data ?? null;
     } catch (error) {
         console.error("Memory data unreadable", error);
         return null;  // Return null in case of failure
@@ -326,13 +328,18 @@ async function updateMemoryData() {
             isFetchingMemory = true;
             const result = await fetchmmData();
             return result;
+        } else {
+            // If already fetching, return a pending promise that waits for the fetch to complete
+            while (isFetchingMemory) {
+                await new Promise(resolve => setTimeout(resolve, 50)); // Polling mechanism
+            }
+            return cachedData; // Return the data once fetching is complete
         }
     } else {
         console.log("Cache is still valid");
+        return cachedData;  // Return the cached data
     }
 }
-
-
 function parseEscapedJsonString(escapedString) {
     if (escapedString.startsWith('"') && escapedString.endsWith('"')) {
         escapedString = escapedString.slice(1, -1);

@@ -10,7 +10,7 @@ function thlog(x) {
 const styles = {
 	dark: {
 		simple: {
-			flodiv: {backgroundColor: "rgb(42, 41, 41)", color: "white", backdropFilter: "none" },
+			flodiv: { backgroundColor: "rgb(42, 41, 41)", color: "white", backdropFilter: "none" },
 			appdmod: { background: "#333333", color: "white", backdropFilter: "none" },
 			searchinpe: { color: "white", backgroundColor: "#2a2929" },
 			searchnbtn: { background: "rgb(42, 41, 41)", color: "#878787" },
@@ -18,7 +18,7 @@ const styles = {
 			novaic: { fill: "white" }
 		},
 		nonSimple: {
-			flodiv: {color: "white", backdropFilter: "blur(10px)", backgroundColor: "rgb(0 0 0 / 33%)"},
+			flodiv: { color: "white", backdropFilter: "blur(10px)", backgroundColor: "rgb(0 0 0 / 33%)" },
 			appdmod: { background: "#00000091", color: "white", backdropFilter: "blur(14px) grayscale(0.5)" },
 			searchinpe: { color: "white", backgroundColor: "rgb(20 20 20)" },
 			searchnbtn: { background: "rgb(20 20 20)", color: "#878787" },
@@ -28,7 +28,7 @@ const styles = {
 	},
 	bright: {
 		simple: {
-			flodiv: {backgroundColor: "#e9e9e9", backdropFilter: "none", color: "rgb(91 91 91)"},
+			flodiv: { backgroundColor: "#e9e9e9", backdropFilter: "none", color: "rgb(91 91 91)" },
 			appdmod: { background: "#f2f9ff", color: "rgb(91 91 91)", backdropFilter: "none" },
 			searchinpe: { color: "black", backgroundColor: "#e5e5e5" },
 			searchnbtn: { background: "rgb(229, 229, 229)", color: "#878787" },
@@ -47,10 +47,11 @@ const styles = {
 };
 
 async function checkdmode() {
-	await qsetsRefresh()
+	updateMemoryData().then(async () => {
+		console.log(memory);
 		// scalable UI
 		if (await getSetting("UISizing") && await getSetting("UISizing") == 1) {
-			
+
 			scaleUIElements(await getSetting("UISizing"))
 		}
 
@@ -75,6 +76,7 @@ async function checkdmode() {
 				switchtheme("bright");
 			}
 		}
+	});
 }
 
 // Common style settings for elementhahas
@@ -123,9 +125,9 @@ function isDark(hexColor) {
 	hexColor = hexColor.replace('#', '');
 
 	// Convert hex to RGB
-	var r = parseInt(hexColor.substring(0,2),16);
-	var g = parseInt(hexColor.substring(2,4),16);
-	var b = parseInt(hexColor.substring(4,6),16);
+	var r = parseInt(hexColor.substring(0, 2), 16);
+	var g = parseInt(hexColor.substring(2, 4), 16);
+	var b = parseInt(hexColor.substring(4, 6), 16);
 
 	// Calculate luminance
 	var luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
@@ -168,18 +170,18 @@ function cuteee() {
 }
 
 const originalFetch = window.fetch;
-window.fetch = async function(...args) {
-    console.log('Fetch called with:', ...args);
-    return originalFetch.apply(this, args);
+window.fetch = async function (...args) {
+	console.log('Fetch called with:', ...args);
+	return originalFetch.apply(this, args);
 };
 
 function scaleUIElements(scaleFactor) {
-    var elements = document.querySelectorAll('.scalableui');
-    
-    // Loop through each element and apply the scale transform
-    elements.forEach(function(element) {
-        element.style.zoom = scaleFactor;
-    });
+	var elements = document.querySelectorAll('.scalableui');
+
+	// Loop through each element and apply the scale transform
+	elements.forEach(function (element) {
+		element.style.zoom = scaleFactor;
+	});
 }
 
 async function checkAndRunFromURL() {

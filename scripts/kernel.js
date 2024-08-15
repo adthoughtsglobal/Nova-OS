@@ -149,13 +149,21 @@ function openwindow(title, cont, ic, theme, appid, params) {
         checksnapping(windowDiv, event);
     });
 
-    windowDiv.addEventListener("mousedown", function (event) {
+    windowDiv.addEventListener("mousedown", function () {
         putwinontop('window' + winuid);
         winds[title + winuid] = windowDiv.style.zIndex;
     });
 
     var ibtnsside = document.createElement("div");
     ibtnsside.classList += "ibtnsside";
+
+    var minimbtn = document.createElement("span");
+    minimbtn.classList.add("material-symbols-rounded", "wincl", "flbtn");
+    minimbtn.style = `padding: 4px 5px; font-size: 8px !important;`;
+    minimbtn.textContent = "minimize";
+    minimbtn.onclick = function () {
+        minim(minimbtn);
+    };
 
     var flButton = document.createElement("span");
     flButton.classList.add("material-symbols-rounded", "wincl", "flbtn");
@@ -183,6 +191,7 @@ function openwindow(title, cont, ic, theme, appid, params) {
     if (!isitmob) {
         ibtnsside.appendChild(flButton);
     }
+    ibtnsside.appendChild(minimbtn);
 
     windowHeader.appendChild(ibtnsside);
 
@@ -288,3 +297,7 @@ async function openapp(x, od) {
         // Call fetchDataAndSave with the desired value of x
         fetchDataAndSave(x);
     }
+
+function minim(x) {
+    x.parentElement.parentElement.parentElement.style.display = "none";
+}
