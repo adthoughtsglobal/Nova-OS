@@ -261,6 +261,27 @@
 			margin-left: 0.2rem;
 		}
 
+		@keyframes rotate {
+			from {
+				transform: rotate(0deg);
+			}
+
+			to {
+				transform: rotate(360deg);
+			}
+		}
+
+		/* Apply the rotation animation */
+		.rotating {
+			animation: rotate 1s linear infinite;
+		}
+
+		/* Transition effect for slowing down */
+		.stopping {
+			animation: none;
+			transition: transform 2s ease-out;
+		}
+
 		.file[grid]>[flname] {
 			font-size: 14px;
 			display: flex;
@@ -935,7 +956,7 @@
 	<div id="flap-mot">
 		<div flap-nav>
 			<div class="nowid">
-				<span class="material-symbols-rounded navbfobtns" onclick="refresh()">
+				<span class="material-symbols-rounded navbfobtns" onclick="refresh()" id="ogrefreshbtn">
 					refresh
 				</span>
 			</div>
@@ -1411,17 +1432,19 @@
 			});
 		}
 		async function refresh() {
-			console.log("refresh called")
-			setTimeout(() => {
-				window.parent.getdb('trojencat', 'rom')
-					.then((result) => {
-						if (result !== null) {
-							memory = result;
-						}
-					});
+			const refreshButton = document.getElementById('ogrefreshbtn');
+
+			// Start the rotation animation
+			refreshButton.classList.add('rotating');
+
+			try {
+				await window.parent.getdb().then((result) => {
+					refreshButton.classList.remove('rotating');
+					refreshButton.classList.add('stopping');
+				});
 				liststuff();
 				listFiles(currentPath);
-			}, 1000);
+			} finally { }
 		}
 
 		function addDragAndDropListeners() {
@@ -1501,6 +1524,7 @@
 					content.sort((a, b) => a.name.localeCompare(b.name));
 
 					for (let item of content) {
+
 						try {
 							fileData = await window.parent.getFileById(item.id);
 							let fileElement = document.createElement('div');

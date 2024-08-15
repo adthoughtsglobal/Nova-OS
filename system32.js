@@ -299,29 +299,40 @@ async function getallusers() {
 }
 
 // settings store functions
-
-var MemoryTimeCache = null;
+let MemoryTimeCache = null;
 let isFetchingMemory = false;
 
 function getTime() {
     return Date.now();
 }
 
+async function fetchmmData() {
+    console.log("Fetching Memory");
+    try {
+        const data = await getdb();  // Ensure getdb() is a working async function
+        MemoryTimeCache = getTime();
+        return data ?? {};  // Use a fallback if data is undefined or null
+    } catch (error) {
+        console.error("Memory data unreadable", error);
+        return null;  // Return null in case of failure
+    } finally {
+        isFetchingMemory = false;
+    }
+}
+
 async function updateMemoryData() {
     if (MemoryTimeCache === null || (getTime() - MemoryTimeCache) >= 5000) {
         if (!isFetchingMemory) {
             isFetchingMemory = true;
-            console.log("Getting Memory");
-            await getdb().then(() => {
-                MemoryTimeCache = getTime();
-                isFetchingMemory = false;
-            }).catch(() => {
-                console.error("Memory data unreadable");
-                isFetchingMemory = false;
-            });
+            const result = await fetchmmData();
+            return result; 
         }
+    } else {
+        console.log("Cache is still valid");
     }
 }
+
+
 function parseEscapedJsonString(escapedString) {
     if (escapedString.startsWith('"') && escapedString.endsWith('"')) {
         escapedString = escapedString.slice(1, -1);

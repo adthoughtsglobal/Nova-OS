@@ -69,7 +69,7 @@ async function showloginmod() {
 				if (isdefaultpass) {
 					gid('loginmod').close();
 					gid('edison').showModal();
-					await getdb();
+					await updateMemoryData()
 					startup()
 				}
 
@@ -134,22 +134,16 @@ async function startup() {
 	try {
 		gid('startupterms').innerHTML = "Initialising clock...";
 		setsrtpprgbr(10)
-		await updateTime();
+		updateTime();
+		setInterval(updateTime, 1000);
 	} catch (err) { console.error("updateTime error:", err); }
 
 	try {
 		gid('startupterms').innerHTML = "Checking themes...";
-		setsrtpprgbr(20)
-		setInterval(updateTime, 1000);
+		setsrtpprgbr(60)
 		await checkdmode();
+		genTaskBar();
 	} catch (err) { console.error("checkdmode error:", err); }
-
-	try {
-		gid('startupterms').innerHTML = "<span id='struploadtasnr'>Loading TaskBar...</span>";
-		await genTaskBar();
-		await loadtaskspanel();
-		setsrtpprgbr(65)
-	} catch (err) { console.error("genTaskBar error:", err); }
 
 	try {
 		await dod();
@@ -163,7 +157,7 @@ async function startup() {
 		loadFileTypeAssociations();
 		setsrtpprgbr(100)
 		gid('startupterms').innerHTML = "Startup completed";
-		closeElementedis()
+		
 	} catch (err) { console.error("dod error:", err); }
 
 	const end = performance.now();
@@ -190,13 +184,14 @@ async function startup() {
 	}
 
 	fetchDataAndUpdate();
+	closeElementedis();
 }
 
 document.addEventListener("DOMContentLoaded", async function () {
 	console.log("DOMCL");
 
 	// Check if the database 'trojencat' exists
-	await getdb('trojencat', 'rom')
+	await updateMemoryData()
 		.then(async (result) => {
 			checkAndRunFromURL();
 			gid('startupterms').innerHTML += "<span>Checking database...</span>";
@@ -205,8 +200,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 					await showloginmod();
 
 				} else {
-					await say(`<h2>Terms of service and License</h2><p>By using Nova OS, you agree to the <a href="https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use">Adthoughtsglobal Nova Terms of Use</a>. <be><small>We do not collect your personal information. <br>Read the terms clearly before use.</small>`);
-					await say(`<h2>Your default password</h2><p>The default password for ${CurrentUsername} is 'nova'. You can change this in settings.</p>`);
+					await say(`<h2>Terms of service and License</h2><p>By using Nova OS, you agree to the <a href="https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use">Adthoughtsglobal Nova Terms of Use</a>. <br><small>We do not store your personal information. <br>Read the terms before use.</small>`);
 					initialiseOS();
 				}
 			} catch (error) {
@@ -1226,7 +1220,6 @@ function makedialogclosable(ok) {
 makedialogclosable('appdmod')
 
 async function getFileNamesByFolder(folderName) {
-	await updateMemoryData();
 	try {
 		await updateMemoryData()
 		const filesInFolder = [];
@@ -1546,7 +1539,7 @@ async function installdefaultapps() {
 
 	}
 
-	await getdb().then(async () => {
+	await updateMemoryData().then(async () => {
 		// Update each app sequentially
 		for (let i = 0; i < defAppsList.length; i++) {
 			await updateApp(defAppsList[i]);
@@ -2156,7 +2149,6 @@ async function genTaskBar() {
 			x = x.filter(item => item);
 
 		}
-		let index = 0;
 		x.forEach(async function (app, index) {
 			index++
 			var islnk = false;
