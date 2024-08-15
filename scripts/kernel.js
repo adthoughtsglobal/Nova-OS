@@ -299,5 +299,11 @@ async function openapp(x, od) {
     }
 
 function minim(x) {
-    x.parentElement.parentElement.parentElement.style.display = "none";
+    x.parentElement.parentElement.parentElement.classList.add("transp4")
+
+	setTimeout(() => {
+		x.parentElement.parentElement.parentElement.classList.remove("transp4")
+        x.parentElement.parentElement.parentElement.style.display = "none";
+		nowapp = '';
+	}, 700);
 }

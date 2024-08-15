@@ -472,6 +472,12 @@ nav info {
 	transform:scale(0.9);
 }
 
+.transp4 {
+	transition: .2s ease-out;
+	opacity: 0;
+	transform: translate(1rem, 1rem) scale(0.9);
+}
+
 .modal {
 	padding: 10px 25px;
 	padding-top: 0;
