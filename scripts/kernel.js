@@ -160,7 +160,7 @@ function openwindow(title, cont, ic, theme, appid, params) {
     var minimbtn = document.createElement("span");
     minimbtn.classList.add("material-symbols-rounded", "wincl", "flbtn");
     minimbtn.style = `padding: 4px 5px; font-size: 8px !important;`;
-    minimbtn.textContent = "minimize";
+    minimbtn.textContent = "remove";
     minimbtn.onclick = function () {
         minim(minimbtn);
     };

@@ -1340,7 +1340,7 @@ async function loadtaskspanel() {
 		appShortcutDiv.addEventListener("click", function () {
 			putwinontop('window' + wid[index]);
 			winds[app + wid[index]] = Number(gid("window" + wid[index]).style.zIndex);
-			gid('window' + wid[index]).style.display = "block";
+			gid('window' + wid[index]).style.display = "flex";
 		});
 
 		let iconSpan = document.createElement("span");
