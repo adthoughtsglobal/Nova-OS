@@ -128,63 +128,64 @@ async function startup() {
 	console.log("Startup");
 	setsrtpprgbr(0)
 	const start = performance.now();
-	try { await updateMemoryData() }
-	catch (err) { console.error("qsetsRefresh error:", err); }
+	await updateMemoryData().then(async () =>{
 
-	try {
-		gid('startupterms').innerHTML = "Initialising clock...";
-		setsrtpprgbr(10)
-		updateTime();
-		setInterval(updateTime, 1000);
-	} catch (err) { console.error("updateTime error:", err); }
-
-	try {
-		gid('startupterms').innerHTML = "Checking themes...";
-		setsrtpprgbr(60)
-		await checkdmode();
-		genTaskBar();
-	} catch (err) { console.error("checkdmode error:", err); }
-
-	try {
-		await dod();
+		try {
+			gid('startupterms').innerHTML = "Initialising clock...";
+			setsrtpprgbr(10)
+			setInterval(updateTime, 1000);
+		} catch (err) { console.error("updateTime error:", err); }
+	
+		try {
+			gid('startupterms').innerHTML = "Checking themes...";
+			setsrtpprgbr(60)
+			await checkdmode();
+		} catch (err) { console.error("checkdmode error:", err); }
+	
+		try {
+			await dod();
+			
+			setsrtpprgbr(100)
+			gid('startupterms').innerHTML = "Startup completed";
+			
+		} catch (err) { console.error("dod error:", err); }
+	
+		const end = performance.now();
+	
+		console.log(`Startup ended: ${(end - start).toFixed(2)}ms`);
+		async function fetchDataAndUpdate() {
+			let localupdatedataver = localStorage.getItem("updver");
+			let fetchupdatedata = await fetch("versions.json");
+	
+			if (fetchupdatedata.ok) {
+				let fetchupdatedataver = (await fetchupdatedata.json()).osver;
+	
+				if (localupdatedataver !== fetchupdatedataver) {
+					if (await justConfirm("Update default apps?", "Your default apps are old. Update them to access new features and fixes.")) {
+						await installdefaultapps();
+						startup();
+					} else {
+						say("You can always update app on settings app/Preferances")
+					}
+				}
+			} else {
+				console.error("Failed to fetch data from the server.");
+			}
+		}
+	
+		fetchDataAndUpdate();
+		closeElementedis();
+		await genTaskBar();
 		// Initialize the associations from settings
 		async function loadFileTypeAssociations() {
 			const associations = await getSetting('fileTypeAssociations');
 			fileTypeAssociations = associations || {};
-			await cleanupInvalidAssociations();
+			cleanupInvalidAssociations();
 		}
+	
+		await loadFileTypeAssociations();
+	})
 
-		loadFileTypeAssociations();
-		setsrtpprgbr(100)
-		gid('startupterms').innerHTML = "Startup completed";
-		
-	} catch (err) { console.error("dod error:", err); }
-
-	const end = performance.now();
-
-	console.log(`Startup ended: ${(end - start).toFixed(2)}ms`);
-	async function fetchDataAndUpdate() {
-		let localupdatedataver = localStorage.getItem("updver");
-		let fetchupdatedata = await fetch("versions.json");
-
-		if (fetchupdatedata.ok) {
-			let fetchupdatedataver = (await fetchupdatedata.json()).osver;
-
-			if (localupdatedataver !== fetchupdatedataver) {
-				if (await justConfirm("Update default apps?", "Your default apps are old. Update them to access new features and fixes.")) {
-					await installdefaultapps();
-					startup();
-				} else {
-					say("You can always update app on settings app/Preferances")
-				}
-			}
-		} else {
-			console.error("Failed to fetch data from the server.");
-		}
-	}
-
-	fetchDataAndUpdate();
-	closeElementedis();
 }
 
 document.addEventListener("DOMContentLoaded", async function () {
@@ -2134,7 +2135,8 @@ document.addEventListener('keydown', function (event) {
 
 async function genTaskBar() {
 	var appbarelement = document.getElementById("dock")
-	appbarelement.innerHTML = ""
+	appbarelement.innerHTML = "<span id='taskbarloader'></span>";
+	await updateMemoryData()
 	if (appbarelement) {
 		let x = await getFileNamesByFolder("Dock");
 		if (x.length == 0) {
@@ -2192,6 +2194,7 @@ async function genTaskBar() {
 
 			appbarelement.appendChild(appShortcutDiv);
 		})
+		gid('taskbarloader').remove()
 	}
 }
 

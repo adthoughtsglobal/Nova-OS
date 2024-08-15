@@ -325,7 +325,7 @@ async function updateMemoryData() {
         if (!isFetchingMemory) {
             isFetchingMemory = true;
             const result = await fetchmmData();
-            return result; 
+            return result;
         }
     } else {
         console.log("Cache is still valid");

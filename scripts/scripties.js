@@ -47,7 +47,7 @@ const styles = {
 };
 
 async function checkdmode() {
-	qsetsRefresh()
+	await qsetsRefresh()
 		// scalable UI
 		if (await getSetting("UISizing") && await getSetting("UISizing") == 1) {
 			
