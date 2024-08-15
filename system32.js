@@ -310,13 +310,13 @@ function getTime() {
 async function fetchmmData() {
     console.log("Fetching Memory");
     try {
-        const data = await getdb();  // Ensure getdb() is a working async function
+        const data = await getdb();
         MemoryTimeCache = getTime();
-        cachedData = data;  // Store the fetched data in the cache
+        cachedData = data;
         return data ?? null;
     } catch (error) {
         console.error("Memory data unreadable", error);
-        return null;  // Return null in case of failure
+        return null;
     } finally {
         isFetchingMemory = false;
     }
@@ -326,20 +326,17 @@ async function updateMemoryData() {
     if (MemoryTimeCache === null || (getTime() - MemoryTimeCache) >= 5000) {
         if (!isFetchingMemory) {
             isFetchingMemory = true;
-            const result = await fetchmmData();
-            return result;
+            return fetchmmData();
         } else {
-            // If already fetching, return a pending promise that waits for the fetch to complete
             while (isFetchingMemory) {
-                await new Promise(resolve => setTimeout(resolve, 50)); // Polling mechanism
+                await new Promise(resolve => setTimeout(resolve, 50));
             }
-            return cachedData; // Return the data once fetching is complete
         }
-    } else {
-        console.log("Cache is still valid");
-        return cachedData;  // Return the cached data
     }
+    memory = cachedData;
+    return cachedData;
 }
+
 function parseEscapedJsonString(escapedString) {
     if (escapedString.startsWith('"') && escapedString.endsWith('"')) {
         escapedString = escapedString.slice(1, -1);

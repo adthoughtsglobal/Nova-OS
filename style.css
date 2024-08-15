@@ -197,6 +197,7 @@ nav info {
     backdrop-filter: blur(5px) brightness(0.5);
     padding: 5px;
     cursor: grab;
+    overflow-x: auto;
     display: flex;
     justify-content: space-between;
 }
