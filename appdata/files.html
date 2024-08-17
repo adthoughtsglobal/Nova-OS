@@ -176,6 +176,7 @@
 			padding: 10px;
 			width: calc(100% - 28px);
 			padding-top: 0;
+			height: 0;
 			margin-top: 5px;
 		}
 
@@ -763,6 +764,39 @@
 			opacity: 0.5;
 			scale: 0.7;
 		}
+
+		#choosefile {
+			display: flex;
+    margin: 0.3rem;
+    gap: 2px;
+    border-radius: 0.3rem;
+    overflow: hidden;
+    width: calc(100% - 1rem);
+		}
+
+		#choosefile input {
+			flex: 1;
+    padding: 0.3rem;
+    font-size: 0.7rem;
+    font-family: inherit;
+    color: white;
+    border-radius: 0;
+    background: #161616;
+    border: none;
+    width: 0;
+	outline: none;
+		}
+
+		#choosefile button {
+    padding: 0.3rem;
+    font-size: 0.7rem;
+    font-family: inherit;
+    color: white;
+    border-radius: 0;
+    background: #3d699b;
+    border: none;
+    width: fit-content;
+		}
 	</style>
 	<script src="https://unpkg.com/interactjs/dist/interact.min.js"></script>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -1023,6 +1057,10 @@
 							add
 						</span>
 					</button>
+					<div id="choosefile">
+						<input placeholder="Double click to choose File" id="choosefileinp" disabled>
+						<button onclick="choosefile()">Open</button>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -1272,7 +1310,7 @@
 		var fllist;
 		var fdlist;
 		var binmode = false;
-		var sessiontype = "normal"
+		var sessiontype = "normal", sessionreturnreqid = null;
 
 		function fitsizesidenav() {
 			document.getElementById("flap-sidenav").style.width = getComputedStyle(document.getElementById("jstree")).width
@@ -1299,20 +1337,6 @@
 				$.jstree.reference('#jstree').select_node('child_node_1');
 			});
 
-			var todo = localStorage.getItem("todo");
-
-			var defile
-			try {
-				let parsedTodo = JSON.parse(todo);
-
-				if (parsedTodo.appname === "files" && parsedTodo.data.type == "open") {
-					sessiontype = "opener";
-					document.getElementById("fileapptitledis").innerText = "Open File"
-					localStorage.setItem("todo", "");
-				}
-			} catch (error) {
-				console.log(error)
-			}
 			fllist = document.getElementById("filelist");
 			fdlist = document.getElementById("folders");
 
@@ -1324,7 +1348,7 @@
 				console.error(error)
 			}
 
-			window.parent.getdb('trojencat', 'rom')
+			window.parent.getdb()
 				.then((result) => {
 					try {
 						if (result !== null) {
@@ -1349,7 +1373,6 @@
 				}
 			});
 
-			console.log(myWindow)
 		}
 
 		function Allowdrop(ev, obj) {
@@ -1627,6 +1650,11 @@
 					listFiles(currentPath + folderPath)
 					return;
 				}
+
+				if (sessiontype == "opener") {
+						return;
+				}
+
 				openfile(z);
 			} else {
 
@@ -1635,9 +1663,10 @@
 
 				var fileSize
 				x.id = "slfile";
-				let fileData
+				let fileData;
 				if (!(x.getAttribute("unid") === null || x.getAttribute("unid") === "")) {
 					if (sessiontype == "opener") {
+						document.getElementById("choosefileinp").value = x.getAttribute("unid");
 						return;
 					}
 					try {
@@ -1772,12 +1801,19 @@ delete
 		async function openfile(...args) {
 			console.log("filesapp default openfile: ", args[0]);
 			if (sessiontype == "opener") {
-				localStorage.setItem("todo", JSON.stringify({ "type": "opentotext", "lclfile": args[0].getAttribute("unid") }));
-				window.parent.clwin(myWindow);
+				choosefile()
 				return;
 			}
 
 			window.parent.openfile(...args);
+		}
+
+		function choosefile() {
+			if (sessiontype == "opener") {
+				window.parent.OLPreturn(nowfile.getAttribute("unid"), sessionreturnreqid)
+				myWindow.element.remove()
+				return;
+			}
 		}
 
 		async function renamef(x) {
@@ -2007,6 +2043,18 @@ delete
 			}
 		}
 		greenflagbro()
+
+		function greenflag() {
+			console.log(myWindow);
+			if (myWindow.params) {
+				sessiontype = "opener";
+				document.getElementById("fileapptitledis").innerText = "Choose File";
+				sessionreturnreqid = myWindow.params.winuid;
+				document.getElementById("choosefile").style.display = "flex"
+			} else {
+				document.getElementById("choosefile").style.display = "none"
+			}
+		}
 	</script>
 </body>
 

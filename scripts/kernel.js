@@ -1,68 +1,84 @@
-async function openlaunchprotocol(appid, data) {
-	console.log("Open Lanuch Protocol", appid, data)
-	let x = {
-		"appid": appid,
-		"data": data
-	};
-	Gtodo = x;
-	openfile(x.appid, {data: Gtodo});
+async function openlaunchprotocol(appid, data, id, winuid) {
+    console.log("Open Lanuch Protocol", appid, data)
+    if (!id) {
+        return;
+    }
+    let x = {
+        "appid": appid,
+        "data": data,
+        "id": id,
+        "winuid":winuid
+    };
+    Gtodo = x;
+    openfile(x.appid, { data: Gtodo });
+}
+
+function OLPreturn(fileID, transferID) {
+    
+    if (iframeReferences[transferID]) {
+        iframeReferences[transferID].postMessage({returned:fileID, id:transferID, action:'loadlocalfile'}, '*');
+      }
+
+      console.log(iframeReferences, {returned:fileID, id:transferID, action:'loadlocalfile'})
 }
 
 
+const iframeReferences = {};
+
 async function openfile(x, all) {
-	console.log("opening: " + x)
-	let unid= x;
-	try {
-		if (!unid) {
-			console.error("No app id provided");
-			return;
-		}
+    console.log("opening: " + x)
+    let unid = x;
+    try {
+        if (!unid) {
+            console.error("No app id provided");
+            return;
+        }
 
-		let mm = await getFileById(unid);
-		// mm is the file
-		if (!mm) {
-			console.error("Error: File not found");
-			return;
-		}
-		// extract type from file extension
-		mm.type = ptypext(mm.fileName);
+        let mm = await getFileById(unid);
+        // mm is the file
+        if (!mm) {
+            console.error("Error: File not found", unid);
+            return;
+        }
+        // extract type from file extension
+        mm.type = ptypext(mm.fileName);
 
-		if (all == 'any') {
+        if (all == 'any') {
             appIdToOpen = fileTypeAssociations['all'] || null;
-			openlaunchprotocol(appIdToOpen, unid);
-			return;
-		}
+            openlaunchprotocol(appIdToOpen, unid);
+            return;
+        }
 
-		if (mm.type == "app") {
-			// run the app if it is one
-			await openapp(mm.fileName, unid);
-		} else if (mm.type == "osl") {
-			runAsOSL(mm.content)
-		} else if (mm.type == "lnk") {
-			let z = JSON.parse(mm.content);
-			openfile(z.open)
-		} else {
+        if (mm.type == "app") {
+            // run the app if it is one
+            await openapp(mm.fileName, unid);
+        } else if (mm.type == "osl") {
+            runAsOSL(mm.content)
+        } else if (mm.type == "lnk") {
+            let z = JSON.parse(mm.content);
+            openfile(z.open)
+        } else {
             // Not a .lnk file or an .osl file nor an .app file.
             let appIdToOpen = null;
             const fileExtension = mm.fileName.substring(mm.fileName.lastIndexOf('.'));
-            
+
             if (fileTypeAssociations[fileExtension] && fileTypeAssociations[fileExtension].length > 0) {
                 appIdToOpen = fileTypeAssociations[fileExtension][0];
             } else if (fileTypeAssociations['all'] && fileTypeAssociations['all'].length > 0) {
                 appIdToOpen = fileTypeAssociations['all'][0];
             }
-            
+
             if (appIdToOpen) {
                 openlaunchprotocol(appIdToOpen, unid);
             } else {
                 console.log(`No app found to open the file with extension: ${fileExtension}`);
             }
-            
-		}
-	} catch (error) {
-		console.error(":( Error:", error);
-		say("<h1>Unable to open file</h1>File Error: " + error, "failed")
-	}
+
+        }
+    } catch (error) {
+        console.error(":( Error:", error);
+        say("<h1>Unable to open file</h1>File Error: " + error, "failed")
+    }
 }
 
 function openwindow(title, cont, ic, theme, appid, params) {
@@ -115,7 +131,7 @@ function openwindow(title, cont, ic, theme, appid, params) {
         let x = await getSetting("WindowBgColor");
         console.log(x);
         windowDiv.style.background = (x) ? x : 'transparent';
-    })();    
+    })();
 
     // Create the window header
     var windowHeader = document.createElement("div");
@@ -205,105 +221,109 @@ function openwindow(title, cont, ic, theme, appid, params) {
     windowLoader.innerHTML = appicns[title] ? appicns[title] : defaultAppIcon;
     windowLoader.appendChild(loaderdiv);
 
-	function loadIframeContent(windowLoader, windowContent, iframe) {
-		var iframe = document.createElement("iframe");
-		var contentString = content.toString();
+    function loadIframeContent(windowLoader, windowContent, iframe) {
+        var iframe = document.createElement("iframe");
+        var contentString = content.toString();
 
-		// Decode the content string if it's Base64 encoded
-		if (isBase64(contentString)) {
-			contentString = decodeBase64Content(contentString);
-		}
-		// Create a Blob from the content string
-		var blob = new Blob([contentString], { type: 'text/html' });
+        // Decode the content string if it's Base64 encoded
+        if (isBase64(contentString)) {
+            contentString = decodeBase64Content(contentString);
+        }
+        // Create a Blob from the content string
+        var blob = new Blob([contentString], { type: 'text/html' });
 
-		// Create a URL for the Blob
-		var blobURL = URL.createObjectURL(blob);
+        // Create a URL for the Blob
+        var blobURL = URL.createObjectURL(blob);
 
-		iframe.onload = function () {
-			const script = document.createElement('script');
-    script.innerHTML = `
+
+        iframe.onload = function () {
+            iframeReferences[winuid] = iframe.contentWindow;
+            iframe.contentWindow.myWindow = {
+                element: windowDiv,
+                titleElement: windowtitlespan,
+                appID: appid,
+                windowID:winuid,
+                ...(params && { params })
+            };
+
+            const script = document.createElement('script');
+            script.innerHTML = `
         document.addEventListener('mousedown', function(event) {
             window.parent.postMessage({ type: 'iframeClick', iframeId: '${winuid}' }, '*');
         });
     `;
-    iframe.contentDocument.body.appendChild(script);
+            iframe.contentDocument.body.appendChild(script);
 
-			iframe.contentWindow.myWindow = {
-				element: windowDiv,
-				titleElement: windowtitlespan,
-				appID: appid,
-				...(params && { params })
-			};
 
-			try { iframe.contentWindow.greenflag(); } catch {}
-			
-			windowLoader.remove();
-		};
+            try { iframe.contentWindow.greenflag(); } catch { }
 
-		iframe.src = blobURL;
+            windowLoader.remove();
+        };
 
-		windowContent.appendChild(iframe);
-		window.addEventListener('message', function(event) {
-			if (event.data.type === 'iframeClick' && event.data.iframeId === winuid) {
-				putwinontop('window' + winuid);
-				winds[title + winuid] = windowDiv.style.zIndex;
-			}
-		});
-	}
+        iframe.src = blobURL;
 
-	nowwindow = 'window' + winuid;
-	// Append the header and content to the window
-	windowDiv.appendChild(windowHeader);
-	windowDiv.appendChild(windowContent);
-	windowDiv.appendChild(windowLoader);
+        windowContent.appendChild(iframe);
+        window.addEventListener('message', function (event) {
+            if (event.data.type === 'iframeClick' && event.data.iframeId === winuid) {
+                putwinontop('window' + winuid);
+                winds[title + winuid] = windowDiv.style.zIndex;
+            }
+        });
+    }
 
-	// Append the window to the document body
-	document.body.appendChild(windowDiv);
+    nowwindow = 'window' + winuid;
+    // Append the header and content to the window
+    windowDiv.appendChild(windowHeader);
+    windowDiv.appendChild(windowContent);
+    windowDiv.appendChild(windowLoader);
 
-	// Initial load
-	loadIframeContent(windowLoader, windowContent);
+    // Append the window to the document body
+    document.body.appendChild(windowDiv);
 
-	dragElement(windowDiv);
-	putwinontop('window' + winuid);
-	loadtaskspanel();
+    // Initial load
+    loadIframeContent(windowLoader, windowContent);
+
+    dragElement(windowDiv);
+    putwinontop('window' + winuid);
+    loadtaskspanel();
 }
 
 async function openapp(x, od) {
     // od is the app id, x is the app name
-        if (gid('appdmod').open) {
-            gid('appdmod').close()
-        }
-        if (gid('searchwindow').open) {
-            gid('searchwindow').close()
-        }
-    
-        const fetchDataAndSave = async (x) => {
-            try {
-                var y;
-                if (od == 1) {
-					y = await fetchData("appdata/" + x + ".html");
-                    od = await createFile("Apps", x, "app", y);
-                } else {
-					y = await getFileById(od)
-					y = y.content
-				}
-                // Assuming you have a predefined function openwindow
-                openwindow(x, y, getAppIcon(y, x), getAppTheme(y), od, Gtodo);
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
-        };
-    
-        // Call fetchDataAndSave with the desired value of x
-        fetchDataAndSave(x);
+    if (gid('appdmod').open) {
+        gid('appdmod').close()
     }
+    if (gid('searchwindow').open) {
+        gid('searchwindow').close()
+    }
+
+    const fetchDataAndSave = async (x) => {
+        try {
+            var y;
+            if (od == 1) {
+                y = await fetchData("appdata/" + x + ".html");
+                od = await createFile("Apps", x, "app", y);
+            } else {
+                y = await getFileById(od)
+                y = y.content
+            }
+            // Assuming you have a predefined function openwindow
+            openwindow(x, y, getAppIcon(y, x), getAppTheme(y), od, Gtodo);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
+
+    // Call fetchDataAndSave with the desired value of x
+    fetchDataAndSave(x);
+}
 
 function minim(x) {
     x.parentElement.parentElement.parentElement.classList.add("transp4")
 
-	setTimeout(() => {
-		x.parentElement.parentElement.parentElement.classList.remove("transp4")
+    setTimeout(() => {
+        x.parentElement.parentElement.parentElement.classList.remove("transp4")
         x.parentElement.parentElement.parentElement.style.display = "none";
-		nowapp = '';
-	}, 700);
+        nowapp = '';
+    }, 700);
 }
