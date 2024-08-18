@@ -11,6 +11,7 @@ async function openlaunchprotocol(appid, data, id, winuid) {
     };
     Gtodo = x;
     openfile(x.appid, { data: Gtodo });
+    Gtodo = null;
 }
 
 function OLPreturn(fileID, transferID) {

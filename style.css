@@ -199,6 +199,7 @@ nav info {
 	backdrop-filter: blur(5px) brightness(0.5);
 	padding: 0 3px;
 	padding-top:1px;
+    padding-right: 1px;
 	cursor: grab;
 	overflow-x: auto;
 	display: flex;
@@ -282,6 +283,7 @@ nav info {
 	border-radius: 10px;
 	bottom: 9% !important;
 	opacity: 1;
+    word-break: break-all;
 	transform: scale(0.9) translateX(-4px);
 }
 
@@ -877,6 +879,7 @@ nav info {
 	width: 68px;
 	background-color: #353535;
 	color: #fff;
+    word-break: break-all;
 	backdrop-filter: blur(1rem);
 	text-align: center;
 	border-radius: 0.3rem;
