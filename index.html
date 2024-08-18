@@ -208,7 +208,7 @@ gid('nova-copilot-window').showModal()">
 
 	<div id="contextMenu" class="context-menu" style="display:none">
 		<ul>
-			<li><a onclick="dod();genTaskBar();cleanupInvalidAssociations()">
+			<li><a onclick="updateMemoryData().then(() => { dod(); genTaskBar(); cleanupInvalidAssociations(); })">
 					<span ic="" class="material-icons">
 						refresh
 					</span>

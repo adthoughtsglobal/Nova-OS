@@ -47,11 +47,11 @@ const styles = {
 };
 
 async function checkdmode() {
-	updateMemoryData().then(async () => {
+	(async () => {
+		
 		console.log(memory);
 		// scalable UI
 		if (await getSetting("UISizing") && await getSetting("UISizing") == 1) {
-
 			scaleUIElements(await getSetting("UISizing"))
 		}
 
@@ -76,7 +76,7 @@ async function checkdmode() {
 				switchtheme("bright");
 			}
 		}
-	});
+	})();
 }
 
 // Common style settings for elementhahas

@@ -142,6 +142,7 @@ async function startup() {
 		} catch (err) { console.error("checkdmode error:", err); }
 	
 		try {
+			gid('startupterms').innerHTML = "Loading desktop...";
 			await dod();
 			await genTaskBar();
 
@@ -1227,7 +1228,6 @@ makedialogclosable('appdmod')
 
 async function getFileNamesByFolder(folderName) {
 	try {
-		await updateMemoryData();
 		const filesInFolder = [];
 
 		for (const key in memory) {
@@ -1477,6 +1477,7 @@ async function remfolder(folderPath) {
 }
 
 async function initialiseOS() {
+	console.log("Setting Up NovaOS\n\nUsername: " + CurrentUsername + "\nWith: Sample preset\nUsing host: " + location.href)
 	initialization = true
 	const memory = {
 		"Downloads/": {
@@ -1503,7 +1504,9 @@ async function initialiseOS() {
 			.then(async () => getFileNamesByFolder("Apps"))
 			.then(async (fileNames) => {
 				if (defAppsList.length !== fileNames.length) {
-					return installdefaultapps();
+					setTimeout(installdefaultapps(), 3000);
+					gid('startupterms').innerText = "Fixing problems..."
+					return;
 				}
 			})
 			.catch(error => {
@@ -1546,7 +1549,21 @@ async function installdefaultapps() {
 
 	}
 
-	await updateMemoryData().then(async () => {
+	async function waitForNonNull() {
+		let result = null;
+		while (result === null) {
+		  result = await updateMemoryData();
+		  if (result === null) {
+			gid('startupterms').innerText = "Waiting for DB to open..."
+			await new Promise(resolve => setTimeout(resolve, 1000)); // wait for 100ms before retrying
+		  }
+		}
+		return result;
+	  }
+	  
+	  // Usage
+	  await waitForNonNull().then(async (memory) =>  {
+		console.log("ELOG:", memory);
 		// Update each app sequentially
 		for (let i = 0; i < defAppsList.length; i++) {
 			await updateApp(defAppsList[i]);
@@ -2142,7 +2159,6 @@ document.addEventListener('keydown', function (event) {
 async function genTaskBar() {
 	var appbarelement = document.getElementById("dock")
 	appbarelement.innerHTML = "<span id='taskbarloader'></span>";
-	await updateMemoryData()
 	if (appbarelement) {
 		let x = await getFileNamesByFolder("Dock");
 		if (x.length == 0) {
@@ -2450,12 +2466,27 @@ function markdownToHTML(markdown) {
 	return html.trim();
 }
 
-function logoutofnova() {
+async function logoutofnova() {
 	memory = null;
 	CurrentUsername = null;
 	password = 'nova';
 	closeallwindows();
-	showloginmod();
+	await showloginmod();
 	lethalpasswordtimes = true;
 	loginscreenbackbtn();
+}
+
+function cleanupram() {
+	closeallwindows();
+	memory = null;
+	CurrentUsername = null;
+	password = 'nova';
+	lethalpasswordtimes = true;
+}
+
+async function setandinitnewuser() {
+	cleanupram();
+	CurrentUsername = await ask("Enter a username:","");
+	await initialiseOS();
+	showloginmod()
 }

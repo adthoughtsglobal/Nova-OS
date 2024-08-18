@@ -174,16 +174,28 @@ async function flushBatch() {
         batchTimeout = null;
     }
 }
+const maxBatchSize = 10; // Set your preferred batch size
 
 function setdb(value) {
     return new Promise((resolve, reject) => {
         batchQueue.push({ value, resolve, reject });
 
-        if (!batchTimeout) {
+        if (batchQueue.length >= maxBatchSize) {
+            if (batchTimeout) {
+                clearTimeout(batchTimeout);
+            }
+
             batchTimeout = setTimeout(async () => {
                 try {
                     await flushBatch();
-                    resolve(); 
+                } catch (error) {
+                    reject(error);
+                }
+            }, batchInterval);
+        } else if (!batchTimeout) {
+            batchTimeout = setTimeout(async () => {
+                try {
+                    await flushBatch();
                 } catch (error) {
                     reject(error);
                 }
@@ -191,7 +203,6 @@ function setdb(value) {
         }
     });
 }
-
 async function getdb() {
     try {
 	  const db = await openDB(databaseName, 1);
@@ -382,7 +393,7 @@ async function ensurePreferencesFileExists() {
             memory["System/"] = {};
         }
         if (!memory["System/"]["preferences.json"]) {
-            const defaultContent = btoa(JSON.stringify({
+            const defaultPreferences = {
                 "defFileLayout": "List",
                 "wsnapping": true,
                 "smartsearch": true,
@@ -390,8 +401,13 @@ async function ensurePreferencesFileExists() {
                 "defSearchEngine": "Bing",
                 "darkMode": true,
                 "simpleMode": true
-              })); 
-            await createFile("System/", "preferences.json", false, `data:application/json;base64,${defaultContent}`);
+            };
+
+            // Encode the default preferences as Base64 with MIME type
+            const defaultContent = btoa(JSON.stringify(defaultPreferences));
+            const dataUri = `data:application/json;base64,${defaultContent}`;
+
+            await createFile("System/", "preferences.json", false, dataUri);
         }
     } catch (err) {
         console.log("Error ensuring preferences file exists", err);
@@ -408,8 +424,8 @@ async function getSetting(key) {
         if (!content) return; // Return undefined if content is empty
 
         // Extract Base64 content from the MIME type prefix
-        let base64Content = content.split(",")[1];
-        let preferences = JSON.parse(atob(base64Content)); // Decode and parse the Base64 content
+        const base64Content = content.split(",")[1];
+        const preferences = JSON.parse(atob(base64Content)); // Decode and parse the Base64 content
         return preferences[key];
     } catch (error) {
         console.log("Error getting settings", error);
@@ -423,23 +439,25 @@ async function setSetting(key, value) {
         await ensurePreferencesFileExists();
         let content = memory["System/"]["preferences.json"]["content"];
         
-        let base64Content = "";
         let preferences = {};
 
         if (content) {
-            base64Content = content.split(",")[1]; // Extract Base64 content from the MIME type prefix
+            const base64Content = content.split(",")[1]; // Extract Base64 content from the MIME type prefix
             preferences = JSON.parse(atob(base64Content));
         }
 
         preferences[key] = value;
 
         // Prepend MIME type prefix when saving
-        memory["System/"]["preferences.json"]["content"] = `data:application/json;base64,${btoa(JSON.stringify(preferences))}`;
+        const newContent = `data:application/json;base64,${btoa(JSON.stringify(preferences))}`;
+        memory["System/"]["preferences.json"]["content"] = newContent;
+        
         await setdb(memory);
     } catch (error) {
         console.log("Error setting settings", error);
     }
 }
+
 async function resetSettings(value) {
     try {
         if (!memory) {return}

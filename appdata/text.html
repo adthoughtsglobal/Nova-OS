@@ -168,6 +168,8 @@
 
         
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/mime-db@1.52.0/db.json"></script>
+
 </head>
 
 <body>
@@ -206,27 +208,34 @@
             });
             
             async function savetx(x) {
-                sbtn.innerHTML = '* Saving';
-                if (mode = "edit") {
-                    await window.parent.updateFile(currentfile.path, currentfile.id, { 
-                        metadata: currentfile.metadata, 
-                        content: document.getElementById("thedisplay").value, 
-                        fileName: currentfile.fileName, 
-                        type: currentfile.type });
-                } else {
-                    if (x == 1) {
-                        window.parent.createFile("Documents", "Untitled", "txt", document.getElementById("thedisplay").value)
-                    } else if (x != "custom") {
-                        window.parent.createFile("Documents", "Untitled", x, document.getElementById("thedisplay").value)
-                    } else {
-                        let y = await window.parent.ask("Enter a file name:", "untitled.txt");
-                        window.parent.createFile("Documents", y, false, document.getElementById("thedisplay").value)
-                    }
-                }
+    sbtn.innerHTML = '* Saving';
 
-                sbtn.innerHTML = 'Save';
-                mode = "edit";
-            }
+    // Get the content and encode it in Base64
+    const content = document.getElementById("thedisplay").value;
+    const encodedContent = btoa(content); // Encode content to Base64
+    const dataUri = `data:${currentfile.type};base64,${encodedContent}`; // Create a data URI with the MIME type
+
+    if (mode === "edit") {
+        await window.parent.updateFile(currentfile.path, currentfile.id, { 
+            metadata: currentfile.metadata, 
+            content: dataUri, 
+            fileName: currentfile.fileName, 
+            type: currentfile.type 
+        });
+    } else {
+        if (x == 1) {
+            window.parent.createFile("Documents", "Untitled", "txt", dataUri);
+        } else if (x != "custom") {
+            window.parent.createFile("Documents", "Untitled", x, dataUri);
+        } else {
+            let y = await window.parent.ask("Enter a file name:", "untitled.txt");
+            window.parent.createFile("Documents", y, false, dataUri);
+        }
+    }
+
+    sbtn.innerHTML = 'Save';
+    mode = "edit";
+}
 
             function toggleDarkMode() {
                 document.body.classList.toggle('dark-mode');
@@ -318,44 +327,62 @@
 
         }
 
-        function readthefile(file) {
-            console.log(file);
-            currentfile = file;
-            mode = "edit";
+        async function getMimeType(extension) {
+    const mimeDbUrl = 'https://cdn.jsdelivr.net/npm/mime-db@1.52.0/db.json';
+    const response = await fetch(mimeDbUrl);
+    const mimeDb = await response.json();
 
-            // Detect and handle MIME type prefix
-            const mimePrefix = file.content.match(/^data:([^;]+);base64,/);
-            if (mimePrefix) {
-                file.type = mimePrefix[1];
-                file.content = file.content.replace(/^data:[^;]+;base64,/, '');
-            } else {
-                file.type = window.parent.mtpetxt(file.fileName);
-            }
-
-            // Decode Base64 content if necessary
-            if (isBase64(file.content)) {
-                file.content = atob(file.content);
-            }
-
-            // Process content based on file type
-            if (file.type === "application/json" || file.type === "json") {
-                try {
-                    file.content = JSON.stringify(JSON.parse(file.content), null, 2); // Format JSON with indentation
-                } catch (e) {
-                    console.error("Error parsing JSON content", e);
-                }
-            }
-
-            // Update UI
-            if (file && file.content) {
-                myWindow.titleElement.innerText = file.fileName;
-                document.getElementById("thedisplay").value = file.content;
-                console.log("Content displayed successfully");
-                localStorage.setItem("todo", "");
-            } else {
-                console.error("Error displaying content");
-            }
+    // Find MIME type by extension
+    for (const [key, value] of Object.entries(mimeDb)) {
+        if (value.extensions && value.extensions.includes(extension)) {
+            return key; // Return the MIME type
         }
+    }
+    return 'application/octet-stream'; // Default MIME type
+}
+
+function readthefile(file) {
+    console.log(file);
+    currentfile = file;
+    mode = "edit";
+
+    const mimePrefix = file.content.match(/^data:([^;]+);base64,/);
+    if (mimePrefix) {
+        file.type = mimePrefix[1];
+        file.content = file.content.replace(/^data:[^;]+;base64,/, '');
+    } else {
+        const extension = window.parent.mtpetxt(file.fileName);
+        getMimeType(extension).then(mimeType => {
+            file.type = mimeType;
+
+            // Continue processing
+            processFileContent(file);
+        });
+    }
+}
+
+function processFileContent(file) {
+    if (isBase64(file.content)) {
+        file.content = atob(file.content);
+    }
+
+    if (file.type === "application/json" || file.type === "json") {
+        try {
+            file.content = JSON.stringify(JSON.parse(file.content), null, 2);
+        } catch (e) {
+            console.error("Error parsing JSON content", e);
+        }
+    }
+
+    if (file && file.content) {
+        myWindow.titleElement.innerText = file.fileName;
+        document.getElementById("thedisplay").value = file.content;
+        console.log("Content displayed successfully");
+        localStorage.setItem("todo", "");
+    } else {
+        console.error("Error displaying content");
+    }
+}
     </script>
 </body>
 

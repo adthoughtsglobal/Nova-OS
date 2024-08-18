@@ -11,7 +11,6 @@ async function openlaunchprotocol(appid, data, id, winuid) {
     };
     Gtodo = x;
     openfile(x.appid, { data: Gtodo });
-    Gtodo = null;
 }
 
 function OLPreturn(fileID, transferID) {
@@ -312,6 +311,8 @@ async function openapp(x, od) {
             }
             // Assuming you have a predefined function openwindow
             openwindow(x, y, getAppIcon(y, x), getAppTheme(y), od, Gtodo);
+            
+    Gtodo = null;
         } catch (error) {
             console.error("Error fetching data:", error);
         }
