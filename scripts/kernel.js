@@ -175,24 +175,26 @@ function openwindow(title, cont, ic, theme, appid, params) {
 
     var minimbtn = document.createElement("span");
     minimbtn.classList.add("material-symbols-rounded", "wincl", "flbtn");
-    minimbtn.style = `padding: 4px 5px; font-size: 8px !important;`;
     minimbtn.textContent = "remove";
+    minimbtn.setAttribute("title", "Minimize");
     minimbtn.onclick = function () {
         minim(minimbtn);
     };
 
     var flButton = document.createElement("span");
     flButton.classList.add("material-symbols-rounded", "wincl", "flbtn");
-    flButton.style = `padding: 4px 5px; font-size: 8px !important;`;
     flButton.textContent = "open_in_full";
+    flButton.style = `padding: 4px 5px; font-size: 0.7rem !important;`;
+    flButton.setAttribute("title", "Maximize");
     flButton.onclick = function () {
         flwin(flButton);
     };
 
     // Create the close button in the header
     var closeButton = document.createElement("span");
-    closeButton.classList.add("material-symbols-rounded", "wincl");
+    closeButton.classList.add("material-symbols-rounded", "wincl", "winclosebtn");
     closeButton.textContent = "close";
+    closeButton.setAttribute("title", "Close");
     closeButton.onclick = function () {
         setTimeout(function () {
             dewallblur();
