@@ -393,6 +393,7 @@ async function ensurePreferencesFileExists() {
             memory["System/"] = {};
         }
         if (!memory["System/"]["preferences.json"]) {
+            console.log("on reseting settings",memory)
             const defaultPreferences = {
                 "defFileLayout": "List",
                 "wsnapping": true,

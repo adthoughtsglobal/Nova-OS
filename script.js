@@ -59,8 +59,6 @@ async function showloginmod() {
 			userDiv.className = 'user';
 			userDiv.tabIndex = 0;
 			const selectUser = async function () {
-				memory = null;
-				CurrentUsername = cacusername;
 				let isdefaultpass;
 				try {
 					isdefaultpass = await checkPassword('nova');
@@ -69,7 +67,8 @@ async function showloginmod() {
 				if (isdefaultpass) {
 					gid('loginmod').close();
 					gid('edison').showModal();
-					await updateMemoryData()
+					cleanupram();
+					CurrentUsername = cacusername;
 					startup()
 				}
 
@@ -124,6 +123,7 @@ function setsrtpprgbr(val) {
 }
 
 async function startup() {
+	memory = null;
 	gid("edison").showModal();
 	console.log("Startup");
 	setsrtpprgbr(0)
@@ -874,40 +874,35 @@ async function createFolder(folderNames, folderData) {
 	try {
 		await updateMemoryData();
 
-		// Ensure folderNames is an array
-		if (!(folderNames instanceof Set)) {
-			throw new Error('folderNames should be a Set');
+		if (typeof folderNames === 'string') {
+			folderNames = [folderNames];
+		} else if (!(folderNames instanceof Set)) {
+			throw new Error('folderNames should be a Set or a string');
 		}
-		
-		for (let folderName of folderNames) {
-			folderName = folderName.replace(/\/$/, ''); // Remove the trailing slash
-			let parts = folderName.split('/');
+
+		// Convert Set to array if necessary
+		folderNames = Array.isArray(folderNames) ? folderNames : [...folderNames];
+
+		folderNames.forEach(folderName => {
+			let parts = folderName.replace(/\/$/, '').split('/');
 			let current = memory;
 
-			for (let part of parts) {
+			parts.forEach(part => {
 				part += '/';
-				if (!current[part]) {
-					current[part] = {};
-				}
+				current[part] = current[part] || {};
 				current = current[part];
-			}
-		}
+			});
+		});
 
-		// Function to recursively insert data into the memory object
-		function insertData(target, data) {
+		(function insertData(target, data) {
 			for (let key in data) {
-				if (typeof data[key] === 'object' && !data[key].hasOwnProperty('id')) {
-					if (!target[key + '/']) {
-						target[key + '/'] = {};
-					}
-					insertData(target[key + '/'], data[key]);
+				if (typeof data[key] === 'object' && !data[key].id) {
+					insertData(target[key + '/'] = target[key + '/'] || {}, data[key]);
 				} else {
 					target[key] = data[key];
 				}
 			}
-		}
-
-		insertData(memory, folderData);
+		})(memory, folderData);
 
 		await setdb(memory);
 		console.log('Folders and data created successfully.');
@@ -1555,7 +1550,7 @@ async function installdefaultapps() {
 		  result = await updateMemoryData();
 		  if (result === null) {
 			gid('startupterms').innerText = "Waiting for DB to open..."
-			await new Promise(resolve => setTimeout(resolve, 1000)); // wait for 100ms before retrying
+			await new Promise(resolve => setTimeout(resolve, 1000));
 		  }
 		}
 		return result;
