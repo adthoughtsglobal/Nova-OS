@@ -3,7 +3,7 @@ gid("mm").innerHTML = `<svg class="mmic" version="1.1" xmlns="http://www.w3.org/
 var defaultAppIcon = `<?xml version="1.0" encoding="UTF-8"?> <svg version="1.1" viewBox="0 0 76.805 112.36" xmlns="http://www.w3.org/2000/svg"> <g transform="translate(-201.6 -123.82)"> <g stroke-dasharray="" stroke-miterlimit="10" style="mix-blend-mode:normal" data-paper-data='{"isPaintingLayer":true}'> <path d="m201.6 236.18v-111.56h49.097l27.707 31.512v80.051z" fill="#3f7ef6" stroke-width="NaN"/> <path d="m250.82 155.02 0.12178-31.202 27.301 31.982z" fill="#054fff" stroke-width="0"/> <path d="m216.73 180.4h46.531" fill="none" stroke="#9dbaff" stroke-linecap="round" stroke-width="7.5"/> <path d="m216.73 194.37h36.44" fill="none" stroke="#9dbaff" stroke-linecap="round" stroke-width="7.5"/> <path d="m216.73 207.78h42.046" fill="none" stroke="#9dbaff" stroke-linecap="round" stroke-width="7.5"/> </g> </g> </svg>`
 
 function thlog(x) {
-	console.log("theme: " + x)
+	// console.log("theme: " + x)
 }
 
 // Mode-specific styles
@@ -48,8 +48,6 @@ const styles = {
 
 async function checkdmode() {
 	(async () => {
-		
-		console.log(memory);
 		// scalable UI
 		if (await getSetting("UISizing") && await getSetting("UISizing") == 1) {
 			scaleUIElements(await getSetting("UISizing"))

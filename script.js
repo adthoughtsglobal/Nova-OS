@@ -67,8 +67,9 @@ async function showloginmod() {
 				if (isdefaultpass) {
 					gid('loginmod').close();
 					gid('edison').showModal();
-					cleanupram();
+					await cleanupram();
 					CurrentUsername = cacusername;
+					console.log("set currentuser: ", CurrentUsername)
 					startup()
 				}
 
@@ -129,6 +130,7 @@ async function startup() {
 	setsrtpprgbr(0)
 	const start = performance.now();
 	updateMemoryData().then(async () =>{
+		console.log(`Starting Up Nova for ${CurrentUsername}\n`, memory)
 		try {
 			gid('startupterms').innerHTML = "Initialising clock...";
 			setsrtpprgbr(10)
@@ -1102,113 +1104,6 @@ async function getAllValidAppIds() {
 	return Object.keys(appsFolder || {}).map(appFileName => appsFolder[appFileName].id);
 }
 
-
-// Simulate creating a folder
-function createFolderStructure(folderName) {
-	let parts = folderName.split('/');
-	let current = memory;
-	for (let part of parts) {
-		part += '/';
-		if (!current[part]) {
-			current[part] = {};
-		}
-		current = current[part];
-	}
-	return current;
-}
-
-async function updateFile(folderName, fileId, newData) {
-	function findFile(folder, fileId) {
-		for (let key in folder) {
-			if (typeof folder[key] === 'object' && folder[key] !== null) {
-				if (folder[key].id === fileId) {
-					return { parent: folder, key: key };
-				} else if (key.endsWith('/') && typeof folder[key] === 'object') {
-					let result = findFile(folder[key], fileId);
-					if (result) {
-						return result;
-					}
-				}
-			}
-		}
-		return null;
-	}
-
-	try {
-		// Locate the target folder
-		let targetFolder = memory;
-		let folderNames = folderName.split('/');
-		for (let name of folderNames) {
-			if (name) {
-				targetFolder = targetFolder[name + '/'];
-				if (!targetFolder) {
-					throw new Error(`Folder "${name}" not found.`);
-				}
-			}
-		}
-
-		// Find the file within the folder structure
-		let fileLocation = findFile(targetFolder, fileId);
-
-		if (fileLocation) {
-			let fileToUpdate = fileLocation.parent[fileLocation.key];
-			fileToUpdate.metadata = newData.metadata !== undefined ? JSON.stringify(newData.metadata) : fileToUpdate.metadata;
-			fileToUpdate.content = newData.content !== undefined ? newData.content : fileToUpdate.content;
-			fileToUpdate.fileName = newData.fileName !== undefined ? newData.fileName : fileLocation.key;
-			fileToUpdate.type = newData.type !== undefined ? newData.type : fileToUpdate.type;
-
-			// If the file name has changed, update the key in the folder
-			if (newData.fileName !== undefined && newData.fileName !== fileLocation.key) {
-				fileLocation.parent[newData.fileName] = fileToUpdate;
-				delete fileLocation.parent[fileLocation.key];
-			}
-
-			await setdb(memory);
-			console.log(`Modified: "${fileToUpdate.fileName}"`);
-		} else {
-			console.log(`Creating New: "${fileId}"`);
-			targetFolder[newData.fileName || `NewFile_${fileId}`] = {
-				id: fileId,
-				metadata: newData.metadata ? JSON.stringify(newData.metadata) : '',
-				content: newData.content || '',
-				type: newData.type || ''
-			};
-			await setdb(memory);
-		}
-	} catch (error) {
-		console.error("Error updating file:", error);
-	}
-}
-
-async function getFileById(id) {
-	if (!id) return undefined;
-	await updateMemoryData();
-
-	function searchFolder(folder, currentPath = '') {
-		for (let key in folder) {
-			const item = folder[key];
-			if (item && typeof item === 'object') {
-				if (item.id === id) {
-					return {
-						fileName: key,
-						id: item.id,
-						content: item.content,
-						metadata: item.metadata,
-						path: currentPath
-					};
-				} else if (key.endsWith('/')) {
-					const result = searchFolder(item, currentPath + key);
-					if (result) return result;
-				}
-			}
-		}
-		return null;
-	}
-
-	return searchFolder(memory);
-}
-
-
 function makedialogclosable(ok) {
 	const myDialog = gid(ok);
 
@@ -1220,32 +1115,6 @@ function makedialogclosable(ok) {
 }
 
 makedialogclosable('appdmod')
-
-async function getFileNamesByFolder(folderName) {
-	try {
-		const filesInFolder = [];
-
-		for (const key in memory) {
-			if (key === folderName || key.startsWith(folderName)) {
-				const isFolder = key.endsWith('/');
-				if (isFolder) {
-					const folder = memory[key];
-					for (const fileName in folder) {
-						if (!fileName.endsWith('/')) {
-							const file = folder[fileName];
-							filesInFolder.push({ id: file.id, name: fileName });
-						}
-					}
-				}
-			}
-		}
-
-		return filesInFolder;
-	} catch (error) {
-		console.error("Error fetching data:", error);
-		return null;
-	}
-}
 
 function justConfirm(title, message) {
 	return new Promise((resolve) => {
@@ -1403,74 +1272,6 @@ async function makewall(deid) {
 	document.getElementById('bgimage').style.backgroundImage = `url("` + x + `")`;
 }
 
-async function remfile(ID) {
-	try {
-		await updateMemoryData();
-
-		function removeFileFromFolder(folder) {
-			for (const [name, content] of Object.entries(folder)) {
-				if (name.endsWith('/')) {
-					if (removeFileFromFolder(content)) return true;
-				} else if (content.id === ID) {
-					delete folder[name];
-					console.log("File eliminated.");
-					return true;
-				}
-			}
-			return false;
-		}
-
-		let fileRemoved = removeFileFromFolder(memory);
-
-		if (!fileRemoved) {
-			console.error(`File with ID "${ID}" not found.`);
-		} else {
-			await setdb(memory);
-		}
-	} catch (error) {
-		console.error("Error fetching or updating data:", error);
-	}
-}
-
-async function remfolder(folderPath) {
-	try {
-		await updateMemoryData()
-
-		// Split the folderPath into parts
-		let parts = folderPath.split('/').filter(part => part);
-		let current = memory;
-		let parent = null;
-		let key = null;
-
-		// Traverse the path to find the folder
-		for (let i = 0; i < parts.length; i++) {
-			let part = parts[i] + '/';
-			if (current.hasOwnProperty(part)) {
-				parent = current;
-				key = part;
-				current = current[part];
-			} else {
-				console.error(`Folder "${folderPath}" not found.`);
-				return;
-			}
-		}
-
-		// Remove only the specified subfolder and its contents
-		if (parent && key) {
-			delete parent[key];
-			console.log(`Folder Eliminated: "${folderPath}"`);
-		} else {
-			console.error(`Unable to delete folder "${folderPath}".`);
-			return;
-		}
-
-		// Update the memory database
-		await setdb(memory);
-	} catch (error) {
-		console.error("Error removing folder:", error);
-	}
-}
-
 async function initialiseOS() {
 	console.log("Setting Up NovaOS\n\nUsername: " + CurrentUsername + "\nWith: Sample preset\nUsing host: " + location.href)
 	initialization = true
@@ -1582,38 +1383,6 @@ async function installdefaultapps() {
 	})
 
 
-}
-
-async function getFileByPath(filePath) {
-	await updateMemoryData();
-	let parts = filePath.split('/');
-	let current = memory;
-
-	for (let i = 0; i < parts.length; i++) {
-		let part = parts[i];
-
-		// If it's a folder and not the last part, descend into it
-		if (part.endsWith('/') && part in current && i !== parts.length - 1) {
-			current = current[part];
-		} else if (part in current) {
-			current = current[part];
-		} else {
-			return null;
-		}
-	}
-
-	// If current is an object and contains nested files, return their names and IDs
-	if (typeof current === 'object' && current !== null && !Array.isArray(current)) {
-		let result = [];
-		for (let key in current) {
-			if (current[key].id) {
-				result.push({ name: key, id: current[key].id });
-			}
-		}
-		return result.length > 0 ? result : current;
-	}
-
-	return current;
 }
 
 function getfourthdimension() {
@@ -1785,24 +1554,6 @@ function calculateSimilarity(string1, string2) {
 	return 1 - dp[m][n] / Math.max(m, n);
 }
 
-async function getFolderNames() {
-	try {
-		await updateMemoryData()
-		const folderNames = [];
-
-		for (const key in memory) {
-			if (key.endsWith('/')) {
-				folderNames.push(key);
-			}
-		}
-
-		return folderNames;
-	} catch (error) {
-		console.error("Error fetching data:", error);
-		return null;
-	}
-}
-
 function containsSmallSVGElement(str) {
 	var svgRegex = /^<svg\s*[^>]*>[\s\S]*<\/svg>$/i;
 	return svgRegex.test(str) && str.length <= 5000;
@@ -1814,17 +1565,6 @@ document.oncontextmenu = rightClick;
 function hideMenu() {
 	gid("contextMenu").style.display = "none"
 }
-
-async function moveFileToFolder(flid, dest) {
-	console.log("Moving file: " + flid + " to: " + dest);
-
-	let fileToMove = await getFileById(flid);
-
-	await createFile(dest, fileToMove.fileName, fileToMove.type, fileToMove.content, fileToMove.metadata);
-
-	await remfile(flid);
-}
-
 
 function rightClick(e) {
 	e.preventDefault();
@@ -2464,6 +2204,7 @@ function markdownToHTML(markdown) {
 async function logoutofnova() {
 	memory = null;
 	CurrentUsername = null;
+	console.log("set currentuser: ", CurrentUsername)
 	password = 'nova';
 	closeallwindows();
 	await showloginmod();
@@ -2471,17 +2212,288 @@ async function logoutofnova() {
 	loginscreenbackbtn();
 }
 
-function cleanupram() {
-	closeallwindows();
-	memory = null;
-	CurrentUsername = null;
-	password = 'nova';
-	lethalpasswordtimes = true;
+async function cleanupram() {
+    if (batchQueue.length > 0) {
+        if (batchTimeout) {
+            clearTimeout(batchTimeout);
+        }
+        await flushBatch();
+    }
+    
+    closeallwindows();
+    memory = null;
+    CurrentUsername = null;
+	console.log("set currentuser: ", CurrentUsername)
+    password = 'nova';
+    lethalpasswordtimes = true;
 }
 
+
 async function setandinitnewuser() {
-	cleanupram();
+	await cleanupram();
 	CurrentUsername = await ask("Enter a username:","");
+	console.log("set currentuser: ", CurrentUsername)
 	await initialiseOS();
 	showloginmod()
+}
+
+// MEMORY MANAGEMENT FUNCTIONS
+
+async function getFileNamesByFolder(folderName) {
+	try {
+		const filesInFolder = [];
+
+		for (const key in memory) {
+			if (key === folderName || key.startsWith(folderName)) {
+				const isFolder = key.endsWith('/');
+				if (isFolder) {
+					const folder = memory[key];
+					for (const fileName in folder) {
+						if (!fileName.endsWith('/')) {
+							const file = folder[fileName];
+							filesInFolder.push({ id: file.id, name: fileName });
+						}
+					}
+				}
+			}
+		}
+
+		return filesInFolder;
+	} catch (error) {
+		console.error("Error fetching data:", error);
+		return null;
+	}
+}
+
+async function getFileByPath(filePath) {
+	await updateMemoryData();
+	let parts = filePath.split('/');
+	let current = memory;
+
+	for (let i = 0; i < parts.length; i++) {
+		let part = parts[i];
+
+		// If it's a folder and not the last part, descend into it
+		if (part.endsWith('/') && part in current && i !== parts.length - 1) {
+			current = current[part];
+		} else if (part in current) {
+			current = current[part];
+		} else {
+			return null;
+		}
+	}
+
+	// If current is an object and contains nested files, return their names and IDs
+	if (typeof current === 'object' && current !== null && !Array.isArray(current)) {
+		let result = [];
+		for (let key in current) {
+			if (current[key].id) {
+				result.push({ name: key, id: current[key].id });
+			}
+		}
+		return result.length > 0 ? result : current;
+	}
+
+	return current;
+}
+
+
+async function getFileById(id) {
+	if (!id) return undefined;
+	await updateMemoryData();
+
+	function searchFolder(folder, currentPath = '') {
+		for (let key in folder) {
+			const item = folder[key];
+			if (item && typeof item === 'object') {
+				if (item.id === id) {
+					return {
+						fileName: key,
+						id: item.id,
+						content: item.content,
+						metadata: item.metadata,
+						path: currentPath
+					};
+				} else if (key.endsWith('/')) {
+					const result = searchFolder(item, currentPath + key);
+					if (result) return result;
+				}
+			}
+		}
+		return null;
+	}
+
+	return searchFolder(memory);
+}
+
+async function getFolderNames() {
+	try {
+		await updateMemoryData()
+		const folderNames = [];
+
+		for (const key in memory) {
+			if (key.endsWith('/')) {
+				folderNames.push(key);
+			}
+		}
+
+		return folderNames;
+	} catch (error) {
+		console.error("Error fetching data:", error);
+		return null;
+	}
+}
+
+async function moveFileToFolder(flid, dest) {
+	console.log("Moving file: " + flid + " to: " + dest);
+
+	let fileToMove = await getFileById(flid);
+
+	await createFile(dest, fileToMove.fileName, fileToMove.type, fileToMove.content, fileToMove.metadata);
+
+	await remfile(flid);
+}
+
+async function remfile(ID) {
+	try {
+		await updateMemoryData();
+
+		function removeFileFromFolder(folder) {
+			for (const [name, content] of Object.entries(folder)) {
+				if (name.endsWith('/')) {
+					if (removeFileFromFolder(content)) return true;
+				} else if (content.id === ID) {
+					delete folder[name];
+					console.log("File eliminated.");
+					return true;
+				}
+			}
+			return false;
+		}
+
+		let fileRemoved = removeFileFromFolder(memory);
+
+		if (!fileRemoved) {
+			console.error(`File with ID "${ID}" not found.`);
+		} else {
+			await setdb(memory);
+		}
+	} catch (error) {
+		console.error("Error fetching or updating data:", error);
+	}
+}
+
+async function remfolder(folderPath) {
+	try {
+		await updateMemoryData()
+
+		// Split the folderPath into parts
+		let parts = folderPath.split('/').filter(part => part);
+		let current = memory;
+		let parent = null;
+		let key = null;
+
+		// Traverse the path to find the folder
+		for (let i = 0; i < parts.length; i++) {
+			let part = parts[i] + '/';
+			if (current.hasOwnProperty(part)) {
+				parent = current;
+				key = part;
+				current = current[part];
+			} else {
+				console.error(`Folder "${folderPath}" not found.`);
+				return;
+			}
+		}
+
+		// Remove only the specified subfolder and its contents
+		if (parent && key) {
+			delete parent[key];
+			console.log(`Folder Eliminated: "${folderPath}"`);
+		} else {
+			console.error(`Unable to delete folder "${folderPath}".`);
+			return;
+		}
+
+		// Update the memory database
+		await setdb(memory);
+	} catch (error) {
+		console.error("Error removing folder:", error);
+	}
+}
+async function updateFile(folderName, fileId, newData) {
+	function findFile(folder, fileId) {
+		for (let key in folder) {
+			if (typeof folder[key] === 'object' && folder[key] !== null) {
+				if (folder[key].id === fileId) {
+					return { parent: folder, key: key };
+				} else if (key.endsWith('/') && typeof folder[key] === 'object') {
+					let result = findFile(folder[key], fileId);
+					if (result) {
+						return result;
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	try {
+		// Locate the target folder
+		let targetFolder = memory;
+		let folderNames = folderName.split('/');
+		for (let name of folderNames) {
+			if (name) {
+				targetFolder = targetFolder[name + '/'];
+				if (!targetFolder) {
+					throw new Error(`Folder "${name}" not found.`);
+				}
+			}
+		}
+
+		// Find the file within the folder structure
+		let fileLocation = findFile(targetFolder, fileId);
+
+		if (fileLocation) {
+			let fileToUpdate = fileLocation.parent[fileLocation.key];
+			fileToUpdate.metadata = newData.metadata !== undefined ? JSON.stringify(newData.metadata) : fileToUpdate.metadata;
+			fileToUpdate.content = newData.content !== undefined ? newData.content : fileToUpdate.content;
+			fileToUpdate.fileName = newData.fileName !== undefined ? newData.fileName : fileLocation.key;
+			fileToUpdate.type = newData.type !== undefined ? newData.type : fileToUpdate.type;
+
+			// If the file name has changed, update the key in the folder
+			if (newData.fileName !== undefined && newData.fileName !== fileLocation.key) {
+				fileLocation.parent[newData.fileName] = fileToUpdate;
+				delete fileLocation.parent[fileLocation.key];
+			}
+
+			await setdb(memory);
+			console.log(`Modified: "${fileToUpdate.fileName}"`);
+		} else {
+			console.log(`Creating New: "${fileId}"`);
+			targetFolder[newData.fileName || `NewFile_${fileId}`] = {
+				id: fileId,
+				metadata: newData.metadata ? JSON.stringify(newData.metadata) : '',
+				content: newData.content || '',
+				type: newData.type || ''
+			};
+			await setdb(memory);
+		}
+	} catch (error) {
+		console.error("Error updating file:", error);
+	}
+}
+
+// Simulate creating a folder
+function createFolderStructure(folderName) {
+	let parts = folderName.split('/');
+	let current = memory;
+	for (let part of parts) {
+		part += '/';
+		if (!current[part]) {
+			current[part] = {};
+		}
+		current = current[part];
+	}
+	return current;
 }

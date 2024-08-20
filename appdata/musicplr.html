@@ -432,9 +432,9 @@
 							shuffle
 						</span>
 					</button>
-					<button>
+					<button onclick="minimode()">
 						<span class="material-symbols-rounded">
-							close
+							featured_video
 						</span>
 					</button>
 				</div>
@@ -493,6 +493,12 @@
 		let track_list = {};
 
 		primaryalert.showModal();
+
+		playmoedrn = 'norm'
+
+		function gid(x) {
+			return document.getElementById(x)
+		}
 
 		// Define the tracks that have to be played
 		function renderQueue() {
@@ -595,6 +601,9 @@
             track_name.textContent = trackName;
             track_artist.textContent = metadata.artist || 'Unknown Artist';
             now_playing.textContent = "Playing " + (Object.keys(track_list).indexOf(trackName) + 1) + " of " + Object.keys(track_list).length;
+			if (playmoedrn == 'mini') {
+				myWindow.titleElement.innerTxt = "Playing " + (Object.keys(track_list).indexOf(trackName) + 1) + " of " + Object.keys(track_list).length;
+			}
 
             // Update baseimg with album art if available
             if (metadata.picture && metadata.picture.data) {
@@ -883,6 +892,31 @@ primaryalert.close();
 }
 	function rgbToHex(r, g, b) {
     return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+}
+
+function minimode() {
+	playmoedrn = 'mini'
+	myWindow.element.style = `left: 1rem;
+    top: 1rem;
+    width: 22rem;
+    height: 12rem;
+    min-height: 0;
+    z-index: 0;`;
+	let basebodystyle = `    background: #00000080;
+    backdrop-filter: blur(2rem) saturate(0);`
+	document.body.style = basebodystyle;
+	myWindow.titleElement.parentElement.parentElement.style = basebodystyle;
+	gid("queuewindow").style.display = "none";
+	document.getElementsByClassName("player")[0].style.margin = "0";
+	document.getElementsByClassName("player")[0].style.flexDirection = "row";
+	document.getElementsByClassName("player")[0].style.flexWrap = "wrap";
+	document.getElementsByClassName("details")[0].style.width = "50%";
+	document.getElementsByClassName("details")[0].style.marginTop = "0";
+	document.getElementsByClassName("buttons")[0].style.width = "fit-content";
+	document.getElementsByClassName("buttons")[0].style.background = "transparent";
+	document.getElementsByClassName("slider_container")[0].style = "position: absolute; top: 0;";
+	document.getElementsByClassName("slider_container")[1].style.display = "none";
+	gid('baseimg').style.display = "none";
 }
 	</script>
 </body>

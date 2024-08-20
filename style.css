@@ -541,6 +541,10 @@ nav info {
 	width: 100%;
 }
 
+.modal button:focus {
+    background: #3f3f3f;
+}
+
 .modal .notbn {
 	background: transparent;
 }
