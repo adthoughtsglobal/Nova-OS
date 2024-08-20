@@ -124,13 +124,12 @@ function setsrtpprgbr(val) {
 }
 
 async function startup() {
-	memory = null;
 	gid("edison").showModal();
 	console.log("Startup");
 	setsrtpprgbr(0)
 	const start = performance.now();
-	updateMemoryData().then(async () =>{
-		console.log(`Starting Up Nova for ${CurrentUsername}\n`, memory)
+	await updateMemoryData().then(async () =>{
+
 		try {
 			gid('startupterms').innerHTML = "Initialising clock...";
 			setsrtpprgbr(10)
@@ -144,18 +143,7 @@ async function startup() {
 		} catch (err) { console.error("checkdmode error:", err); }
 	
 		try {
-			gid('startupterms').innerHTML = "Loading desktop...";
 			await dod();
-			await genTaskBar();
-
-			// Initialize the associations from settings
-		async function loadFileTypeAssociations() {
-			const associations = await getSetting('fileTypeAssociations');
-			fileTypeAssociations = associations || {};
-			await cleanupInvalidAssociations();
-		}
-	
-		await loadFileTypeAssociations();
 			
 			setsrtpprgbr(100)
 			gid('startupterms').innerHTML = "Startup completed";
@@ -187,7 +175,15 @@ async function startup() {
 	
 		fetchDataAndUpdate();
 		closeElementedis();
-		
+		await genTaskBar();
+		// Initialize the associations from settings
+		async function loadFileTypeAssociations() {
+			const associations = await getSetting('fileTypeAssociations');
+			fileTypeAssociations = associations || {};
+			cleanupInvalidAssociations();
+		}
+	
+		await loadFileTypeAssociations();
 	})
 
 }
@@ -2213,18 +2209,12 @@ async function logoutofnova() {
 }
 
 async function cleanupram() {
-    if (batchQueue.length > 0) {
-        if (batchTimeout) {
-            clearTimeout(batchTimeout);
-        }
-        await flushBatch();
-    }
-    
     closeallwindows();
     memory = null;
     CurrentUsername = null;
 	console.log("set currentuser: ", CurrentUsername)
     password = 'nova';
+	MemoryTimeCache = null;
     lethalpasswordtimes = true;
 }
 

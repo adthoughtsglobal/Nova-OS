@@ -174,7 +174,8 @@ async function flushBatch() {
         batchTimeout = null;
     }
 }
-const maxBatchSize = 10; // Set your preferred batch size
+
+const maxBatchSize = 10;
 
 function setdb(value) {
     return new Promise((resolve, reject) => {
@@ -217,6 +218,7 @@ async function getdb() {
 				const cryptoKey = await getKey(password);
 				const decryptedValue = await decryptData(cryptoKey, request.result.value);
 				memory = parseEscapedJsonString(decompressString(decryptedValue));
+                console.log(MemoryTimeCache,memory)
 				resolve(memory);
 			  } catch (error) {
 				console.error("Decryption error:", error);
@@ -233,6 +235,7 @@ async function getdb() {
 	  console.error("Error in getdb function:", error);
     }
 }
+
 
 function compressString(input) {
     return LZUTF8.compress(input, { outputEncoding: 'Base64' });
