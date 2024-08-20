@@ -2,9 +2,6 @@ var batteryLevel, winds = {}, rp, flwint = true, memory, _nowapp, fulsapp = fals
 var really = false, initmenuload = true, fileTypeAssociations = {}, Gtodo, notifLog = {}, initialization = false;
 var novaFeaturedImage = `https://images.unsplash.com/photo-1716980197262-ce400709bf0d?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D`;
 
-const memorytree = new Map();
-const contentpool = new Map();
-
 document.getElementById("bgimage").src = novaFeaturedImage;
 var defAppsList = [
 	"camera",
@@ -1915,9 +1912,8 @@ async function genTaskBar() {
 			var appShortcutDiv = document.createElement("biv");
 			appShortcutDiv.className = "app-shortcut tooltip adock sizableuielement";
 			app = await getFileById(app.id)
-			console.log(app)
 
-			if (mtpetxt(app.fileName) == "lnk") {
+			if (app.type == "lnk") {
 				let z = JSON.parse(app.content);
 				app = await getFileById(z.open)
 				islnk = true;
@@ -2259,57 +2255,68 @@ async function getFileNamesByFolder(folderName) {
 		return null;
 	}
 }
+
 async function getFileByPath(filePath) {
-    await updateMemoryData();
-    const parts = filePath.split('/');
-    let current = memorytree;
+	await updateMemoryData();
+	let parts = filePath.split('/');
+	let current = memory;
 
-    for (let part of parts) {
-        if (current instanceof Map && current.has(part)) {
-            current = current.get(part);
-        } else {
-            return null;
-        }
-    }
+	for (let i = 0; i < parts.length; i++) {
+		let part = parts[i];
 
-    if (current instanceof Map) {
-        return Array.from(current.entries()).map(([name, value]) => ({
-            name,
-            id: value.id
-        }));
-    } else {
-        return {
-            name: parts[parts.length - 1],
-            id: current.id,
-            content: contentpool.get(current.contentRef),
-        };
-    }
+		// If it's a folder and not the last part, descend into it
+		if (part.endsWith('/') && part in current && i !== parts.length - 1) {
+			current = current[part];
+		} else if (part in current) {
+			current = current[part];
+		} else {
+			return null;
+		}
+	}
+
+	// If current is an object and contains nested files, return their names and IDs
+	if (typeof current === 'object' && current !== null && !Array.isArray(current)) {
+		let result = [];
+		for (let key in current) {
+			if (current[key].id) {
+				result.push({ name: key, id: current[key].id });
+			}
+		}
+		return result.length > 0 ? result : current;
+	}
+
+	return current;
 }
+
 
 async function getFileById(id) {
-    await updateMemoryData();
+	if (!id) return undefined;
+	await updateMemoryData();
 
-    function searchTree(tree) {
-        for (const [key, value] of tree) {
-            if (value && value.id === id) {
-                const content = contentpool.get(value.contentRef);
-                return {
-                    fileName: key,
-                    id: value.id,
-                    content,
-                    metadata: value.metadata,
-                    path: key
-                };
-            } else if (value instanceof Map) {
-                const result = searchTree(value);
-                if (result) return result;
-            }
-        }
-        return null;
-    }
+	function searchFolder(folder, currentPath = '') {
+		for (let key in folder) {
+			const item = folder[key];
+			if (item && typeof item === 'object') {
+				if (item.id === id) {
+					return {
+						fileName: key,
+						id: item.id,
+						content: item.content,
+						metadata: item.metadata,
+						path: currentPath
+					};
+				} else if (key.endsWith('/')) {
+					const result = searchFolder(item, currentPath + key);
+					if (result) return result;
+				}
+			}
+		}
+		return null;
+	}
 
-    return searchTree(memorytree);
+	return searchFolder(memory);
 }
+
 async function getFolderNames() {
 	try {
 		await updateMemoryData()
@@ -2327,92 +2334,147 @@ async function getFolderNames() {
 		return null;
 	}
 }
+
 async function moveFileToFolder(flid, dest) {
-    let fileToMove = await getFileById(flid);
+	console.log("Moving file: " + flid + " to: " + dest);
 
-    if (fileToMove) {
-        const destFolder = createFolderStructure(dest);
-        destFolder.set(fileToMove.fileName, { id: fileToMove.id, contentRef: fileToMove.contentRef });
-        removeFileFromMemorytree(flid);  // Implement this to remove the file from its original location
-        await setdb(memorytree, contentpool);
-    }
+	let fileToMove = await getFileById(flid);
+
+	await createFile(dest, fileToMove.fileName, fileToMove.type, fileToMove.content, fileToMove.metadata);
+
+	await remfile(flid);
 }
+
 async function remfile(ID) {
-    await updateMemoryData();
+	try {
+		await updateMemoryData();
 
-    function removeFileFromTree(tree) {
-        for (let [name, value] of tree) {
-            if (value && value.id === ID) {
-                tree.delete(name);
-                console.log("File eliminated.");
-                return true;
-            } else if (value instanceof Map) {
-                if (removeFileFromTree(value)) return true;
-            }
-        }
-        return false;
-    }
+		function removeFileFromFolder(folder) {
+			for (const [name, content] of Object.entries(folder)) {
+				if (name.endsWith('/')) {
+					if (removeFileFromFolder(content)) return true;
+				} else if (content.id === ID) {
+					delete folder[name];
+					console.log("File eliminated.");
+					return true;
+				}
+			}
+			return false;
+		}
 
-    if (!removeFileFromTree(memorytree)) {
-        console.error(`File with ID "${ID}" not found.`);
-    } else {
-        await setdb(memorytree, contentpool);
-    }
+		let fileRemoved = removeFileFromFolder(memory);
+
+		if (!fileRemoved) {
+			console.error(`File with ID "${ID}" not found.`);
+		} else {
+			await setdb(memory);
+		}
+	} catch (error) {
+		console.error("Error fetching or updating data:", error);
+	}
 }
+
 async function remfolder(folderPath) {
-    await updateMemoryData();
+	try {
+		await updateMemoryData()
 
-    let parts = folderPath.split('/').filter(Boolean);
-    let current = memorytree;
-    let parent = null;
+		// Split the folderPath into parts
+		let parts = folderPath.split('/').filter(part => part);
+		let current = memory;
+		let parent = null;
+		let key = null;
 
-    for (let part of parts) {
-        if (current.has(part + '/')) {
-            parent = current;
-            current = current.get(part + '/');
-        } else {
-            console.error(`Folder "${folderPath}" not found.`);
-            return;
-        }
-    }
+		// Traverse the path to find the folder
+		for (let i = 0; i < parts.length; i++) {
+			let part = parts[i] + '/';
+			if (current.hasOwnProperty(part)) {
+				parent = current;
+				key = part;
+				current = current[part];
+			} else {
+				console.error(`Folder "${folderPath}" not found.`);
+				return;
+			}
+		}
 
-    if (parent) {
-        parent.delete(parts[parts.length - 1] + '/');
-        console.log(`Folder eliminated: "${folderPath}"`);
-        await setdb(memorytree, contentpool);
-    }
+		// Remove only the specified subfolder and its contents
+		if (parent && key) {
+			delete parent[key];
+			console.log(`Folder Eliminated: "${folderPath}"`);
+		} else {
+			console.error(`Unable to delete folder "${folderPath}".`);
+			return;
+		}
+
+		// Update the memory database
+		await setdb(memory);
+	} catch (error) {
+		console.error("Error removing folder:", error);
+	}
 }
-
 async function updateFile(folderName, fileId, newData) {
-    await updateMemoryData();
+	function findFile(folder, fileId) {
+		for (let key in folder) {
+			if (typeof folder[key] === 'object' && folder[key] !== null) {
+				if (folder[key].id === fileId) {
+					return { parent: folder, key: key };
+				} else if (key.endsWith('/') && typeof folder[key] === 'object') {
+					let result = findFile(folder[key], fileId);
+					if (result) {
+						return result;
+					}
+				}
+			}
+		}
+		return null;
+	}
 
-    let targetFolder = memorytree;
-    const folderNames = folderName.split('/').filter(Boolean);
+	try {
+		// Locate the target folder
+		let targetFolder = memory;
+		let folderNames = folderName.split('/');
+		for (let name of folderNames) {
+			if (name) {
+				targetFolder = targetFolder[name + '/'];
+				if (!targetFolder) {
+					throw new Error(`Folder "${name}" not found.`);
+				}
+			}
+		}
 
-    for (const name of folderNames) {
-        targetFolder = targetFolder.get(name + '/');
-        if (!targetFolder) throw new Error(`Folder "${name}" not found.`);
-    }
+		// Find the file within the folder structure
+		let fileLocation = findFile(targetFolder, fileId);
 
-    if (targetFolder.has(fileId)) {
-        let file = targetFolder.get(fileId);
-        if (newData.content !== undefined) {
-            const newRef = contentpool.size;
-            contentpool.set(newRef, newData.content);
-            file.contentRef = newRef;
-        }
-        if (newData.fileName) {
-            targetFolder.set(newData.fileName, file);
-            targetFolder.delete(fileId);
-        }
-        await setdb(memorytree, contentpool);
-    } else {
-        const newRef = contentpool.size;
-        contentpool.set(newRef, newData.content);
-        targetFolder.set(newData.fileName, { id: fileId, contentRef: newRef, metadata: newData.metadata });
-        await setdb(memorytree, contentpool);
-    }
+		if (fileLocation) {
+			let fileToUpdate = fileLocation.parent[fileLocation.key];
+			fileToUpdate.metadata = newData.metadata !== undefined ? JSON.stringify(newData.metadata) : fileToUpdate.metadata;
+			fileToUpdate.content = newData.content !== undefined ? newData.content : fileToUpdate.content;
+			fileToUpdate.fileName = newData.fileName !== undefined ? newData.fileName : fileLocation.key;
+			fileToUpdate.type = newData.type !== undefined ? newData.type : fileToUpdate.type;
+
+			// If the file name has changed, update the key in the folder
+			if (newData.fileName !== undefined && newData.fileName !== fileLocation.key) {
+				fileLocation.parent[newData.fileName] = fileToUpdate;
+				delete fileLocation.parent[fileLocation.key];
+			}
+
+			await setdb(memory);
+			console.log(`Modified: "${fileToUpdate.fileName}"`);
+		} else {
+			console.log(`Creating New: "${fileId}"`);
+			targetFolder[newData.fileName || `NewFile_${fileId}`] = {
+				id: fileId,
+				metadata: newData.metadata ? JSON.stringify(newData.metadata) : '',
+				content: newData.content || '',
+				type: newData.type || ''
+			};
+			await setdb(memory);
+		}
+	} catch (error) {
+		console.error("Error updating file:", error);
+	}
 }
+
 // Simulate creating a folder
 function createFolderStructure(folderName) {
 	let parts = folderName.split('/');
