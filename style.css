@@ -1021,7 +1021,7 @@ nav info {
 }
 
 #loginmod {
-	background: transparent;
+	background: #5555557d;
 	backdrop-filter: blur(1.5rem);
 	border: none;
 	color: white;
@@ -1232,17 +1232,16 @@ nav info {
 
 #notification {
 	position: absolute;
-	right: 10px;
-	width: 250px;
-	background: transparent;
-	backdrop-filter: blur(10px) brightness(50%);
-	border-radius: 10px;
-	padding: 10px;
-	bottom: 61px;
-	box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-	display: none;
-	animation: notifpull .2s ease-out;
-
+    right: 10px;
+    width: 250px;
+    background: #2a29299c;
+    backdrop-filter: blur(10px) brightness(50%);
+    border-radius: 10px;
+    padding: 10px;
+    bottom: 61px;
+    box-shadow: 0 0 2rem rgb(0 0 0 / 77%);
+    display: none;
+    animation: notifpull .2s ease-out;
 }
 
 @keyframes notifpull {
@@ -2210,6 +2209,14 @@ dialog#terminal {
 			aspect-ratio: 1 / 1;
 			margin-bottom: 0.3rem;
 		}
+
+		.name {
+			width: 100%;
+			text-wrap: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+            text-align: center;
+		}
 	}
 
 	.user:hover {
@@ -2233,12 +2240,13 @@ dialog#terminal {
 
 #userschooser {
 	display: flex;
-	flex-direction: row;
-	gap: 0.5rem;
-	height: fit-content;
-	align-items: center;
-
-
+    flex-direction: row;
+    gap: 0.5rem;
+    height: fit-content;
+    align-items: flex-start;
+    max-width: 80%;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .strtappsugs strong {

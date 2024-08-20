@@ -525,6 +525,7 @@
 		[danger] {
 			background: #653939;
 			color: #ff6262;
+			opacity: 0.7;
 		}
 
 		.inpbox {
@@ -579,6 +580,13 @@
 			box-shadow: 0 3px 5px #0C0C0C;
 			animation: drop .2s ease-out;
 			max-width: 500px;
+		}
+
+		buttongrp {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			gap: 0.3rem;
 		}
 	</style>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -858,44 +866,16 @@
 
 					<script>
 						async function erdbs() {
-							if (!confirm("Erase Device? \nThis will remove all your data, including your files, folders, apps, permissions, cache and everything.\n\nWould you like to Clear your OS?")) {
+							if (!confirm("Erase Device? \nThis will remove all data, including every user's files, folders, apps, permissions, cache and everything.\n\nWould you like to Clear your device?")) {
 								return;
 							}
-
-							window.parent.localStorage.removeItem('todo');
-							window.parent.localStorage.removeItem('sets');
-							window.parent.localStorage.removeItem('updver');
-
-							let indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
-							let dbName = 'trojencat';
-							let storeName = 'store';
-							let keyToRemove = 'rom';
-
-							let request = indexedDB.open(dbName);
-
-							request.onsuccess = function (event) {
-								let db = event.target.result;
-
-								let transaction = db.transaction(storeName, 'readwrite');
-								let objectStore = transaction.objectStore(storeName);
-
-								let deleteRequest = objectStore.delete(keyToRemove);
-
-								deleteRequest.onsuccess = function (event) {
-									console.log("Key 'rom' removed successfully");
-
-									localStorage.removeItem("qsets")
-									window.parent.location.reload()
-								};
-
-								deleteRequest.onerror = function (event) {
-									console.error("Error removing key 'rom':", event.target.errorCode);
-								};
-							};
-
-							request.onerror = function (event) {
-								console.error("Error opening database:", event.target.errorCode);
-							};
+							window.parent.erdbsfull();
+						}
+						async function erdbsur() {
+							if (!confirm("Remove User? \nThis will remove your data, including your files, folders, apps, permissions, cache and everything.\n\nWould you like to Clear your account?")) {
+								return;
+							}
+							window.parent.removeUser();
 						}
 						function ercache() {
 							window.parent.appicns = {};
@@ -903,8 +883,12 @@
 							window.parent.MemoryTimeCache = 4000;
 						}
 					</script>
+					<buttongrp>
+
+					<button danger onclick="erdbsur()">Remove User</button>
 					<button danger onclick="erdbs()">Erase Device</button>
-					<button danger onclick="ercache()">Reset cached data</button>
+					<button danger onclick="ercache()">Reset cached</button>
+					</buttongrp>
 				</div>
 			</segr>
 			<segr>

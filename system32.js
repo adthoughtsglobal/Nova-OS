@@ -320,14 +320,50 @@ let cachedData = null;
 function getTime() {
     return Date.now();
 }
-
 async function fetchmmData() {
     console.log("Fetching Memory");
     try {
         const data = await getdb();
+        if (!data) return null;  // Return null if no data is fetched
+
         MemoryTimeCache = getTime();
-        cachedData = data;
-        return data ?? null;
+
+        // Initialize the new memorytree and contentpool
+        const newMemorytree = new Map();
+        const newContentpool = new Map();
+        let contentId = 0;
+
+        // Traverse the memory structure to populate memorytree and contentpool
+        function processFolder(folder, tree) {
+            for (const key in folder) {
+                const item = folder[key];
+                if (typeof item === 'object' && !Array.isArray(item)) {
+                    if (item.content) {
+                        // File found, add to contentpool and reference in memorytree
+                        newContentpool.set(contentId, item.content);
+                        tree.set(key, { id: item.id, contentRef: contentId });
+                        contentId++;
+                    } else {
+                        // Subfolder found, create a new map and process it recursively
+                        const subfolderTree = new Map();
+                        tree.set(key + '/', subfolderTree);
+                        processFolder(item, subfolderTree);
+                    }
+                }
+            }
+        }
+
+        // Process the root level of the memory structure
+        processFolder(data, newMemorytree);
+
+        // Clear and update global variables
+        memorytree.clear();
+        contentpool.clear();
+        newMemorytree.forEach((value, key) => memorytree.set(key, value));
+        newContentpool.forEach((value, key) => contentpool.set(key, value));
+
+        cachedData = { memorytree: newMemorytree, contentpool: newContentpool };
+        return cachedData;
     } catch (error) {
         console.error("Memory data unreadable", error);
         return null;
@@ -340,15 +376,23 @@ async function updateMemoryData() {
     if (MemoryTimeCache === null || (getTime() - MemoryTimeCache) >= 5000) {
         if (!isFetchingMemory) {
             isFetchingMemory = true;
-            return fetchmmData();
+            const data = await fetchmmData();
+
+            if (data === null) return null;  // Return null if data is null
+
+            memorytree.clear();
+            contentpool.clear();
+
+            // Update memorytree and contentpool with the fetched data
+            data.memorytree.forEach((value, key) => memorytree.set(key, value));
+            data.contentpool.forEach((value, key) => contentpool.set(key, value));
         } else {
             while (isFetchingMemory) {
                 await new Promise(resolve => setTimeout(resolve, 50));
             }
         }
     }
-    memory = cachedData;
-    return cachedData;
+    return { memorytree, contentpool };
 }
 
 function parseEscapedJsonString(escapedString) {
@@ -540,5 +584,35 @@ function erdbsfull() {
 	  };
     } catch (error) {
 	  
+    }
+}
+
+async function removeUser(username = CurrentUsername) {
+    const key = 'dataStore';
+
+    try {
+        const db = await openDB(databaseName, 1, {
+            upgrade(db) {
+                if (!db.objectStoreNames.contains(key)) {
+                    db.createObjectStore(key, { keyPath: 'CurrentUsername' });
+                }
+            }
+        });
+
+        const transaction = db.transaction(key, 'readwrite');
+        const store = transaction.objectStore(key);
+
+        const existingUser = await store.get(username);
+        if (existingUser) {
+            await store.delete(username);
+            console.log(`User ${username} removed successfully.`);
+        } else {
+            console.warn(`User ${username} does not exist.`);
+        }
+
+        await transaction.complete;
+        logoutofnova()
+    } catch (error) {
+        console.error("Error in removeUser function:", error);
     }
 }
