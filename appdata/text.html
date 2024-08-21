@@ -38,6 +38,10 @@
             cursor: grabbing;
         }
 
+        ::selection {
+  background-color: #727272;
+  color: #ffffff; 
+}
 
         html {
             height: 100%;
@@ -192,6 +196,7 @@
             var currentreqID = null;
 
             function openfromfiles() {
+                document.getElementById("thedisplay").value = "Waiting for you to open a file...";
                 currentreqID = window.parent.genUID();
                 let appIdToOpen = window.parent.fileTypeAssociations['file'][0] || null;
 				window.parent.openlaunchprotocol(appIdToOpen, 'opener', currentreqID, myWindow.windowID);
@@ -314,12 +319,14 @@
             try {
 
                 if (myWindow.params.appid == myWindow.appID) {
+                    document.getElementById("thedisplay").value = "Loading...";
                     defile = myWindow.params.data;
+                    console.log("defile, ", defile)
                     const file = await window.parent.getFileById(defile);
                     readthefile(file)
 
                 } else {
-                    document.getElementById("thedisplay").value = "Please open the files app to read a file from your system memory.";
+                    document.getElementById("thedisplay").value = "";
                 }
             } catch (error) {
                 console.error("Error parsing todo JSON:", error);
@@ -350,12 +357,11 @@ function readthefile(file) {
     if (mimePrefix) {
         file.type = mimePrefix[1];
         file.content = file.content.replace(/^data:[^;]+;base64,/, '');
+        processFileContent(file);
     } else {
         const extension = window.parent.mtpetxt(file.fileName);
         getMimeType(extension).then(mimeType => {
-            file.type = mimeType;
-
-            // Continue processing
+            file.type = mimeType || 'application/octet-stream';
             processFileContent(file);
         });
     }
@@ -365,7 +371,7 @@ function processFileContent(file) {
     if (isBase64(file.content)) {
         file.content = atob(file.content);
     }
-
+console.log("reading: ", file)
     if (file.type === "application/json" || file.type === "json") {
         try {
             file.content = JSON.stringify(JSON.parse(file.content), null, 2);
