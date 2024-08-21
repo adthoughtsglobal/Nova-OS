@@ -166,7 +166,7 @@ async function flushBatch() {
 
         await transaction.complete;
 
-        console.log(`Batch of ${processedBatch.length} operations saved successfully.`);
+        console.log(`Batch of ${processedBatch.length} saved to ` + CurrentUsername);
         batchQueue = [];
     } catch (error) {
         console.error("Error in flushBatch function:", error);
@@ -263,13 +263,18 @@ async function saveMagicStringInLocalStorage(password) {
     const cryptoKey = await getKey(password);
     const encryptedMagicString = await encryptData(cryptoKey, "magicString");
 
-    localStorage.setItem('magicString', JSON.stringify(encryptedMagicString));
+    const magicStrings = JSON.parse(localStorage.getItem('magicStrings')) || {};
+    magicStrings[CurrentUsername] = encryptedMagicString;
+
+    localStorage.setItem('magicStrings', JSON.stringify(magicStrings));
 }
 
 async function checkPassword(password) {
-    const encryptedMagicString = JSON.parse(localStorage.getItem('magicString'));
+    const magicStrings = JSON.parse(localStorage.getItem('magicStrings')) || {};
+    const encryptedMagicString = magicStrings[CurrentUsername];
+
     if (!encryptedMagicString) {
-        console.error("Magic string not found in localStorage");
+        console.error(`Magic string not found for user: ${CurrentUsername}`);
         return false;
     }
 

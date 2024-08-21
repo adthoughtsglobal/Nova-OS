@@ -59,24 +59,31 @@ async function showloginmod() {
 			userDiv.className = 'user';
 			userDiv.tabIndex = 0;
 			const selectUser = async function () {
-				let isdefaultpass;
+				await cleanupram();
+				CurrentUsername = cacusername;
+				let isdefaultpass = false;
+			
 				try {
 					isdefaultpass = await checkPassword('nova');
-				} catch (err) { }
-
+				} catch (err) {
+					console.error("Password check failed:", err);
+				}
+			
 				if (isdefaultpass) {
+					console.log("Password check: good: ", password, isdefaultpass);
 					gid('loginmod').close();
 					gid('edison').showModal();
-					await cleanupram();
-					CurrentUsername = cacusername;
-					console.log("set currentuser: ", CurrentUsername)
-					startup()
+					
+					console.log("Set CurrentUsername: ", CurrentUsername);
+					startup();
+				} else {
+					console.log("Password check: bad: ", password, isdefaultpass);
+					document.getElementsByClassName("backbtnuserspg")[0].style.display = "flex";
+					document.getElementsByClassName("userselect")[0].style.flex = "0";
+					document.getElementsByClassName("logincard")[0].style.flex = "1";
+					gid("loginform1").focus();
+					gid('loginmod').showModal()
 				}
-
-				document.getElementsByClassName("backbtnuserspg")[0].style.display = "flex";
-				document.getElementsByClassName("userselect")[0].style.flex = "0";
-				document.getElementsByClassName("logincard")[0].style.flex = "1";
-				gid("loginform1").focus();
 			};
 
 			userDiv.addEventListener("mouseup", selectUser);
@@ -2211,12 +2218,12 @@ async function logoutofnova() {
 
 async function cleanupram() {
     closeallwindows();
-	document.querySelectorAll('dialog[open]').forEach(dialog => dialog.close());
+    document.querySelectorAll('dialog[open].onramcloseable').forEach(dialog => dialog.close());
     memory = null;
     CurrentUsername = null;
-	console.log("set currentuser: ", CurrentUsername)
+    console.log("Cleaned up: set CurrentUsername to null");
     password = 'nova';
-	MemoryTimeCache = null;
+    MemoryTimeCache = null;
     lethalpasswordtimes = true;
 }
 

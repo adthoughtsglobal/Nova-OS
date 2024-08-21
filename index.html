@@ -138,7 +138,7 @@ gid('nova-copilot-window').showModal()">
 			</info>
 		</div>
 	</nav>
-	<dialog id="appdmod" class="scalableui">
+	<dialog id="appdmod" class="scalableui onramcloseable">
 		<div class="appdmodestuff">
 			<h1>Apps</h1>
 
@@ -189,7 +189,7 @@ gid('nova-copilot-window').showModal()">
 			</div>
 		</div>
 	</dialog>
-	<dialog id="bios" class="scalableui">
+	<dialog id="bios" class="scalableui onramcloseable">
 		<h1>Nova Setup</h1>
 		<p>Welcome to Nova Setup. This page deals with critical choices that may affect your data and the os itself.
 			remember, clicking on any buttons here might cause damage to your data.</p>
@@ -251,7 +251,7 @@ gid('nova-copilot-window').showModal()">
 			</div>
 		</div>
 	</dialog>
-	<dialog id="sleepwindow" class="scalableui">
+	<dialog id="sleepwindow" class="scalableui onramcloseable">
 		<div class="sleepwincon">
 			<p>"<span id="sleepquote"></span>"</p>
 			<h1 id="sleeptimer">00:00</h1>
@@ -272,7 +272,7 @@ gid('nova-copilot-window').showModal()">
 				onclick="document.getElementById('sleepwindow').close(); clearInterval(countdown);clearInterval(countdown2);document.getElementById('sleeptimer').textContent = '00:00';document.getElementById('sleepbtns').style.display = 'block';">close</span>
 		</div>
 	</dialog>
-	<dialog id="terminal" class="scalableui">
+	<dialog id="terminal" class="scalableui onramcloseable">
 		<div class="containerterm">
 			<textarea id="termoutput"></textarea>
 			<script>
@@ -302,7 +302,7 @@ gid('nova-copilot-window').showModal()">
 		</div>
 
 	</dialog>
-	<dialog id="searchwindow" class="scalableui">
+	<dialog id="searchwindow" class="scalableui onramcloseable">
 		<div class="searchwincont">
 			<div class="searchside">
 				<div class="searchinputcont">
@@ -332,7 +332,7 @@ gid('nova-copilot-window').showModal()">
 		</div>
 	</dialog>
 
-	<dialog id="nova-copilot-window" class="scalableui">
+	<dialog id="nova-copilot-window" class="scalableui onramcloseable">
 		<div class="nvacoplt-nav">
 			<div class="left">
 				<span>Copilot</span>
@@ -352,7 +352,7 @@ gid('nova-copilot-window').showModal()">
 		</div>
 	</dialog>
 
-	<dialog id="NaviconfDia" class="naviconf-dial modal">
+	<dialog id="NaviconfDia" class="naviconf-dial modal onramcloseable">
 		<div class="modal-content">
 			<h1></h1>
 			<p></p>
