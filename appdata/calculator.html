@@ -6,70 +6,86 @@
 	<meta name="nova-icon" content="<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='66.21059' height='66.21059' viewBox='0,0,66.21059,66.21059'><g transform='translate(-206.8947,-146.8947)'><g data-paper-data='{&quot;isPaintingLayer&quot;:true}' fill-rule='nonzero' stroke-linejoin='miter' stroke-miterlimit='10' stroke-dasharray='' stroke-dashoffset='0' style='mix-blend-mode: normal'><path d='M206.89471,213.1053v-66.21059h66.21059v66.21059z' fill='#ffbb66' stroke='none' stroke-width='0' stroke-linecap='butt'/><path d='M239.79091,180v-32.89506h32.89506v32.89506z' fill='#ffffff' stroke='none' stroke-width='0' stroke-linecap='butt'/><path d='M207.15696,212.82665v-32.89506h32.89505v32.89506z' fill='#ffffff' stroke='none' stroke-width='0' stroke-linecap='butt'/><path d='M223.10448,156.74319v15.08596' fill='none' stroke='#4d4d4d' stroke-width='2' stroke-linecap='round'/><path d='M230.64747,164.28617h-15.08596' fill='none' stroke='#4d4d4d' stroke-width='2' stroke-linecap='round'/><path d='M217.77079,191.29543l10.66738,10.66738' fill='none' stroke='#4d4d4d' stroke-width='2' stroke-linecap='round'/><path d='M228.43818,191.29543l-10.66738,10.66738' fill='none' stroke='#4d4d4d' stroke-width='2' stroke-linecap='round'/><path d='M263.78141,163.55247h-15.08596' fill='none' stroke='#4d4d4d' stroke-width='2' stroke-linecap='round'/><path d='M263.78141,197.88628h-15.08596' fill='none' stroke='#4d4d4d' stroke-width='2' stroke-linecap='round'/><path d='M254.75319,193.32534c0,-0.82028 0.66497,-1.48524 1.48524,-1.48524c0.82027,0 1.48524,0.66496 1.48524,1.48524c0,0.82028 -0.66497,1.48524 -1.48524,1.48524c-0.82028,0 -1.48524,-0.66497 -1.48524,-1.48524z' fill='#4d4d4d' stroke='none' stroke-width='0' stroke-linecap='butt'/><path d='M254.75319,202.52228c0,-0.82028 0.66497,-1.48524 1.48524,-1.48524c0.82027,0 1.48524,0.66496 1.48524,1.48524c0,0.82028 -0.66497,1.48524 -1.48524,1.48524c-0.82028,0 -1.48524,-0.66497 -1.48524,-1.48524z' fill='#4d4d4d' stroke='none' stroke-width='0' stroke-linecap='butt'/></g></g></svg>">
   <title>Calculator</title>
   <style>
+	html {
+		height: 100%;
+	}
 	body {
 	  font-family: Arial, sans-serif;
 	  background-color: #3d3c3c;
 	  color: #fff;
 	  margin: 0;
 	  padding: 0;
+	  height:100%;
 	}
 
 	.calculator {
-	  margin: 10px 10px;
-	  padding: 20px;
-	  border-radius: 10px;
-	  background-color: #141414;
-	  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-		height: calc(100vh - 80px);
-		display: flex;
-		flex-direction: column;
+    height: calc(100% - 0px);
+    background-color: #1d1d1d;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
 
 	}
 
 	.calculator-screen {
-	  width: calc(100% - 2rem);
-	  height: 60px;
-	  border: none;
-	  font-size: 2em;
-	  text-align: right;
-	  padding: 0.5em;
-	  background-color: #1d1d1d;
-	  border-radius: 5px;
-	  color: #fff;
-	  margin-bottom: 20px;
+		width: calc(100% - 2em);
+    flex: 1;
+    border: none;
+    font-size: 2em;
+    text-align: right;
+    max-height: 100px;
+    background-color: #1d1d1d;
+    color: #fff;
+    margin-bottom: 20px;
+	}
+
+	.prev-screen {
+		flex: 1;
+    border: none;
+    font-size: 1em;
+    text-align: right;
+    max-height: 50px;
+    padding: 0 2.5em;
+    margin: 0.5em;
+    background-color: #1d1d1d;
+    color: #979797;
 	}
 
 	.calculator-keys {
-	  display: grid;
-	  grid-template-columns: repeat(4, 1fr);
-	  grid-gap: 10px;
-	  flex: 1;
+	  display: table;
+	  flex: 4;
+	  background-color: #141414;
+	  justify-items: stretch;
+	  padding-top:10px;
+	  height:0;
 	}
 
 	.calculator-keys button {
-	  width: 100%;
-	  border: none;
-	  background-color: #1d1d1d;
-	  font-size: 1.5em;
-	  color: #fff;
-	  border-radius: 10px;
-	  padding: 10px;
-	  cursor: pointer;
-	  transition: background-color 0.2s;
+		width: 100%;
+    border: none;
+    background-color: transparent;
+    font-size: 1.5em;
+    color: #fff;
+    border-radius: 10px;
+    padding: 10px;
+    cursor: pointer;
+    transition: color 0.2s;
+    height: 100%;
 	}
 
 	.calculator-keys button:hover {
-	  background-color: #384246;
 	  color: rgb(54, 139, 160);
 	}
 
 	  .calculator-keys button:active {
-		  box-shadow: 0 2px 0px #1f1f1f;
+		  text-shadow: 0 2px 0px #1f1f1f;
 	  }
 
 	.equals {
-	  background-color: #3a596b !important;
-	  grid-column: span 2;
+		color: #ffb554 !important;
+	}
+	.equals:hover {
+		color: #ff9c1a !important;
 	}
 
 	.editkeys {
@@ -80,43 +96,65 @@
 	</head>
 	<body>
 	  <div class="calculator">
+		<input type="text" id="prev" class="prev-screen" readonly>
 		<input type="text" id="display" class="calculator-screen" readonly>
-		<div class="calculator-keys">
-			<button onclick="clearDisplay()">C</button>
-			<button onclick="appendToDisplay('00')">00</button>
-			<button onclick="appendToDisplay('3.14159')">pi</button>
-			<button onclick="appendToDisplay('2.71828')">e</button>
-		  <button onclick="appendToDisplay('7')">7</button>
-		  <button onclick="appendToDisplay('8')">8</button>
-		  <button onclick="appendToDisplay('9')">9</button>
-		  <button onclick="appendToDisplay('+')" class="editkeys">+</button>
-		  <button onclick="appendToDisplay('4')">4</button>
-		  <button onclick="appendToDisplay('5')">5</button>
-		  <button onclick="appendToDisplay('6')">6</button>
-		  <button onclick="appendToDisplay('-')" class="editkeys">-</button>
-		  <button onclick="appendToDisplay('1')">1</button>
-		  <button onclick="appendToDisplay('2')">2</button>
-		  <button onclick="appendToDisplay('3')">3</button>
-		  <button onclick="appendToDisplay('*')" class="editkeys">*</button>
-		  <button onclick="appendToDisplay('0')">0</button>
-		  <button class="equals" onclick="calculateResult()">=</button>
-		  <button onclick="appendToDisplay('/')" class="editkeys">/</button>
-		</div>
+		<table class="calculator-keys">
+			<tr>
+			  <td><button onclick="clearDisplay()">C</button></td>
+			  <td><button onclick="appendToDisplay('00')">00</button></td>
+			  <td><button onclick="appendToDisplay('3.14159')">pi</button></td>
+			  <td><button onclick="appendToDisplay('2.71828')">e</button></td>
+			</tr>
+			<tr>
+			  <td><button onclick="appendToDisplay('7')">7</button></td>
+			  <td><button onclick="appendToDisplay('8')">8</button></td>
+			  <td><button onclick="appendToDisplay('9')">9</button></td>
+			  <td><button onclick="appendToDisplay('+')" class="editkeys">+</button></td>
+			</tr>
+			<tr>
+			  <td><button onclick="appendToDisplay('4')">4</button></td>
+			  <td><button onclick="appendToDisplay('5')">5</button></td>
+			  <td><button onclick="appendToDisplay('6')">6</button></td>
+			  <td><button onclick="appendToDisplay('-')" class="editkeys">-</button></td>
+			</tr>
+			<tr>
+			  <td><button onclick="appendToDisplay('1')">1</button></td>
+			  <td><button onclick="appendToDisplay('2')">2</button></td>
+			  <td><button onclick="appendToDisplay('3')">3</button></td>
+			  <td><button onclick="appendToDisplay('*')" class="editkeys">*</button></td>
+			</tr>
+			<tr>
+			  <td><button onclick="appendToDisplay('0')">0</button></td>
+			  <td><button onclick="appendToDisplay('.')">.</button></td>
+			  <td><button class="equals" onclick="calculateResult()">=</button></td>
+			  <td><button onclick="appendToDisplay('/')" class="editkeys">/</button></td>
+			</tr>
+		  </table>
 	  </div>
 
 	  <script>
-		function appendToDisplay(value) {
-		  document.getElementById('display').value += value;
-		}
+		const display = document.getElementById('display');
+const prev = document.getElementById('prev');
 
-		function clearDisplay() {
-		  document.getElementById('display').value = '';
-		}
+function appendToDisplay(value) {
+  display.value += value;
+}
 
-		function calculateResult() {
-		  let result = eval(document.getElementById('display').value);
-		  document.getElementById('display').value = result;
-		}
+function clearDisplay() {
+  prev.value = display.value;
+  display.value = '';
+}
+
+function calculateResult() {
+  try {
+    const expression = display.value;
+    const result = Function(`return ${expression}`)();
+    prev.value = `${expression} =`;
+    display.value = result;
+  } catch {
+    display.value = 'Error';
+  }
+}
 	  </script>
 	</body>
 	</html>

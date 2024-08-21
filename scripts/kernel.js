@@ -1,12 +1,8 @@
 async function openlaunchprotocol(appid, data, id, winuid) {
-    console.log("Open Lanuch Protocol", appid, data)
-    if (!id) {
-        return;
-    }
+    console.log("Open Lanuch Protocol", appid, data,id)
     let x = {
         "appid": appid,
         "data": data,
-        "id": id,
         "winuid":winuid
     };
     Gtodo = x;
@@ -305,19 +301,19 @@ async function openapp(x, od) {
             if (od == 1) {
                 y = await fetchData("appdata/" + x + ".html");
                 od = await createFile("Apps", x, "app", y);
+                console.log("loadable",od)
             } else {
                 y = await getFileById(od)
-                y = y.content
+                y = y.content;
+                console.log("local",od)
             }
             // Assuming you have a predefined function openwindow
             openwindow(x, y, getAppIcon(y, x), getAppTheme(y), od, Gtodo);
-            
-    Gtodo = null;
+            Gtodo = null;
         } catch (error) {
             console.error("Error fetching data:", error);
         }
     };
-
     // Call fetchDataAndSave with the desired value of x
     fetchDataAndSave(x);
 }
