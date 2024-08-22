@@ -13,30 +13,74 @@ if (typeof HTMLDialogElement == 'undefined') {
 	issues = `<li><b>HTMLDialogElement Not supported: </b> We have taken some efforts to fix this for you.</li>`
 	say(cantusetext + issues + caniuse2, "failed")
 	// Check if HTMLDialogElement is supported
-	if (!window.HTMLDialogElement) {
-		// Define custom dialog polyfill
-		class HTMLDialogElementPolyfill extends HTMLElement {
+	(function() {
+		if ('HTMLDialogElement' in window) return; // If dialog is supported, do nothing
+	
+		class CustomDialog extends HTMLElement {
 			constructor() {
 				super();
-				this.setAttribute('role', 'dialog');
-				this.style.display = 'none';
-				document.body.appendChild(this);
+				this._open = false;
+				this._returnValue = '';
+				this._handleClick = this._handleClick.bind(this);
 			}
-
-			// Method to show the dialog
+	
+			static get observedAttributes() {
+				return ['open'];
+			}
+	
+			connectedCallback() {
+				this.style.display = 'none';
+				this.addEventListener('click', this._handleClick);
+			}
+	
+			disconnectedCallback() {
+				this.removeEventListener('click', this._handleClick);
+			}
+	
+			attributeChangedCallback(name, oldValue, newValue) {
+				if (name === 'open') {
+					this._open = newValue !== null;
+					this.style.display = this._open ? 'block' : 'none';
+				}
+			}
+	
+			get open() {
+				return this._open;
+			}
+	
+			set open(value) {
+				this.setAttribute('open', value ? '' : null);
+			}
+	
+			get returnValue() {
+				return this._returnValue;
+			}
+	
+			close(returnValue = '') {
+				this._returnValue = returnValue;
+				this.open = false;
+				this.dispatchEvent(new Event('close'));
+			}
+	
+			show() {
+				this.open = true;
+				this.dispatchEvent(new Event('show'));
+			}
+	
 			showModal() {
-				this.style.display = 'block';
+				this.show();
+				// Optionally, implement modal behavior (e.g., blocking interaction with background)
 			}
-
-			// Method to close the dialog
-			close() {
-				this.style.display = 'none';
+	
+			_handleClick(event) {
+				if (event.target === this) {
+					this.close();
+				}
 			}
 		}
-
-		// Define custom element for dialog
-		customElements.define('dialog', HTMLDialogElementPolyfill);
-	}
+	
+		customElements.define('dialog', CustomDialog);
+	})();
 }
 
 if (detectIE()) {
