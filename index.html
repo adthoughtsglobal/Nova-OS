@@ -5,8 +5,8 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
 	<title>Nova OS</title>
-	<link href="style.css" rel="stylesheet" type="text/css" />
 	<script src="system32.js" defer></script>
+	<link rel="stylesheet" href="style.css">
 	<!--String compression: pako-->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.0.3/pako.min.js"></script>
 	</script>
@@ -312,8 +312,14 @@ gid('nova-copilot-window').showModal()">
 				<div class="strtappsugs" id="strtappsugs">
 				</div>
 
-				<div id="notiflist">
-					No new notifications
+				<div class="notiflist">
+					<div class="notiflistnav">
+						<span>Notifications</span>
+						<span class="material-icons" onclick="displayNotifications('clear');">close</span>
+					</div>
+					<div id="notiflist">
+						No new notifications
+					</div>
 				</div>
 			</div>
 			<div class="previewsside">

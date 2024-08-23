@@ -1,6 +1,6 @@
 var issues = ``
 const cantusetext = `<h1>Nova won't work here.</h1>
-		<p>And that's nothing to worry about!<br>Update your browser, or just move to the better options. </p>
+		<p>And that's nothing to worry about!<br>Update your browser, or just move to a better browser. </p>
 		<p>Try these options:</p>
 		<ul>
 		<li><a href="https://www.google.com/chrome/">Google Chrome - install</a></li>
@@ -11,11 +11,9 @@ const cantusetext = `<h1>Nova won't work here.</h1>
 
 if (typeof HTMLDialogElement == 'undefined') {
 	issues = `<li><b>HTMLDialogElement Not supported: </b> We have taken some efforts to fix this for you.</li>`
-	say(cantusetext + issues + caniuse2, "failed")
-	// Check if HTMLDialogElement is supported
+	say(cantusetext + issues + caniuse2, "failed");
 	(function() {
-		if ('HTMLDialogElement' in window) return; // If dialog is supported, do nothing
-	
+		if ('HTMLDialogElement' in window) return;
 		class CustomDialog extends HTMLElement {
 			constructor() {
 				super();
@@ -69,7 +67,6 @@ if (typeof HTMLDialogElement == 'undefined') {
 	
 			showModal() {
 				this.show();
-				// Optionally, implement modal behavior (e.g., blocking interaction with background)
 			}
 	
 			_handleClick(event) {

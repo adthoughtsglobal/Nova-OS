@@ -1648,22 +1648,39 @@ dialog#terminal {
 	width: 100%;
 }
 
-.searchside #notiflist {
-	color: #a1a1a1;
-	font-size: 0.8rem;
-	display: flex;
-	align-items: flex-start;
-	width: 100%;
-	min-height: 2rem;
-	max-height: 6rem;
-	overflow-y: scroll;
-	gap: 0.5rem;
-	margin-top: 0.5rem;
-	flex-direction: row;
-	justify-content: flex-start;
-	flex-wrap: wrap;
+#notiflist {
+    overflow-y: scroll;
+    width: 100%;
+    padding: 0.5rem;
+    box-sizing: border-box;
+}
 
-	.notification {
+.notiflistnav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: calc(100% - 1rem);
+    font-size: 0.7rem;
+    color: lightgrey;
+    padding: 0 0.5rem;
+    padding-top: 0.3rem;
+}
+
+.notiflistnav span.material-icons {
+    font-size: 0.8rem !important;
+}
+
+.searchside .notiflist {
+	color: #a1a1a1;
+    font-size: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    max-height: 6rem;
+    overflow-y: hidden;
+}
+.searchside	.notification {
 		background: #1f1f1f3b;
 		padding: 0.5rem;
 		border-radius: 0.5rem;
@@ -1675,23 +1692,21 @@ dialog#terminal {
 		overflow: hidden;
 		word-break: break-word;
 		text-align: left;
-
-		.notifTitle {
+}
+		.searchside .notifTitle {
 			font-size: 1rem;
 		}
 
-		.notifDesc {
+		.searchside .notifDesc {
 			text-align: left;
 			opacity: 0.7;
 			font-size: 0.7rem;
 		}
 
-		.notifAppName {
+		.searchside .notifAppName {
 			font-size: 0.7rem;
 			opacity: 0.8;
 		}
-	}
-}
 
 .searchinputcont {
 	border-radius: 5px;
@@ -1770,6 +1785,11 @@ dialog#terminal {
 #partrecentapps {
 	text-align: left;
 	width: 100%;
+}
+
+#partrecentapps span.smalltitl {
+    font-size: 0.7rem;
+    opacity: 0.5;
 }
 
 @media only screen and (max-width: 800px) {

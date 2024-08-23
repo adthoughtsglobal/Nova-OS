@@ -81,6 +81,12 @@
 			align-items: center;
 		}
 
+		.flappsearch {
+			width:100%;
+			height: 100%;
+			display: flex;
+		}
+
 		.nowid {
 			width: fit-content;
 			text-align: center;
@@ -440,7 +446,7 @@
 			top: 11px;
 			left: 40px;
 			color: white;
-			content: "Upload File";
+			content: "Upload Files";
 		}
 
 		/* file upload button */
@@ -571,59 +577,46 @@
 			display: inline-block;
 		}
 
-		@keyframes bop {
-			0% {
-				transform: scaleY(0.5) translateY(35px);
-				opacity: 0%;
-			}
-
-			100% {
-				opacity: 100%;
-			}
-		}
+		.flappsearch {
+			padding: 0.1rem;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+}
 
 		/* Dropup content (Hidden by Default) */
 		.dropup-content {
-			display: none;
-			position: absolute;
-			animation: bop 0.2s;
-			bottom: 21px;
-			border-bottom: 5px solid #161616;
+			display: flex;
+			flex-direction: row;
+			align-items: flex-start;
 			border-radius: 5px;
-			background-color: #282828;
-			min-width: 160px;
-			z-index: 1;
-			overflow: hidden;
+			overflow: auto;
 		}
 
 		/* Links inside the dropup */
-		.dropup-content a {
-			color: white;
-			padding: 3px 6px;
-			text-decoration: none;
-			display: block;
-			cursor: pointer;
+		a.dropdownerthebob {
+			color: rgb(168, 168, 168);
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    width: fit-content;
+    max-width: 48px;
+    transform: scale(0.75) !important;
+	animation: poprs .2s ease-out;
+    font-size: 11px;
 		}
 
-		.dropup-content a span {
-			font-size: 10px;
-			transform: scale(1.5);
-			margin-right: 5px;
-			padding: 1px;
-			background: #3d3d3d;
-			border-radius: 2px;
-			color: #eaeaea;
-		}
+		a.dropdownerthebob span {
+    font-size: 19px !important;
+    border-radius: 2px;
+    color: #cacaca;
+}
 
 		/* Change color of dropup links on hover */
 		.dropup-content a:hover {
-			color: #cbcbcb;
-			background: #1f1f1f;
-		}
-
-		/* Show the dropup menu on hover */
-		.dropup:hover .dropup-content {
-			display: block;
+			color: white;
 		}
 
 		/* Change the background color of the dropup button when the dropup content is shown */
@@ -989,15 +982,17 @@
 
 	<div id="flap-mot">
 		<div flap-nav>
-			<div class="nowid">
-				<span class="material-symbols-rounded navbfobtns" onclick="refresh()" id="ogrefreshbtn">
-					refresh
-				</span>
+			<div class="nowid" onclick="refresh()">
+				<a class="dropdownerthebob"><span class="material-symbols-rounded " id="ogrefreshbtn">refresh</span> Refresh</a>
 			</div>
 			<div class="nowid flappsearch" id="fileapptitledis">
-				Files App 2.2
+				<div id="filetools">
+
+				</div>
 			</div>
-			<div class="nowid"><span class="material-symbols-rounded navbfobtns" onclick="upmd()">upload</span></div>
+			<div class="nowid" onclick="upmd()">
+				<a class="dropdownerthebob"><span class="material-symbols-rounded " id="ogrefreshbtn">import</span> Import</a>
+			</div>
 		</div>
 		<div style="height: calc(100% - 48px);">
 			<div class="themainstuff">
@@ -1315,7 +1310,11 @@
 		function fitsizesidenav() {
 			document.getElementById("flap-sidenav").style.width = getComputedStyle(document.getElementById("jstree")).width
 		}
-		async function greenflagbro() {
+		async function greenflagbro(defaultopenfold = false) {
+			console.log("deffofof",defaultopenfold)
+			if (defaultopenfold) {
+				currentPath = defaultopenfold;
+			}
 			if (await window.parent.getSetting("filesSidenavSize")) {
 				document.getElementById("flap-sidenav").style.width = await window.parent.getSetting("filesSidenavSize");
 			} else {
@@ -1703,26 +1702,13 @@
 
 					document.getElementById("fileinfobn").style.opacity = 1;
 
-					if (binmode) {
 						document.getElementById("fileinfobn").innerHTML = `<button class="delbtn" onclick="remfile('` + x.getAttribute("unid") + `')">Delete</button>`;
-					} else {
-						document.getElementById("fileinfobn").innerHTML = `<button class="delbtn" onclick="remfile('` + x.getAttribute("unid") + `')"><span class="material-symbols-rounded">
-delete
-</span> Delete</button>`;
-					}
 					try {
 						const fileInfoContainer = document.getElementById("fileinfobn");
+						fileInfoContainer.innerHTML += fileSize + ' ' + units[unitIndex];
 
-						// Create the dropup container
-						const dropupDiv = document.createElement("div");
-						dropupDiv.className = "dropup";
-
-						// Create the drop button
-						const dropBtn = document.createElement("button");
-						dropBtn.className = "dropbtn";
-						dropBtn.textContent = "More";
-						dropupDiv.appendChild(dropBtn);
-
+						const dropupDiv = document.getElementById("filetools");
+						dropupDiv.innerHTML = ""
 						// Create the dropup content container
 						const dropupContentDiv = document.createElement("div");
 						dropupContentDiv.className = "dropup-content";
@@ -1730,43 +1716,51 @@ delete
 						// Add "Set As Wallpaper" option if the file is an image
 						if (window.parent.getbaseflty(mtpetxt(fileData.fileName)) === "image") {
 							const wallpaperOption = document.createElement("a");
+							wallpaperOption.classList.add("dropdownerthebob")
 							wallpaperOption.onclick = () => window.parent.makewall(x.getAttribute("unid"));
-							wallpaperOption.innerHTML = `<span class="material-symbols-rounded">wallpaper</span> Set As Wallpaper`;
+							wallpaperOption.innerHTML = `<span class="material-symbols-rounded">wallpaper</span> Set As`;
 							dropupContentDiv.appendChild(wallpaperOption);
 						}
 
 						// Add "Reinstall application" option if the file is an app
 						if (ptypext(fileData.fileName) === "app") {
 							const reinstallOption = document.createElement("a");
+							reinstallOption.classList.add("dropdownerthebob")
 							reinstallOption.onclick = () => window.parent.extractAndRegisterCapabilities(x.getAttribute("unid"));
-							reinstallOption.innerHTML = `<span class="material-symbols-rounded">download</span> Reinstall application`;
+							reinstallOption.innerHTML = `<span class="material-symbols-rounded">download</span> Reinstall`;
 							dropupContentDiv.appendChild(reinstallOption);
 						}
 
-						// Add "Open as text" option
+						// Add "Open" option
+						const openOption = document.createElement("a");
+						openOption.classList.add("dropdownerthebob")
+						openOption.onclick = () => openfile(x.getAttribute("unid"));
+						openOption.innerHTML = `<span class="material-symbols-rounded">open_in_new</span> Open`;
+						dropupContentDiv.appendChild(openOption);
+
+						// Add "Open as" option
 						const openAsTextOption = document.createElement("a");
+						openAsTextOption.classList.add("dropdownerthebob")
 						openAsTextOption.onclick = () => openfile(x.getAttribute("unid"), 'any');
-						openAsTextOption.innerHTML = `<span class="material-symbols-rounded">open_in_new</span> Open as text`;
+						openAsTextOption.innerHTML = `<span class="material-symbols-rounded">open_with</span> Open as`;
 						dropupContentDiv.appendChild(openAsTextOption);
 
 						// Add "Rename" option
 						const renameOption = document.createElement("a");
+						renameOption.classList.add("dropdownerthebob")
 						renameOption.onclick = () => renamef(document.getElementById(x.id));
 						renameOption.innerHTML = `<span class="material-symbols-rounded">save_as</span> Rename`;
 						dropupContentDiv.appendChild(renameOption);
 
 						// Add "Move" option
 						const moveOption = document.createElement("a");
+						moveOption.classList.add("dropdownerthebob")
 						moveOption.onclick = () => movefile(document.getElementById(x.id));
 						moveOption.innerHTML = `<span class="material-symbols-rounded">drive_file_move</span> Move`;
 						dropupContentDiv.appendChild(moveOption);
 
 						// Append the dropup content to the dropup container
 						dropupDiv.appendChild(dropupContentDiv);
-
-						// Append the dropup container and file size information to the file info container
-						fileInfoContainer.appendChild(dropupDiv);
-						fileInfoContainer.innerHTML += fileSize + ' ' + units[unitIndex];
 
 					} catch (error) {
 						document.getElementById("fileinfobn").innerHTML += "Safe Error 0006";
@@ -2042,19 +2036,23 @@ delete
 				console.log(err)
 			}
 		}
-		greenflagbro()
 
 		function greenflag() {
-			console.log(myWindow);
-			if (myWindow.params) {
-				sessiontype = "opener";
-				document.getElementById("fileapptitledis").innerText = "Choose File";
-				sessionreturnreqid = myWindow.params.winuid;
-				document.getElementById("choosefile").style.display = "flex"
-			} else {
-				document.getElementById("choosefile").style.display = "none"
-			}
-		}
+    const data = myWindow?.params?.data;
+    
+    console.log(myWindow, data);
+    
+    if (data?.opener) {
+        sessiontype = "opener";
+        document.getElementById("fileapptitledis").innerText = "Choose File";
+        sessionreturnreqid = myWindow.params.winuid;
+        document.getElementById("choosefile").style.display = "flex";
+        greenflagbro(data.dir ?? false);
+    } else {
+        document.getElementById("choosefile").style.display = "none";
+        greenflagbro(false);
+    }
+}
 	</script>
 </body>
 

@@ -1791,7 +1791,10 @@ function notify(title, description, appname) {
 	notifLog[notificationID] = { title, description, appname };
 }
 
-function displayNotifications() {
+function displayNotifications(x) {
+	if (x == "clear") {
+		notifLog = {};
+	}
 	const notifList = document.getElementById("notiflist");
 	notifList.innerHTML = "";
 
