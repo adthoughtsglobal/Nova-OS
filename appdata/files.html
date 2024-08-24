@@ -65,7 +65,7 @@
 
 		[flap-nav] {
 			display: flex;
-			height: 29px;
+			height: fit-content;
 			flex-direction: row;
 			flex-wrap: nowrap;
 			padding: 3px;
@@ -82,9 +82,13 @@
 		}
 
 		.flappsearch {
-			width:100%;
+			width: 100%;
 			height: 100%;
 			display: flex;
+		}
+
+		div#filetools {
+			overflow-x: auto;
 		}
 
 		.nowid {
@@ -98,7 +102,6 @@
 			overflow: hidden;
 			border-radius: 0.5rem;
 			margin: 0.1rem;
-			padding: 16px 0;
 		}
 
 		.navbfobtns {
@@ -179,8 +182,8 @@
 			overflow-y: scroll;
 			flex-grow: 8;
 			padding-bottom: 50px !important;
-			padding: 10px;
-			width: calc(100% - 28px);
+			padding: 5px;
+			width: calc(100% - 18px);
 			padding-top: 0;
 			height: 0;
 			margin-top: 5px;
@@ -579,11 +582,11 @@
 
 		.flappsearch {
 			padding: 0.1rem;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-}
+			display: flex;
+			flex-direction: row;
+			flex-wrap: nowrap;
+			justify-content: flex-start;
+		}
 
 		/* Dropup content (Hidden by Default) */
 		.dropup-content {
@@ -597,22 +600,24 @@
 		/* Links inside the dropup */
 		a.dropdownerthebob {
 			color: rgb(168, 168, 168);
-    text-decoration: none;
-    display: flex;
-    flex-direction: column;
-    cursor: pointer;
-    width: fit-content;
-    max-width: 48px;
-    transform: scale(0.75) !important;
-	animation: poprs .2s ease-out;
-    font-size: 11px;
+			text-decoration: none;
+			display: flex;
+			flex-direction: column;
+			cursor: pointer;
+			width: 40px;
+			transform: scale(0.75) !important;
+			animation: poprs .2s ease-out;
+			font-size: 11px;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			align-items: center;
 		}
 
 		a.dropdownerthebob span {
-    font-size: 19px !important;
-    border-radius: 2px;
-    color: #cacaca;
-}
+			font-size: 19px !important;
+			border-radius: 2px;
+			color: #cacaca;
+		}
 
 		/* Change color of dropup links on hover */
 		.dropup-content a:hover {
@@ -644,15 +649,22 @@
 
 		.newfilebtn {
 			position: absolute;
-			bottom: 55px;
-			right: 15px;
+			bottom: 2rem;
+			right: 1rem;
 			padding: 0.5em;
-			border-radius: 1em;
+			border-radius: 7.5px;
 			height: 37px;
+			background-color: #2b2b2b;
+			box-shadow: 0 3px 1rem rgba(0, 0, 0, 0.685);
+			opacity: 0.8;
+			transition: .2s;
+			transform: translateY(3px);
 		}
 
 		.newfilebtn:hover {
-			background-color: #465969;
+			opacity: 1;
+			background-color: #3a3a3a;
+			box-shadow: 0 3px 1.5rem black;
 		}
 
 		.newfoldbtn {
@@ -674,11 +686,11 @@
 		}
 
 		.drivenav {
-			background: #3939395e;
-			padding: 3px;
-			border-radius: 0.3rem;
-			margin: 2px;
+			padding: 0px;
+			border-bottom: 1px solid #2b2b2b;
+			margin: 4px;
 			cursor: pointer;
+			padding-bottom: 3px;
 		}
 
 		.im {
@@ -693,7 +705,6 @@
 		}
 
 		#jstree {
-			margin-top: 0.5rem;
 			transform: translateX(-5px);
 			display: inline-block;
 			width: fit-content;
@@ -760,35 +771,35 @@
 
 		#choosefile {
 			display: flex;
-    margin: 0.3rem;
-    gap: 2px;
-    border-radius: 0.3rem;
-    overflow: hidden;
-    width: calc(100% - 1rem);
+			margin: 0.3rem;
+			gap: 2px;
+			border-radius: 0.3rem;
+			overflow: hidden;
+			width: calc(100% - 1rem);
 		}
 
 		#choosefile input {
 			flex: 1;
-    padding: 0.3rem;
-    font-size: 0.7rem;
-    font-family: inherit;
-    color: white;
-    border-radius: 0;
-    background: #161616;
-    border: none;
-    width: 0;
-	outline: none;
+			padding: 0.3rem;
+			font-size: 0.7rem;
+			font-family: inherit;
+			color: white;
+			border-radius: 0;
+			background: #161616;
+			border: none;
+			width: 0;
+			outline: none;
 		}
 
 		#choosefile button {
-    padding: 0.3rem;
-    font-size: 0.7rem;
-    font-family: inherit;
-    color: white;
-    border-radius: 0;
-    background: #3d699b;
-    border: none;
-    width: fit-content;
+			padding: 0.3rem;
+			font-size: 0.7rem;
+			font-family: inherit;
+			color: white;
+			border-radius: 0;
+			background: #3d699b;
+			border: none;
+			width: fit-content;
 		}
 	</style>
 	<script src="https://unpkg.com/interactjs/dist/interact.min.js"></script>
@@ -983,7 +994,8 @@
 	<div id="flap-mot">
 		<div flap-nav>
 			<div class="nowid" onclick="refresh()">
-				<a class="dropdownerthebob"><span class="material-symbols-rounded " id="ogrefreshbtn">refresh</span> Refresh</a>
+				<a class="dropdownerthebob"><span class="material-symbols-rounded " id="ogrefreshbtn">refresh</span>
+					Refresh</a>
 			</div>
 			<div class="nowid flappsearch" id="fileapptitledis">
 				<div id="filetools">
@@ -991,7 +1003,8 @@
 				</div>
 			</div>
 			<div class="nowid" onclick="upmd()">
-				<a class="dropdownerthebob"><span class="material-symbols-rounded " id="ogrefreshbtn">download</span> Import</a>
+				<a class="dropdownerthebob"><span class="material-symbols-rounded " id="ogrefreshbtn">download</span>
+					Import</a>
 			</div>
 		</div>
 		<div style="height: calc(100% - 48px);">
@@ -1311,7 +1324,7 @@
 			document.getElementById("flap-sidenav").style.width = getComputedStyle(document.getElementById("jstree")).width
 		}
 		async function greenflagbro(defaultopenfold = false) {
-			console.log("deffofof",defaultopenfold)
+			console.log("deffofof", defaultopenfold)
 			if (defaultopenfold) {
 				currentPath = defaultopenfold;
 			}
@@ -1532,6 +1545,19 @@
 			// Find the folder with the given name
 			const folder = findFolder(folderName, memory);
 			if (folder) {
+				const dropupDiv = document.getElementById("filetools");
+				dropupDiv.innerHTML = ""
+
+				const dropupContentDiv = document.createElement("div");
+				dropupContentDiv.className = "dropup-content";
+
+				const delfolde = document.createElement("a");
+				delfolde.classList.add("dropdownerthebob");
+				delfolde.title = "Delete folder";
+				delfolde.onclick = () => remfold();
+				delfolde.innerHTML = `<span class="material-symbols-rounded">delete</span> Delete`;
+				dropupContentDiv.appendChild(delfolde);
+
 				currentPath = folderName;
 				updpth();
 
@@ -1652,7 +1678,7 @@
 				}
 
 				if (sessiontype == "opener") {
-						return;
+					return;
 				}
 
 				openfile(z);
@@ -1702,10 +1728,9 @@
 
 					document.getElementById("fileinfobn").style.opacity = 1;
 
-						document.getElementById("fileinfobn").innerHTML = `<button class="delbtn" onclick="remfile('` + x.getAttribute("unid") + `')">Delete</button>`;
 					try {
 						const fileInfoContainer = document.getElementById("fileinfobn");
-						fileInfoContainer.innerHTML += fileSize + ' ' + units[unitIndex];
+						fileInfoContainer.innerHTML = fileSize + ' ' + units[unitIndex];
 
 						const dropupDiv = document.getElementById("filetools");
 						dropupDiv.innerHTML = ""
@@ -1714,9 +1739,10 @@
 						dropupContentDiv.className = "dropup-content";
 
 						// Add "Set As Wallpaper" option if the file is an image
-						if (window.parent.getbaseflty(mtpetxt(fileData.fileName)) === "image") {
+						if (window.parent.getbaseflty(ptypext(fileData.fileName)) === "image") {
 							const wallpaperOption = document.createElement("a");
-							wallpaperOption.classList.add("dropdownerthebob")
+							wallpaperOption.classList.add("dropdownerthebob");
+							wallpaperOption.title = "Set as Wallpaper";
 							wallpaperOption.onclick = () => window.parent.makewall(x.getAttribute("unid"));
 							wallpaperOption.innerHTML = `<span class="material-symbols-rounded">wallpaper</span> Set As`;
 							dropupContentDiv.appendChild(wallpaperOption);
@@ -1725,7 +1751,8 @@
 						// Add "Reinstall application" option if the file is an app
 						if (ptypext(fileData.fileName) === "app") {
 							const reinstallOption = document.createElement("a");
-							reinstallOption.classList.add("dropdownerthebob")
+							reinstallOption.classList.add("dropdownerthebob");
+							reinstallOption.title = "Reinstall Application";
 							reinstallOption.onclick = () => window.parent.extractAndRegisterCapabilities(x.getAttribute("unid"));
 							reinstallOption.innerHTML = `<span class="material-symbols-rounded">download</span> Reinstall`;
 							dropupContentDiv.appendChild(reinstallOption);
@@ -1733,28 +1760,40 @@
 
 						// Add "Open" option
 						const openOption = document.createElement("a");
-						openOption.classList.add("dropdownerthebob")
+						openOption.classList.add("dropdownerthebob");
+						openOption.title = "Open File";
 						openOption.onclick = () => openfile(x.getAttribute("unid"));
 						openOption.innerHTML = `<span class="material-symbols-rounded">open_in_new</span> Open`;
 						dropupContentDiv.appendChild(openOption);
 
+						// Add "Delete" option
+						const deleteOption = document.createElement("a");
+						deleteOption.classList.add("dropdownerthebob");
+						deleteOption.title = "Delete File";
+						deleteOption.onclick = () => remfile(x.getAttribute("unid"));
+						deleteOption.innerHTML = `<span class="material-symbols-rounded">delete</span> Delete`;
+						dropupContentDiv.appendChild(deleteOption);
+
 						// Add "Open as" option
 						const openAsTextOption = document.createElement("a");
-						openAsTextOption.classList.add("dropdownerthebob")
+						openAsTextOption.classList.add("dropdownerthebob");
+						openAsTextOption.title = "Open as Different Type";
 						openAsTextOption.onclick = () => openfile(x.getAttribute("unid"), 'any');
 						openAsTextOption.innerHTML = `<span class="material-symbols-rounded">open_with</span> Open as`;
 						dropupContentDiv.appendChild(openAsTextOption);
 
 						// Add "Rename" option
 						const renameOption = document.createElement("a");
-						renameOption.classList.add("dropdownerthebob")
+						renameOption.classList.add("dropdownerthebob");
+						renameOption.title = "Rename File";
 						renameOption.onclick = () => renamef(document.getElementById(x.id));
 						renameOption.innerHTML = `<span class="material-symbols-rounded">save_as</span> Rename`;
 						dropupContentDiv.appendChild(renameOption);
 
 						// Add "Move" option
 						const moveOption = document.createElement("a");
-						moveOption.classList.add("dropdownerthebob")
+						moveOption.classList.add("dropdownerthebob");
+						moveOption.title = "Move File";
 						moveOption.onclick = () => movefile(document.getElementById(x.id));
 						moveOption.innerHTML = `<span class="material-symbols-rounded">drive_file_move</span> Move`;
 						dropupContentDiv.appendChild(moveOption);
@@ -2022,6 +2061,7 @@
 			console.log(str)
 			try {
 				const parts = str.split('/');
+				console.log(str)
 				return parts.length > 1 ? parts.pop() : '';
 			} catch (err) {
 				console.log(err)
@@ -2038,21 +2078,21 @@
 		}
 
 		function greenflag() {
-    const data = myWindow?.params?.data;
-    
-    console.log(myWindow, data);
-    
-    if (data?.opener) {
-        sessiontype = "opener";
-        document.getElementById("fileapptitledis").innerText = "Choose File";
-        sessionreturnreqid = myWindow.params.winuid;
-        document.getElementById("choosefile").style.display = "flex";
-        greenflagbro(data.dir ?? false);
-    } else {
-        document.getElementById("choosefile").style.display = "none";
-        greenflagbro(false);
-    }
-}
+			const data = myWindow?.params?.data;
+
+			console.log(myWindow, data);
+
+			if (data?.opener) {
+				sessiontype = "opener";
+				document.getElementById("fileapptitledis").innerText = "Choose File";
+				sessionreturnreqid = myWindow.params.winuid;
+				document.getElementById("choosefile").style.display = "flex";
+				greenflagbro(data.dir ?? false);
+			} else {
+				document.getElementById("choosefile").style.display = "none";
+				greenflagbro(false);
+			}
+		}
 	</script>
 </body>
 
