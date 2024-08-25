@@ -193,4 +193,18 @@ async function checkAndRunFromURL() {
 			erdbsfull();
 		}
 	}
+
+	const filePath = params.get('path');
+  
+  if (filePath) {
+    // Process the file path as needed in your WebOS
+    console.log(`Opening NovaOS path: ${filePath}`);
+    
+    onstartup.push(async () => {
+		let fileid = await getFileByPath(filePath);
+		openfile(fileid.id);
+	});
+  }
+  
+  
 }

@@ -609,7 +609,7 @@
 				Performance</button>
 			<button class="tablinks" onclick="openCity(event, 'password')"><i class="material-icons">person</i>
 				User</button>
-			<button class="tablinks" onclick="openCity(event, 'exp'); defs(); gwall() "><i
+			<button class="tablinks" onclick="openCity(event, 'exp'); defs();"><i
 					class="material-icons">monitor</i>
 				Display</button>
 			<button class="tablinks" onclick="openCity(event, 'lclstgsc'); lclstgsc();"><i
@@ -1873,82 +1873,7 @@
 					text-align: center;
 					flex: 1;
 				}
-
-				#cwallimg {
-					display: block;
-					height: 120px;
-					object-fit: contain;
-					aspect-ratio: 9 / 6;
-					margin: 10px 0;
-					background: black;
-					border-radius: 5px;
-					box-shadow: 0 5px 10px black;
-				}
 			</style>
-			<script>
-				async function gwall() {
-					let x = null;
-					try {
-						x = await window.parent.getFileById(await window.parent.getSetting("wall"));
-						x = window.parent.unshrinkbsf(x.content);
-
-					} catch (err) { }
-
-					if (x) {
-						document.getElementById("cwallimg").src = x;
-					} else {
-						document.getElementById("cwallimg").src = window.parent.novaFeaturedImage;
-					}
-
-
-					let selinp = document.getElementById("windbgs");
-					let colorInput = document.getElementById("colorPicker");
-
-					(async function () {
-						try {
-							const savedValue = await window.parent.getSetting("WindowBgColor");
-							if (savedValue) {
-								if (savedValue === "#00000000") {
-									selinp.value = "#00000000";
-								} else if (savedValue === "#101010") {
-									selinp.value = "#101010";
-								} else {
-									selinp.value = "Custom color";
-									colorInput.value = savedValue;
-									colorInput.style.display = "inline-block";
-								}
-							}
-						} catch (error) {
-							console.error(error);
-						}
-					})();
-
-					selinp.addEventListener("change", function () {
-						console.log(selinp.value)
-						let newValue = selinp.value;
-						if (newValue === "#00000000") {
-							colorInput.style.display = "none";
-						} else if (newValue === "Custom color") {
-							colorInput.style.display = "inline-block";
-							newValue = colorInput.value;
-						} else {
-							colorInput.style.display = "none";
-						}
-						window.parent.setSetting("WindowBgColor", newValue);
-					});
-
-					colorInput.addEventListener("input", function () {
-						let newValue = colorInput.value;
-						window.parent.setSetting("WindowBgColor", newValue);
-					});
-				}
-			</script>
-
-			<div setting>
-				<span>Current Wallpaper</span>
-				<img src="N.webp" id="cwallimg">
-			</div>
-
 			</segr>
 			<script defer>
 				function openCity(evt, cityName) {

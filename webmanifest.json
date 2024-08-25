@@ -5,7 +5,13 @@
     "description": "NovaOS is a powerful web operating system built for everything. From daily tasks to endless fun, it has got you covered.",
     "theme_color": "#fff",
     "background_color": "#fff",
-    "display": "fullscreen",
+    "display": "standalone",
+    "protocol_handlers": [
+    {
+      "protocol": "web+nova",
+      "url": "/?path=%s"
+    }
+  ],
     "display_override": ["fullscreen", "standalone", "minimal-ui", "browser"],
     "scope": "https://adthoughtsglobal.github.io/nova-dev-repl-rl/",
     "start_url": "https://adthoughtsglobal.github.io/nova-dev-repl-rl",

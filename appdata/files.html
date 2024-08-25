@@ -12,6 +12,12 @@
 	<style>
 		@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
 
+		:root {
+	--def-bg: #0A0A0A;
+	--item-bg: #171717;
+	--highlighted: #44403C;
+}
+
 		/* width */
 		::-webkit-scrollbar {
 			width: 0.5em;
@@ -50,13 +56,13 @@
 			display: block;
 			box-sizing: border-box;
 			overflow: hidden;
-			background-color: #0e0e0e;
+			background-color: var(--def-bg);
 			height: calc(100% - 0px);
 		}
 
 		[flap-nav] y {
 			display: flex;
-			background-color: #151515;
+			background-color: transparent;
 			width: 100%;
 			flex-direction: row;
 			flex-wrap: nowrap;
@@ -94,7 +100,7 @@
 		.nowid {
 			width: fit-content;
 			text-align: center;
-			backdrop-filter: brightness(1.7);
+			background-color: var(--item-bg);
 			display: flex;
 			justify-content: center;
 			align-items: center;
@@ -145,7 +151,7 @@
 			overflow-y: scroll;
 			font-size: 11px !important;
 			min-width: 120px;
-			background: #161616;
+			background: var(--item-bg);
 			padding-bottom: 50px;
 			display: flex;
 			flex-direction: column;
@@ -160,22 +166,22 @@
 		}
 
 		.themainstuff {
-			margin: 10px 5px;
-			display: flex;
-			width: 100%;
-			height: 100%;
+			margin: 3px 5px;
+    display: flex;
+    width: calc(100% - 5px);
+    height: 100%;
 		}
 
 		[flap-fl-topnav] {
 			display: flex;
-			padding-top: 0.5rem;
-			margin: 0rem 0.5rem;
-			margin-bottom: 0.1rem;
-			font-size: 9px;
-			opacity: 70%;
-			flex-direction: row;
-			background-color: #181818;
-			border-radius: 0.3rem;
+    margin: 0rem 5px;
+    margin-bottom: 0.1rem;
+    font-size: 9px;
+    opacity: 70%;
+    flex-direction: row;
+    background-color: #181818;
+    border-radius: 0.3rem;
+    padding: 3px 0px;
 		}
 
 		[flap-files] {
@@ -358,7 +364,7 @@
 		}
 
 		#slfile {
-			background: #414e59;
+			background: var(--highlighted);
 			transform: scale(1.01);
 		}
 
@@ -376,33 +382,12 @@
 
 		[flap-fl-bottomnav] {
 			padding: 5px 7px;
-			background: #161616;
+			background: var(--item-bg);
 			border-radius: 0.3rem;
 			font-size: 12px;
 			transition: .3s ease-out;
 			margin: 0.2rem;
 			width: calc(100% - 25px);
-		}
-
-		.delbtn {
-			background: #1f1f1f;
-			border: none;
-			border-radius: 10px;
-			color: #ff7c7c;
-			margin: 0px 10px;
-			float: right;
-			transition: .2s;
-			padding: 2px 8px;
-			cursor: pointer;
-		}
-
-		.delbtn:hover {
-			background-color: #442a2a;
-		}
-
-		.delbtn span {
-			font-size: 10px;
-			transform: translate(0px, 1px) scale(1.3);
 		}
 
 		input[type="file"] {
@@ -436,7 +421,7 @@
 			border-radius: 5px;
 			border: none;
 			padding: 7px 15px;
-			background: #2e363d;
+			background: var(--highlighted);
 			color: white;
 			font-family: 'Poppins';
 			font-size: 11px;
@@ -613,6 +598,10 @@
 			align-items: center;
 		}
 
+		a.dropdownerthebob.disabled {
+			opacity: 0.3;
+		}
+
 		a.dropdownerthebob span {
 			font-size: 19px !important;
 			border-radius: 2px;
@@ -699,9 +688,16 @@
 			transform: scale(1.2) translate(1px, 1px);
 		}
 
-		[flap-files] svg {
+		[flap-files] svg.thisfolderisempty {
 			margin-bottom: 1rem;
 			height: 50px;
+		}
+
+		[flap-files] .file svg {
+			object-fit: contain;
+			aspect-ratio: 1/1;
+			    width: 100%;
+				height: 100%;
 		}
 
 		#jstree {
@@ -785,7 +781,7 @@
 			font-family: inherit;
 			color: white;
 			border-radius: 0;
-			background: #161616;
+			background: var(--item-bg);
 			border: none;
 			width: 0;
 			outline: none;
@@ -1016,8 +1012,8 @@
 					</div>
 					<div id="folders">
 
+						<div id="jstree"></div>
 					</div>
-					<div id="jstree"></div>
 					<div flap-sidenav-mems>
 
 					</div>
@@ -1029,30 +1025,6 @@
 					<div flap-fl-topnav><span id="pathdisp">
 							/
 						</span>
-
-						<div class="nvbtns">
-							<button class="flarrbtn" title="Sorting">
-								<span class="material-symbols-rounded">
-									sort
-								</span>
-							</button>
-							<button class="flarrbtn" onclick="changeview('list')" title="Change View to List">
-								<span class="material-symbols-rounded">
-									view_list
-								</span>
-							</button>
-							<button class="flarrbtn" onclick="changeview('grid')" title="Change View to Grid">
-								<span class="material-symbols-rounded">
-									grid_view
-								</span>
-							</button>
-							<button class="flarrbtn" onclick="remfold()" id="remfoldbtn" title="Remove Folder"
-								style="background-color: #7f4040;">
-								<span class="material-symbols-rounded">
-									delete_forever
-								</span>
-							</button>
-						</div>
 					</div>
 					<div flap-files id="filelist">
 
@@ -1508,11 +1480,6 @@
 			if (currentPath == folderName && gen) {
 				return;
 			}
-			if (folderName == "System/") {
-				document.getElementById("remfoldbtn").style.display = "none";
-			} else {
-				document.getElementById("remfoldbtn").style.display = "";
-			}
 			fllist.innerHTML = `<div class="loader33" id='listfilesloader'></div>`
 
 			function findFolder(path, obj) {
@@ -1555,8 +1522,40 @@
 				delfolde.classList.add("dropdownerthebob");
 				delfolde.title = "Delete folder";
 				delfolde.onclick = () => remfold();
+
+				if (folderName === "System/" || folderName === "") {
+					delfolde.classList.add("disabled");
+					delfolde.onclick = (e) => e.preventDefault();
+				}
+
 				delfolde.innerHTML = `<span class="material-symbols-rounded">delete</span> Delete`;
 				dropupContentDiv.appendChild(delfolde);
+
+				const toggleViewButton = document.createElement("a");
+				toggleViewButton.classList.add("dropdownerthebob");
+				toggleViewButton.title = flmode === 'grid' ? 'List view' : 'Grid view';
+				toggleViewButton.onclick = () => {
+					if (flmode === 'grid') {
+						changeview('list');
+						flmode = 'list';
+						toggleViewButton.title = 'Grid view';
+						toggleViewButton.innerHTML = `<span class="material-symbols-rounded">view_list</span> List View`;
+					} else {
+						changeview('grid');
+						flmode = 'grid';
+						toggleViewButton.title = 'List view';
+						toggleViewButton.innerHTML = `<span class="material-symbols-rounded">grid_view</span> Grid View`;
+					}
+				};
+
+				toggleViewButton.innerHTML = flmode === 'grid'
+					? `<span class="material-symbols-rounded">view_list</span> List View`
+					: `<span class="material-symbols-rounded">grid_view</span> Grid View`;
+
+				dropupContentDiv.appendChild(toggleViewButton);
+
+				dropupDiv.appendChild(dropupContentDiv);
+
 
 				currentPath = folderName;
 				updpth();
@@ -1586,7 +1585,7 @@
 							if (!item.name.endsWith('/')) {
 								fileElement.setAttribute("ondragstart", "dragfl(event, this)");
 							}
-							let icon = item.type === 'folder' ? geticon('folder') : geticon(ptypext(item.name));
+							let icon = item.type === 'folder' ? geticon('folder') : geticon(ptypext(item.name), item.id);
 							if (window.parent.getbaseflty(ptypext(item.name)) == "music" && false) {
 								jsmediatags.read(window.parent.unshrinkbsf(fileData.content), {
 									onSuccess: function (tag) {
@@ -1605,25 +1604,7 @@
 							console.error("Safe Error processing item:", error);
 							console.log("This item caused error: " + item.name);
 							// error files
-							let fileElement = document.createElement('div');
-							fileElement.classList.add("file");
-							fileElement.setAttribute(flmode, '');
-							fileElement.setAttribute("unid", item.id || '');
-							fileElement.setAttribute("onclick", "slfile(this, '" + item.id + "')");
-
-							// Assuming metadata is stored as a JSON object within the file
-							let metadata = {};
-							if (item.metadata) {
-								try {
-									metadata = JSON.parse(item.metadata);
-								} catch (error) {
-									console.error("Safe Error parsing metadata:", error);
-								}
-							}
-
-							const icon = item.type === 'folder' ? geticon('folder') : geticon(ptypext(item.name));
-							fileElement.innerHTML = `<span>${icon}</span><span flname><span class='flfrname'> ${item.name}</span> <small>${ptypext(item.name)}</small></span>`;
-							fllist.appendChild(fileElement);
+							
 						}
 					}
 					const endTime = performance.now(); // End the timer if the file is not found
@@ -1645,8 +1626,11 @@
 
 		function updpth() {
 			const pathDisp = document.getElementById("pathdisp");
-			pathDisp.innerHTML = "";
+			pathDisp.innerHTML = "/";
 
+			if (currentPath == "") {
+				return
+			}
 			const parts = currentPath.split('/').filter(Boolean);
 			let accumulatedPath = "";
 
@@ -1774,12 +1758,12 @@
 						deleteOption.innerHTML = `<span class="material-symbols-rounded">delete</span> Delete`;
 						dropupContentDiv.appendChild(deleteOption);
 
-						// Add "Open as" option
+						// Add "Open with" option
 						const openAsTextOption = document.createElement("a");
 						openAsTextOption.classList.add("dropdownerthebob");
-						openAsTextOption.title = "Open as Different Type";
+						openAsTextOption.title = "Open with an app";
 						openAsTextOption.onclick = () => openfile(x.getAttribute("unid"), 'any');
-						openAsTextOption.innerHTML = `<span class="material-symbols-rounded">open_with</span> Open as`;
+						openAsTextOption.innerHTML = `<span class="material-symbols-rounded">open_with</span> Open In`;
 						dropupContentDiv.appendChild(openAsTextOption);
 
 						// Add "Rename" option
@@ -1969,14 +1953,21 @@
 			});
 		}
 
-		function geticon(x) {
+		function geticon(x, name) {
+			
 			let i, c;
 			if (x == "txt") {
 				i = "description"
 				c = "#42A5F5"
 			} else if (x == "app") {
-				i = "rocket_launch"
-				c = "#4CAF50"
+				
+				if (window.parent.appicns[name]) {
+					i = window.parent.appicns[name];
+					c = "#ffffff";
+				} else {
+					i = "rocket_launch";
+					c = "#4CAF50";
+				}
 			} else if (window.parent.getbaseflty(x) == "image") {
 				i = "image"
 				c = "#FFEE58"
@@ -1999,7 +1990,7 @@
 				i = "folder"
 				c = "#FDD835"
 			} else {
-				i = "bug_report"
+				i = window.parent.defaultAppIcon
 			}
 			return `<span class="material-symbols-rounded" style="color:` + c + `">
 		`+ i + `

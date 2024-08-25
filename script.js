@@ -1,5 +1,5 @@
 var batteryLevel, winds = {}, rp, flwint = true, memory, _nowapp, fulsapp = false, nowappdo, appsHistory = [], nowwindow, appicns = {}, dev = true, appfound = 'files', fileslist = [], qsetscache = {};
-var really = false, initmenuload = true, fileTypeAssociations = {}, Gtodo, notifLog = {}, initialization = false;
+var really = false, initmenuload = true, fileTypeAssociations = {}, Gtodo, notifLog = {}, initialization = false, onstartup = [];
 var novaFeaturedImage = `https://images.unsplash.com/photo-1716980197262-ce400709bf0d?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D`;
 
 document.getElementById("bgimage").src = novaFeaturedImage;
@@ -52,13 +52,19 @@ async function showloginmod() {
 	function createUserDivs(users) {
 		const usersChooser = document.getElementById('userschooser');
 		usersChooser.innerHTML = '';
-		const defaultIcon = 'https://cdn-novaos-server.milosantos.com/user-icon.png'; // Default icon URL
+		const defaultIcon = `data:image/svg+xml,data:image/svg+xml,&lt;svg version=&amp;quot;1.1&amp;quot; xmlns=&amp;quot;http://www.w3.org/2000/svg&amp;quot; xmlns:xlink=&amp;quot;http://www.w3.org/1999/xlink&amp;quot; width=&amp;quot;66&amp;quot; height=&amp;quot;61&amp;quot; viewBox=&amp;quot;0,0,66.9,61.3&amp;quot;&gt;&lt;g transform=&amp;quot;translate(-206.80919,-152.00164)&amp;quot;&gt;&lt;g fill=&amp;quot;#ffffff&amp;quot;%20stroke=&amp;quot;none&amp;quot;%20stroke-miterlimit=&amp;quot;10&amp;quot;%3E%3Cpath%20d=&amp;quot;M206.80919,213.33676c0,0%203.22013,-18.32949%2021.37703,-24.2487c3.5206,-1.14773%205.89388,2.28939%2012.33195,2.29893c6.51034,0.00899%208.33976,-3.45507%2011.71219,-2.35934c18.01675,5.85379%2021.54426,24.30912%2021.54426,24.30912z&amp;quot;%20stroke-width=&amp;quot;none&amp;quot;/%3E%3Cpath%20d=&amp;quot;M222.47948,169.52215c0,-9.67631%207.8442,-17.52052%2017.52052,-17.52052c9.67631,0%2017.52052,7.8442%2017.52052,17.52052c0,9.67631%20-7.8442,17.52052%20-17.52052,17.52052c-9.67631,0%20-17.52052,-7.8442%20-17.52052,-17.52052z&amp;quot;%20stroke-width=&amp;quot;0&amp;quot;/%3E%3C/g%3E%3C/g%3E%3C/svg%3E`
 
 		users.forEach(async (cacusername) => {
 			const userDiv = document.createElement('div');
 			userDiv.className = 'user';
 			userDiv.tabIndex = 0;
 			const selectUser = async function () {
+				
+				navigator.registerProtocolHandler(
+				  'web+nova',
+				  `${location.origin}/?path=%s`,
+				  'NovaOS'
+				);
 				await cleanupram();
 				CurrentUsername = cacusername;
 				let isdefaultpass = false;
@@ -114,6 +120,10 @@ async function showloginmod() {
 	if (users.length > 0) {
 		document.querySelector('.user').focus();
 	}
+	const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    document.getElementById('loginusselctime').textContent = `${hours}:${minutes}`;
 
 	gid('loginmod').showModal();
 	gid('loginform1').addEventListener("keydown", async function (event) {
@@ -191,6 +201,15 @@ async function startup() {
 		}
 	
 		await loadFileTypeAssociations();
+
+		try {
+			function runScriptsSequentially(scripts, delay) {
+				scripts.forEach((script, index) => {
+				  setTimeout(script, index * delay);
+				});
+			  }
+			  
+		} catch (e) {}
 	})
 
 }
@@ -280,7 +299,7 @@ async function openn() {
 		return;
 	}
 
-	initmenuload = false
+	initmenuload = false;
 	Promise.all(x.map(async (app) => {
 		// Create a div element for the app shortcut
 		var appShortcutDiv = document.createElement("div");
@@ -1361,7 +1380,6 @@ async function installdefaultapps() {
 		return result;
 	  }
 	  
-	  // Usage
 	  await waitForNonNull().then(async (memory) =>  {
 		console.log("ELOG:", memory);
 		// Update each app sequentially
@@ -1385,8 +1403,6 @@ async function installdefaultapps() {
 			closeElementedis();
 		}
 	})
-
-
 }
 
 function getfourthdimension() {
@@ -2232,10 +2248,12 @@ async function cleanupram() {
 
 
 async function setandinitnewuser() {
+	gid("edison").showModal()
 	await cleanupram();
 	CurrentUsername = await ask("Enter a username:","");
 	console.log("set currentuser: ", CurrentUsername)
 	await initialiseOS();
+	gid('loginmod').close();
 }
 
 // MEMORY MANAGEMENT FUNCTIONS
@@ -2266,38 +2284,26 @@ async function getFileNamesByFolder(folderName) {
 	}
 }
 
-async function getFileByPath(filePath) {
-	await updateMemoryData();
-	let parts = filePath.split('/');
-	let current = memory;
-
-	for (let i = 0; i < parts.length; i++) {
-		let part = parts[i];
-
-		// If it's a folder and not the last part, descend into it
-		if (part.endsWith('/') && part in current && i !== parts.length - 1) {
-			current = current[part];
-		} else if (part in current) {
-			current = current[part];
-		} else {
-			return null;
-		}
-	}
-
-	// If current is an object and contains nested files, return their names and IDs
-	if (typeof current === 'object' && current !== null && !Array.isArray(current)) {
-		let result = [];
-		for (let key in current) {
-			if (current[key].id) {
-				result.push({ name: key, id: current[key].id });
+async function getFileByPath(path) {
+    await updateMemoryData();
+		const segments = path.split('/');
+		let current = memory;
+	
+		for (let i = 0; i < segments.length; i++) {
+			const segment = segments[i];
+			const isLastSegment = i === segments.length - 1;
+	
+			if (segment + '/' in current && !isLastSegment) {
+				current = current[segment + '/'];
+			} else if (segment in current && isLastSegment) {
+				return current[segment];
+			} else {
+				return null;
 			}
 		}
-		return result.length > 0 ? result : current;
-	}
-
-	return current;
+	
+		return current;
 }
-
 
 async function getFileById(id) {
 	if (!id) return undefined;

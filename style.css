@@ -198,8 +198,8 @@ nav info {
 	background-color: #121212;
 	backdrop-filter: blur(5px) brightness(0.5);
 	padding: 0 3px;
-	padding-top:1px;
-    padding-right: 1px;
+	padding-top: 1px;
+	padding-right: 1px;
 	cursor: grab;
 	overflow-x: auto;
 	display: flex;
@@ -283,7 +283,7 @@ nav info {
 	border-radius: 10px;
 	bottom: 9% !important;
 	opacity: 1;
-    word-break: break-all;
+	word-break: break-all;
 	transform: scale(0.9) translateX(-4px);
 }
 
@@ -542,7 +542,7 @@ nav info {
 }
 
 .modal button:focus {
-    background: #3f3f3f;
+	background: #3f3f3f;
 }
 
 .modal .notbn {
@@ -883,7 +883,7 @@ nav info {
 	width: 68px;
 	background-color: #353535;
 	color: #fff;
-    word-break: break-all;
+	word-break: normal;
 	backdrop-filter: blur(1rem);
 	text-align: center;
 	border-radius: 0.3rem;
@@ -1232,16 +1232,16 @@ nav info {
 
 #notification {
 	position: absolute;
-    right: 10px;
-    width: 250px;
-    background: #2a29299c;
-    backdrop-filter: blur(10px) brightness(50%);
-    border-radius: 10px;
-    padding: 10px;
-    bottom: 61px;
-    box-shadow: 0 0 2rem rgb(0 0 0 / 77%);
-    display: none;
-    animation: notifpull .2s ease-out;
+	right: 10px;
+	width: 250px;
+	background: #2a29299c;
+	backdrop-filter: blur(10px) brightness(50%);
+	border-radius: 10px;
+	padding: 10px;
+	bottom: 61px;
+	box-shadow: 0 0 2rem rgb(0 0 0 / 77%);
+	display: none;
+	animation: notifpull .2s ease-out;
 }
 
 @keyframes notifpull {
@@ -1286,7 +1286,7 @@ nav info {
 
 .windowheader .windowdataspan {
 	display: flex;
-    align-items: center;
+	align-items: center;
 }
 
 .rightsidesmadivs {
@@ -1649,64 +1649,66 @@ dialog#terminal {
 }
 
 #notiflist {
-    overflow-y: scroll;
-    width: 100%;
-    padding: 0.5rem;
-    box-sizing: border-box;
+	overflow-y: scroll;
+	width: 100%;
+	padding: 0.5rem;
+	box-sizing: border-box;
 }
 
 .notiflistnav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: calc(100% - 1rem);
-    font-size: 0.7rem;
-    color: lightgrey;
-    padding: 0 0.5rem;
-    padding-top: 0.3rem;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: calc(100% - 1rem);
+	font-size: 0.7rem;
+	color: lightgrey;
+	padding: 0 0.5rem;
+	padding-top: 0.3rem;
 }
 
 .notiflistnav span.material-icons {
-    font-size: 0.8rem !important;
+	font-size: 0.8rem !important;
 }
 
 .searchside .notiflist {
 	color: #a1a1a1;
-    font-size: 0.8rem;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    width: 100%;
-    max-height: 6rem;
-    overflow-y: hidden;
+	font-size: 0.8rem;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	width: 100%;
+	max-height: 6rem;
+	overflow-y: hidden;
 }
-.searchside	.notification {
-		background: #1f1f1f3b;
-		padding: 0.5rem;
-		border-radius: 0.5rem;
-		color: white;
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		width: calc(100% - 1rem);
-		overflow: hidden;
-		word-break: break-word;
-		text-align: left;
+
+.searchside .notification {
+	background: #1f1f1f3b;
+	padding: 0.5rem;
+	border-radius: 0.5rem;
+	color: white;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	width: calc(100% - 1rem);
+	overflow: hidden;
+	word-break: break-word;
+	text-align: left;
 }
-		.searchside .notifTitle {
-			font-size: 1rem;
-		}
 
-		.searchside .notifDesc {
-			text-align: left;
-			opacity: 0.7;
-			font-size: 0.7rem;
-		}
+.searchside .notifTitle {
+	font-size: 1rem;
+}
 
-		.searchside .notifAppName {
-			font-size: 0.7rem;
-			opacity: 0.8;
-		}
+.searchside .notifDesc {
+	text-align: left;
+	opacity: 0.7;
+	font-size: 0.7rem;
+}
+
+.searchside .notifAppName {
+	font-size: 0.7rem;
+	opacity: 0.8;
+}
 
 .searchinputcont {
 	border-radius: 5px;
@@ -1788,8 +1790,8 @@ dialog#terminal {
 }
 
 #partrecentapps span.smalltitl {
-    font-size: 0.7rem;
-    opacity: 0.5;
+	font-size: 0.7rem;
+	opacity: 0.5;
 }
 
 @media only screen and (max-width: 800px) {
@@ -2196,7 +2198,18 @@ dialog#terminal {
 		overflow: hidden;
 		flex: 1;
 		transition: .2s ease-out;
+		justify-content: flex-end;
 	}
+}
+
+noscript {
+	position: absolute;
+    top: 0;
+    right: 0;
+    padding: 2rem;
+    background: #2b2b2b;
+    z-index: 100;
+    height: 100vh;
 }
 
 .userselect {
@@ -2204,69 +2217,75 @@ dialog#terminal {
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
+}
 
-	.user {
-		width: 75px;
-		overflow: hidden;
-		height: fit-content;
-		text-overflow: ellipsis;
-		display: flex;
-		flex-direction: column;
-		flex-wrap: nowrap;
-		gap: 0.3rem;
-		padding: 0.5rem;
-		align-items: center;
-		border-radius: 0.5rem;
-		transition: .2s;
-		cursor: pointer;
 
-		.icon {
-			height: 2rem;
-			object-fit: contain;
-			background: rgb(205 205 205 / 30%);
-			border-radius: 0.3rem;
-			padding: 0.3rem;
-			aspect-ratio: 1 / 1;
-			margin-bottom: 0.3rem;
-		}
+.userselect h1 {
+	font-size: 15vh;
+	opacity: 0.8;
+}
 
-		.name {
-			width: 100%;
-			text-wrap: nowrap;
-			text-overflow: ellipsis;
-			overflow: hidden;
-            text-align: center;
-		}
-	}
+.userselect .user {
+	width: 75px;
+	overflow: hidden;
+	height: fit-content;
+	text-overflow: ellipsis;
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	gap: 0.3rem;
+	padding: 0.5rem;
+	align-items: center;
+	border-radius: 0.5rem;
+	transition: .2s;
+	cursor: pointer;
+}
 
-	.user:hover {
-		background: #80808052;
-		transform: scale(1.1);
-		box-shadow: #0000002f;
-	}
+.userselect .user .icon {
+	height: 2rem;
+	object-fit: contain;
+	background: rgb(205 205 205 / 30%);
+	border-radius: 0.3rem;
+	padding: 0.3rem;
+	aspect-ratio: 1 / 1;
+	margin-bottom: 0.3rem;
+}
 
-	.newusbtn {
-		background: #ffffff1a;
-		color: white;
-		border-radius: 2rem;
-		padding: 0.3rem 0.6rem;
-		padding-right: 0.5rem;
-		border: 1px solid #55555582;
-		display: flex;
-		flex-direction: row;
-		margin-top: 1rem;
-	}
+.userselect .user .name {
+	width: 100%;
+	text-wrap: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	text-align: center;
+}
+
+.userselect .user:hover {
+	background: #80808052;
+	transform: scale(1.1);
+	box-shadow: #0000002f;
+}
+
+.userselect .newusbtn {
+	background: #ffffff1a;
+	color: white;
+	border-radius: 2rem;
+	padding: 0.3rem 0.6rem;
+	padding-right: 0.5rem;
+	border: 1px solid #55555582;
+	display: flex;
+	flex-direction: row;
+	margin-top: 1rem;
 }
 
 #userschooser {
 	display: flex;
-    flex-direction: row;
-    gap: 0.5rem;
-    height: fit-content;
-    align-items: flex-start;
-    max-width: 80%;
-    flex-wrap: wrap;
-    justify-content: center;
+	flex-direction: row;
+	gap: 0.5rem;
+	height: fit-content;
+	align-items: flex-start;
+	max-width: 80%;
+	flex-wrap: wrap;
+	justify-content: center;
 }
 
 .strtappsugs strong {
