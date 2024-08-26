@@ -52,7 +52,7 @@ async function showloginmod() {
 	function createUserDivs(users) {
 		const usersChooser = document.getElementById('userschooser');
 		usersChooser.innerHTML = '';
-		const defaultIcon = `data:image/svg+xml,data:image/svg+xml,&lt;svg version=&amp;quot;1.1&amp;quot; xmlns=&amp;quot;http://www.w3.org/2000/svg&amp;quot; xmlns:xlink=&amp;quot;http://www.w3.org/1999/xlink&amp;quot; width=&amp;quot;66&amp;quot; height=&amp;quot;61&amp;quot; viewBox=&amp;quot;0,0,66.9,61.3&amp;quot;&gt;&lt;g transform=&amp;quot;translate(-206.80919,-152.00164)&amp;quot;&gt;&lt;g fill=&amp;quot;#ffffff&amp;quot;%20stroke=&amp;quot;none&amp;quot;%20stroke-miterlimit=&amp;quot;10&amp;quot;%3E%3Cpath%20d=&amp;quot;M206.80919,213.33676c0,0%203.22013,-18.32949%2021.37703,-24.2487c3.5206,-1.14773%205.89388,2.28939%2012.33195,2.29893c6.51034,0.00899%208.33976,-3.45507%2011.71219,-2.35934c18.01675,5.85379%2021.54426,24.30912%2021.54426,24.30912z&amp;quot;%20stroke-width=&amp;quot;none&amp;quot;/%3E%3Cpath%20d=&amp;quot;M222.47948,169.52215c0,-9.67631%207.8442,-17.52052%2017.52052,-17.52052c9.67631,0%2017.52052,7.8442%2017.52052,17.52052c0,9.67631%20-7.8442,17.52052%20-17.52052,17.52052c-9.67631,0%20-17.52052,-7.8442%20-17.52052,-17.52052z&amp;quot;%20stroke-width=&amp;quot;0&amp;quot;/%3E%3C/g%3E%3C/g%3E%3C/svg%3E`
+		const defaultIcon = `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="66" height="61" viewBox="0,0,66.9,61.3"><g transform="translate(-206.80919,-152.00164)"><g fill="#ffffff" stroke="none" stroke-miterlimit="10"><path d="M206.80919,213.33676c0,0 3.22013,-18.32949 21.37703,-24.2487c3.5206,-1.14773 5.89388,2.28939 12.33195,2.29893c6.51034,0.00899 8.33976,-3.45507 11.71219,-2.35934c18.01675,5.85379 21.54426,24.30912 21.54426,24.30912z" stroke-width="none"/><path d="M222.47948,169.52215c0,-9.67631 7.8442,-17.52052 17.52052,-17.52052c9.67631,0 17.52052,7.8442 17.52052,17.52052c0,9.67631 -7.8442,17.52052 -17.52052,17.52052c-9.67631,0 -17.52052,-7.8442 -17.52052,-17.52052z" stroke-width="0"/></g></g></svg>`
 
 		users.forEach(async (cacusername) => {
 			const userDiv = document.createElement('div');
@@ -100,9 +100,9 @@ async function showloginmod() {
 				}
 			});
 
-			const img = document.createElement('img');
+			const img = document.createElement('span');
 			img.className = 'icon';
-			img.src = defaultIcon;
+			img.innerHTML = defaultIcon;
 
 			const nameDiv = document.createElement('div');
 			nameDiv.className = 'name';
@@ -1136,21 +1136,50 @@ function makedialogclosable(ok) {
 	});
 }
 
-makedialogclosable('appdmod')
+makedialogclosable('appdmod');
 
-function justConfirm(title, message) {
+function openModal(type, { title = '', message, options = null, status = null, preset = '' } = {}) {
 	return new Promise((resolve) => {
 		const modal = document.querySelector("#NaviconfDia");
-		modal.querySelector('h1').textContent = title;
-		modal.querySelector('p').innerHTML = message;
-
+		const h1 = modal.querySelector('h1');
+		const p = modal.querySelector('p');
+		const dropdown = modal.querySelector('.dropdown');
+		const inputField = modal.querySelector('.input-field');
 		const yesButton = modal.querySelector('.yes-button');
+		const noButton = modal.querySelector('.notbn');
+
+		// Reset modal
+		h1.textContent = title;
+		p.innerHTML = message;
+		dropdown.style.display = 'none';
+		inputField.style.display = 'none';
+		noButton.style.display = 'none';
+		yesButton.textContent = 'OK';
+
+		// Customize based on type
+		if (type === 'confirm') {
+			noButton.style.display = 'inline-block';
+			yesButton.textContent = 'Yes';
+		} else if (type === 'dropdown') {
+			dropdown.innerHTML = options.map(option => `<option value="${option}">${option}</option>`).join('');
+			dropdown.style.display = 'block';
+			noButton.style.display = 'inline-block';
+		} else if (type === 'say' && status) {
+			let ic = "warning";
+			if (status === "success") ic = "check_circle";
+			else if (status === "failed") ic = "dangerous";
+			p.innerHTML = `<span class="material-symbols-rounded">${ic}</span> ${message}`;
+		} else if (type === 'ask') {
+			inputField.value = preset;
+			inputField.style.display = 'block';
+		}
+
+		// Button actions
 		yesButton.onclick = () => {
 			modal.close();
-			resolve(true);
+			resolve(type === 'dropdown' ? dropdown.value : type === 'ask' ? inputField.value : true);
 		};
 
-		const noButton = modal.querySelector('.notbn');
 		noButton.onclick = () => {
 			modal.close();
 			resolve(false);
@@ -1160,43 +1189,20 @@ function justConfirm(title, message) {
 	});
 }
 
-function say(message, status) {
-	return new Promise((resolve) => {
-		const modal = document.createElement('dialog');
-		modal.classList.add('modal');
+function justConfirm(title, message) {
+	return openModal('confirm', { title, message });
+}
 
-		const modalContent = document.createElement('div');
-		modalContent.classList.add('modal-content');
+function showDropdownModal(title, message, options) {
+	return openModal('dropdown', { title, message, options });
+}
 
-		const promptMessage = document.createElement('p');
-		let ic = "warning"
-		if (status == "success") {
-			ic = "check_circle"
-		} else if (status == "warning") {
-			ic = "warning"
-		} else if (status == "failed") {
-			ic = "dangerous"
-		}
+function say(message, status = null) {
+	return openModal('say', { message, status });
+}
 
-		ic = `<span class="material-symbols-rounded">` + ic + `</span>`
-
-		promptMessage.innerHTML = ic + message;
-		modalContent.appendChild(promptMessage);
-
-		const okButton = document.createElement('button');
-		okButton.textContent = 'OK';
-		okButton.addEventListener('click', () => {
-			modal.close();
-			modal.remove()
-			resolve(true);
-		});
-		modalContent.appendChild(okButton);
-
-		modal.appendChild(modalContent);
-		document.body.appendChild(modal);
-
-		modal.showModal();
-	});
+function ask(question, preset = '') {
+	return openModal('ask', { message: question, preset });
 }
 
 async function loadtaskspanel() {
@@ -1242,39 +1248,6 @@ async function loadtaskspanel() {
 		appbarelement.appendChild(appShortcutDiv);
 	});
 }
-
-function ask(question, preset) {
-	return new Promise((resolve) => {
-		const modal = document.createElement('dialog');
-		modal.classList.add('modal');
-
-		const modalContent = document.createElement('div');
-		modalContent.classList.add('modal-content');
-
-		const promptMessage = document.createElement('p');
-		promptMessage.innerHTML = question;
-		modalContent.appendChild(promptMessage);
-
-		const inputField = document.createElement('input');
-		inputField.setAttribute('type', 'text');
-		inputField.value = preset;
-		modalContent.appendChild(inputField);
-
-		const okButton = document.createElement('button');
-		okButton.textContent = 'OK';
-		okButton.addEventListener('click', () => {
-			modal.close();
-			resolve(inputField.value);
-		});
-		modalContent.appendChild(okButton);
-
-		modal.appendChild(modalContent);
-		document.body.appendChild(modal);
-
-		modal.showModal();
-	});
-}
-
 var dev;
 
 function shrinkbsf(str) {

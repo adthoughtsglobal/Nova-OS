@@ -67,7 +67,7 @@ async function openfile(x, all) {
             if (appIdToOpen) {
                 openlaunchprotocol(appIdToOpen, unid);
             } else {
-                console.log(`No app found to open the file with extension: ${fileExtension}`);
+                
             }
 
         }
