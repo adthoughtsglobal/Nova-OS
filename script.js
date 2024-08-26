@@ -208,7 +208,7 @@ async function startup() {
 				  setTimeout(script, index * delay);
 				});
 			  }
-			  
+			  runScriptsSequentially(onstartup, 1000)
 		} catch (e) {}
 	})
 
