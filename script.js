@@ -2141,8 +2141,10 @@ const sendMessage = () => {
 
 	fetch('https://ai.milosantos.com/blackbox', {
 		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify(payload)
+		headers: { 'Content-Type': 'application/json',
+			"Authorization" : "Bearer ml_uwYLJFCuVhgkqL6xl705SHGC"
+		 },
+		body: JSON.stringify(payload),
 	})
 		.then(response => response.json())
 		.then(data => {

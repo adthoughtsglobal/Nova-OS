@@ -2358,3 +2358,18 @@ margin-bottom: 0.3rem;
 .winclosebtn:hover {
 	background-color: rgb(153, 41, 41);
 }
+
+.erase-everything {
+	color: #ff4242;
+    bottom: 2rem;
+    display: block;
+    opacity: 0.5;
+    position: absolute;
+    width: 100%;
+    margin: auto;
+    right: 0;
+}
+
+.erase-everything:hover {
+	opacity: 1;
+}
