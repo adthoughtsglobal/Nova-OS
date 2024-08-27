@@ -77,7 +77,7 @@ async function openfile(x, all) {
     }
 }
 
-function openwindow(title, cont, ic, theme, appid, params) {
+function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
     appsHistory.push(title);
     if (appsHistory.length > 5) {
         appsHistory = appsHistory.slice(-5);
@@ -111,9 +111,37 @@ function openwindow(title, cont, ic, theme, appid, params) {
     let isitmob = window.innerWidth <= 500;
 
     if (!isitmob) {
-        windowDiv.style = `left: calc(50vw - 33.5vw); top: calc(50vh - 35vh); width: 65vw; height: 70vh; z-index: 0;`;
-        let newLeft = `calc(50vw - 33.5vw + ${5 * Object.keys(winds).length}px)`;
-        let newTop = `calc(50vh - 35vh + ${5 * Object.keys(winds).length}px)`;
+        console.log(aspectratio);
+        if (aspectratio == null) {
+            aspectratio = "9/6";
+        }
+        console.log("adjusting window for aspect ratio: ", aspectratio);
+        
+        let [widthFactor, heightFactor] = aspectratio.split('/').map(Number);
+        let aspectRatioValue = widthFactor / heightFactor;
+        
+        const maxVW = 90;
+        const maxVH = 90;
+        
+        const maxWidthPx = (window.innerWidth * maxVW) / 100;
+        const maxHeightPx = (window.innerHeight * maxVH) / 100;
+        
+        let heightPx = (maxHeightPx / 100) * 70; 
+        let widthPx = heightPx * aspectRatioValue; 
+    
+        if (widthPx > maxWidthPx) {
+            widthPx = maxWidthPx;
+            heightPx = widthPx / aspectRatioValue;
+        }
+        
+        const widthVW = (widthPx / window.innerWidth) * 100;
+        const heightVH = (heightPx / window.innerHeight) * 100;
+        windowDiv.style = `left: calc(50vw - ${widthVW / 2}vw); top: calc(50vh - ${heightVH / 2}vh); width: ${widthVW}vw; height: ${heightVH}vh; z-index: 0;`;
+        
+        let offset = 5 * Object.keys(winds).length;
+        let newLeft = `calc(50vw - ${widthVW / 2}vw + ${offset}px)`;
+        let newTop = `calc(50vh - ${heightVH / 2}vh + ${offset}px)`;
+        
         windowDiv.style.left = newLeft;
         windowDiv.style.top = newTop;
     } else {
@@ -308,7 +336,7 @@ async function openapp(x, od) {
                 console.log("local",od)
             }
             // Assuming you have a predefined function openwindow
-            openwindow(x, y, getAppIcon(y, x), getAppTheme(y), od, Gtodo);
+            openwindow(x, y, getAppIcon(y, x), getAppTheme(y), getAppAspectRatio(y), od, Gtodo);
             Gtodo = null;
         } catch (error) {
             console.error("Error fetching data:", error);

@@ -822,6 +822,27 @@ function getAppTheme(unshrunkContent) {
 	return metaTagData;
 }
 
+function getAppAspectRatio(unshrunkContent) {
+	if (!unshrunkContent.includes("aspect-ratio")) {
+		console.log("no aspect ratio")
+		return null;
+	}
+	const tempElement = document.createElement('div');
+	tempElement.innerHTML = unshrunkContent;
+	const metaTags = tempElement.getElementsByTagName('meta');
+	let metaTagData = null;
+	Array.from(metaTags).forEach(tag => {
+		const tagName = tag.getAttribute('name');
+		const tagContent = tag.getAttribute('content');
+		if (tagName === 'aspect-ratio' && tagContent) {
+			metaTagData = tagContent;
+		}
+	});
+
+	console.log(metaTagData)
+	return metaTagData;
+}
+
 async function fetchData(url) {
 	try {
 		const response = await fetch(url);

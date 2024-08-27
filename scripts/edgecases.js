@@ -107,8 +107,7 @@ const exit = function () {
 document.addEventListener("DOMContentLoaded", async function () {
 onstartup.push(async () => {
 		if (location.origin == 'http://127.0.0.1:3000' || location.origin != 'https://adthoughtsglobal.github.io') {
-	gid("loginmod").close()
-	say("You are on an <b style='color:red;'>unsafe</b> copy of NovaOS. Do not use this.", "failed");
+	// say("You are on an <b style='color:red;'>unsafe</b> copy of NovaOS. Do not use this.", "failed");
 }
 
 if (detectIE()) {

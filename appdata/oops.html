@@ -7,24 +7,24 @@
 
 		/* width */
 		::-webkit-scrollbar {
-			width: 5px;
+			width: 0.5rem;
 		}
 
 		/* Track */
 		::-webkit-scrollbar-track {
-			background: #818181;
+			background: transparent;
 			border-radius: 5px;
 		}
 
 		/* Handle */
 		::-webkit-scrollbar-thumb {
-			background: #2b2b2b;
+			background: #555555;
 			border-radius: 5px;
 		}
 
 		/* Handle on hover */
 		::-webkit-scrollbar-thumb:hover {
-			background: #555;
+			background: #3b3b3b;
 		}
 
 		html {
@@ -51,13 +51,17 @@
 			font-family: 'Poppins', sans-serif;
 			transition: 2s;
 			background-repeat: no-repeat;
+			display:flex;
+			flex-direction: column;
 		}
 
 		.logo {
 			font-family: "poppins", sans-serif;
-			text-shadow: 0 0 1rem black;
-			font-size: 1.5rem;
-			margin: 10px;
+    font-size: 1.5rem;
+    margin: 10px;
+    background: #00000030;
+    padding: 1rem 2rem;
+    border-radius: 1rem;
 		}
 
 		.mains {
@@ -66,21 +70,24 @@
 			justify-content: center;
 			align-items: center;
 			min-height: 214px;
-			height: 40vh;
+			height: 0;
+			flex:9;
 			justify-items: center;
 		}
 
 		#news-section {
-			overflow: hidden;
-			overflow-y: scroll;
-			height: calc(50vh + 49px);
-			border-radius: 10px;
-			margin: 0 1rem;
+			overflow-x: hidden;
+    overflow-y: scroll;
+    border-radius: 10px;
+    margin: 1rem 1rem;
+    height: 0;
+    flex: 0;
+    padding-right: 0.3rem;
 		}
 
 		.news-item {
-			background: white;
-			color: #1f1f1f;
+			background: rgb(44, 44, 44);
+			color: #dddddd;
 			padding: 5px 27px;
 			border-radius: 10px;
 			margin-bottom: 10px;
@@ -92,33 +99,64 @@
 
 		.searchbr {
 			overflow: hidden;
-			border-radius: 25px;
-			padding: 0;
-			background: white;
-			box-shadow: 0 5px 10px #00000054;
+    border-radius: 25px;
+    padding: 0;
+    background: #2b2b2b;    
+	display: flex;
+    flex-direction: row;
+    align-items: center;
+	width: 45vw;
+	gap:0.3rem;
+		}
+
+		.searchbr form {
+			width: inherit;
+			display: inherit;
 		}
 
 		.searchbr input {
-			width: 30vw;
 			min-width: 180px;
+			flex:1;
 			padding: 5px;
+			padding-left: 1rem;
 			font-size: 1rem;
 			border: none;
 			margin: 0;
+			background-color:inherit;
+			color:inherit;
 			display: inline-block;
-			transform: translateY(-8px);
-			padding-left: 15px;
 		}
 
 		.searchbr button {
 			color: white;
-			background: dodgerblue;
+			background: rgb(77, 77, 77);
 			border: 0;
 			margin: 5px;
 			border-radius: 50%;
 			aspect-ratio: 1 / 1;
-			padding: 3px 4px 0px 5px;
+			display: flex;
+    align-items: center;
+    justify-content: center;
 		}
+
+		#newses {
+			margin: 1rem;
+    border-radius: 1rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    background: #101010;
+}
+
+#slideshow-container {
+	width: 80%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    opacity: .5;
+    white-space: nowrap;
+    font-size: 0.8rem;
+}
 
 		[subb] {
 			height: fit-content;
@@ -129,6 +167,15 @@
 			margin: 1rem;
 			border-radius: 5px;
 		}
+
+		.newsnav {
+    display: flex;
+    padding: 0.5rem 1rem;
+    background: #2b2b2b;
+    align-items: center;
+    justify-content: space-between;
+	cursor: pointer;
+}
 	</style>
 </head>
 
@@ -142,14 +189,37 @@
 			</form>
 			
 		</div>
-		<button subb onclick="nwpsearch()">
-			 Search Nwp
-		</button>
 	</div>
-	<div id="news-section">
+	<div id="newses">
+		<div class="newsnav" onclick="togglenews()">
+			<span>News <div id="slideshow-container"></div></span>
+			<span class="material-icons">expand_less</span>
+		</div>
+<div id="news-section">
 
+</div>
 	  </div>
 	<script>
+
+const slideshowContainer = document.getElementById('slideshow-container');
+let currentIndex = 0;
+const fadeDuration = 3000;
+
+		var newsopen = false;
+		var newssection = document.querySelector("#newses");
+		const newsContainer = document.getElementById('news-section');
+
+		function togglenews() {
+			if (newsopen) {
+				newssection.style.flex = 1;
+				newsopen = false;
+				newsContainer.style.flex = 0;
+			} else {
+				newssection.style.flex = 10;
+				newsContainer.style.flex = 1;
+				newsopen = true;
+			}
+		}
 
 		function nwpsearch() {
 			location.href = "https://adthoughtsglobal.github.io/Search?q=" + document.getElementById("q").value
@@ -158,7 +228,7 @@
 		var titlet = document.getElementById("titlet");
 		var now = new Date();
 		var hour = now.getHours();
-		var greeting;
+		var greeting, newsItems;
 
 		var holidays = {
 			"01-01": "Happy New Year!",
@@ -224,8 +294,7 @@
 
 		async function news() {
 			fetchWikinews(function(data) {
-				const newsContainer = document.getElementById('news-section');
-				const newsItems = data.query.categorymembers;
+				newsItems = data.query.categorymembers;
 				console.log(newsItems)
 
 				newsItems.forEach(function(newsItem) {
@@ -246,10 +315,27 @@
 
 					newsContainer.appendChild(div);
 				});
+				
+startSlideshow();
 			});
 		}
 
 		news();
+
+		function startSlideshow() {
+  if (newsItems.length === 0) return;
+  
+  slideshowContainer.textContent = newsItems[currentIndex].title;
+  
+
+  setInterval(() => {
+    
+    currentIndex = (currentIndex + 1) % newsItems.length;
+    
+    slideshowContainer.textContent = newsItems[currentIndex].title; // Update title text
+  }, fadeDuration);
+}
+
 	</script>
 
 
