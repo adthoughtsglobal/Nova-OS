@@ -616,14 +616,35 @@ async function dod() {
 	let x;
 	try {
 		gid("desktop").innerHTML = ``;
-		let y = await getFileNamesByFolder("Desktop")
+		let y = await getFileNamesByFolder("Desktop");
+		let dropZone = document.getElementById("desktop");
+		dropZone.addEventListener('dragover', (event) => {
+			event.preventDefault();
+		});
+
+		dropZone.addEventListener('drop', async (event) => {
+			console.log(event)
+			event.preventDefault();
+
+			const unid = event.dataTransfer.getData("Text");
+    console.log('Dropped item unid:', unid);
+	await moveFileToFolder(unid, "Desktop/");
+	dod()
+		});
+
+
+		dropZone.addEventListener('dragend', (event) => {
+			event.preventDefault();
+		});
 		y.forEach(async function (app) {
 			// Create a div element for the app shortcut
 			var appShortcutDiv = document.createElement("div");
 			appShortcutDiv.className = "app-shortcut sizableuielement";
 			appShortcutDiv.setAttribute("onclick", "openfile('" + app.id + "')");
 			appShortcutDiv.setAttribute("unid", app.id);
-
+			
+			appShortcutDiv.setAttribute("draggable", true);
+			appShortcutDiv.setAttribute("ondragstart", "dragfl(event, this)");
 
 			// Create a span element for the app icon
 			var iconSpan = document.createElement("span");
@@ -677,6 +698,7 @@ async function dod() {
 			appShortcutDiv.appendChild(nameSpan);
 
 			gid("desktop").appendChild(appShortcutDiv);
+			
 		});
 		x = await getFileById(await getSetting("wall"));
 	} catch (error) {
@@ -1808,6 +1830,12 @@ function displayNotifications(x) {
 	const notifList = document.getElementById("notiflist");
 	notifList.innerHTML = "";
 
+	if (Object.values(notifLog).length == 0) {
+		document.querySelector(".notiflist").style.display = "none";
+	} else {
+		document.querySelector(".notiflist").style.display = "block";
+	}
+
 	Object.values(notifLog).forEach(({ title, description, appname }) => {
 		const notifDiv = document.createElement("div");
 		notifDiv.className = "notification";
@@ -1913,6 +1941,25 @@ async function genTaskBar() {
 	appbarelement.innerHTML = "<span id='taskbarloader'></span>";
 	if (appbarelement) {
 		let x = await getFileNamesByFolder("Dock");
+		let dropZone = appbarelement;
+		dropZone.addEventListener('dragover', (event) => {
+			event.preventDefault();
+		});
+
+		dropZone.addEventListener('drop', async (event) => {
+			console.log(event)
+			event.preventDefault();
+
+			const unid = event.dataTransfer.getData("Text");
+    console.log('Dropped item unid:', unid);
+	await moveFileToFolder(unid, "Dock/");
+	genTaskBar();
+		});
+
+
+		dropZone.addEventListener('dragend', (event) => {
+			event.preventDefault();
+		});
 		if (x.length == 0) {
 			let y = await getFileNamesByFolder("Apps");
 
@@ -1930,6 +1977,10 @@ async function genTaskBar() {
 			var islnk = false;
 			// Create a div element for the app shortcut
 			var appShortcutDiv = document.createElement("biv");
+			
+			appShortcutDiv.setAttribute("draggable", true);
+			appShortcutDiv.setAttribute("ondragstart", "dragfl(event, this)");
+			appShortcutDiv.setAttribute("unid", app.id || '');
 			appShortcutDiv.className = "app-shortcut tooltip adock sizableuielement";
 			app = await getFileById(app.id)
 
@@ -1960,13 +2011,17 @@ async function genTaskBar() {
 
 			var tooltisp = document.createElement("span");
 			tooltisp.className = "tooltiptext";
-			tooltisp.innerHTML = islnk ? app.fileName + `*` : app.fileName;
+			tooltisp.innerHTML = islnk ? basename(app.fileName) + `*` : basename(app.fileName);
 
 			// Append both spans to the app shortcut container
 			appShortcutDiv.appendChild(iconSpan);
 			appShortcutDiv.appendChild(tooltisp);
 
+			
+
 			appbarelement.appendChild(appShortcutDiv);
+
+			
 		})
 		gid('taskbarloader').remove()
 	}
@@ -1975,7 +2030,14 @@ async function genTaskBar() {
 makedialogclosable('searchwindow');
 prepareArrayToSearch()
 async function opensearchpanel() {
-	gid('searchwindow').showModal()
+	gid("seapppreview").style.display = "none";
+
+	if (appsHistory.length > 0) {
+		gid("partrecentapps").style.display = "block";
+	} else {
+		gid("partrecentapps").style.display = "none";
+		document.querySelector(".previewsside").style.display = "none";
+	}
 	if (await getSetting("smartsearch")) {
 		gid('searchiconthingy').style = `background: linear-gradient(-34deg, #79afff, #f66eff);opacity: 1; color: white;padding: 0.1rem 0.3rem; margin: 0.3rem; border-radius: 0.5rem;aspect-ratio: 1 / 1;display: grid;cursor: default; margin-right: 0.5rem;box-shadow: 0 0 6px inset #ffffff6b;`
 	} else {
@@ -1987,15 +2049,8 @@ async function opensearchpanel() {
 	gid("strtsear").value = "";
 	loadrecentapps();
 	displayNotifications();
-
-	gid("seapppreview").style.display = "none";
-
-	if (appsHistory.length > 0) {
-		gid("partrecentapps").style.display = "block";
-	} else {
-		gid("partrecentapps").style.display = "none";
-		document.querySelector(".previewsside").style.display = "none";
-	}
+	gid('searchwindow').showModal();
+	prepareArrayToSearch()
 }
 
 function mtpetxt(str) {
@@ -2499,4 +2554,8 @@ function createFolderStructure(folderName) {
 		current = current[part];
 	}
 	return current;
+}
+
+function dragfl(ev, obj) {
+	ev.dataTransfer.setData("Text", obj.getAttribute('unid'));
 }

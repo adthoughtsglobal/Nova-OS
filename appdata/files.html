@@ -13,10 +13,10 @@
 		@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
 
 		:root {
-	--def-bg: #0A0A0A;
-	--item-bg: #171717;
-	--highlighted: #44403C;
-}
+			--def-bg: #0A0A0A;
+			--item-bg: #171717;
+			--highlighted: #44403C;
+		}
 
 		/* width */
 		::-webkit-scrollbar {
@@ -167,21 +167,21 @@
 
 		.themainstuff {
 			margin: 3px 5px;
-    display: flex;
-    width: calc(100% - 5px);
-    height: 100%;
+			display: flex;
+			width: calc(100% - 5px);
+			height: 100%;
 		}
 
 		[flap-fl-topnav] {
 			display: flex;
-    margin: 0rem 5px;
-    margin-bottom: 0.1rem;
-    font-size: 9px;
-    opacity: 70%;
-    flex-direction: row;
-    background-color: #181818;
-    border-radius: 0.3rem;
-    padding: 3px 0px;
+			margin: 0rem 5px;
+			margin-bottom: 0.1rem;
+			font-size: 9px;
+			opacity: 70%;
+			flex-direction: row;
+			background-color: #181818;
+			border-radius: 0.3rem;
+			padding: 3px 0px;
 		}
 
 		[flap-files] {
@@ -193,6 +193,11 @@
 			padding-top: 0;
 			height: 0;
 			margin-top: 5px;
+		}
+
+		[flap-files][flmode='grid'] {
+			display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
 		}
 
 		.file {
@@ -215,27 +220,26 @@
 
 
 		.file[list] .flfrname {
-			width: calc(100% - 73px);
 			display: inline-block;
 			overflow: hidden;
 			text-overflow: ellipsis;
+			flex: 1;
 		}
 
 		.file[grid] {
 			display: inline-block;
-			height: 83px;
-			width: calc(50% - 42px);
-			min-width: 80px;
-			margin: 5px;
-			transition: .3s;
-			padding: 1rem;
-			max-width: 100px;
+    height: 83px;
+    min-width: 80px;
+    width: auto;
+    margin: 5px;
+    transition: .3s;
+    padding: 1rem;
 		}
 
 		.file[grid] .flfrname {
-			max-width: 66px;
 			text-overflow: ellipsis;
 			overflow: hidden;
+			flex: 1;
 		}
 
 		.file[list] small {
@@ -262,19 +266,16 @@
 		}
 
 		.file small {
-			float: right;
 			flex-basis: max-content;
-			display: inline-block;
-			transform: translate(-3px, 4px);
-			opacity: 0.5;
-			font-size: 11px;
-			width: 0;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			flex-grow: 5;
-			text-align: end;
-
-			margin-left: 0.2rem;
+    display: inline-block;
+    transform: translate(-3px, 4px);
+    opacity: 0.5;
+    font-size: 11px;
+    width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: end;
+    margin-left: 0.2rem;
 		}
 
 		@keyframes rotate {
@@ -364,12 +365,13 @@
 		}
 
 		#slfile {
-			background: var(--highlighted);
+			background: #44403C;
 			transform: scale(1.01);
+			cursor:pointer;
 		}
 
 		#slfile[grid] [flname] {
-			background: #566877;
+			background: #78716C;
 		}
 
 		[bottomnav] {
@@ -696,8 +698,9 @@
 		[flap-files] .file svg {
 			object-fit: contain;
 			aspect-ratio: 1/1;
-			    width: 100%;
-				height: 100%;
+			width: 100%;
+			height: 100%;
+			max-width: 2rem;
 		}
 
 		#jstree {
@@ -1255,19 +1258,7 @@
 
 				reader.onload = (e) => {
 					const fileContent = e.target.result;
-					if (file.type.startsWith('video') || file.type.startsWith('audio') || file.type.startsWith('image')) {
-						folderName = 'Media';
-
-						out = window.parent.shrinkbsf(fileContent)
-
-					} else if (file.type.startsWith('text') || file.type.endsWith('md') || file.type.endsWith('rtf')) {
-						folderName = 'Documents';
-					} else if (file.type.startsWith('html')) {
-						folderName = 'Apps';
-					} else {
-						folderName = 'Other';
-					}
-
+						folderName = 'downloads';
 					let md = {
 						"via": "imported"
 					}
@@ -1296,7 +1287,6 @@
 			document.getElementById("flap-sidenav").style.width = getComputedStyle(document.getElementById("jstree")).width
 		}
 		async function greenflagbro(defaultopenfold = false) {
-			console.log("deffofof", defaultopenfold)
 			if (defaultopenfold) {
 				currentPath = defaultopenfold;
 			}
@@ -1339,8 +1329,6 @@
 							memory = result;
 							refresh()
 
-						} else {
-							console.log('0003');
 						}
 					} catch (error) {
 						console.error('Error:', error);
@@ -1360,7 +1348,6 @@
 		}
 
 		function Allowdrop(ev, obj) {
-			console.log("allowdrop")
 			ev.preventDefault();
 			obj.style.transform = "scale(1.1)";
 			setTimeout(function () {
@@ -1370,7 +1357,6 @@
 
 		function dropfl(ev, dat) {
 			let data = ev.dataTransfer.getData("Text");
-			console.log("moving " + data + " to " + dat)
 			moveFileToFolder(data, dat)
 		}
 
@@ -1426,7 +1412,6 @@
 				$('#jstree').on("changed.jstree", function (e, data) {
 					if (data?.node?.li_attr?.['data-path']) {
 						let selectedPath = data.node.li_attr['data-path'];
-						console.log('Selected folder:', selectedPath);
 						listFiles(selectedPath);
 
 						if (!window.parent.getSetting("filesSidenavSize")) {
@@ -1456,10 +1441,8 @@
 		}
 
 		function addDragAndDropListeners() {
-			console.log("trying to add event listeners")
 			document.querySelectorAll('#jstree li[role="none"]').forEach(function (element) {
 				const folderName = element.querySelector('a').textContent;
-				console.log(element)
 				element.addEventListener('dragover', function (event) {
 					Allowdrop(event, element);
 				});
@@ -1475,7 +1458,6 @@
 		}
 
 		async function listFiles(folderName, gen) {
-			console.log(folderName)
 			const startTime = performance.now();
 			if (currentPath == folderName && gen) {
 				return;
@@ -1574,11 +1556,12 @@
 					for (let item of content) {
 
 						try {
+							document.getElementById("filelist").setAttribute('flmode', flmode);
 							fileData = await window.parent.getFileById(item.id);
 							let fileElement = document.createElement('div');
 							fileElement.classList.add("file");
 							fileElement.setAttribute(flmode, '');
-							fileElement.setAttribute("unid", item.id || '');
+							(item.id) ? fileElement.setAttribute("unid", item.id) : null;
 							fileElement.setAttribute("draggable", !item.name.endsWith('/'));
 
 							fileElement.setAttribute("onclick", "slfile(this, '" + item.id + "');");
@@ -1601,10 +1584,9 @@
 							fileElement.setAttribute("title", `${item.name}\nID: ${item.id || 'Folder'}`);
 							fllist.appendChild(fileElement);
 						} catch (error) {
-							console.error("Safe Error processing item:", error);
-							console.log("This item caused error: " + item.name);
+							console.error("Safe Error processing item:", error, item.id);
 							// error files
-							
+
 						}
 					}
 					const endTime = performance.now(); // End the timer if the file is not found
@@ -1680,7 +1662,6 @@
 						return;
 					}
 					try {
-						console.log(x.getAttribute("unid"))
 						fileData = await window.parent.getFileById(x.getAttribute("unid"));
 
 						if (fileData && fileData.content) {
@@ -1803,12 +1784,12 @@
 			try {
 
 				window.parent.remfile(ID);
-				console.log(`0004`);
 
 				document.getElementById("fileinfobn").style.opacity = 1;
 				document.getElementById("fileinfobn").innerHTML = "Deleting file...";
 				await window.parent.updateMemoryData().then(() => {
 					document.getElementById("fileinfobn").innerHTML = "File Deleted";
+					refresh();
 				});
 				document.querySelector(`[unid="${ID}"]`).style.opacity = 0.2;
 			} catch (error) {
@@ -1817,7 +1798,6 @@
 		}
 
 		async function openfile(...args) {
-			console.log("filesapp default openfile: ", args[0]);
 			if (sessiontype == "opener") {
 				choosefile()
 				return;
@@ -1853,73 +1833,49 @@
 		}
 
 		async function moveFileToFolder(flid, dest) {
-			console.log("Moving file with id: " + flid + " to folder: " + dest);
 
 			let fileToMove = await window.parent.getFileById(flid);
 
 			await window.parent.createFile(dest, fileToMove.fileName, fileToMove.type, fileToMove.content, fileToMove.metadata);
-			console.log("File created in folder: " + dest);
 
-			console.log("Removing file: " + flid);
 			await remfile(flid);
 
 			document.getElementById("fileinfobn").style.opacity = 1;
 			document.getElementById("fileinfobn").innerHTML = "File was moved to " + dest;
+			refresh()
 		}
 
 
 		async function movefile(flid) {
 			// Get file ID from the attribute
 			flid = flid.getAttribute("unid");
-			console.log("NAV MOVE file with id: " + flid);
 
-			// Function to get folder names from the memory object
-			const getFolderNames = (memory) => {
-				return Object.keys(memory).filter(key => key.endsWith('/'));
+			const getFolderNames = (memory, parentPath = '', level = 0) => {
+				let folders = [];
+				Object.keys(memory).forEach(key => {
+					const fullPath = parentPath + key;
+					if (fullPath.endsWith('/')) {
+						const indent = '-'.repeat(level * 2); // 2 spaces per level
+						folders.push(indent + fullPath);
+						folders = folders.concat(getFolderNames(memory[key], fullPath, level + 1));
+					}
+				});
+				return folders;
 			};
 
-			// Get the current path
-			const currentPath = "Downloads/";
 
-			// Get folder names array
 			let folders = getFolderNames(memory);
-			let filteredFolders = folders.filter(folder => folder !== currentPath);
+			let filteredFolders = folders.filter(folder => folder.trim() !== currentPath);
 
-			// Create select element
-			let selectOptions = filteredFolders.map(folder => `<option>${folder}</option>`).join('');
-			let selectElement = `<select id="filesappselecttomovedest">${selectOptions}</select>`;
+			let selectedFolder = await window.parent.showDropdownModal("Select a folder", "Move to", filteredFolders);
 
-			// Ask user to select a folder
-			let confpromise = await window.parent.justConfirm("Select a folder", `Move to ${selectElement}`);
+			if (selectedFolder !== null) {
 
-			console.log("promise result: " + confpromise);
-			if (confpromise) {
-				let selectedFolder = window.parent.document.getElementById("filesappselecttomovedest").value;
-				console.log("Moving to: " + selectedFolder);
-
-				// Function to find a file by ID
-				const getFileById = (memory, id) => {
-					for (let folder in memory) {
-						for (let file in memory[folder]) {
-							if (memory[folder][file].id === id) {
-								return { path: folder, name: file, data: memory[folder][file] };
-							}
-						}
-					}
-					return null;
-				};
-
-				// Get file data by ID
-				let fileData = getFileById(memory, flid);
 				if (fileData) {
-					// Create file in the new location
-					memory[selectedFolder][fileData.name] = fileData.data;
-					console.log("file made in " + selectedFolder + ", " + JSON.stringify(fileData.data));
+					await moveFileToFolder(flid, selectedFolder);
 
-					// Remove file from the old location
-					delete memory[fileData.path][fileData.name];
-					console.log("removing: " + flid);
-
+					await liststuff();
+					listFiles(selectedFolder)
 					document.getElementById("fileinfobn").innerHTML = "File was moved to " + selectedFolder;
 				} else {
 					console.error("File not found!");
@@ -1954,13 +1910,13 @@
 		}
 
 		function geticon(x, name) {
-			
+
 			let i, c;
 			if (x == "txt") {
 				i = "description"
 				c = "#42A5F5"
 			} else if (x == "app") {
-				
+
 				if (window.parent.appicns[name]) {
 					i = window.parent.appicns[name];
 					c = "#ffffff";
@@ -2036,7 +1992,8 @@
 
 		async function remfold() {
 			if (currentPath == "System") {
-				window.parent.say("You cannot remove system folder through files app.")
+				window.parent.say("You cannot remove system folder through files app.");
+				return;
 			}
 			let x = await window.parent.justConfirm("Remove folder?", "Remove '" + currentPath + "' permanently from your device?")
 			if (x) {
@@ -2044,18 +2001,16 @@
 					document.getElementById("fileinfobn").innerHTML = currentPath + " was removed"
 				})
 				listFiles('', true)
+				liststuff()
 			}
 		}
 
 
 		function mtpetxt(str) {
-			console.log(str)
 			try {
 				const parts = str.split('/');
-				console.log(str)
 				return parts.length > 1 ? parts.pop() : '';
 			} catch (err) {
-				console.log(err)
 			}
 		}
 
@@ -2064,18 +2019,15 @@
 				const parts = str.split('.');
 				return parts.length > 1 ? parts.pop() : '';
 			} catch (err) {
-				console.log(err)
 			}
 		}
 
 		function greenflag() {
 			const data = myWindow?.params?.data;
 
-			console.log(myWindow, data);
-
 			if (data?.opener) {
 				sessiontype = "opener";
-				document.getElementById("fileapptitledis").innerText = "Choose File";
+				myWindow.titleElement.innerText = "Choose File";
 				sessionreturnreqid = myWindow.params.winuid;
 				document.getElementById("choosefile").style.display = "flex";
 				greenflagbro(data.dir ?? false);

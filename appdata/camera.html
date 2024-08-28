@@ -221,7 +221,7 @@
 			startCamera()
 		}
 
-		function captureCameraImage() {
+		async function captureCameraImage() {
 			const video = document.getElementById('video');
 			const canvas = document.createElement('canvas');
 			const ctx = canvas.getContext('2d');
@@ -239,11 +239,10 @@
 			var dataUrl;
 			var condition = true;
 			try {
-				let qsets = localStorage.getItem("qsets");
+				let qsets = await window.parent.getSetting("CamImgFormat");
 				if (qsets) {
-					let qsetsObj = JSON.parse(qsets);
-					if (qsetsObj.CamImgFormat) {
-						dataUrl = canvas.toDataURL('image/' + qsetsObj.CamImgFormat.toLowerCase());
+					if (qsets) {
+						dataUrl = canvas.toDataURL('image/' + qsets.toLowerCase() || 'webp');
 					}
 				}
 			} catch (error) {
@@ -253,13 +252,14 @@
 			return dataUrl;
 		}
 
-		function capture(obj) {
-		setTimeout(()=> {
+		async function capture(obj) {
+		setTimeout(async ()=> {
 			const video = document.getElementById('video');
-			video.style.filter = "brightness(5)"
+			video.style.display = "none";
 			let cakebuff = obj.innerHTML;
 			obj.innerHTML = "..."
-			let x = captureCameraImage();
+			let x = await captureCameraImage();
+			console.log("capturedata", x)
 			x = window.parent.shrinkbsf(x);
 			let y = {
 				"via": "camera"
@@ -268,11 +268,10 @@
 			let FileFormat;
 			var condition = true;
 			try {
-				let qsets = localStorage.getItem("qsets");
+				let qsets = await window.parent.getSetting("CamImgFormat")
 				if (qsets) {
-					let qsetsObj = JSON.parse(qsets);
-					if (qsetsObj.CamImgFormat) {
-						FileFormat = qsetsObj.CamImgFormat.toLowerCase()
+					if (qsets) {
+						FileFormat = qsets.toLowerCase();
 					}
 				}
 			} catch (error) {
@@ -297,7 +296,7 @@
 createFileWithTimestamp();
 			obj.innerHTML = cakebuff;
 			setTimeout(() => {
-				video.style.filter = "none";
+				video.style.display = "block";
 			}, 500);
 }, document.getElementById('timer-select').value)
 		}

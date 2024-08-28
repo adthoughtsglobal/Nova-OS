@@ -204,6 +204,7 @@ nav info {
 	overflow-x: auto;
 	display: flex;
 	justify-content: space-between;
+	margin-bottom: -1px;
 }
 
 .windowheader:active {
@@ -283,7 +284,7 @@ nav info {
 	border-radius: 10px;
 	bottom: 9% !important;
 	opacity: 1;
-	word-break: break-all;
+	word-break: normal;
 	transform: scale(0.9) translateX(-4px);
 }
 
@@ -512,7 +513,7 @@ nav info {
 
 .modal p {
 	text-align: left;
-	overflow-wrap: break-word;
+	overflow-wrap: normal;
 }
 
 .modal p span {
@@ -1019,8 +1020,10 @@ nav info {
 
 .layer44 {
 	position: absolute;
-	top: 0;
-	left: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
 }
 
 #loginmod {

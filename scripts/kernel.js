@@ -14,15 +14,12 @@ function OLPreturn(fileID, transferID) {
     if (iframeReferences[transferID]) {
         iframeReferences[transferID].postMessage({returned:fileID, id:transferID, action:'loadlocalfile'}, '*');
       }
-
-      console.log(iframeReferences, {returned:fileID, id:transferID, action:'loadlocalfile'})
 }
 
 
 const iframeReferences = {};
 
 async function openfile(x, all) {
-    console.log("opening: " + x)
     let unid = x;
     try {
         if (!unid) {
@@ -83,10 +80,6 @@ function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
         appsHistory = appsHistory.slice(-5);
     }
 
-    if (winds.length > 3) {
-        notify("Over 100 tabs is open.", "Even if your pc can handle it - this is cringe.");
-    }
-
     content = cont;
     if (content == undefined) {
         content = "<center><h1>Unavailable</h1>App Data cannot be read.</center>";
@@ -111,11 +104,9 @@ function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
     let isitmob = window.innerWidth <= 500;
 
     if (!isitmob) {
-        console.log(aspectratio);
         if (aspectratio == null) {
             aspectratio = "9/6";
         }
-        console.log("adjusting window for aspect ratio: ", aspectratio);
         
         let [widthFactor, heightFactor] = aspectratio.split('/').map(Number);
         let aspectRatioValue = widthFactor / heightFactor;
@@ -153,7 +144,6 @@ function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
 
     (async function () {
         let x = await getSetting("WindowBgColor");
-        console.log(x);
         windowDiv.style.background = (x) ? x : 'transparent';
     })();
 
@@ -329,11 +319,9 @@ async function openapp(x, od) {
             if (od == 1) {
                 y = await fetchData("appdata/" + x + ".html");
                 od = await createFile("Apps", x, "app", y);
-                console.log("loadable",od)
             } else {
                 y = await getFileById(od)
                 y = y.content;
-                console.log("local",od)
             }
             // Assuming you have a predefined function openwindow
             openwindow(x, y, getAppIcon(y, x), getAppTheme(y), getAppAspectRatio(y), od, Gtodo);
