@@ -564,6 +564,10 @@ async function removeUser(username = CurrentUsername) {
         const store = transaction.objectStore(key);
 
         const existingUser = await store.get(username);
+        
+        const magicStrings = JSON.parse(localStorage.getItem('magicStrings')) || {};
+        delete magicStrings[CurrentUsername];
+        localStorage.setItem('magicStrings', JSON.stringify(magicStrings));
         if (existingUser) {
             await store.delete(username);
             console.log(`User ${username} removed successfully.`);

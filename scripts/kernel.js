@@ -1,3 +1,5 @@
+var dragging = false;
+
 async function openlaunchprotocol(appid, data, id, winuid) {
     console.log("Open Lanuch Protocol", appid, data,id)
     let x = {
@@ -300,6 +302,63 @@ function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
     dragElement(windowDiv);
     putwinontop('window' + winuid);
     loadtaskspanel();
+}
+
+
+function dragElement(elmnt) {
+	var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+	if (gid(elmnt.id + "header")) {
+		gid(elmnt.id + "header").onmousedown = dragMouseDown;
+	} else {
+		elmnt.onmousedown = dragMouseDown;
+	}
+
+	function dragMouseDown(e) {
+		e = e || window.event;
+		e.preventDefault();
+		pos3 = e.clientX;
+		pos4 = e.clientY;
+		document.onmouseup = closeDragElement;
+		document.onmousemove = elementDrag;
+	}
+
+	function elementDrag(e) {
+		e = e || window.event;
+		e.preventDefault();
+		pos1 = pos3 - e.clientX;
+		pos2 = pos4 - e.clientY;
+		pos3 = e.clientX;
+		pos4 = e.clientY;
+
+		let newTop = elmnt.offsetTop - pos2;
+		let newLeft = elmnt.offsetLeft - pos1;
+
+		let boundaryTop = 0;
+		let boundaryLeft = 0;
+		let boundaryBottom = window.innerHeight - elmnt.offsetHeight;
+		let boundaryRight = window.innerWidth - elmnt.offsetWidth;
+
+		if (newTop < boundaryTop) {
+			newTop = boundaryTop;
+		}
+		if (newTop > boundaryBottom) {
+			newTop = boundaryBottom;
+		}
+		if (newLeft < boundaryLeft) {
+			newLeft = boundaryLeft;
+		}
+		if (newLeft > boundaryRight) {
+			newLeft = boundaryRight;
+		}
+
+		elmnt.style.top = newTop + "px";
+		elmnt.style.left = newLeft + "px";
+	}
+
+	function closeDragElement() {
+		document.onmouseup = null;
+		document.onmousemove = null;
+	}
 }
 
 async function openapp(x, od) {
