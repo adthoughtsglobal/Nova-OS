@@ -309,7 +309,7 @@ async function openn() {
 		// Create a span element for the app icon
 		var iconSpan = document.createElement("span");
 
-		if (!appicns[app.name]) {
+		if (!appicns[app.id]) {
 			// Fetch the content asynchronously using getFileById
 			const content = await getFileById(app.id);
 
@@ -325,7 +325,7 @@ async function openn() {
 				iconSpan.innerHTML = defaultAppIcon;
 			}
 		} else {
-			iconSpan.innerHTML = appicns[app.name];
+			iconSpan.innerHTML = appicns[app.id];
 		}
 
 		function getapnme(x) {
@@ -390,7 +390,7 @@ async function loadrecentapps() {
 		appShortcutDiv.setAttribute("onclick", "openapp('" + app.name + "', '" + app.id + "')");
 		// Create a span element for the app icon
 		var iconSpan = document.createElement("span");
-		if (!appicns[app.name]) {
+		if (!appicns[app.id]) {
 
 			// Fetch the content asynchronously using getFileById
 			const content = await getFileById(app.id);
@@ -427,10 +427,10 @@ async function loadrecentapps() {
 			} else {
 				iconSpan.innerHTML = defaultAppIcon;
 			}
-			appicns[app.name] = iconSpan.innerHTML
+			appicns[app.id] = iconSpan.innerHTML
 
 		} else {
-			iconSpan.innerHTML = appicns[app.name]
+			iconSpan.innerHTML = appicns[app.id]
 		}
 
 		// Create a span element for the app name
@@ -629,7 +629,7 @@ async function dod() {
 			const unid = event.dataTransfer.getData("Text");
     console.log('Dropped item unid:', unid);
 	await moveFileToFolder(unid, "Desktop/");
-	dod()
+	//dod()
 		});
 
 
@@ -1546,7 +1546,7 @@ async function strtappse(event) {
 			if (!mostRelevantItem) mostRelevantItem = item; // Set mostRelevantItem if not set
 
 			const newElement = document.createElement("div");
-			newElement.innerHTML = "<div>" + ((appicns[item.name] != undefined) ? appicns[item.name] : defaultAppIcon) + " " + item.name + "</div>" + `<span class="material-icons" onclick="openfile('${item.id}')">arrow_outward</span>`;
+			newElement.innerHTML = "<div>" + ((appicns[item.id] != undefined) ? appicns[item.id] : defaultAppIcon) + " " + item.name + "</div>" + `<span class="material-icons" onclick="openfile('${item.id}')">arrow_outward</span>`;
 			gid("strtappsugs").appendChild(newElement);
 			elements++;
 		});
@@ -1558,7 +1558,7 @@ async function strtappse(event) {
 		document.getElementsByClassName("previewsside")[0].style.display = "flex";
 		gid("seapppreview").style.display = "block";
 
-		gid('seprw-icon').innerHTML = (appicns[mostRelevantItem.name] != undefined) ? appicns[mostRelevantItem.name] : defaultAppIcon;
+		gid('seprw-icon').innerHTML = (appicns[mostRelevantItem.id] != undefined) ? appicns[mostRelevantItem.id] : defaultAppIcon;
 		gid('seprw-appname').innerText = mostRelevantItem.name;
 		gid('seprw-openb').onclick = function () {
 			openfile(mostRelevantItem.id);
@@ -1993,7 +1993,7 @@ async function genTaskBar() {
 			appShortcutDiv.setAttribute("onclick", "openfile('" + app.id + "')");
 			var iconSpan = document.createElement("span");
 
-			if (!appicns[app.fileName]) {
+			if (!appicns[app.id]) {
 				// Unshrink the content
 				const unshrunkContent = unshrinkbsf(app.content);
 
@@ -2006,7 +2006,7 @@ async function genTaskBar() {
 					iconSpan.innerHTML = defaultAppIcon;
 				}
 			} else {
-				iconSpan.innerHTML = appicns[app.fileName];
+				iconSpan.innerHTML = appicns[app.id];
 			}
 
 			var tooltisp = document.createElement("span");

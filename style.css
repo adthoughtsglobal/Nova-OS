@@ -1024,6 +1024,8 @@ nav info {
     left: 0;
     width: 100%;
     height: 100vh;
+	display: grid;
+  gap: 10px;
 }
 
 #loginmod {

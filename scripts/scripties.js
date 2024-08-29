@@ -1,10 +1,8 @@
 gid("mm").innerHTML = `<svg class="mmic" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="22.93098" height="43.31773" viewBox="0,0,22.93098,43.31773"><g transform="translate(-228.53451,-158.34114)"><g data-paper-data="{&quot;isPaintingLayer&quot;:true}" id='novaic' fill="#ffffff" fill-rule="nonzero" stroke="none" stroke-width="0" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" style="mix-blend-mode: normal"><path d="M228.68924,195.01197l-0.15473,-36.67083l19.03116,29.04225l0.00895,-17.05191l3.55036,-5.02752l0.3405,36.35491c0,0 -18.13437,-29.80707 -18.13437,-29.23736c0,5.15736 -0.30946,16.4013 -0.30946,16.4013z"/></g></g></svg>`;
 
-var defaultAppIcon = `<?xml version="1.0" encoding="UTF-8"?> <svg version="1.1" viewBox="0 0 76.805 112.36" xmlns="http://www.w3.org/2000/svg"> <g transform="translate(-201.6 -123.82)"> <g stroke-dasharray="" stroke-miterlimit="10" style="mix-blend-mode:normal" data-paper-data='{"isPaintingLayer":true}'> <path d="m201.6 236.18v-111.56h49.097l27.707 31.512v80.051z" fill="#3f7ef6" stroke-width="NaN"/> <path d="m250.82 155.02 0.12178-31.202 27.301 31.982z" fill="#054fff" stroke-width="0"/> <path d="m216.73 180.4h46.531" fill="none" stroke="#9dbaff" stroke-linecap="round" stroke-width="7.5"/> <path d="m216.73 194.37h36.44" fill="none" stroke="#9dbaff" stroke-linecap="round" stroke-width="7.5"/> <path d="m216.73 207.78h42.046" fill="none" stroke="#9dbaff" stroke-linecap="round" stroke-width="7.5"/> </g> </g> </svg>`
+var defaultAppIcon = `<?xml version="1.0" encoding="UTF-8"?> <svg version="1.1" viewBox="0 0 76.805 112.36" xmlns="http://www.w3.org/2000/svg"> <g transform="translate(-201.6 -123.82)"> <g stroke-dasharray="" stroke-miterlimit="10" style="mix-blend-mode:normal" data-paper-data='{"isPaintingLayer":true}'> <path d="m201.6 236.18v-111.56h49.097l27.707 31.512v80.051z" fill="#3f7ef6" stroke-width="NaN"/> <path d="m250.82 155.02 0.12178-31.202 27.301 31.982z" fill="#054fff" stroke-width="0"/> <path d="m216.73 180.4h46.531" fill="none" stroke="#9dbaff" stroke-linecap="round" stroke-width="7.5"/> <path d="m216.73 194.37h36.44" fill="none" stroke="#9dbaff" stroke-linecap="round" stroke-width="7.5"/> <path d="m216.73 207.78h42.046" fill="none" stroke="#9dbaff" stroke-linecap="round" stroke-width="7.5"/> </g> </g> </svg>`;
 
-function thlog(x) {
-	// console.log("theme: " + x)
-}
+var globalmimeDb = null;
 
 // Mode-specific styles
 const styles = {
@@ -53,24 +51,16 @@ async function checkdmode() {
 			scaleUIElements(await getSetting("UISizing"))
 		}
 
-		// themes
-		thlog("qsets found");
 		if (await getSetting("darkMode")) {
-			thlog("yeah dark mode");
 			if (await getSetting("simpleMode")) {
-				thlog("oh its dark simple");
 				switchtheme("dark", "simple");
 			} else {
-				thlog("its non-simple dark");
 				switchtheme("dark");
 			}
 		} else {
-			thlog("bright");
 			if (await getSetting("simpleMode")) {
-				thlog("its simple bright");
 				switchtheme("bright", "simple");
 			} else {
-				thlog("its non-simple bright");
 				switchtheme("bright");
 			}
 		}
@@ -103,8 +93,6 @@ function switchtheme(x, y) {
 	// Determine which styles to apply
 	const mode = x === "dark" ? "dark" : "bright";
 	const simplicity = y === "simple" ? "simple" : "nonSimple";
-
-	thlog(`setting ${mode} mode ${simplicity === "simple" ? "simple" : "non-simple"}`);
 
 	// Apply styles
 	const currentStyles = styles[mode][simplicity];
@@ -208,3 +196,84 @@ async function checkAndRunFromURL() {
   
   
 }
+
+async function getMimeType(extension) {
+	if (globalmimeDb == null) {
+		const mimeDbUrl = 'https://cdn.jsdelivr.net/npm/mime-db@1.52.0/db.json';
+		const responseformimedb = await fetch(mimeDbUrl);
+		globalmimeDb = await responseformimedb.json();
+	}
+    // Find MIME type by extension
+    for (const [key, value] of Object.entries(globalmimeDb)) {
+        if (value.extensions && value.extensions.includes(extension)) {
+            return key; // Return the MIME type
+        }
+    }
+    return 'application/octet-stream'; // Default MIME type
+}
+
+
+const gridContainer = document.getElementById('desktop');
+const draggableItems = document.querySelectorAll('app-shortcut');
+
+// Configure these as needed
+const itemWidth = 100;
+const itemHeight = 100;
+
+function setupGrid() {
+  // Dynamically calculate container width and height
+  const containerWidth = gridContainer.clientWidth;
+  const containerHeight = gridContainer.clientHeight;
+
+  const columns = Math.floor(containerWidth / itemWidth);
+  const rows = Math.floor(containerHeight / itemHeight);
+
+  gridContainer.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+  gridContainer.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+
+  // Create grid cells
+  for (let i = 0; i < rows * columns; i++) {
+    const cell = document.createElement('div');
+    cell.classList.add('grid-cell');
+    cell.style.width = `${itemWidth}px`;
+    cell.style.height = `${itemHeight}px`;
+    gridContainer.appendChild(cell);
+
+    // Add event listeners for drag and drop
+    cell.addEventListener('dragover', dragOver);
+    cell.addEventListener('drop', drop);
+  }
+}
+
+function dragStart(event) {
+  event.dataTransfer.setData('text/plain', event.target.id);
+}
+
+function dragOver(event) {
+  event.preventDefault(); // Necessary to allow dropping
+}
+
+function drop(event) {
+  event.preventDefault();
+  const draggableElementId = event.dataTransfer.getData('text/plain');
+  const draggableElement = document.getElementById(draggableElementId);
+  draggableElement.style.left = `${event.target.offsetLeft}px`;
+  draggableElement.style.top = `${event.target.offsetTop}px`;
+  gridContainer.appendChild(draggableElement);
+}
+
+draggableItems.forEach(item => {
+  item.style.width = `${itemWidth}px`;
+  item.style.height = `${itemHeight}px`;
+  item.addEventListener('dragstart', dragStart);
+});
+
+// Initialize grid after the DOM is fully loaded
+window.addEventListener('load', setupGrid);
+
+// Re-setup grid on window resize to handle dynamic container resizing
+window.addEventListener('resize', () => {
+  // Clear existing grid cells
+  gridContainer.innerHTML = '';
+  setupGrid();
+});

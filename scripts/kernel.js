@@ -19,7 +19,7 @@ function OLPreturn(fileID, transferID) {
 
 const iframeReferences = {};
 
-async function openfile(x, all) {
+async function openfile(x) {
     let unid = x;
     try {
         if (!unid) {
@@ -35,12 +35,6 @@ async function openfile(x, all) {
         }
         // extract type from file extension
         mm.type = ptypext(mm.fileName);
-
-        if (all == 'any') {
-            appIdToOpen = fileTypeAssociations['all'] || null;
-            openlaunchprotocol(appIdToOpen, unid);
-            return;
-        }
 
         if (mm.type == "app") {
             // run the app if it is one
@@ -234,7 +228,7 @@ function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
     windowLoader.classList += "windowloader";
     var loaderdiv = document.createElement("div");
     loaderdiv.classList = "loader33";
-    windowLoader.innerHTML = appicns[title] ? appicns[title] : defaultAppIcon;
+    windowLoader.innerHTML = appicns[appid] ? appicns[appid] : defaultAppIcon;
     windowLoader.appendChild(loaderdiv);
 
     function loadIframeContent(windowLoader, windowContent, iframe) {
@@ -256,6 +250,10 @@ function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
             iframeReferences[winuid] = iframe.contentWindow;
             iframe.contentWindow.myWindow = {
                 element: windowDiv,
+                close: () => {
+                    clwin("window" + winuid);
+                    delete winds[title + winuid];
+                },
                 titleElement: windowtitlespan,
                 appID: appid,
                 windowID:winuid,

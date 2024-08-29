@@ -197,7 +197,7 @@
 
 		[flap-files][flmode='grid'] {
 			display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+			grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
 		}
 
 		.file {
@@ -228,12 +228,12 @@
 
 		.file[grid] {
 			display: inline-block;
-    height: 83px;
-    min-width: 80px;
-    width: auto;
-    margin: 5px;
-    transition: .3s;
-    padding: 1rem;
+			height: 83px;
+			min-width: 80px;
+			width: auto;
+			margin: 5px;
+			transition: .3s;
+			padding: 1rem;
 		}
 
 		.file[grid] .flfrname {
@@ -267,15 +267,15 @@
 
 		.file small {
 			flex-basis: max-content;
-    display: inline-block;
-    transform: translate(-3px, 4px);
-    opacity: 0.5;
-    font-size: 11px;
-    width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-align: end;
-    margin-left: 0.2rem;
+			display: inline-block;
+			transform: translate(-3px, 4px);
+			opacity: 0.5;
+			font-size: 11px;
+			width: 0;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			text-align: end;
+			margin-left: 0.2rem;
 		}
 
 		@keyframes rotate {
@@ -367,7 +367,7 @@
 		#slfile {
 			background: #44403C;
 			transform: scale(1.01);
-			cursor:pointer;
+			cursor: pointer;
 		}
 
 		#slfile[grid] [flname] {
@@ -663,17 +663,17 @@
 			margin: 0px;
 			font-size: 13px;
 			cursor: pointer;
-			background: #333333;
 			display: grid;
 			align-items: center;
 			justify-items: center;
 			justify-content: center;
 			align-content: center;
-			border-radius: 0.2rem;
-			height: 9px;
-			width: 6px;
 			text-align: right;
-			padding: 4px;
+			transition: .3s ease-out;
+		}
+
+		.newfoldbtn span {
+			font-size: 0.8rem;
 		}
 
 		.drivenav {
@@ -1010,8 +1010,9 @@
 			<div class="themainstuff">
 				<div flap-sidenav id="flap-sidenav">
 					<div class="drivenav">
-						<small onclick="listFiles('')">IndexedDB</small>
-						<small class="newfoldbtn" onclick="makefolderhuh()">+</small>
+						<small onclick="listFiles('')" id="dirviewbtn">IndexedDB</small>
+						<small class="newfoldbtn" onclick="toggletree()"><span class="material-symbols-rounded " id="treeviewchevron">chevron_left</span>
+							</small>
 					</div>
 					<div id="folders">
 
@@ -1235,7 +1236,7 @@
 				return;
 			}
 
-			await window.parent.createFile(currentPath, window.parent.basename(fname), window.parent.mtpetxt(fname))
+			await window.parent.createFile(currentPath, window.parent.basename(fname), window.parent.mtpetxt(fname), "data:" + await window.parent.getMimeType(window.parent.mtpetxt(fname)) + ";base64,")
 				.then(function () {
 					document.getElementById('makefiledia').close();
 					window.parent.notify("Created file", "File " + fname + " created at " + currentPath, "Files");
@@ -1258,7 +1259,7 @@
 
 				reader.onload = (e) => {
 					const fileContent = e.target.result;
-						folderName = 'downloads';
+					folderName = 'downloads';
 					let md = {
 						"via": "imported"
 					}
@@ -1276,7 +1277,7 @@
 			event.preventDefault();
 		});
 
-		var currentPath = '', nowfile, flmode = 'grid';
+		var currentPath = '', nowfile, flmode = 'grid', onlyshow = false;
 		var memory;
 		var fllist;
 		var fdlist;
@@ -1505,6 +1506,7 @@
 				delfolde.title = "Delete folder";
 				delfolde.onclick = () => remfold();
 
+
 				if (folderName === "System/" || folderName === "") {
 					delfolde.classList.add("disabled");
 					delfolde.onclick = (e) => e.preventDefault();
@@ -1513,6 +1515,35 @@
 				delfolde.innerHTML = `<span class="material-symbols-rounded">delete</span> Delete`;
 				dropupContentDiv.appendChild(delfolde);
 
+				const createfoldbtn = document.createElement("a");
+				createfoldbtn.classList.add("dropdownerthebob");
+				createfoldbtn.title = "Create folder";
+				createfoldbtn.onclick = () => makefolderhuh();
+
+				createfoldbtn.innerHTML = `<span class="material-symbols-rounded">add</span> Folder`;
+				dropupContentDiv.appendChild(createfoldbtn);
+
+				const navupbtn = document.createElement("a");
+				navupbtn.classList.add("dropdownerthebob");
+				navupbtn.title = "Parent folder";
+				let str = currentPath;
+				let count = 1;
+				for (let i = 0; i < str.length; i++) {
+					if (str[i] === '/') {
+						count++;
+					}
+				}
+				navupbtn.innerHTML = `<span class="material-symbols-rounded">keyboard_return</span> Parent`;
+				
+				if (count > 1) {
+					navupbtn.onclick = () => {
+						listFiles(currentPath.substring(0, currentPath.lastIndexOf('/', currentPath.lastIndexOf('/') - 1) + 1));
+					};
+				} else {
+					navupbtn.classList.add("disabled");
+				}
+				dropupContentDiv.appendChild(navupbtn);
+				
 				const toggleViewButton = document.createElement("a");
 				toggleViewButton.classList.add("dropdownerthebob");
 				toggleViewButton.title = flmode === 'grid' ? 'List view' : 'Grid view';
@@ -1556,6 +1587,9 @@
 					for (let item of content) {
 
 						try {
+							if (onlyshow && !item.name.endsWith(onlyshow)) {
+								continue;
+							}
 							document.getElementById("filelist").setAttribute('flmode', flmode);
 							fileData = await window.parent.getFileById(item.id);
 							let fileElement = document.createElement('div');
@@ -1632,6 +1666,25 @@
 
 				pathDisp.appendChild(span);
 			});
+		}
+
+		var treeviewopen = true;
+		function toggletree() {
+			if (treeviewopen) {
+				document.getElementById("flap-sidenav").style.width = '28px';
+				document.getElementById("flap-sidenav").style.minWidth = '28px';
+				document.getElementById("dirviewbtn").style.display = 'none';
+				document.getElementById("treeviewchevron").style.transform = 'rotate(180deg)';
+				document.getElementById("folders").style.display = 'none';
+				treeviewopen = false;
+			} else {
+				document.getElementById("flap-sidenav").style.width = '';
+				document.getElementById("flap-sidenav").style.minWidth = '';
+				document.getElementById("dirviewbtn").style.display = '';
+				document.getElementById("treeviewchevron").style.transform = 'none';
+				document.getElementById("folders").style.display = '';
+				treeviewopen = true;
+			}
 		}
 
 		async function slfile(y, z) {
@@ -1797,19 +1850,27 @@
 			}
 		}
 
-		async function openfile(...args) {
+		async function openfile(x, all) {
 			if (sessiontype == "opener") {
 				choosefile()
 				return;
 			}
 
-			window.parent.openfile(...args);
+			
+			if (all == 'any') {
+				currentreqID = window.parent.genUID();
+				let appIdToOpen = window.parent.fileTypeAssociations['file'][0] || null;
+				window.parent.openlaunchprotocol(appIdToOpen, {"opener":"app", "dir":"Apps/"}, currentreqID, myWindow.windowID);
+				return;
+			}
+
+			window.parent.openfile(x);
 		}
 
 		function choosefile() {
 			if (sessiontype == "opener") {
 				window.parent.OLPreturn(nowfile.getAttribute("unid"), sessionreturnreqid)
-				myWindow.element.remove()
+				myWindow.close()
 				return;
 			}
 		}
@@ -2022,6 +2083,18 @@
 			}
 		}
 
+		var currentreqID;
+
+		window.addEventListener('message', async (event) => {
+                console.log(event, currentreqID)
+                if (event.data.action === 'loadlocalfile') {
+                    if (event.data.id === myWindow.windowID) {
+                      
+                window.parent.openlaunchprotocol(event.data.returned, nowfile.getAttribute("unid")); 
+                    }
+                }
+            });
+
 		function greenflag() {
 			const data = myWindow?.params?.data;
 
@@ -2031,6 +2104,10 @@
 				sessionreturnreqid = myWindow.params.winuid;
 				document.getElementById("choosefile").style.display = "flex";
 				greenflagbro(data.dir ?? false);
+				onlyshow = data.opener || false;
+				if (onlyshow) {
+					myWindow.titleElement.innerText = "Choose " + onlyshow + " files";
+				}
 			} else {
 				document.getElementById("choosefile").style.display = "none";
 				greenflagbro(false);
