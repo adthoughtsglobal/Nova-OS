@@ -1800,7 +1800,7 @@ dialog#terminal {
 	opacity: 0.5;
 }
 
-@media only screen and (max-width: 800px) {
+@media only screen and (max-width: 1000px) {
 
 	#appdmod,
 	#searchwindow {

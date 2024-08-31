@@ -2104,7 +2104,7 @@
 				sessionreturnreqid = myWindow.params.winuid;
 				document.getElementById("choosefile").style.display = "flex";
 				greenflagbro(data.dir ?? false);
-				onlyshow = data.opener || false;
+				onlyshow = (data.opener != 'any') ? data.opener : false;
 				if (onlyshow) {
 					myWindow.titleElement.innerText = "Choose " + onlyshow + " files";
 				}

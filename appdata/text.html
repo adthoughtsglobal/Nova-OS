@@ -197,7 +197,7 @@
                 document.getElementById("thedisplay").value = "Waiting for you to open a file...";
                 currentreqID = window.parent.genUID();
                 let appIdToOpen = window.parent.fileTypeAssociations['file'][0] || null;
-                window.parent.openlaunchprotocol(appIdToOpen, { "opener": "app", "dir": "Downloads/" }, currentreqID, myWindow.windowID);
+                window.parent.openlaunchprotocol(appIdToOpen, { "opener":'any', "dir": "Downloads/" }, currentreqID, myWindow.windowID);
             }
 
             window.addEventListener('message', async (event) => {
