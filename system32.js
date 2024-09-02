@@ -222,7 +222,7 @@ async function getdb() {
 				resolve(memory);
 			  } catch (error) {
 				console.error("Decryption error:", error);
-				reject(error);
+				reject(3);
 			  }
 		    } else {
 			  resolve(null);
@@ -335,7 +335,7 @@ async function fetchmmData() {
         return data ?? null;
     } catch (error) {
         console.error("Memory data unreadable", error);
-        return null;
+        return 3;
     } finally {
         isFetchingMemory = false;
     }

@@ -217,7 +217,6 @@ async function startup() {
 document.addEventListener("DOMContentLoaded", async function () {
 	console.log("DOMCL");
 
-	// Check if the database 'trojencat' exists
 	updateMemoryData()
     .then(async (result) => {
         console.log("dat:", result);
