@@ -70,7 +70,52 @@ async function openfile(x) {
     }
 }
 
+
+function flwin(x) {
+    const winElement = x.parentElement.parentElement.parentElement;
+    winElement.classList.add("transp2");
+
+    const isFullScreen = x.innerHTML === "open_in_full";
+    const aspectRatio = winElement.getAttribute("data-aspectratio") || "9/6";
+    const [widthFactor, heightFactor] = aspectRatio.split('/').map(Number);
+    const aspectRatioValue = widthFactor / heightFactor;
+    const maxVW = 100, maxVH = 100;
+
+    if (isFullScreen) {
+        winElement.style.width = `calc(${maxVW}% - 0px)`;
+        winElement.style.height = `calc(${maxVH}% - 57px)`;
+        winElement.style.left = "0";
+        winElement.style.top = "0";
+        x.innerHTML = "close_fullscreen";
+    } else {
+        const maxWidthPx = (window.innerWidth * maxVW) / 100;
+        const maxHeightPx = (window.innerHeight * maxVH) / 100;
+
+        let heightPx = (maxHeightPx / 100) * 70;
+        let widthPx = heightPx * aspectRatioValue;
+
+        if (widthPx > maxWidthPx) {
+            widthPx = maxWidthPx;
+            heightPx = widthPx / aspectRatioValue;
+        }
+
+        const widthVW = (widthPx / window.innerWidth) * 100;
+        const heightVH = (heightPx / window.innerHeight) * 100;
+
+        winElement.style.width = `${widthVW}vw`;
+        winElement.style.height = `${heightVH}vh`;
+        winElement.style.left = `calc(50vw - ${widthVW / 2}vw)`;
+        winElement.style.top = `calc(50vh - ${heightVH / 2}vh)`;
+        x.innerHTML = "open_in_full";
+    }
+
+    setTimeout(() => {
+        winElement.classList.remove("transp2");
+    }, 1000);
+}
+
 function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
+    const start = performance.now();
     appsHistory.push(title);
     if (appsHistory.length > 5) {
         appsHistory = appsHistory.slice(-5);
@@ -234,21 +279,12 @@ function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
     windowLoader.appendChild(loaderdiv);
 
     function loadIframeContent(windowLoader, windowContent, iframe) {
+        const appstart = performance.now();
         var iframe = document.createElement("iframe");
-        var contentString = content.toString();
+        var contentString = isBase64(content) ? decodeBase64Content(content) : content;
+        var blobURL = URL.createObjectURL(new Blob([contentString], { type: 'text/html' }));
 
-        // Decode the content string if it's Base64 encoded
-        if (isBase64(contentString)) {
-            contentString = decodeBase64Content(contentString);
-        }
-        // Create a Blob from the content string
-        var blob = new Blob([contentString], { type: 'text/html' });
-
-        // Create a URL for the Blob
-        var blobURL = URL.createObjectURL(blob);
-
-
-        iframe.onload = function () {
+        iframe.onload = async function () {
             iframeReferences[winuid] = iframe.contentWindow;
             iframe.contentWindow.myWindow = {
                 element: windowDiv,
@@ -271,7 +307,10 @@ function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
             iframe.contentDocument.body.appendChild(script);
 
 
-            try { iframe.contentWindow.greenflag(); } catch { }
+            try { await iframe.contentWindow.greenflag(); } catch { }
+            const end = performance.now();
+	
+	    	console.log(`App startup took ${(end - start).toFixed(2)}ms`);
 
             windowLoader.remove();
         };
@@ -303,8 +342,87 @@ function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
     putwinontop('window' + winuid);
     loadtaskspanel();
 }
+async function checksnapping(x, event) {
+    if (await getSetting("wsnapping") !== true) {
+        return;
+    }
 
+    const cursorX = event.clientX;
+    const cursorY = event.clientY;
+    const viewportWidthInPixels = window.innerWidth;
+    const viewportHeightInPixels = window.innerHeight;
 
+    const VWInPixels = (3 * viewportWidthInPixels) / 100;
+    const VHInPixels = (3 * viewportHeightInPixels) / 100;
+
+    // Fixed aspect ratio of 9/6
+    const aspectRatioValue = 9 / 6;
+
+    const maxVW = 100;
+    const maxVH = 100;
+
+    const maxWidthPx = (viewportWidthInPixels * maxVW) / 100;
+    const maxHeightPx = (viewportHeightInPixels * maxVH) / 100;
+
+    let heightPx = (maxHeightPx / 100) * 70;
+    let widthPx = heightPx * aspectRatioValue;
+
+    if (widthPx > maxWidthPx) {
+        widthPx = maxWidthPx;
+        heightPx = widthPx / aspectRatioValue;
+    }
+
+    const widthVW = (widthPx / viewportWidthInPixels) * 100;
+    const heightVH = (heightPx / viewportHeightInPixels) * 100;
+
+    const resetWindow = () => {
+        x.classList.add("snapping");
+        x.style = `left: calc(50vw - ${widthVW / 2}vw); top: calc(50vh - ${heightVH / 2}vh); width: ${widthVW}vw; height: ${heightVH}vh; z-index: 0;`;
+        x.getElementsByClassName("flbtn")[0].innerHTML = "open_in_full";
+        fulsapp = false;
+        setTimeout(() => {
+            x.classList.remove("snapping");
+        }, 1000);
+    };
+
+    const maximizeWindow = () => {
+        x.classList.add("snapping");
+        x.style.width = "calc(100% - 0px)";
+        x.style.height = "calc(100% - 60px)";
+        x.style.top = "0";
+        x.style.left = "0";
+        x.style.right = "0";
+        fulsapp = true;
+        x.getElementsByClassName("flbtn")[0].innerHTML = "close_fullscreen";
+        setTimeout(() => {
+            x.classList.remove("snapping");
+        }, 1000);
+    };
+
+    if (fulsapp) {
+        resetWindow();
+    }
+
+    if (cursorY < VHInPixels || (viewportHeightInPixels - cursorY) < VHInPixels) {
+        maximizeWindow();
+    } else if (cursorX < VWInPixels) {
+        x.classList.add("snapping");
+        x.style = `left: 0; top: 0; width: calc(50% - 0px); height: calc(100% - 50px);`;
+        fulsapp = true;
+        x.getElementsByClassName("flbtn")[0].innerHTML = "open_in_full";
+        setTimeout(() => {
+            x.classList.remove("snapping");
+        }, 1000);
+    } else if ((viewportWidthInPixels - cursorX) < VWInPixels) {
+        x.classList.add("snapping");
+        x.style = `right: 0; top: 0; width: calc(50% - 0px); height: calc(100% - 50px);`;
+        fulsapp = true;
+        x.getElementsByClassName("flbtn")[0].innerHTML = "open_in_full";
+        setTimeout(() => {
+            x.classList.remove("snapping");
+        }, 1000);
+    }
+}
 function dragElement(elmnt) {
 	var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
 	if (gid(elmnt.id + "header")) {

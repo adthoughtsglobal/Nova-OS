@@ -1813,7 +1813,6 @@ dialog#terminal {
 	#appdmod,
 	#searchwindow {
 		width: 100%;
-		max-height: none;
 		height: calc(100vh - 90px);
 		padding: 22px;
 		bottom: -4px;

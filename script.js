@@ -80,7 +80,6 @@ async function showloginmod() {
 					gid('loginmod').close();
 					gid('edison').showModal();
 					
-					console.log("Set CurrentUsername: ", CurrentUsername);
 					startup();
 				} else {
 					console.log("Password check: bad: ", password, isdefaultpass);
@@ -142,34 +141,24 @@ function setsrtpprgbr(val) {
 
 async function startup() {
 	gid("edison").showModal();
-	console.log("Startup");
+	console.log("Starting up NovaOS");
 	setsrtpprgbr(0)
 	const start = performance.now();
 	await updateMemoryData().then(async () =>{
-
 		try {
 			gid('startupterms').innerHTML = "Initialising clock...";
-			setsrtpprgbr(10)
 			setInterval(updateTime, 1000);
-		} catch (err) { console.error("updateTime error:", err); }
-	
-		try {
+
 			gid('startupterms').innerHTML = "Checking themes...";
-			setsrtpprgbr(60)
 			await checkdmode();
-		} catch (err) { console.error("checkdmode error:", err); }
-	
-		try {
-			await dod();
-			
 			setsrtpprgbr(100)
 			gid('startupterms').innerHTML = "Startup completed";
 			
-		} catch (err) { console.error("dod error:", err); }
+		} catch (err) { console.error("startup error:", err); }
 	
 		const end = performance.now();
 	
-		console.log(`Startup ended: ${(end - start).toFixed(2)}ms`);
+		console.log(`Startup took ${(end - start).toFixed(2)}ms`);
 		async function fetchDataAndUpdate() {
 			let localupdatedataver = localStorage.getItem("updver");
 			let fetchupdatedata = await fetch("versions.json");
@@ -193,6 +182,8 @@ async function startup() {
 		fetchDataAndUpdate();
 		closeElementedis();
 		await genTaskBar();
+		await dod();
+		
 		// Initialize the associations from settings
 		async function loadFileTypeAssociations() {
 			const associations = await getSetting('fileTypeAssociations');
@@ -217,14 +208,30 @@ async function startup() {
 document.addEventListener("DOMContentLoaded", async function () {
 	console.log("DOMCL");
 
-	updateMemoryData()
-    .then(async (result) => {
-        console.log("dat:", result);
+	async function waitForNonNull() {
+		const startTime = Date.now();
+		const maxWaitTime = 3000; // 3 seconds
+	
+		while (Date.now() - startTime < maxWaitTime) {
+			const result = await updateMemoryData();
+			
+			if (result !== null) {
+				return result;
+			}
+			console.log("No data: retrying")
+			await new Promise(resolve => setTimeout(resolve, 100)); // Wait 100ms before trying again
+		}
+	
+		return null; // Return null if no non-null value is found within 3 seconds
+	}
+	
+	waitForNonNull().then( async (result) => {
+        console.log("Saved:", result);
         checkAndRunFromURL();
         gid('startupterms').innerHTML = "<span>Checking database...</span>";
 
         try {
-            if (result) {
+            if (result || result == 3) {
                 await showloginmod();
             } else {
                 await say(`
@@ -282,6 +289,7 @@ function updateTime() {
 const jsonToDataURI = json => `data:application/json,${encodeURIComponent(JSON.stringify(json))}`;
 
 async function openn() {
+	const start = performance.now();
 	gid("appsindeck").innerHTML = `<span class="loader" id="appsloader"></span>`
 	gid("strtsear").value = ""
 	gid("strtappsugs").style.display = "none";
@@ -347,8 +355,9 @@ async function openn() {
 
 		gid("appsindeck").appendChild(appShortcutDiv);
 	})).then(() => {
-
-		// gid('appsloader').remove();
+		const end = performance.now();
+	
+		console.log(`App Menu took ${(end - start).toFixed(2)}ms`);
 	}).catch((error) => {
 		console.error('An error occurred:', error);
 	});
@@ -558,11 +567,9 @@ async function dod() {
 		});
 
 		dropZone.addEventListener('drop', async (event) => {
-			console.log(event)
 			event.preventDefault();
 
 			const unid = event.dataTransfer.getData("Text");
-    console.log('Dropped item unid:', unid);
 	await moveFileToFolder(unid, "Desktop/");
 	//dod()
 		});
@@ -642,7 +649,7 @@ async function dod() {
 	}
 
 	if (x != undefined) {
-		console.log("wallpaper defined", x)
+		console.log("Setting custom wallpaper", x)
 		let unshrinkbsfX = unshrinkbsf(x.content);
 		document.getElementById('bgimage').src = unshrinkbsfX;
 	}
@@ -685,38 +692,6 @@ function clwin(x) {
 		document.getElementById(x).remove();
 		nowapp = '';
 	}, 700);
-}
-
-function flwin(x) {
-	x.parentElement.parentElement.parentElement.classList.add("transp2")
-	if (x.innerHTML == "open_in_full") {
-		let oke = x.parentElement.parentElement.parentElement;
-
-		oke.style.width = "calc(100% - 0px)";
-		oke.style.height = "calc(100% - 57px)";
-		oke.style.left = "0";
-		oke.style.top = "0";
-
-		x.innerHTML = "close_fullscreen";
-		fulsapp = true;
-	} else {
-		// minimise window
-		let oke = x.parentElement.parentElement.parentElement;
-
-		oke.style.left = "calc(50vw - 33.5vw)";
-		oke.style.top = "calc(50vh - 35vh)";
-		oke.style.width = "65vw";
-		oke.style.height = "70vh";
-
-		nowapp = ""
-		dewallblur();
-		x.innerHTML = "open_in_full"
-		fulsapp = false;
-	}
-	setTimeout(() => {
-		x.parentElement.parentElement.parentElement.classList.remove("transp2")
-
-	}, 1000);
 }
 
 function getAppIcon(unshrunkContent, appid, jff) {
@@ -781,7 +756,6 @@ function getAppTheme(unshrunkContent) {
 
 function getAppAspectRatio(unshrunkContent) {
 	if (!unshrunkContent.includes("aspect-ratio")) {
-		console.log("no aspect ratio")
 		return null;
 	}
 	const tempElement = document.createElement('div');
@@ -796,7 +770,6 @@ function getAppAspectRatio(unshrunkContent) {
 		}
 	});
 
-	console.log(metaTagData)
 	return metaTagData;
 }
 
@@ -907,7 +880,7 @@ async function createFolder(folderNames, folderData) {
 		})(memory, folderData);
 
 		await setdb(memory);
-		console.log('Folders and data created successfully.');
+		console.log('Folders created successfully.');
 	} catch (error) {
 		console.error("Error creating folders and data:", error);
 	}
@@ -1015,7 +988,7 @@ async function createFile(folderName2, fileName, type, content, metadata = {}) {
 	// Helper function to handle file creation or update
 	async function handleFile(folder, folderName, fileName2, base64data, type, metadata) {
 		if (type === "app" && fileName2.endsWith(".app")) {
-			console.log("App file to be created!");
+			console.log("Installing NovaOS Application");
 			const appData = await getFileByPath(`Apps/${fileName2}`);
 			if (appData) {
 				await updateFile("Apps", appData.id, { metadata, content: base64data, fileName: fileName2, type });
@@ -1044,7 +1017,6 @@ async function createFile(folderName2, fileName, type, content, metadata = {}) {
 }
 
 async function extractAndRegisterCapabilities(appId, content) {
-    console.log("EX CAPABLE:" + appId);
     try {
 		if (!content) {
 			content = await window.parent.getFileById(appId);
@@ -1055,8 +1027,6 @@ async function extractAndRegisterCapabilities(appId, content) {
             content = decodeBase64Content(content);
         }
 
-        console.log(content.substring(0, 100));
-
         let parser = new DOMParser();
         let doc = parser.parseFromString(content, "text/html");
         let metaTag = doc.querySelector('meta[name="capabilities"]');
@@ -1064,9 +1034,9 @@ async function extractAndRegisterCapabilities(appId, content) {
         if (metaTag) {
             let capabilities = metaTag.getAttribute("content").split(',');
             await registerApp(appId, capabilities);
-            console.log(`Registered capabilities for app ID: ${appId}`);
+            console.log(`Registered capabilities: ${appId}`);
         } else {
-            console.log(`No capabilities meta tag found for app ID: ${appId}`);
+            console.log(`No capabilities: ${appId}`);
         }
     } catch (error) {
         console.error("Error extracting and registering capabilities:", error);
@@ -1096,7 +1066,7 @@ async function cleanupInvalidAssociations() {
     }
 
     await setSetting('fileTypeAssociations', fileTypeAssociations);
-    console.log('Cleanup completed: Invalid app associations removed.');
+    console.log('AFA cleanup completed');
 }
 
 async function getAllValidAppIds() {
@@ -1264,8 +1234,6 @@ async function initialiseOS() {
 		"Apps/": {}
 	};
 
-	console.log("Init from preset")
-
 	setdb(memory).then(async function () {
 		await saveMagicStringInLocalStorage(password);
 		await ensurePreferencesFileExists()
@@ -1306,11 +1274,9 @@ async function installdefaultapps() {
 			const fileContent = await response.text();
 
 			createFile("Apps", appName, "app", fileContent);
-			console.log(appName + " modified");
 		} catch (error) {
 			console.error("Error updating " + appName + ":", error.message);
 			if (attempt < maxRetries) {
-				console.log("Retrying update: " + appName + " (attempt " + (attempt + 1) + ")");
 				await updateApp(appName, attempt + 1);
 			} else {
 				console.error("Max retries reached for " + appName + ". Skipping update.");
@@ -1332,7 +1298,6 @@ async function installdefaultapps() {
 	  }
 	  
 	  await waitForNonNull().then(async (memory) =>  {
-		console.log("ELOG:", memory);
 		// Update each app sequentially
 		for (let i = 0; i < defAppsList.length; i++) {
 			await updateApp(defAppsList[i]);
@@ -1372,11 +1337,14 @@ async function prepareArrayToSearch() {
 	let arrayToSearch = [];
 
 	function scanFolder(folderPath, folderContents) {
-		for (const name in folderContents) {
-			const fullPath = `${folderPath}${name}`;
-			const item = folderContents[name];
+		for (let name in folderContents) {
+			let fullPath = `${folderPath}${name}`;
+			let item = folderContents[name];
 
 			if (item.id) {
+				if (mtpetxt(name) == "app") {
+					name = basename(name)
+				}
 				arrayToSearch.push({ name, id: item.id, type: "file", path: folderPath });
 			} else {
 				arrayToSearch.push({ name: name, type: "folder", path: folderPath });
@@ -1393,117 +1361,103 @@ async function prepareArrayToSearch() {
 }
 
 async function strtappse(event) {
-	if (fileslist.length === 0) {
-		await prepareArrayToSearch();
-	}
+    if (fileslist.length === 0) {
+        await prepareArrayToSearch();
+    }
 
-	const searchValue = gid("strtsear").value.toLowerCase();
-	if (searchValue.length === 0) return;
+    const searchValue = gid("strtsear").value.toLowerCase().trim();
+    if (searchValue === "") return;
 
-	const abracadra = await getSetting("smartsearch");
+    const abracadra = await getSetting("smartsearch");
 
-	if (event.key === "Enter") {
-		event.preventDefault();
+    let maxSimilarity = 0.5;
+    let appToOpen = null;
+    let mostRelevantItem = null;
+    const itemsWithSimilarity = [];
 
-		if (searchValue === "i love nova") {
-			gid("searchwindow").close();
-			notify("hmm", "you're really goofy...", "Nova just replied you:");
-			really = true;
-		}
+    fileslist.forEach(item => {
+        const itemName = item.name.toLowerCase();
+        if (item.type !== "folder") {
+            let similarity = abracadra ? calculateSimilarity(itemName, searchValue) : 0;
+            if (!abracadra && itemName.startsWith(searchValue)) {
+                similarity = 1;
+            }
 
-		let maxSimilarity = 0.5;
-		let appToOpen = null;
+            if (similarity > maxSimilarity) {
+                maxSimilarity = similarity;
+                appToOpen = item;
+            }
 
-		fileslist.forEach(item => {
-			const itemName = item.name.toLowerCase();
-			if (item.type === "folder" || (!abracadra && itemName.startsWith(searchValue))) {
-				appToOpen = item;
-				return false;
-			} else if (abracadra) {
-				const similarity = calculateSimilarity(itemName, searchValue);
-				if (similarity > maxSimilarity) {
-					maxSimilarity = similarity;
-					appToOpen = item;
-				}
-			}
-		});
+            if (similarity >= 0.2) {
+                itemsWithSimilarity.push({ item, similarity });
+            }
+        }
+    });
 
-		if (appToOpen) {
-			openfile(appToOpen.id);
-		}
-		return;
-	}
-	let elements = 0;
-	const itemsWithSimilarity = [];
+    if (event.key === "Enter") {
+        event.preventDefault();
 
-	// Filter and sort items based on similarity
-	fileslist.forEach(item => {
-		const itemName = item.name.toLowerCase();
-		let similarity = 1;
+        if (searchValue === "i love nova") {
+            gid("searchwindow").close();
+            notify("hmm", "you're really goofy...", "Nova just replied you:");
+            really = true;
+            return;
+        }
 
-		// Check if item is not a folder (folders end with '/')
-		if (!itemName.endsWith('/')) {
-			if (!abracadra) {
-				if (itemName.startsWith(searchValue)) {
-					itemsWithSimilarity.push({ item, similarity });
-				}
-			} else {
-				similarity = calculateSimilarity(itemName, searchValue);
-				if (similarity >= 0.2) {
-					itemsWithSimilarity.push({ item, similarity });
-				}
-			}
-		}
-	});
+        if (appToOpen) {
+            console.log(appToOpen);
+            openfile(appToOpen.id);
+        }
+        return;
+    }
 
-	itemsWithSimilarity.sort((a, b) => b.similarity - a.similarity);
+    itemsWithSimilarity.sort((a, b) => b.similarity - a.similarity);
 
-	// Group results by path
-	const groupedResults = itemsWithSimilarity.reduce((acc, { item }) => {
-		const path = item.path || '';
-		if (!acc[path]) acc[path] = [];
-		acc[path].push(item);
-		return acc;
-	}, {});
+    // Group results by path
+    const groupedResults = itemsWithSimilarity.reduce((acc, { item }) => {
+        const path = item.path || '';
+        if (!acc[path]) acc[path] = [];
+        acc[path].push(item);
+        return acc;
+    }, {});
 
-	// Clear previous search suggestions
-	gid("strtappsugs").innerHTML = "";
+    // Clear previous search suggestions
+    gid("strtappsugs").innerHTML = "";
 
-	// Display grouped results
-	let mostRelevantItem = null;
-	Object.keys(groupedResults).forEach(path => {
-		const items = groupedResults[path];
-		const pathElement = document.createElement("div");
-		pathElement.innerHTML = `<strong>${path}</strong>`;
-		gid("strtappsugs").appendChild(pathElement);
+    let elements = 0;
 
-		items.forEach(item => {
-			if (!mostRelevantItem) mostRelevantItem = item; // Set mostRelevantItem if not set
+    Object.keys(groupedResults).forEach(path => {
+        const items = groupedResults[path];
+        const pathElement = document.createElement("div");
+        pathElement.innerHTML = `<strong>${path}</strong>`;
+        gid("strtappsugs").appendChild(pathElement);
 
-			const newElement = document.createElement("div");
-			newElement.innerHTML = "<div>" + ((appicns[item.id] != undefined) ? appicns[item.id] : defaultAppIcon) + " " + item.name + "</div>" + `<span class="material-icons" onclick="openfile('${item.id}')">arrow_outward</span>`;
-			gid("strtappsugs").appendChild(newElement);
-			elements++;
-		});
-	});
+        items.forEach(item => {
+            if (!mostRelevantItem) mostRelevantItem = item;
 
-	// Handle the most relevant item
-	if (mostRelevantItem) {
-		gid("partrecentapps").style.display = "none";
-		document.getElementsByClassName("previewsside")[0].style.display = "flex";
-		gid("seapppreview").style.display = "block";
+            const newElement = document.createElement("div");
+            newElement.innerHTML = `<div>${appicns[item.id] != undefined ? appicns[item.id] : defaultAppIcon} ${item.name}</div><span class="material-icons" onclick="openfile('${item.id}')">arrow_outward</span>`;
+            gid("strtappsugs").appendChild(newElement);
+            elements++;
+        });
+    });
 
-		gid('seprw-icon').innerHTML = (appicns[mostRelevantItem.id] != undefined) ? appicns[mostRelevantItem.id] : defaultAppIcon;
-		gid('seprw-appname').innerText = mostRelevantItem.name;
-		gid('seprw-openb').onclick = function () {
-			openfile(mostRelevantItem.id);
-		};
-	} else {
-		gid("partrecentapps").style.display = "block";
-		gid("seapppreview").style.display = "none";
-	}
+    if (mostRelevantItem) {
+        gid("partrecentapps").style.display = "none";
+        document.getElementsByClassName("previewsside")[0].style.display = "flex";
+        gid("seapppreview").style.display = "block";
 
-	gid("strtappsugs").style.display = elements > 0 ? "block" : "none";
+        gid('seprw-icon').innerHTML = appicns[mostRelevantItem.id] != undefined ? appicns[mostRelevantItem.id] : defaultAppIcon;
+        gid('seprw-appname').innerText = mostRelevantItem.name;
+        gid('seprw-openb').onclick = function () {
+            openfile(mostRelevantItem.id);
+        };
+    } else {
+        gid("partrecentapps").style.display = "block";
+        gid("seapppreview").style.display = "none";
+    }
+
+    gid("strtappsugs").style.display = elements > 0 ? "block" : "none";
 }
 function calculateSimilarity(string1, string2) {
 	const m = string1.length;
@@ -1597,84 +1551,11 @@ async function dewallblur() {
 	}
 }
 
-async function checksnapping(x, event) {
-	if (await getSetting("wsnapping") != true) {
-		return;
-	}
-	var cursorX = event.clientX;
-	var cursorY = event.clientY;
-
-	var viewportWidthInPixels = window.innerWidth;
-	var viewportHeightInPixels = window.innerHeight;
-
-	var VWInPixels = (3 * viewportWidthInPixels) / 100;
-	var VHInPixels = (3 * viewportHeightInPixels) / 100;
-
-	if (fulsapp) {
-		x.classList.add("snapping");
-		x.getElementsByClassName("flbtn")[0].innerHTML = "open_in_full";
-		x.style = 'left: calc(50vw - 33.5vw); top: calc(50vh - 35vh); width: 65vw; height: 70vh; z-index: 0;';
-		fulsapp = false;
-		setTimeout(() => {
-			x.classList.remove("snapping");
-		}, 1000);
-	}
-
-	if (cursorY < VHInPixels || (viewportHeightInPixels - cursorY) < VHInPixels) {
-		x.classList.add("snapping");
-		x.style.width = "calc(100% - 0px)";
-		x.style.height = "calc(100% - 60px)";
-		x.style.top = "0";
-		x.style.right = "0";
-		x.style.left = "0";
-
-		fulsapp = true;
-		x.getElementsByClassName("flbtn")[0].innerHTML = "close_fullscreen";
-		setTimeout(() => {
-			x.classList.remove("snapping");
-		}, 1000);
-	}
-
-	// left
-	if (cursorX < VWInPixels) {
-		x.classList.add("snapping");
-		x.style = "left: 0; top: 0; width: calc(50% - 0px); height: calc(100% - 50px);";
-		fulsapp = true;
-		x.getElementsByClassName("flbtn")[0].innerHTML = "open_in_full";
-		setTimeout(() => {
-			x.classList.remove("snapping");
-		}, 1000);
-	}
-
-	// right
-	if ((viewportWidthInPixels - cursorX) < VWInPixels) {
-		x.classList.add("snapping");
-		x.style = "right: 0; top: 0; width: calc(50% - 0px); height: calc(100% - 50px);";
-		fulsapp = true;
-		x.getElementsByClassName("flbtn")[0].innerHTML = "open_in_full";
-		setTimeout(() => {
-			x.classList.remove("snapping");
-		}, 1000);
-	}
-}
-
 let countdown, countdown2;
-var sleepQuotes = [
-	"A quick nap is all you need.",
-	"Sweet dreams",
-	"Just let it dissolve.",
-	"You are empty",
-	"Nothing disturbs you",
-	"Stay Calm",
-	"Breath In",
-	"Breath out",
-	"Slowly relax your body"
-]
 
 function startTimer(minutes) {
 	document.getElementById("sleepbtns").style.display = "none";
 	clearInterval(countdown);
-	clearInterval(countdown2);
 	const now = Date.now();
 	const then = now + minutes * 60 * 1000;
 	displayTimeLeft(minutes * 60);
@@ -1690,26 +1571,31 @@ function startTimer(minutes) {
 
 		displayTimeLeft(secondsLeft);
 	}, 1000);
-	countdown2 = setInterval(() => {
-		const randomIndex = Math.floor(Math.random() * sleepQuotes.length);
-
-		gid("sleepquote").innerHTML = sleepQuotes[randomIndex];
-	}, 3000);
 }
 
 function playBeeps() {
 	const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-	for (let i = 0; i < 6; i++) {
+	const frequencies = [440, 494, 523]; // A simple tune: A4, B4, C5
+
+	for (let i = 0; i < 3; i++) {
 		const oscillator = audioCtx.createOscillator();
-		oscillator.type = 'sine';
-		oscillator.frequency.value = 1000;
-		oscillator.connect(audioCtx.destination);
+		const gainNode = audioCtx.createGain();
+
+		oscillator.type = 'triangle'; // Softer wave type
+		oscillator.frequency.value = frequencies[i]; // Different frequency for each beep
+
+		oscillator.connect(gainNode);
+		gainNode.connect(audioCtx.destination);
+
+		gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+		gainNode.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.05); // Gradual fade in
+		gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.35); // Gradual fade out
 
 		setTimeout(() => {
 			oscillator.start();
-			setTimeout(() => oscillator.stop(), 100);
-		}, i * 200);
+			setTimeout(() => oscillator.stop(), 400); // Beep duration
+		}, i * 600); // Timing for a musical effect
 	}
 }
 
@@ -1882,11 +1768,9 @@ async function genTaskBar() {
 		});
 
 		dropZone.addEventListener('drop', async (event) => {
-			console.log(event)
 			event.preventDefault();
 
 			const unid = event.dataTransfer.getData("Text");
-    console.log('Dropped item unid:', unid);
 	await moveFileToFolder(unid, "Dock/");
 	genTaskBar();
 		});
@@ -2213,7 +2097,6 @@ function markdownToHTML(markdown) {
 async function logoutofnova() {
 	memory = null;
 	CurrentUsername = null;
-	console.log("set currentuser: ", CurrentUsername)
 	password = 'nova';
 	closeallwindows();
 	await showloginmod();
@@ -2226,7 +2109,6 @@ async function cleanupram() {
     document.querySelectorAll('dialog[open].onramcloseable').forEach(dialog => dialog.close());
     memory = null;
     CurrentUsername = null;
-    console.log("Cleaned up: set CurrentUsername to null");
     password = 'nova';
     MemoryTimeCache = null;
     lethalpasswordtimes = true;
@@ -2237,7 +2119,6 @@ async function setandinitnewuser() {
 	gid("edison").showModal()
 	await cleanupram();
 	CurrentUsername = await ask("Enter a username:","");
-	console.log("set currentuser: ", CurrentUsername)
 	await initialiseOS();
 	gid('loginmod').close();
 }

@@ -45,7 +45,6 @@ const styles = {
 };
 
 async function checkdmode() {
-	(async () => {
 		// scalable UI
 		if (await getSetting("UISizing") && await getSetting("UISizing") == 1) {
 			scaleUIElements(await getSetting("UISizing"))
@@ -64,7 +63,6 @@ async function checkdmode() {
 				switchtheme("bright");
 			}
 		}
-	})();
 }
 
 // Common style settings for elementhahas
@@ -157,7 +155,7 @@ function cuteee() {
 
 const originalFetch = window.fetch;
 window.fetch = async function (...args) {
-	console.log('Fetch called with:', ...args);
+	console.log('NovaOS Fetch:', ...args);
 	return originalFetch.apply(this, args);
 };
 
@@ -185,7 +183,6 @@ async function checkAndRunFromURL() {
 	const filePath = params.get('path');
   
   if (filePath) {
-    // Process the file path as needed in your WebOS
     console.log(`Opening NovaOS path: ${filePath}`);
     
     onstartup.push(async () => {

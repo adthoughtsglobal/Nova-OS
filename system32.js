@@ -218,7 +218,6 @@ async function getdb() {
 				const cryptoKey = await getKey(password);
 				const decryptedValue = await decryptData(cryptoKey, request.result.value);
 				memory = parseEscapedJsonString(decompressString(decryptedValue));
-                console.log(MemoryTimeCache,memory)
 				resolve(memory);
 			  } catch (error) {
 				console.error("Decryption error:", error);
@@ -235,7 +234,6 @@ async function getdb() {
 	  console.error("Error in getdb function:", error);
     }
 }
-
 
 function compressString(input) {
     return LZUTF8.compress(input, { outputEncoding: 'Base64' });
@@ -282,14 +280,11 @@ async function checkPassword(password) {
     try {
         const decryptedMagicString = await decryptData(cryptoKey, encryptedMagicString);
         if (decryptedMagicString === "magicString") {
-            console.log("Password verified successfully");
             return true;
         } else {
-            console.error("Password verification failed: Data corrupted");
             return false;
         }
     } catch (error) {
-        console.error("Password verification failed:", error.message);
         return false;
     }
 }
@@ -327,7 +322,6 @@ function getTime() {
 }
 
 async function fetchmmData() {
-    console.log("Fetching Memory");
     try {
         const data = await getdb();
         MemoryTimeCache = getTime();
@@ -401,7 +395,6 @@ async function ensurePreferencesFileExists() {
             memory["System/"] = {};
         }
         if (!memory["System/"]["preferences.json"]) {
-            console.log("on reseting settings",memory)
             const defaultPreferences = {
                 "defFileLayout": "List",
                 "wsnapping": true,
@@ -423,18 +416,22 @@ async function ensurePreferencesFileExists() {
     }
 }
 
+let settingsCache = {};
+const settingscacheDuration = 5000;
+
 async function getSetting(key) {
     try {
         if (!memory) return;
 
-        await ensurePreferencesFileExists();
-        let content = memory["System/"]["preferences.json"]["content"];
-        
-        if (!content) return; // Return undefined if content is empty
+        const cached = settingsCache[key];
+        if (cached && (Date.now() - cached.t < settingscacheDuration)) return cached.v;
 
-        // Extract Base64 content from the MIME type prefix
-        const base64Content = content.split(",")[1];
-        const preferences = JSON.parse(atob(base64Content)); // Decode and parse the Base64 content
+        await ensurePreferencesFileExists();
+        const content = memory["System/"]["preferences.json"]["content"];
+        if (!content) return;
+
+        const preferences = JSON.parse(atob(content.split(",")[1]));
+        settingsCache[key] = { v: preferences[key], t: Date.now() };
         return preferences[key];
     } catch (error) {
         console.log("Error getting settings", error);
@@ -519,33 +516,35 @@ async function changePassword(oldPassword, newPassword) {
     return true;
 }
 
-function erdbsfull() {
-    localStorage.removeItem('todo');
-    localStorage.removeItem('magicString');
-    localStorage.removeItem('updver');
-    localStorage.removeItem('qsets');
-
-    let indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
-    let dbName = 'trojencat';
-
-    try {
-	  let deleteRequest = indexedDB.deleteDatabase(dbName);
-
-	  deleteRequest.onsuccess = function (event) {
-		
-		location.reload();
-	  };
-
-	  deleteRequest.onerror = function (event) {
-		
-	  };
-
-	  deleteRequest.onblocked = function () {
-		
-	  };
-    } catch (error) {
-	  
-    }
+async function erdbsfull() {
+    if (await justConfirm("Are you really sure?", "Removing all the users data seems a bit overkill? Click cancel to remove your account instead.")) {
+        localStorage.removeItem('todo');
+        localStorage.removeItem('magicString');
+        localStorage.removeItem('updver');
+        localStorage.removeItem('qsets');
+    
+        let indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
+        let dbName = 'trojencat';
+    
+        try {
+          let deleteRequest = indexedDB.deleteDatabase(dbName);
+    
+          deleteRequest.onsuccess = function (event) {
+            
+            location.reload();
+          };
+    
+          deleteRequest.onerror = function (event) {
+            
+          };
+    
+          deleteRequest.onblocked = function () {
+            
+          };
+        } catch (error) {
+          
+        }
+    };
 }
 
 async function removeUser(username = CurrentUsername) {
