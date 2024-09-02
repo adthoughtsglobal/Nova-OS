@@ -20,6 +20,14 @@ var defAppsList = [
 gid("nowrunninapps").style.display = "none";
 
 const rllog = console.log;
+console.log = function(...args) {
+	const stack = new Error().stack;
+	const caller = stack.split('\n')[2].trim();
+	const match = caller.match(/at (\S+)/);
+	const source = match ? (match[1].startsWith('http') ? 'system' : match[1]) : 'anonymous';
+	const style = 'font-size: 0.8em; color:grey;';
+	rllog(`%c${source}\n`, style, ...args);
+};
 
 async function qsetsRefresh() {
 	return await updateMemoryData();
@@ -141,7 +149,12 @@ function setsrtpprgbr(val) {
 
 async function startup() {
 	gid("edison").showModal();
-	console.log("Starting up NovaOS");
+	rllog(
+		'You are using \n\n%cNovaOS%c\nNovaOS is the free, source-available, powerful and the cutest Web Operating system on the internet.',
+		'color: white; background-color: #101010; font-size: 2rem; padding: 0.7rem 1rem; border-radius: 1rem;',
+		  'color: lightgrey; padding:0.5rem;'
+	  );
+	  
 	setsrtpprgbr(0)
 	const start = performance.now();
 	await updateMemoryData().then(async () =>{
@@ -183,6 +196,7 @@ async function startup() {
 		closeElementedis();
 		await genTaskBar();
 		await dod();
+		removeInvalidMagicStrings()
 		
 		// Initialize the associations from settings
 		async function loadFileTypeAssociations() {
@@ -2096,12 +2110,14 @@ function markdownToHTML(markdown) {
 
 async function logoutofnova() {
 	memory = null;
-	CurrentUsername = null;
 	password = 'nova';
 	closeallwindows();
 	await showloginmod();
 	lethalpasswordtimes = true;
 	loginscreenbackbtn();
+	console.clear();
+	console.log("logged out of " + CurrentUsername);
+	CurrentUsername = null;
 }
 
 async function cleanupram() {

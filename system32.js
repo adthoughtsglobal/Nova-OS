@@ -244,28 +244,21 @@ function decompressString(compressed) {
     return LZUTF8.decompress(compressed, { inputEncoding: 'Base64' });
 }
 
-function convertToMap(obj) {
-    if (typeof obj !== 'object' || obj === null) {
-        return obj;
-    }
+async function removeInvalidMagicStrings() {
+    const validUsernames = new Set(await getAllUsers());
+    const magicStrings = JSON.parse(localStorage.getItem('magicStrings'));
 
-    const map = new Map();
-    for (const key in obj) {
-        if (obj.hasOwnProperty(key)) {
-            map.set(key, convertToMap(obj[key]));
+    if (!magicStrings) return;
+
+    for (const username in magicStrings) {
+        if (!validUsernames.has(username)) {
+            delete magicStrings[username];
         }
     }
-    return map;
-}
-async function saveMagicStringInLocalStorage(password) {
-    const cryptoKey = await getKey(password);
-    const encryptedMagicString = await encryptData(cryptoKey, "magicString");
-
-    const magicStrings = JSON.parse(localStorage.getItem('magicStrings')) || {};
-    magicStrings[CurrentUsername] = encryptedMagicString;
 
     localStorage.setItem('magicStrings', JSON.stringify(magicStrings));
 }
+
 
 async function checkPassword(password) {
     const magicStrings = JSON.parse(localStorage.getItem('magicStrings')) || {};
@@ -491,6 +484,32 @@ async function remSetting(key) {
         console.log("error removing settings");
     }
 }
+
+async function saveMagicStringInLocalStorage(password) {
+    const cryptoKey = await getKey(password);
+    const encryptedMagicString = await encryptData(cryptoKey, "magicString");
+
+    const magicStrings = JSON.parse(localStorage.getItem('magicStrings')) || {};
+    magicStrings[CurrentUsername] = encryptedMagicString;
+
+    localStorage.setItem('magicStrings', JSON.stringify(magicStrings));
+}
+
+async function removeInvalidMagicStrings() {
+    const validUsernames = new Set(await getallusers());
+    const magicStrings = JSON.parse(localStorage.getItem('magicStrings'));
+
+    if (!magicStrings) return;
+
+    for (const username in magicStrings) {
+        if (!validUsernames.has(username)) {
+            delete magicStrings[username];
+        }
+    }
+
+    localStorage.setItem('magicStrings', JSON.stringify(magicStrings));
+}
+
 
 async function changePassword(oldPassword, newPassword) {
     lethalpasswordtimes = true;

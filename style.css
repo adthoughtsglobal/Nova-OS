@@ -100,7 +100,7 @@ nav .flodiv {
 }
 
 nav [navobj] {
-	padding: 1px;
+	padding: 1px 2px;
 	margin: 3px;
 	border-radius: 5px;
 	background-color: #c4c4c429;
@@ -277,6 +277,7 @@ nav info {
 	transition: .2s;
 	text-align: center;
 	align-self: flex-start;
+	
 }
 
 .app-shortcut.tooltip .tooltiptext {
@@ -303,9 +304,10 @@ nav info {
 
 .app-shortcut span svg {
 	width: 31px;
-	height: 31px;
-	background: #6d6d6d1f;
-	padding: 5px;
+    height: 31px;
+    background: #89898929;
+    padding: 5px;
+    border-radius: 15% / 40%;
 }
 
 @keyframes appop {
@@ -1479,7 +1481,7 @@ codeblock {
 
 .adock {
 	padding: 0;
-	margin: 3px 3px;
+    margin: 2.5px 1px;
 	width: fit-content;
 	width: -moz-fit-content;
 }
