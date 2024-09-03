@@ -76,17 +76,25 @@ dialog {
 	border: none;
 }
 
+#workspace {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+#maxappscontainer {
+	flex: 1;
+}
+
 nav {
-	bottom: 5px;
-	position: fixed;
-	width: calc(100%);
-	background-color: transparent;
-	color: white;
-	z-index: 99;
-	display: grid;
-	user-select: none;
-	justify-content: center;
-	align-items: center;
+    background-color: transparent;
+    color: white;
+    z-index: 99;
+    display: grid;
+    user-select: none;
+    justify-content: center;
+    align-items: center;
+    height: fit-content;
 }
 
 nav .flodiv {

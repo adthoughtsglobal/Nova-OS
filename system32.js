@@ -393,9 +393,7 @@ async function ensurePreferencesFileExists() {
                 "wsnapping": true,
                 "smartsearch": true,
                 "CamImgFormat": "WEBP",
-                "defSearchEngine": "Bing",
-                "darkMode": true,
-                "simpleMode": true
+                "defSearchEngine": "Bing"
             };
 
             // Encode the default preferences as Base64 with MIME type
@@ -410,7 +408,7 @@ async function ensurePreferencesFileExists() {
 }
 
 let settingsCache = {};
-const settingscacheDuration = 5000;
+const settingscacheDuration = 500;
 
 async function getSetting(key) {
     try {

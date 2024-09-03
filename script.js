@@ -406,31 +406,17 @@ async function loadrecentapps() {
 		if (!appsHistory.includes(app.name)) {
 			return
 		}
-		// Create a div element for the app shortcut
 		var appShortcutDiv = document.createElement("div");
 		appShortcutDiv.className = "app-shortcut tooltip sizableuielement";
 		appShortcutDiv.setAttribute("onclick", "openapp('" + app.name + "', '" + app.id + "')");
-		// Create a span element for the app icon
 		var iconSpan = document.createElement("span");
 		if (!appicns[app.id]) {
-
-			// Fetch the content asynchronously using getFileById
 			const content = await getFileById(app.id);
-
-			// Unshrink the content
 			const unshrunkContent = unshrinkbsf(content.content);
-
-			// Create a temporary div to parse the content
 			const tempElement = document.createElement('div');
 			tempElement.innerHTML = unshrunkContent;
-
-			// Get all meta tags
 			const metaTags = tempElement.getElementsByTagName('meta');
-
-			// Create an object to store meta tag data
 			let metaTagData = null;
-
-			// Iterate through meta tags and extract data
 			Array.from(metaTags).forEach(tag => {
 				const tagName = tag.getAttribute('name');
 				const tagContent = tag.getAttribute('content');
@@ -455,14 +441,13 @@ async function loadrecentapps() {
 			iconSpan.innerHTML = appicns[app.id]
 		}
 
-		// Create a span element for the app name
 		var nameSpan = document.createElement("span");
 		nameSpan.className = "appname";
-		nameSpan.textContent = app.name;
+		nameSpan.textContent = basename(app.name);
 
 		var tooltisp = document.createElement("span");
 		tooltisp.className = "tooltiptext";
-		tooltisp.textContent = app.name;
+		tooltisp.textContent = basename(app.name);
 
 		// Append both spans to the app shortcut container
 		appShortcutDiv.appendChild(iconSpan);
@@ -1202,7 +1187,7 @@ async function loadtaskspanel() {
 
 		let tooltisp = document.createElement("span");
 		tooltisp.className = "tooltiptext";
-		tooltisp.innerHTML = app;
+		tooltisp.innerText = basename(app);
 
 		appShortcutDiv.appendChild(iconSpan);
 		appShortcutDiv.appendChild(tooltisp);

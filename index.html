@@ -92,51 +92,57 @@
 		<p id="notifappDesc">Description</p>
 	</div>
 
-	<nav id="novanav" class="scalableui">
-		<div class="flodiv">
-			<quicks navobj id="dock">
-
-			</quicks>
-			<your navobj onclick="openn()">
-				<div app-shortcut>
-					<span ic class="material-icons" id="mm">N
-					</span>
-				</div>
-				<g id="your-apps">
-				</g>
-			</your>
-			<your navobj onclick="opensearchpanel()">
-				<span ic class="material-icons searchbtnac directxicons">
-					search
-				</span>
-			</your>
-			<your navobj onclick="
-gid('nova-copilot-window').showModal()">
-				<span ic class="material-icons searchbtnac directxicons">
-					auto_awesome
-				</span>
-			</your>
-			<info navobj>
-				<div id="batterydisdiv">
-					<span id="battery-p-display">
-					</span>
-					<span id="battery-display" class="material-icons">
-						p ic
-					</span>
-				</div>
-				<div>
-					<hitbx class="hitbox" title="time">
-						<span id="time-display">time</span><br>
-						<span id="date-display">date</span>
-					</hitbx>
-				</div>
-			</info>
-			<info navobj id="nowrunninapps">
-				<div>
-				</div>
-			</info>
+	<div id="workspace">
+		<div id="maxappscontainer">
+			
 		</div>
-	</nav>
+		<nav id="novanav" class="scalableui">
+			<div class="flodiv">
+				<quicks navobj id="dock">
+	
+				</quicks>
+				<your navobj onclick="openn()">
+					<div app-shortcut>
+						<span ic class="material-icons" id="mm">N
+						</span>
+					</div>
+					<g id="your-apps">
+					</g>
+				</your>
+				<your navobj onclick="opensearchpanel()">
+					<span ic class="material-icons searchbtnac directxicons">
+						search
+					</span>
+				</your>
+				<your navobj onclick="
+	gid('nova-copilot-window').showModal()">
+					<span ic class="material-icons searchbtnac directxicons">
+						auto_awesome
+					</span>
+				</your>
+				<info navobj>
+					<div id="batterydisdiv">
+						<span id="battery-p-display">
+						</span>
+						<span id="battery-display" class="material-icons">
+							p ic
+						</span>
+					</div>
+					<div>
+						<hitbx class="hitbox" title="time">
+							<span id="time-display">time</span><br>
+							<span id="date-display">date</span>
+						</hitbx>
+					</div>
+				</info>
+				<info navobj id="nowrunninapps">
+					<div>
+					</div>
+				</info>
+			</div>
+		</nav>
+	</div>
+	
 	<dialog id="appdmod" class="scalableui onramcloseable">
 		<div class="appdmodestuff">
 			<h1>Apps</h1>
