@@ -7,7 +7,7 @@ This version is not intended for public use. This version is where we release No
 There can be a lot of reasons why.
 - The current update is a partial one, and must have patches for it to work.
 - The current update is not supposed to work
-- The current update is not supported by your browser
+- The current update is not supported by your browser [Report Issue](https://discord.gg/atkqbwEQU8)
 - You have used it / any other nova version before
 
 If you have used it / any other nova version before, consider Erasing your device (NovaOS) in the settings or via the boot (NovaOS boot). Contact us if nessesary on our discord: https://discord.gg/atkqbwEQU8
