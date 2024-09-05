@@ -9,36 +9,8 @@
 	<meta name="nova-icon"
 		content="<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='115.79063' height='79.42629' viewBox='0,0,115.79063,79.42629'><g transform='translate(-182.26576,-138.78469)'><g data-paper-data='{&quot;isPaintingLayer&quot;:true}' fill-rule='nonzero' stroke-linecap='butt' stroke-linejoin='miter' stroke-miterlimit='10' stroke-dasharray='' stroke-dashoffset='0' style='mix-blend-mode: normal'><path d='M192.5,211v-70.66666h96.33333v70.66666z' fill='#5e511c' stroke='none' stroke-width='0'/><path d='M214.94361,194.01973l7.87476,-55.19191l75.23803,10.73494l-7.87476,55.19191z' fill='#cbcbcb' stroke='none' stroke-width='0'/><path d='M215.52729,204.79778l-7.94546,-55.18178l75.22422,-10.83131l7.94545,55.18177z' fill='#ffffff' stroke='none' stroke-width='0'/><path d='M191.80875,211.01003l-9.54298,-67.4916c0,0 17.94997,0 29.05001,0c1.75099,0 3.83004,5.47155 6.1555,5.47155c21.27569,0 63.17701,0 63.17701,0l7.54298,62.02005z' fill='#ffe166' stroke='none' stroke-width='0'/><path d='M217.66762,213.21099c-0.25148,-4.40441 -2.40197,-12.90365 1.84715,-16.36796c3.99005,-3.25308 24.23976,-3.39012 28.02687,0.40735c3.79805,3.80844 6.43466,11.61379 6.49657,16.10718' fill='none' stroke='#00b8ff' stroke-width='10'/></g></g></svg>">
 	<script src="https://cdn.jsdelivr.net/npm/jsmediatags@latest/dist/jsmediatags.min.js"></script>
+	<link rel="stylesheet" href="/nova.css">
 	<style>
-		@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
-
-		:root {
-			--def-bg: #0A0A0A;
-			--item-bg: #171717;
-			--highlighted: #44403C;
-		}
-
-		/* width */
-		::-webkit-scrollbar {
-			width: 0.5em;
-		}
-
-		/* Track */
-		::-webkit-scrollbar-track {
-			background: #101010;
-		}
-
-		/* Handle */
-		::-webkit-scrollbar-thumb {
-			background: #2b2b2b;
-			border-radius: 5px;
-		}
-
-		/* Handle on hover */
-		::-webkit-scrollbar-thumb:hover {
-			background: #555;
-		}
-
 		html {
 			height: 100%;
 		}
@@ -56,7 +28,7 @@
 			display: block;
 			box-sizing: border-box;
 			overflow: hidden;
-			background-color: var(--def-bg);
+			background-color: var(--colors-BG-normal);
 			height: calc(100% - 0px);
 		}
 
@@ -100,7 +72,7 @@
 		.nowid {
 			width: fit-content;
 			text-align: center;
-			background-color: var(--item-bg);
+			background-color: var(--colors-BG-section);
 			display: flex;
 			justify-content: center;
 			align-items: center;
@@ -151,7 +123,7 @@
 			overflow-y: scroll;
 			font-size: 11px !important;
 			min-width: 120px;
-			background: var(--item-bg);
+			background: var(--colors-BG-section);
 			padding-bottom: 50px;
 			display: flex;
 			flex-direction: column;
@@ -159,6 +131,7 @@
 			border-radius: 0.5rem;
 			overflow-x: hidden;
 			height: calc(100% - 51px);
+			padding-right: var(--sizing-nano);
 		}
 
 		[flap-sidenav] small {
@@ -384,7 +357,7 @@
 
 		[flap-fl-bottomnav] {
 			padding: 5px 7px;
-			background: var(--item-bg);
+			background: var(--colors-BG-section);
 			border-radius: 0.3rem;
 			font-size: 12px;
 			transition: .3s ease-out;
@@ -423,7 +396,7 @@
 			border-radius: 5px;
 			border: none;
 			padding: 7px 15px;
-			background: var(--highlighted);
+			background: var(--colors-BG-highlighted);
 			color: white;
 			font-family: 'Poppins';
 			font-size: 11px;
@@ -784,7 +757,7 @@
 			font-family: inherit;
 			color: white;
 			border-radius: 0;
-			background: var(--item-bg);
+			background: var(--colors-BG-section);
 			border: none;
 			width: 0;
 			outline: none;

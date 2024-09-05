@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
+
+:root {
+	--font-size-small: 0.8em;
+	--font-size-normal: 1em;
+	--font-size-big: 2em;
+    --colors-BG-normal: #0A0A0A;
+    --colors-BG-sub: #262626;
+    --colors-BG-section: #171717;
+    --colors-BG-highlighted: #44403C;
+    --colors-text-normal: white;
+    --sizing-border-radius: 0.5rem;
+    --sizing-normal: 0.5rem;
+	--sizing-nano: 0.3rem;
+}
+
+::-webkit-scrollbar {
+	width: var(--sizing-normal);
+}
+
+::-webkit-scrollbar-track {
+	background: var(--colors-BG-sub);
+	border-radius: var(--sizing-border-radius);
+}
+
+::-webkit-scrollbar-thumb {
+	background: var(--colors-BG-highlighted);
+	border-radius: var(--sizing-border-radius);
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: var(--colors-BG-section);
+	cursor: grab;
+}
+
+::-webkit-scrollbar-thumb:active {
+	background: var(--colors-BG-section);
+	cursor: grabbing;
+}
+
+html {
+	height: 100%;
+	width: 100%;
+}
+
+button,
+input,
+textarea {
+	outline: none;
+	font-family: inherit;
+}
+
+body {
+	margin: 0;
+	background-color: var(--colors-BG-normal);
+	color: var(--colors-text-normal);
+	font-family: 'Poppins', sans-serif;
+	transition: .5s;
+	user-select: none;
+}

@@ -155,7 +155,7 @@ async function startup() {
 		  'color: lightgrey; padding:0.5rem;'
 	  );
 	  
-	setsrtpprgbr(0)
+	setsrtpprgbr(20)
 	const start = performance.now();
 	await updateMemoryData().then(async () =>{
 		try {

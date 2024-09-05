@@ -196,6 +196,7 @@ function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
     windowdataspan.classList += "windowdataspan";
     windowdataspan.innerHTML = ic != null ? ic : "";
     let windowtitlespan = document.createElement("div");
+    windowtitlespan.classList.add("title")
     windowtitlespan.innerHTML += toTitleCase(basename(title));
     windowdataspan.appendChild(windowtitlespan);
     windowHeader.appendChild(windowdataspan);
@@ -294,24 +295,39 @@ function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
                 },
                 titleElement: windowtitlespan,
                 appID: appid,
-                windowID:winuid,
+                windowID: winuid,
                 ...(params && { params })
             };
-
+    
+            // Fetch the CSS content and inject it inline
+            try {
+                const cssResponse = await fetch('nova.css'); // Update the path to your CSS file
+                const cssText = await cssResponse.text();
+                const style = document.createElement('style');
+                style.textContent = cssText;
+                iframe.contentDocument.head.appendChild(style);
+            } catch (error) {
+                console.error('Error fetching or injecting CSS:', error);
+            }
+    
+            // Inject the JavaScript code
             const script = document.createElement('script');
             script.innerHTML = `
-        document.addEventListener('mousedown', function(event) {
-            window.parent.postMessage({ type: 'iframeClick', iframeId: '${winuid}' }, '*');
-        });
-    `;
+                document.addEventListener('mousedown', function(event) {
+                    window.parent.postMessage({ type: 'iframeClick', iframeId: '${winuid}' }, '*');
+                });
+            `;
             iframe.contentDocument.body.appendChild(script);
-
-
-            try { await iframe.contentWindow.greenflag(); } catch { }
+    
+            try {
+                await iframe.contentWindow.greenflag();
+            } catch (e) {
+                console.error('Error during iframe initialization:', e);
+            }
+            
             const end = performance.now();
-	
-	    	console.log(`App startup took ${(end - start).toFixed(2)}ms`);
-
+            console.log(`App startup took ${(end - appstart).toFixed(2)}ms`);
+    
             windowLoader.remove();
         };
 

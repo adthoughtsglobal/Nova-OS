@@ -388,20 +388,20 @@ async function ensurePreferencesFileExists() {
             memory["System/"] = {};
         }
         if (!memory["System/"]["preferences.json"]) {
-            const defaultPreferences = {
-                "defFileLayout": "List",
-                "wsnapping": true,
-                "smartsearch": true,
-                "CamImgFormat": "WEBP",
-                "defSearchEngine": "Bing"
-            };
+    const defaultPreferences = {
+        "defFileLayout": "List",
+        "wsnapping": true,
+        "smartsearch": true,
+        "CamImgFormat": "WEBP",
+        "defSearchEngine": "Bing"
+    };
 
-            // Encode the default preferences as Base64 with MIME type
-            const defaultContent = btoa(JSON.stringify(defaultPreferences));
-            const dataUri = `data:application/json;base64,${defaultContent}`;
+    // Encode the default preferences as Base64 with MIME type
+    const defaultContent = btoa(JSON.stringify(defaultPreferences));
+    const dataUri = `data:application/json;base64,${defaultContent}`;
 
-            await createFile("System/", "preferences.json", false, dataUri);
-        }
+    await createFile("System/", "preferences.json", false, dataUri);
+}
     } catch (err) {
         console.log("Error ensuring preferences file exists", err);
     }

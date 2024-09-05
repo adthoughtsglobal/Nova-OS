@@ -8,8 +8,10 @@
 	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 	<meta name="nova-icon"
 		content="<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='40.8208' height='40.94891' viewBox='0,0,40.8208,40.94891'><g transform='translate(-219.51359,-159.63806)'><g data-paper-data='{&quot;isPaintingLayer&quot;:true}' fill-rule='nonzero' stroke-linecap='butt' stroke-linejoin='miter' stroke-miterlimit='10' stroke-dasharray='' stroke-dashoffset='0' style='mix-blend-mode: normal'><path d='M224.49728,191.97943c0,-6.51609 0,-20.12167 0,-23.80086c0,-1.79525 1.27743,-3.6813 3.28885,-3.6813c6.47459,0 20.55435,0 24.11403,0c1.56415,0 3.60258,1.44253 3.60258,3.6813c0,6.76316 0,20.4796 0,23.95744c0,1.53 -1.83996,3.36671 -3.60258,3.36671c-3.67444,0 -17.45008,0 -23.95744,0c-2.10186,0 -3.44544,-1.37709 -3.44544,-3.52329zM239.52997,189.92242c5.52285,0 10,-4.47715 10,-10c0,-5.52285 -4.47715,-10 -10,-10c-5.52285,0 -10,4.47715 -10,10c0,5.52285 4.47715,10 10,10z' fill='#ffffff' stroke='none' stroke-width='0'/><path d='M237.50865,199.43282c-4.60757,-4.60757 -14.22817,-14.22817 -16.82975,-16.82975c-1.26943,-1.26943 -1.69979,-3.50635 -0.2775,-4.92864c4.57823,-4.57823 14.53412,-14.53412 17.05119,-17.05119c1.10602,-1.10602 3.56743,-1.52738 5.15048,0.05567c4.78228,4.78228 14.48126,14.48126 16.94047,16.94047c1.08187,1.08187 1.07958,3.68167 -0.16678,4.92803c-2.59822,2.59822 -12.33907,12.33907 -16.94047,16.94047c-1.48624,1.48624 -3.41004,1.46254 -4.92764,-0.05506zM239.52997,189.92242c5.52285,0 10,-4.47715 10,-10c0,-5.52285 -4.47715,-10 -10,-10c-5.52285,0 -10,4.47715 -10,10c0,5.52285 4.47715,10 10,10z' fill='#ffffff' stroke='none' stroke-width='0'/><path d='M235.7745,180.11252c0,-2.2917 1.85779,-4.14949 4.14949,-4.14949c2.2917,0 4.14949,1.85779 4.14949,4.14949c0,2.2917 -1.85779,4.14949 -4.14949,4.14949c-2.2917,0 -4.14949,-1.85779 -4.14949,-4.14949z' fill='none' stroke='#ffffff' stroke-width='2.5'/></g></g></svg>">
+		
+	<link rel="stylesheet" href="nova.css">
 	<style>
-		@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Poppins:wght@400;700&display=swap');
+		@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
 
 		* {
 			box-sizing: border-box;
@@ -162,7 +164,7 @@
 			padding-top: 0.5rem;
 			vertical-align: top;
 			padding-right: 1rem;
-			border-bottom: 1px solid #292929;
+			border-bottom: 1px solid #262626;
 		}
 
 		td b,
@@ -240,10 +242,10 @@
 
 		small {
 			display: block;
-			padding: 5px 7px;
-			background: #1a1a1a;
-			border-radius: 5px;
-			color: #a1a1a1;
+    padding: var(--sizing-normal);
+    background: var(--colors-BG-sub);
+    border-radius: var(--sizing-border-radius);
+    opacity: 0.5;
 		}
 
 		small b {
@@ -323,18 +325,17 @@
 		}
 
 		[settingn] {
-			background: #292929;
-			padding: 0.5rem;
-			margin: 0;
-			border-bottom: 1px solid #373737;
+			background: var(--colors-BG-section);
+    padding: var(--sizing-normal);
+    margin: 0;
+    border-bottom: 1px solid var(--colors-BG-sub);
 		}
 
 		[setting] {
-			background: #292929;
-			padding: 10px;
-			margin: 0;
-			border-bottom: 1px solid #373737;
-
+			background: var(--colors-BG-section);
+    padding: var(--sizing-normal);
+    margin: 0;
+    border-bottom: 1px solid var(--colors-BG-sub);
 		}
 
 		[setting] b {
@@ -529,16 +530,16 @@
 		}
 
 		.inpbox {
-			background: #292929;
-			padding: 0.5rem;
-			outline: none;
-			border-bottom: 1px solid #373737;
+			background: var(--colors-BG-section);
+    padding: var(--sizing-normal);
+    outline: none;
+    border-bottom: 1px solid var(--colors-BG-sub);
 		}
 
 		.inpbox select {
-			background: #434343;
+			background: var(--colors-BG-highlighted);
 			color: white;
-			border: 1px solid #292929;
+			border: 1px solid var(--colors-BG-sub);
 			border-radius: 5px;
 			font-size: 0.8rem;
 			padding: 3px 1px 3px 9px !important;
@@ -1164,18 +1165,13 @@
 			</segr>
 			<segr>
 				<div setting>
-					<b>Update Default Apps</b>
-					<button style="margin-top: 5px;float: right;" onclick="updefapps();">Update</button>
-					<p>Update or reinstall deleted or corrupted versions of default apps.</p>
-
-					<small id="updefapplog" style="margin-top: 5px;">Updating default apps frequently can assure newer
-						features and bug fixes.</small>
+					<b>Reset Settings</b>
+					<button style="margin-top: 5px;float: right;" onclick="updefapps();" danger>Reset</button>
+					<p>Reset to default settings.</p>
 					<script>
 						async function updefapps() {
-							document.getElementById("updefapplog").innerHTML = "Installing...";
 							try {
-								await window.parent.installdefaultapps();
-								document.getElementById("updefapplog").innerHTML = "All Default apps updated. <b>Re-open Settings to reflect changes.</b>";
+								await window.parent.resetSettings();
 							} catch (error) {
 								console.error("Error updating default apps:", error);
 							}
@@ -1504,7 +1500,7 @@
 			<style>
 				.task {
 					padding: 10px;
-					background: #2b2b2b;
+					background: var(--colors-BG-sub);
 					border-radius: 5px;
 					margin: 5px 0;
 				}
@@ -1515,7 +1511,7 @@
 					transform: translateY(1px);
 					cursor: pointer;
 					padding: 2px;
-					background: #4d4d4d;
+					background: var(--colors-BG-highlighted);
 					border-radius: 50%;
 					color: #ff7373;
 				}
@@ -1610,9 +1606,9 @@
 			<h1>Devices</h1>
 			<style>
 				.device {
-					padding: 10px;
-					background: #212121;
-					border-radius: 5px;
+					padding: var(--sizing-normal);
+					background: var(--colors-BG-section);
+					border-radius: var(--sizing-border-radius);
 					margin: 5px 0;
 				}
 
