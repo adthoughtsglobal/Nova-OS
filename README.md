@@ -1,0 +1,1 @@
+If you are using this, consider supporting the [NovaOS](https://github.com/adthoughtsglobal/Nova-OS) project at Our patreon page: [adthoughtslgobal - patreon.com](https://www.patreon.com/adthoughtsglobal)
