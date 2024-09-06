@@ -700,6 +700,7 @@ function getMetaTagContent(unshrunkContent, metaName, decode = false) {
     const metaTag = Array.from(tempElement.getElementsByTagName('meta')).find(tag =>
         tag.getAttribute('name') === metaName && tag.getAttribute('content')
     );
+	console.log(metaName, metaTag)
     return metaTag ? metaTag.getAttribute('content') : null;
 }
 
