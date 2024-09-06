@@ -304,7 +304,7 @@ const jsonToDataURI = json => `data:application/json,${encodeURIComponent(JSON.s
 
 async function openn() {
 	const start = performance.now();
-	gid("appsindeck").innerHTML = `<span class="loader" id="appsloader"></span>`
+	gid("appsindeck").innerHTML = ``
 	gid("strtsear").value = ""
 	gid("strtappsugs").style.display = "none";
 
@@ -693,34 +693,35 @@ function clwin(x) {
 	}, 700);
 }
 
+function getMetaTagContent(unshrunkContent, metaName, decode = false) {
+    const content = decode ? decodeBase64Content(unshrunkContent) : unshrunkContent;
+    const tempElement = document.createElement('div');
+    tempElement.innerHTML = content;
+    const metaTag = Array.from(tempElement.getElementsByTagName('meta')).find(tag =>
+        tag.getAttribute('name') === metaName && tag.getAttribute('content')
+    );
+    return metaTag ? metaTag.getAttribute('content') : null;
+}
+
+function getAppTheme(unshrunkContent) {
+    return getMetaTagContent(unshrunkContent, 'theme-color');
+}
+
+function getAppAspectRatio(unshrunkContent) {
+    return unshrunkContent.includes("aspect-ratio") ? getMetaTagContent(unshrunkContent, 'aspect-ratio') : null;
+}
+
 function getAppIcon(unshrunkContent, appid, jff) {
-	if (jff) {
-		if (appicns[appid]) {
-			return appicns[appid];
-		} else {
-			return defaultAppIcon;
-		};
-	}
-	if (appicns[appid]) return appicns[appid];
+    if (jff && appicns[appid]) return appicns[appid] || defaultAppIcon;
+    if (appicns[appid]) return appicns[appid];
 
-	const decodedContent = decodeBase64Content(unshrunkContent);
+    const iconContent = getMetaTagContent(unshrunkContent, 'nova-icon', true);
+    if (iconContent && containsSmallSVGElement(iconContent)) {
+        appicns[appid] = iconContent;
+        return iconContent;
+    }
 
-	const tempElement = document.createElement('div');
-	tempElement.innerHTML = decodedContent;
-
-	const metaTag = Array.from(tempElement.getElementsByTagName('meta')).find(tag =>
-		tag.getAttribute('name') === 'nova-icon' && tag.getAttribute('content')
-	);
-
-	if (!metaTag) return null;
-
-	const metaTagContent = metaTag.getAttribute('content');
-	if (typeof metaTagContent === "string" && containsSmallSVGElement(metaTagContent)) {
-		appicns[appid] = metaTagContent;
-		return metaTagContent;
-	}
-
-	return null;
+    return null;
 }
 
 function decodeBase64Content(str) {
@@ -735,41 +736,6 @@ function decodeBase64Content(str) {
 
 	// Decode only if the string is a valid Base64
 	return isBase64(str) ? atob(str) : str;
-}
-
-function getAppTheme(unshrunkContent) {
-	const tempElement = document.createElement('div');
-	tempElement.innerHTML = unshrunkContent;
-	const metaTags = tempElement.getElementsByTagName('meta');
-	let metaTagData = null;
-	Array.from(metaTags).forEach(tag => {
-		const tagName = tag.getAttribute('name');
-		const tagContent = tag.getAttribute('content');
-		if (tagName === 'theme-color' && tagContent) {
-			metaTagData = tagContent;
-		}
-	});
-
-	return metaTagData;
-}
-
-function getAppAspectRatio(unshrunkContent) {
-	if (!unshrunkContent.includes("aspect-ratio")) {
-		return null;
-	}
-	const tempElement = document.createElement('div');
-	tempElement.innerHTML = unshrunkContent;
-	const metaTags = tempElement.getElementsByTagName('meta');
-	let metaTagData = null;
-	Array.from(metaTags).forEach(tag => {
-		const tagName = tag.getAttribute('name');
-		const tagContent = tag.getAttribute('content');
-		if (tagName === 'aspect-ratio' && tagContent) {
-			metaTagData = tagContent;
-		}
-	});
-
-	return metaTagData;
 }
 
 async function fetchData(url) {

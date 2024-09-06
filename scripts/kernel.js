@@ -18,7 +18,6 @@ function OLPreturn(fileID, transferID) {
       }
 }
 
-
 const iframeReferences = {};
 
 async function openfile(x) {
@@ -299,15 +298,16 @@ function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
                 ...(params && { params })
             };
     
-            // Fetch the CSS content and inject it inline
-            try {
-                const cssResponse = await fetch('nova.css'); // Update the path to your CSS file
-                const cssText = await cssResponse.text();
-                const style = document.createElement('style');
-                style.textContent = cssText;
-                iframe.contentDocument.head.appendChild(style);
-            } catch (error) {
-                console.error('Error fetching or injecting CSS:', error);
+            if (contentString.includes("nova-include") && getMetaTagContent(contentString, 'nova-include') != null) {
+                try {
+                    const cssResponse = await fetch('nova.css');
+                    const cssText = await cssResponse.text();
+                    const style = document.createElement('style');
+                    style.textContent = cssText;
+                    iframe.contentDocument.head.appendChild(style);
+                } catch (error) {
+                    console.error('Error fetching or injecting CSS:', error);
+                }
             }
     
             // Inject the JavaScript code

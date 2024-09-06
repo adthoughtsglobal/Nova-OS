@@ -644,13 +644,18 @@ nav info {
 
 #appsindeck {
 	overflow-x: hidden;
-	max-height: calc(50vh - 29px);
-	overflow-y: scroll;
-	text-align: left;
-	display: flex;
-	flex: 1;
-	flex-wrap: wrap;
-	justify-content: center;
+    max-height: calc(50vh - 29px);
+    overflow-y: scroll;
+    text-align: left;
+    display: grid;
+    flex: 1;
+    width: calc(100% - 1rem);
+    margin: auto;
+    grid-template-columns: repeat(auto-fill, minmax(55px, 70px));
+    justify-items: center;
+    justify-content: space-around;
+    align-items: start;
+    padding: 0 0.5rem;
 }
 
 .context-menu {
@@ -2181,7 +2186,7 @@ noscript {
 	flex-direction: column;
     align-items: center;
 	overflow: visible;
-    justify-content: flex-end;
+    justify-content: space-between;
 }
 
 
@@ -2268,6 +2273,7 @@ margin-bottom: 0.3rem;
 	display: flex;
 	flex-direction: row;
     align-items: center;
+	
 }
 
 #userschooser {

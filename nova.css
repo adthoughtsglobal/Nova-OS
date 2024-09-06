@@ -12,6 +12,9 @@
     --sizing-border-radius: 0.5rem;
     --sizing-normal: 0.5rem;
 	--sizing-nano: 0.3rem;
+	--vw: 1vw;
+	--vh: 1vh;
+	--font-size-default: calc((var(--vw) + var(--vh)) / 2);
 }
 
 ::-webkit-scrollbar {
@@ -41,6 +44,7 @@
 html {
 	height: 100%;
 	width: 100%;
+	font-size: var(--font-size);
 }
 
 button,
