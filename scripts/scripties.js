@@ -190,8 +190,6 @@ async function checkAndRunFromURL() {
 		openfile(fileid.id);
 	});
   }
-  
-  
 }
 
 async function getMimeType(extension) {
@@ -200,11 +198,22 @@ async function getMimeType(extension) {
 		const responseformimedb = await fetch(mimeDbUrl);
 		globalmimeDb = await responseformimedb.json();
 	}
-    // Find MIME type by extension
     for (const [key, value] of Object.entries(globalmimeDb)) {
         if (value.extensions && value.extensions.includes(extension)) {
-            return key; // Return the MIME type
+            return key;
         }
     }
-    return 'application/octet-stream'; // Default MIME type
+    return 'application/octet-stream';
+}
+
+function useNovaOffline() {
+	if ('serviceWorker' in navigator) {
+		navigator.serviceWorker.register('sw.js', { scope: '/' })
+		  .then((registration) => {
+			console.log('Service Worker registered with scope:', registration.scope);
+		  })
+		  .catch((error) => {
+			console.log('Service Worker registration failed:', error);
+		  });
+	  }
 }

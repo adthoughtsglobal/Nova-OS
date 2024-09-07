@@ -1,6 +1,6 @@
 var batteryLevel, winds = {}, rp, flwint = true, memory, _nowapp, fulsapp = false, nowappdo, appsHistory = [], nowwindow, appicns = {}, dev = true, appfound = 'files', fileslist = [], qsetscache = {};
 var really = false, initmenuload = true, fileTypeAssociations = {}, Gtodo, notifLog = {}, initialization = false, onstartup = [];
-var novaFeaturedImage = `https://images.unsplash.com/photo-1716980197262-ce400709bf0d?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D`;
+var novaFeaturedImage = `Dev.png`;
 
 document.getElementById("bgimage").src = novaFeaturedImage;
 var defAppsList = [
@@ -700,7 +700,6 @@ function getMetaTagContent(unshrunkContent, metaName, decode = false) {
     const metaTag = Array.from(tempElement.getElementsByTagName('meta')).find(tag =>
         tag.getAttribute('name') === metaName && tag.getAttribute('content')
     );
-	console.log(metaName, metaTag)
     return metaTag ? metaTag.getAttribute('content') : null;
 }
 
@@ -1239,7 +1238,7 @@ async function installdefaultapps() {
 			}
 			const fileContent = await response.text();
 
-			createFile("Apps", appName, "app", fileContent);
+			createFile("Apps", toTitleCase(appName), "app", fileContent);
 		} catch (error) {
 			console.error("Error updating " + appName + ":", error.message);
 			if (attempt < maxRetries) {

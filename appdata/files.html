@@ -1271,8 +1271,8 @@
 				fitsizesidenav();
 			}
 
-
-			$("#flap-sidenav").resizable({
+if (navigator.onLine) {
+	$("#flap-sidenav").resizable({
 				handles: 'e',
 				stop: function (event, ui) {
 					const newWidth = ui.size.width;
@@ -1285,7 +1285,7 @@
 				$('#jstree').jstree('select_node', 'child_node_1');
 				$.jstree.reference('#jstree').select_node('child_node_1');
 			});
-
+}
 			fllist = document.getElementById("filelist");
 			fdlist = document.getElementById("folders");
 
@@ -1368,6 +1368,9 @@
 		}
 
 		function liststuff() {
+			if (!navigator.onLine) {
+				return;
+			}
 			$(function () {
 				// Convert memory to jsTree data
 				const jsTreeData = memoryToJsTree(memory);
