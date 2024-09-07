@@ -10,20 +10,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Send embed message to Discord
+      - name: Send message to Discord
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
           COMMIT_MESSAGE=$(jq -r '.head_commit.message' < $GITHUB_EVENT_PATH)
           COMMIT_URL=$(jq -r '.head_commit.url' < $GITHUB_EVENT_PATH)
           REPO_NAME=$(jq -r '.repository.full_name' < $GITHUB_EVENT_PATH)
-          AUTHOR_NAME=$(jq -r '.head_commit.author.name' < $GITHUB_EVENT_PATH)
-          AUTHOR_AVATAR=$(jq -r '.sender.avatar_url' < $GITHUB_EVENT_PATH)
-          TIMESTAMP=$(jq -r '.head_commit.timestamp' < $GITHUB_EVENT_PATH)
 
+          # Format the message as plain text
+          MESSAGE="**${COMMIT_MESSAGE}**\n- # [Learn more](${COMMIT_URL})"
+
+          # Send message to Discord
           curl -H "Content-Type: application/json" \
           -X POST \
-          -d '{
-                "content": ":magic_wand: '"$COMMIT_MESSAGE"' [View](<'"$COMMIT_URL"'>")
-              }' \
+          -d "{\"content\": \"$MESSAGE\"}" \
           $DISCORD_WEBHOOK_URL
