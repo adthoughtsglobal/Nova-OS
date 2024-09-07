@@ -172,6 +172,7 @@ async function startup() {
 		const end = performance.now();
 	
 		console.log(`Startup took ${(end - start).toFixed(2)}ms`);
+		closeElementedis();
 		async function fetchDataAndUpdate() {
 			let localupdatedataver = localStorage.getItem("updver");
 			let fetchupdatedata = await fetch("versions.json");
@@ -193,7 +194,6 @@ async function startup() {
 		}
 	
 		fetchDataAndUpdate();
-		closeElementedis();
 		await genTaskBar();
 		await dod();
 		removeInvalidMagicStrings()

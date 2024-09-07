@@ -17,9 +17,9 @@
     "start_url": "https://adthoughtsglobal.github.io/nova-dev-repl-rl",
     "icons": [
         {
-            "src": "N.webp",
+            "src": "n.png",
             "sizes": "512x512",
-            "type": "image/webp"
+            "type": "image/png"
         }
     ],
     "screenshots": [

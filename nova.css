@@ -22,8 +22,8 @@
 }
 
 ::-webkit-scrollbar-track {
-	background: var(--colors-BG-sub);
-	border-radius: var(--sizing-border-radius);
+    background: #77777714;
+    border-radius: var(--sizing-border-radius);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -32,12 +32,12 @@
 }
 
 ::-webkit-scrollbar-thumb:hover {
-	background: var(--colors-BG-section);
+	background: var(--colors-BG-sub);
 	cursor: grab;
+	transform:scale(1.1);
 }
 
 ::-webkit-scrollbar-thumb:active {
-	background: var(--colors-BG-section);
 	cursor: grabbing;
 }
 

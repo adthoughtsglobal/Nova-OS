@@ -597,3 +597,27 @@ async function removeUser(username = CurrentUsername) {
         console.error("Error in removeUser function:", error);
     }
 }
+
+function removeSWs() {
+	if ('serviceWorker' in navigator) {
+        // Get all service worker registrations
+        navigator.serviceWorker.getRegistrations()
+          .then(registrations => {
+            // Unregister all service workers and delete all caches
+            const promises = registrations.map(registration => 
+              caches.keys()
+                .then(cacheNames => Promise.all(cacheNames.map(cacheName => caches.delete(cacheName))))
+                .then(() => registration.unregister())  // Unregister each service worker
+            );
+            return Promise.all(promises);  // Wait for all to complete
+          })
+          .then(() => {
+            console.log('All service workers and caches have been removed.');
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+      } else {
+        console.log('Service workers not supported.');
+      }
+  }

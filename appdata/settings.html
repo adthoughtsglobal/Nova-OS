@@ -59,7 +59,7 @@
 			flex-grow: 2;
 			height: calc(100% - 10px);
 			color: white;
-			overflow-y: scroll;
+			overflow-y:auto;
 			max-width: 150px;
 			min-width: 100px;
 			padding-bottom: 25vh;
@@ -67,12 +67,13 @@
 
 		.tab::after {
 			height: 10vh;
-			width: calc(100% - 10px);
-			background: linear-gradient(0deg, #121212, transparent);
-			content: "";
-			display: block;
-			position: absolute;
-			bottom: 10px;
+    width: calc(100% - 10px);
+    background: linear-gradient(0deg, var(--colors-BG-normal), transparent);
+    content: "";
+    display: block;
+    position: absolute;
+    bottom: 10px;
+    z-index: 1;
 		}
 
 		.tab h3 {
@@ -137,7 +138,7 @@
 			border-radius: 6px;
 			height: calc(100% - 5px);
 			animation: tab .2s;
-			overflow-y: scroll;
+			overflow-y: auto;
 			margin-left: 5px;
 		}
 
@@ -575,13 +576,13 @@
 
 		segr {
 			margin: 10px 0;
-			overflow: hidden;
-			border-radius: 5px;
-			display: block;
-			border: 1px solid #434343;
-			box-shadow: 0 3px 5px #0C0C0C;
-			animation: drop .2s ease-out;
-			max-width: 500px;
+    overflow: hidden;
+    border-radius: 5px;
+    display: block;
+    border: 1px solid var(--colors-BG-sub);
+    box-shadow: 0 3px 5px #000000;
+    animation: drop .2s ease-out;
+    max-width: 500px;
 		}
 
 		buttongrp {
@@ -1085,8 +1086,12 @@
 
 						// offline nova
 						document.getElementById("cbx-70").addEventListener("change", function () {
-							window.parent.useNovaOffline();
 							let newValue2 = document.getElementById("cbx-70").checked;
+							if (newValue2) {
+								window.parent.useNovaOffline();
+							} else {
+								window.parent.removeSWs()
+							}
 							window.parent.setSetting("novaOffline", newValue2)
 						});
 

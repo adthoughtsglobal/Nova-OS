@@ -318,7 +318,7 @@ nav info {
 	white-space: nowrap;
 	text-align: center;
 	padding: 0.1rem 0.5rem;
-	background: #1f1f1f42;
+	background: var(--colors-BG-normal)42;
 	max-width: 46px;
 	text-transform: capitalize;
 }
@@ -529,7 +529,7 @@ nav info {
 }
 
 #startup {
-	background-color: #1f1f1f;
+	background-color: var(--colors-BG-normal);
 	color: white;
 	width: 100%;
 	height: 100%;
@@ -589,7 +589,7 @@ nav info {
 	width: calc(100% - 5px);
 	color: inherit;
 	animation: pop .2s;
-	overflow-y: scroll;
+	overflow-y: auto;
 	overflow-x: hidden;
 	max-height: 30vh;
 	padding-right: 5px;
@@ -645,7 +645,7 @@ nav info {
 #appsindeck {
 	overflow-x: hidden;
     max-height: calc(50vh - 29px);
-    overflow-y: scroll;
+    overflow-y: auto;
     text-align: left;
     display: grid;
     flex: 1;
@@ -661,9 +661,9 @@ nav info {
 .context-menu {
 	position: absolute;
 	text-align: center;
-	background: #2a2929;
+	background: var(--colors-BG-highlighted);
 	border: 1px solid #4b4b4b;
-	color: white;
+	color: var(--colors-text-normal);
 	border-radius: 0.3rem;
 	box-shadow: 0px 3px 5px 0px #0000005c;
 	overflow: hidden;
@@ -742,7 +742,7 @@ nav info {
 	position: absolute;
 	margin-bottom: 61px;
 	border: 0;
-	background: #1f1f1f;
+	background: var(--colors-BG-normal);
 	padding: 10px;
 	border-radius: 15px;
 	width: 100vw;
@@ -839,7 +839,7 @@ nav info {
 	margin-bottom: 10px;
 	height: 50%;
 	overflow: hidden;
-	overflow-y: scroll;
+	overflow-y: auto;
 }
 
 #quicsets {
@@ -876,7 +876,7 @@ nav info {
 	font-size: 12px;
 	opacity: 0;
 	transition: opacity 0.3s ease-out;
-	box-shadow: 0 3px 1rem #1f1f1f9e;
+	box-shadow: 0 3px 1rem var(--colors-BG-normal)9e;
 }
 
 .tooltip:hover .tooltiptext {
@@ -1350,7 +1350,7 @@ nav info {
 		margin: 0.2rem;
 		padding-bottom: 1.5rem;
 		max-height: 50vh;
-		overflow-y: scroll;
+		overflow-y: auto;
 	}
 
 	.usermsg {
@@ -1611,7 +1611,7 @@ dialog#terminal {
 }
 
 #serrecentapps {
-	overflow-x: scroll;
+	overflow-x: auto;
 	overflow-y: hidden;
 	text-align: left;
 	display: flex;
@@ -1622,7 +1622,7 @@ dialog#terminal {
 }
 
 #notiflist {
-	overflow-y: scroll;
+	overflow-y: auto;
 	width: 100%;
 	padding: 0.5rem;
 	box-sizing: border-box;
@@ -1655,7 +1655,7 @@ dialog#terminal {
 }
 
 .searchside .notification {
-	background: #1f1f1f3b;
+	background: var(--colors-BG-normal)3b;
 	padding: 0.5rem;
 	border-radius: 0.5rem;
 	color: white;
@@ -1685,7 +1685,7 @@ dialog#terminal {
 
 .searchinputcont {
 	border-radius: 5px;
-	background: #1f1f1f;
+	background: var(--colors-BG-normal);
 	color: inherit;
 	display: flex;
 	flex-direction: row;
