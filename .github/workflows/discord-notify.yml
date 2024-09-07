@@ -19,7 +19,7 @@ jobs:
           REPO_NAME=$(jq -r '.repository.full_name' < $GITHUB_EVENT_PATH)
 
           # Format the message as plain text
-          MESSAGE="**${COMMIT_MESSAGE}**\n- # [Learn more](${COMMIT_URL})"
+          MESSAGE="New Update on Dev Version: ${COMMIT_MESSAGE}\n-# [Learn more](<${COMMIT_URL}>)"
 
           # Send message to Discord
           curl -H "Content-Type: application/json" \
