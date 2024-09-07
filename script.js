@@ -1748,7 +1748,7 @@ async function genTaskBar() {
 			let y = await getFileNamesByFolder("Apps");
 
 			x = await Promise.all(y.map(async (item) => {
-				if (item.name === "files.app" || item.name === "settings.app" || item.name === "store.app") {
+				if (item.name === "Files.app" || item.name === "Settings.app" || item.name === "Store.app") {
 					return item;
 				}
 			}));

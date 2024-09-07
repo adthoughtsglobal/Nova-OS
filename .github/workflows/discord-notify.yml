@@ -14,24 +14,26 @@ jobs:
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
-          COMMIT_MESSAGE=$(jq -r '.head_commit.message' < $GITHUB_EVENT_PATH)
-          COMMIT_URL=$(jq -r '.head_commit.url' < $GITHUB_EVENT_PATH)
-          REPO_NAME=$(jq -r '.repository.full_name' < $GITHUB_EVENT_PATH)
+          GITHUB_EVENT_PATH=${GITHUB_EVENT_PATH:-/github/workflow/event.json}  # Ensure GITHUB_EVENT_PATH is set
 
-          MODIFIED_FILES=$(jq -r '.commits[].modified[]' < $GITHUB_EVENT_PATH)
+          COMMIT_MESSAGE=$(jq -r '.head_commit.message' < "$GITHUB_EVENT_PATH")
+          COMMIT_URL=$(jq -r '.head_commit.url' < "$GITHUB_EVENT_PATH")
+          REPO_NAME=$(jq -r '.repository.full_name' < "$GITHUB_EVENT_PATH")
+
+          MODIFIED_FILES=$(jq -r '.commits[].modified[]' < "$GITHUB_EVENT_PATH")
           
           DIFF=""
-          if [ ! -z "$MODIFIED_FILES" ]; then
-            DIFF="changes:\n\`\`\`diff\n"
+          if [ -n "$MODIFIED_FILES" ]; then
+            DIFF="Changes:\n\`\`\`diff\n"
             for FILE in $MODIFIED_FILES; do
               DIFF+="+ $FILE\n"
             done
             DIFF+="\`\`\`"
           fi
 
-          MESSAGE="New Update on Dev Version:\n## ${COMMIT_MESSAGE}\n${DIFF}\n-# [View code](${COMMIT_URL})"
+          MESSAGE="New Update on Dev Version:\n**${COMMIT_MESSAGE}**\n${DIFF}\n[View Code](${COMMIT_URL})"
 
           curl -H "Content-Type: application/json" \
-          -X POST \
-          -d "{\"content\": \"$MESSAGE\"}" \
-          $DISCORD_WEBHOOK_URL
+               -X POST \
+               -d "{\"content\": \"$MESSAGE\"}" \
+               "$DISCORD_WEBHOOK_URL"

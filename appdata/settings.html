@@ -279,7 +279,7 @@
 			width: 40px;
 			height: 22px;
 			display: block;
-			background: #c8ccd4;
+			background: #2a2a2a;
 			border-radius: 12px;
 			transition: background 0.2s ease;
 		}
@@ -291,9 +291,8 @@
 			width: 24px;
 			height: 24px;
 			display: block;
-			background: #fff;
+			background: #6a6a6a;
 			border-radius: 50%;
-			box-shadow: 0 2px 6px rgba(154, 153, 153, 0.75);
 			transition: all 0.2s ease;
 		}
 
@@ -303,7 +302,7 @@
 		}
 
 		.checkbox-wrapper-51 .toggle span svg path {
-			stroke: #c8ccd4;
+			stroke: #4c4c4c;
 			stroke-width: 2;
 			stroke-linecap: round;
 			stroke-linejoin: round;
@@ -313,7 +312,8 @@
 		}
 
 		.checkbox-wrapper-51 input[type="checkbox"]:checked+.toggle:before {
-			background: #52d66b;
+			background: #9fff8c;
+    box-shadow: 0 2px 0.5rem #79e57947;
 		}
 
 		.checkbox-wrapper-51 input[type="checkbox"]:checked+.toggle span {
@@ -526,9 +526,10 @@
 		}
 
 		[danger] {
-			background: #653939;
-			color: #ff6262;
-			opacity: 0.7;
+			background: #73414133;
+    color: #ff6262;
+    opacity: 1;
+	cursor: pointer;
 		}
 
 		.inpbox {
@@ -1169,13 +1170,6 @@
 					<select id="defSearchEngine">
 						<option>NWP</option>
 						<option>Bing</option>
-					</select>
-				</div>
-				<div class="inpbox">
-					<span>Sort app menu by</span>
-					<select id="defSearchEngine">
-						<option>Usage</option>
-						<option>A-Z</option>
 					</select>
 				</div>
 				<script>
@@ -1891,7 +1885,11 @@
 				}
 
 				#UISIZErangeslid {
-					width: 100%;
+					width: 79%;
+    height: 2px;
+    display: block;
+    margin: var(--sizing-normal) auto;
+    margin-top: 1rem;
 				}
 
 				.UISIZEslider-labels {
