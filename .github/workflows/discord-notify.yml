@@ -26,21 +26,7 @@ jobs:
           COMMIT_URL=$(jq -r '.head_commit.url // "No commit URL"' < "$GITHUB_EVENT_PATH")
           REPO_NAME=$(jq -r '.repository.full_name // "Unknown repository"' < "$GITHUB_EVENT_PATH")
 
-          # Extract modified files safely; if no files exist, return an empty string
-          MODIFIED_FILES=$(jq -r '.commits[]?.modified? // []' < "$GITHUB_EVENT_PATH")
-
-          DIFF=""
-          if [ -n "$MODIFIED_FILES" ]; then
-            DIFF="Changes:\n\`\`\`diff\n"
-            for FILE in $MODIFIED_FILES; do
-              DIFF+="+ $FILE\n"
-            done
-            DIFF+="\`\`\`"
-          else
-            DIFF="No modified files."
-          fi
-
-          MESSAGE="-# New Update on Dev Version:\n## **${COMMIT_MESSAGE}**\n${DIFF}\n-# <[View Code](${COMMIT_URL})>"
+          MESSAGE="-# New Update on Dev Version:\n## **${COMMIT_MESSAGE}**\n-# [View Code](<${COMMIT_URL}>)"
 
           curl -H "Content-Type: application/json" \
                -X POST \
