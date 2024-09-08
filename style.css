@@ -155,8 +155,7 @@ nav info {
 }
 
 .windowheader {
-	background-color: #121212;
-	backdrop-filter: blur(5px) brightness(0.5);
+	background-color: var(--colors-BG-normal);
 	padding: 0 3px;
 	padding-top: 1px;
 	padding-right: 1px;
@@ -183,7 +182,7 @@ nav info {
 	height: calc(100% - 26px);
 	display: grid;
 	transition: .5s;
-	background: #101010;
+	background: var(--colors-BG-normal);
 	justify-content: center;
 	align-content: center;
 	color: #748c9b;
@@ -220,7 +219,6 @@ nav info {
 
 .wincl:hover {
 	background: #29292952;
-	color: #cfcfcf;
 	opacity: 1;
 }
 
@@ -241,8 +239,8 @@ nav info {
 }
 
 .app-shortcut.tooltip .tooltiptext {
-	background-color: #272727;
-	border-radius: 10px;
+	background-color: var(--colors-BG-highlighted);
+	border-radius: var(--sizing-border-radius);
 	bottom: 9% !important;
 	opacity: 1;
 	word-break: normal;
@@ -322,62 +320,6 @@ nav info {
 	background: var(--colors-BG-normal)42;
 	max-width: 46px;
 	text-transform: capitalize;
-}
-
-#installer {
-	border-radius: 10px;
-	border: 0;
-	padding: 10px;
-	width: 80%;
-	background: transparent;
-	backdrop-filter: blur(7px) brightness(0.2);
-	box-shadow: rgba(50, 50, 93, 0.25) 0px 0px 11px 5px inset, rgba(0, 0, 0, 0.3) 0px 4px 12px -1px;
-	color: white;
-}
-
-#installer span {
-	width: 50px;
-	height: 50px;
-	font-size: 27px;
-	margin-left: 7px;
-	display: inline-grid;
-	border-radius: 6px;
-	background-color: #162a3b;
-	align-items: center;
-	text-align: center;
-}
-
-#installer h1 {
-	display: inline-block;
-	width: calc(100% - 144px);
-	margin: 10px;
-}
-
-#installer small {
-	display: block;
-	margin: 8px;
-	margin-top: 2px;
-	opacity: 0.7;
-	font-size: 12px;
-}
-
-#installer [appinfos] {
-	padding: 5px;
-	background: #0e0e0e;
-	border-radius: 7px;
-}
-
-#installer button {
-	display: block;
-	width: 100%;
-	border-radius: 25px;
-	padding: 5px;
-	background: linear-gradient(1deg, #3d884c, #32a046);
-	color: white;
-	border: none;
-	margin-top: 10px;
-	cursor: pointer;
-	font-family: poppins;
 }
 
 .navWindows {
@@ -460,8 +402,8 @@ nav info {
 	padding-top: 0;
 	border: 0;
 	border-radius: 10px;
-	color: #ededed;
-	background: #262626;
+	color: var(--colors-text-normal);
+    background: var(--colors-BG-section);
 	text-align: center;
 	max-height: 80%;
 	width: 80%;
@@ -477,8 +419,8 @@ nav info {
 .modal input {
 	width: 90%;
 	padding: 7px 10px;
-	color: white;
-	background: #181818;
+	color: inherit;
+	background: var(--colors-BG-normal);
 	border: none;
 	border-radius: 5px;
 }
@@ -495,21 +437,21 @@ nav info {
 }
 
 .modal select {
-	background: #2d2d2d;
-    color: #969696;
+	background: var(--colors-BG-highlighted);
+    color: var(--colors-text-normal);
     border-radius: 5px;
     padding: 0.5rem;
     outline: none;
     display: block;
     width: 100%;
-    border: 1px solid grey;
+    border: 1px solid var(--colors-BG-sub);
 }
 
 .modal button {
 	padding: 8px 18px;
-	background: #313131;
-	border: 1px solid #434343;
-	color: white;
+	background: var(--colors-BG-sub);
+	border: 1px solid var(--colors-BG-sub);
+	color: inherit;
 	flex-grow: 1;
 	cursor: pointer;
 	border-radius: 7px;
@@ -518,7 +460,7 @@ nav info {
 }
 
 .modal button:focus {
-	background: #3f3f3f;
+	background: var(--colors-BG-highlighted);
 }
 
 .modal .notbn {
@@ -816,9 +758,9 @@ nav info {
 
 .notifpan {
 	width: calc(100% - 20px);
-	background: #1a1a1a;
+	background: var(--colors-BG-section);
 	border-radius: 10px;
-	color: #cdcdcd;
+	color: var(--colors-text-normal);
 	padding: 10px;
 	margin-bottom: 5px;
 }
@@ -862,8 +804,8 @@ nav info {
 .tooltip .tooltiptext {
 	visibility: hidden;
 	width: 68px;
-	background-color: #353535;
-	color: #fff;
+	background-color: var(--colors-BG-highlighted);
+	color: var(--colors-text-normal);
 	word-break: normal;
 	backdrop-filter: blur(1rem);
 	text-align: center;
@@ -1106,7 +1048,7 @@ nav info {
 #bobthedropdown {
 	visibility: visible;
 	display: flex;
-	background: #2a2929;
+	background: var(--colors-BG-section);
 	padding: 1px 3px;
 	border-radius: 0.5rem;
 	height: 34px;

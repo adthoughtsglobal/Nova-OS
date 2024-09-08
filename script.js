@@ -1530,29 +1530,41 @@ function startTimer(minutes) {
 }
 
 function playBeeps() {
-	const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-	const frequencies = [440, 494, 523]; // A simple tune: A4, B4, C5
-
-	for (let i = 0; i < 3; i++) {
-		const oscillator = audioCtx.createOscillator();
-		const gainNode = audioCtx.createGain();
-
-		oscillator.type = 'triangle'; // Softer wave type
-		oscillator.frequency.value = frequencies[i]; // Different frequency for each beep
-
-		oscillator.connect(gainNode);
-		gainNode.connect(audioCtx.destination);
-
-		gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-		gainNode.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.05); // Gradual fade in
-		gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.35); // Gradual fade out
-
-		setTimeout(() => {
-			oscillator.start();
-			setTimeout(() => oscillator.stop(), 400); // Beep duration
-		}, i * 600); // Timing for a musical effect
-	}
+	const context = new (window.AudioContext || window.webkitAudioContext)();
+	const now = context.currentTime;
+	const duration = 0.1; // Extended duration of each "bop" in seconds
+	const fadeDuration = 0.02; // Fade in and out duration
+	const gap = 0.1; // Gap between bops
+	const pitch = 700; // Higher frequency (A5)
+	const rhythm = [
+		[0, 0.2, 0.4, 0.6],
+		[1.2, 1.4, 1.6, 1.8],
+		[2.4, 2.6, 2.8, 3.0]
+	];
+	
+	const getOffsetTime = (index, time) => now + time + index * (4 * (duration + gap));
+	
+	rhythm.forEach((set, index) => {
+		set.forEach(time => {
+			const offsetTime = getOffsetTime(index, time);
+			
+			const oscillator = context.createOscillator();
+			const gainNode = context.createGain();
+	
+			oscillator.type = 'triangle';
+			oscillator.frequency.setValueAtTime(pitch, offsetTime);
+			
+			gainNode.gain.setValueAtTime(0, offsetTime);
+			gainNode.gain.linearRampToValueAtTime(1, offsetTime + fadeDuration); // Fade in
+			gainNode.gain.linearRampToValueAtTime(0, offsetTime + duration - fadeDuration); // Fade out
+			
+			oscillator.connect(gainNode);
+			gainNode.connect(context.destination);
+	
+			oscillator.start(offsetTime);
+			oscillator.stop(offsetTime + duration);
+		});
+	});
 }
 
 async function setMessage() {

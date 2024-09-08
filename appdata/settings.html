@@ -6,6 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Settings App</title>
 	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+	<script src="https://jscolor.com/release/2.5/jscolor-2.5.2/jscolor.js"></script>
 	<meta name="nova-include" content="nova.css">
 	<meta name="nova-icon"
 		content="<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='40.8208' height='40.94891' viewBox='0,0,40.8208,40.94891'><g transform='translate(-219.51359,-159.63806)'><g data-paper-data='{&quot;isPaintingLayer&quot;:true}' fill-rule='nonzero' stroke-linecap='butt' stroke-linejoin='miter' stroke-miterlimit='10' stroke-dasharray='' stroke-dashoffset='0' style='mix-blend-mode: normal'><path d='M224.49728,191.97943c0,-6.51609 0,-20.12167 0,-23.80086c0,-1.79525 1.27743,-3.6813 3.28885,-3.6813c6.47459,0 20.55435,0 24.11403,0c1.56415,0 3.60258,1.44253 3.60258,3.6813c0,6.76316 0,20.4796 0,23.95744c0,1.53 -1.83996,3.36671 -3.60258,3.36671c-3.67444,0 -17.45008,0 -23.95744,0c-2.10186,0 -3.44544,-1.37709 -3.44544,-3.52329zM239.52997,189.92242c5.52285,0 10,-4.47715 10,-10c0,-5.52285 -4.47715,-10 -10,-10c-5.52285,0 -10,4.47715 -10,10c0,5.52285 4.47715,10 10,10z' fill='#ffffff' stroke='none' stroke-width='0'/><path d='M237.50865,199.43282c-4.60757,-4.60757 -14.22817,-14.22817 -16.82975,-16.82975c-1.26943,-1.26943 -1.69979,-3.50635 -0.2775,-4.92864c4.57823,-4.57823 14.53412,-14.53412 17.05119,-17.05119c1.10602,-1.10602 3.56743,-1.52738 5.15048,0.05567c4.78228,4.78228 14.48126,14.48126 16.94047,16.94047c1.08187,1.08187 1.07958,3.68167 -0.16678,4.92803c-2.59822,2.59822 -12.33907,12.33907 -16.94047,16.94047c-1.48624,1.48624 -3.41004,1.46254 -4.92764,-0.05506zM239.52997,189.92242c5.52285,0 10,-4.47715 10,-10c0,-5.52285 -4.47715,-10 -10,-10c-5.52285,0 -10,4.47715 -10,10c0,5.52285 4.47715,10 10,10z' fill='#ffffff' stroke='none' stroke-width='0'/><path d='M235.7745,180.11252c0,-2.2917 1.85779,-4.14949 4.14949,-4.14949c2.2917,0 4.14949,1.85779 4.14949,4.14949c0,2.2917 -1.85779,4.14949 -4.14949,4.14949c-2.2917,0 -4.14949,-1.85779 -4.14949,-4.14949z' fill='none' stroke='#ffffff' stroke-width='2.5'/></g></g></svg>">
@@ -1301,10 +1302,10 @@
 					files app and open this page again. Contact the Developer of the app if the issue presists.</p>
 			</small>
 			<script>
-				function rldfltyptable() {
+				async function rldfltyptable() {
 					const fileAssociations = window.parent.fileTypeAssociations;
 
-					function createTable(fileAssociations) {
+					async function createTable(fileAssociations) {
 						const table = document.createElement('div');
 						table.className = 'table';
 
@@ -1335,10 +1336,10 @@
 							defaultAppCell.className = 'cell default-app-cell';
 							let subappsContent = apps.length > 1 ?
 								`<div class="subapps"><span class="material-icons">extension</span>` +
-								apps.slice(1).map((app, index) => window.parent.getAppIcon(index + 1, app, true)).join(', ') +
+								apps.slice(1).map(async (app, index) => await window.parent.getAppIcon(index + 1, app, true)).join(', ') +
 								`</div>` : '';
 
-							defaultAppCell.innerHTML = window.parent.getAppIcon(0, apps[0], true) + '<br>' + subappsContent;
+							defaultAppCell.innerHTML = await window.parent.getAppIcon(0, apps[0], true) + '<br>' + subappsContent;
 
 
 							row.appendChild(fileTypeCell);
@@ -1496,11 +1497,11 @@
 					</tr>
 					<tr>
 						<td><b onclick="openlink('https://mistium.com/')">Mistium</b></td>
-						<td>Concept Developer and OSL embed</td>
+						<td>literally a random person</td>
 					</tr>
 					<tr>
 						<td><b onclick="openlink('https://github.com/RoturTW')">RoturTW</b></td>
-						<td>Networking</td>
+						<td>Networking?</td>
 					</tr>
 					<tr>
 						<td>Libraries</td>
@@ -1669,6 +1670,13 @@
 					margin-right: 3px;
 					padding-right: 3px;
 					border-right: 1px solid grey;
+				}
+
+				.colorsetting {
+					display: flex;
+					flex-direction: row;
+					justify-content: space-between;
+    align-items: center;
 				}
 			</style>
 			<div id="deviceslist">
@@ -1842,6 +1850,69 @@
 					</div>
 				</div>
 			</segr>
+			<h1>Colors</h1>
+			<segr>
+				<div setting class="colorsetting">
+				  <b>Normal background</b>
+				  <button id="normal-bg" data-jscolor="{preset:'dark', width:150, paletteCols:0, onInput:'updateColor(this, \"--colors-BG-normal\")'}"></button>
+				</div>
+				<div setting class="colorsetting">
+					<b>Sub background</b>
+					<button id="sub-bg" data-jscolor="{preset:'dark', width:150, paletteCols:0, onInput:'updateColor(this, \"--colors-BG-sub\")'}"></button>
+				  </div>
+				<div setting class="colorsetting">
+				  <b>Section background</b>
+				  <button id="section-bg" data-jscolor="{preset:'dark', width:150, paletteCols:0, onInput:'updateColor(this, \"--colors-BG-section\")'}"></button>
+				</div>
+				<div setting class="colorsetting">
+				  <b>Highlighted color</b>
+				  <button id="highlighted-bg" data-jscolor="{preset:'dark', width:150, paletteCols:0, onInput:'updateColor(this, \"--colors-BG-highlighted\")'}"></button>
+				</div>
+				  <div setting class="colorsetting">
+					<b>Normal text color</b>
+					<button id="text-normal" data-jscolor="{preset:'dark', width:150, paletteCols:0, onInput:'updateColor(this, \"--colors-text-normal\")'}"></button>
+				  </div>
+				  
+				<div setting class="colorsetting">
+				  <button id="save-btn">Save</button>
+				</div>
+			  </segr>
+			  
+			  <script>
+			 function updateColor(picker, variableName) {
+  const colorValue = picker.toHEXString();
+  window.parent.document.documentElement.style.setProperty(variableName, colorValue);
+}
+
+function getCSSVariableValue(varName) {
+  return window.parent.getComputedStyle(window.parent.document.documentElement).getPropertyValue(varName).trim();
+}
+
+function initColorPickers() {
+  document.querySelector("#normal-bg").jscolor.fromString(getCSSVariableValue('--colors-BG-normal'));
+  document.querySelector("#section-bg").jscolor.fromString(getCSSVariableValue('--colors-BG-section'));
+  document.querySelector("#highlighted-bg").jscolor.fromString(getCSSVariableValue('--colors-BG-highlighted'));
+  document.querySelector("#sub-bg").jscolor.fromString(getCSSVariableValue('--colors-BG-sub'));
+  document.querySelector("#text-normal").jscolor.fromString(getCSSVariableValue('--colors-text-normal'));
+}
+
+function saveColors() {
+  const normalBgColor = document.querySelector("#normal-bg").jscolor.toHEXString();
+  const sectionBgColor = document.querySelector("#section-bg").jscolor.toHEXString();
+  const highlightedBgColor = document.querySelector("#highlighted-bg").jscolor.toHEXString();
+  const subBgColor = document.querySelector("#sub-bg").jscolor.toHEXString();
+  const textNormalColor = document.querySelector("#text-normal").jscolor.toHEXString();
+  
+  window.parent.document.documentElement.style.setProperty('--colors-BG-normal', normalBgColor);
+  window.parent.document.documentElement.style.setProperty('--colors-BG-section', sectionBgColor);
+  window.parent.document.documentElement.style.setProperty('--colors-BG-highlighted', highlightedBgColor);
+  window.parent.document.documentElement.style.setProperty('--colors-BG-sub', subBgColor);
+  window.parent.document.documentElement.style.setProperty('--colors-text-normal', textNormalColor);
+}
+
+window.addEventListener('load', initColorPickers);
+document.querySelector("#save-btn").addEventListener('click', saveColors);
+			  </script>
 			<h1>Personalization</h1>
 			<segr>
 				<div class="inpbox">

@@ -300,10 +300,41 @@ async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
             if (contentString.includes("nova-include") && getMetaTagContent(contentString, 'nova-include') != null) {
                 try {
                     const cssResponse = await fetch('nova.css');
-                    const cssText = await cssResponse.text();
-                    const style = document.createElement('style');
-                    style.textContent = cssText;
-                    iframe.contentDocument.head.appendChild(style);
+const cssText = await cssResponse.text();
+
+// Get the current root CSS variables from the body element
+const computedStyles = getComputedStyle(document.body);
+const variables = {
+    '--font-size-small': computedStyles.getPropertyValue('--font-size-small'),
+    '--font-size-normal': computedStyles.getPropertyValue('--font-size-normal'),
+    '--font-size-big': computedStyles.getPropertyValue('--font-size-big'),
+    '--colors-BG-normal': computedStyles.getPropertyValue('--colors-BG-normal'),
+    '--colors-BG-sub': computedStyles.getPropertyValue('--colors-BG-sub'),
+    '--colors-BG-section': computedStyles.getPropertyValue('--colors-BG-section'),
+    '--colors-BG-highlighted': computedStyles.getPropertyValue('--colors-BG-highlighted'),
+    '--colors-text-normal': computedStyles.getPropertyValue('--colors-text-normal'),
+    '--sizing-border-radius': computedStyles.getPropertyValue('--sizing-border-radius'),
+    '--sizing-normal': computedStyles.getPropertyValue('--sizing-normal'),
+    '--sizing-nano': computedStyles.getPropertyValue('--sizing-nano'),
+    '--vw': computedStyles.getPropertyValue('--vw'),
+    '--vh': computedStyles.getPropertyValue('--vh'),
+    '--font-size-default': computedStyles.getPropertyValue('--font-size-default')
+};
+
+// Replace root CSS variable declarations in the fetched CSS
+const updatedCssText = cssText.replace(/:root\s*{([^}]*)}/, (match, declarations) => {
+    let updatedDeclarations = declarations.trim();
+    for (const [variable, value] of Object.entries(variables)) {
+        const regex = new RegExp(`(${variable}\\s*:\\s*).*?;`, 'g');
+        updatedDeclarations = updatedDeclarations.replace(regex, `$1${value.trim()};`);
+    }
+    return `:root { ${updatedDeclarations} }`;
+});
+
+// Inject the updated CSS into the iframe
+const style = document.createElement('style');
+style.textContent = updatedCssText;
+iframe.contentDocument.head.appendChild(style);
                 } catch (error) {
                     console.error('Error fetching or injecting CSS:', error);
                 }
