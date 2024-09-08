@@ -113,8 +113,7 @@ function flwin(x) {
     }, 1000);
 }
 
-function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
-    const start = performance.now();
+async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
     appsHistory.push(title);
     if (appsHistory.length > 5) {
         appsHistory = appsHistory.slice(-5);
@@ -270,18 +269,18 @@ function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
 
     var windowContent = document.createElement("div");
     windowContent.classList += "windowcontent";
+    var contentString = isBase64(content) ? decodeBase64Content(content) : content;
 
     var windowLoader = document.createElement("div");
     windowLoader.classList += "windowloader";
     var loaderdiv = document.createElement("div");
     loaderdiv.classList = "loader33";
-    windowLoader.innerHTML = appicns[appid] ? appicns[appid] : defaultAppIcon;
+    windowLoader.innerHTML = await getAppIcon(contentString, appid);
     windowLoader.appendChild(loaderdiv);
 
     function loadIframeContent(windowLoader, windowContent, iframe) {
         const appstart = performance.now();
         var iframe = document.createElement("iframe");
-        var contentString = isBase64(content) ? decodeBase64Content(content) : content;
         var blobURL = URL.createObjectURL(new Blob([contentString], { type: 'text/html' }));
 
         iframe.onload = async function () {
@@ -515,7 +514,7 @@ async function openapp(x, od) {
                 y = y.content;
             }
             // Assuming you have a predefined function openwindow
-            openwindow(x, y, getAppIcon(y, x), getAppTheme(y), getAppAspectRatio(y), od, Gtodo);
+            openwindow(x, y, await getAppIcon(y, x), getAppTheme(y), getAppAspectRatio(y), od, Gtodo);
             Gtodo = null;
         } catch (error) {
             console.error("Error fetching data:", error);

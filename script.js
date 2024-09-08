@@ -20,7 +20,7 @@ var defAppsList = [
 gid("nowrunninapps").style.display = "none";
 
 const rllog = console.log;
-console.log = function(...args) {
+console.log = function (...args) {
 	const stack = new Error().stack;
 	const caller = stack.split('\n')[2].trim();
 	const match = caller.match(/at (\S+)/);
@@ -67,27 +67,27 @@ async function showloginmod() {
 			userDiv.className = 'user';
 			userDiv.tabIndex = 0;
 			const selectUser = async function () {
-				
+
 				navigator.registerProtocolHandler(
-				  'web+nova',
-				  `${location.origin}/?path=%s`,
-				  'NovaOS'
+					'web+nova',
+					`${location.origin}/?path=%s`,
+					'NovaOS'
 				);
 				await cleanupram();
 				CurrentUsername = cacusername;
 				let isdefaultpass = false;
-			
+
 				try {
 					isdefaultpass = await checkPassword('nova');
 				} catch (err) {
 					console.error("Password check failed:", err);
 				}
-			
+
 				if (isdefaultpass) {
 					console.log("Password check: good: ", password, isdefaultpass);
 					gid('loginmod').close();
 					gid('edison').showModal();
-					
+
 					startup();
 				} else {
 					console.log("Password check: bad: ", password, isdefaultpass);
@@ -128,9 +128,9 @@ async function showloginmod() {
 		document.querySelector('.user').focus();
 	}
 	const now = new Date();
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    document.getElementById('loginusselctime').textContent = `${hours}:${minutes}`;
+	const hours = String(now.getHours()).padStart(2, '0');
+	const minutes = String(now.getMinutes()).padStart(2, '0');
+	document.getElementById('loginusselctime').textContent = `${hours}:${minutes}`;
 
 	gid('loginmod').showModal();
 	gid('loginform1').addEventListener("keydown", async function (event) {
@@ -152,12 +152,12 @@ async function startup() {
 	rllog(
 		'You are using \n\n%cNovaOS%c\nNovaOS is the free, source-available, powerful and the cutest Web Operating system on the internet.',
 		'color: white; background-color: #101010; font-size: 2rem; padding: 0.7rem 1rem; border-radius: 1rem;',
-		  'color: lightgrey; padding:0.5rem;'
-	  );
-	  
+		'color: lightgrey; padding:0.5rem;'
+	);
+
 	setsrtpprgbr(20)
 	const start = performance.now();
-	await updateMemoryData().then(async () =>{
+	await updateMemoryData().then(async () => {
 		try {
 			gid('startupterms').innerHTML = "Initialising clock...";
 			setInterval(updateTime, 1000);
@@ -166,20 +166,20 @@ async function startup() {
 			await checkdmode();
 			setsrtpprgbr(100)
 			gid('startupterms').innerHTML = "Startup completed";
-			
+
 		} catch (err) { console.error("startup error:", err); }
-	
+
 		const end = performance.now();
-	
+
 		console.log(`Startup took ${(end - start).toFixed(2)}ms`);
 		closeElementedis();
 		async function fetchDataAndUpdate() {
 			let localupdatedataver = localStorage.getItem("updver");
 			let fetchupdatedata = await fetch("versions.json");
-	
+
 			if (fetchupdatedata.ok) {
 				let fetchupdatedataver = (await fetchupdatedata.json()).osver;
-	
+
 				if (localupdatedataver !== fetchupdatedataver) {
 					if (await justConfirm("Update default apps?", "Your default apps are old. Update them to access new features and fixes.")) {
 						await installdefaultapps();
@@ -192,29 +192,29 @@ async function startup() {
 				console.error("Failed to fetch data from the server.");
 			}
 		}
-	
+
 		fetchDataAndUpdate();
 		await genTaskBar();
 		await dod();
 		removeInvalidMagicStrings()
-		
+
 		// Initialize the associations from settings
 		async function loadFileTypeAssociations() {
 			const associations = await getSetting('fileTypeAssociations');
 			fileTypeAssociations = associations || {};
 			cleanupInvalidAssociations();
 		}
-	
+
 		await loadFileTypeAssociations();
 
 		try {
 			function runScriptsSequentially(scripts, delay) {
 				scripts.forEach((script, index) => {
-				  setTimeout(script, index * delay);
+					setTimeout(script, index * delay);
 				});
-			  }
-			  runScriptsSequentially(onstartup, 1000)
-		} catch (e) {}
+			}
+			runScriptsSequentially(onstartup, 1000)
+		} catch (e) { }
 	})
 
 }
@@ -225,44 +225,44 @@ document.addEventListener("DOMContentLoaded", async function () {
 	async function waitForNonNull() {
 		const startTime = Date.now();
 		const maxWaitTime = 3000; // 3 seconds
-	
+
 		while (Date.now() - startTime < maxWaitTime) {
 			const result = await updateMemoryData();
-			
+
 			if (result !== null) {
 				return result;
 			}
 			console.log("No data: retrying")
 			await new Promise(resolve => setTimeout(resolve, 100)); // Wait 100ms before trying again
 		}
-	
+
 		return null; // Return null if no non-null value is found within 3 seconds
 	}
-	
-	waitForNonNull().then( async (result) => {
-        console.log("Saved:", result);
-        checkAndRunFromURL();
-        gid('startupterms').innerHTML = "<span>Checking database...</span>";
 
-        try {
-            if (result || result == 3) {
-                await showloginmod();
-            } else {
-                await say(`
+	waitForNonNull().then(async (result) => {
+		console.log("Saved:", result);
+		checkAndRunFromURL();
+		gid('startupterms').innerHTML = "<span>Checking database...</span>";
+
+		try {
+			if (result || result == 3) {
+				await showloginmod();
+			} else {
+				await say(`
                     <h2>Terms of service and License</h2>
                     <p>By using Nova OS, you agree to the <a href="https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use">Adthoughtsglobal Nova Terms of Use</a>. 
                     <br><small>We do not store your personal information. <br>Read the terms before use.</small></p>
                 `);
-                initialiseOS();
-            }
-        } catch (error) {
-            console.error('Error in database operations:', error);
-        }
-    })
-    .catch(async (error) => {
-        console.error('Error retrieving data from the database:', error);
-        await showloginmod(); // Await in case `showloginmod` is async
-    });
+				initialiseOS();
+			}
+		} catch (error) {
+			console.error('Error in database operations:', error);
+		}
+	})
+		.catch(async (error) => {
+			console.error('Error retrieving data from the database:', error);
+			await showloginmod(); // Await in case `showloginmod` is async
+		});
 	var bgImage = document.getElementById("bgimage");
 
 	bgImage.addEventListener("click", function () {
@@ -281,8 +281,6 @@ try {
 function updateTime() {
 	const now = new Date();
 	let hours = now.getHours();
-
-
 	if (condition) {
 		// 12-hour format
 		const ampm = hours >= 12 ? 'PM' : 'AM';
@@ -298,8 +296,6 @@ function updateTime() {
 	gid('time-display').innerText = timeFormat;
 	gid('date-display').innerText = date;
 }
-
-
 const jsonToDataURI = json => `data:application/json,${encodeURIComponent(JSON.stringify(json))}`;
 
 async function openn() {
@@ -338,7 +334,7 @@ async function openn() {
 			const unshrunkContent = unshrinkbsf(content.content);
 
 			// Use the getAppIcon function to fetch the icon
-			const icon = getAppIcon(unshrunkContent, app.id);
+			const icon = await getAppIcon(unshrunkContent, app.id);
 
 			if (icon) {
 				iconSpan.innerHTML = icon;
@@ -370,7 +366,7 @@ async function openn() {
 		gid("appsindeck").appendChild(appShortcutDiv);
 	})).then(() => {
 		const end = performance.now();
-	
+
 		console.log(`App Menu took ${(end - start).toFixed(2)}ms`);
 	}).catch((error) => {
 		console.error('An error occurred:', error);
@@ -493,8 +489,6 @@ function makedefic(str) {
 		}
 	}
 }
-
-
 function updateBattery() {
 	var batteryPromise;
 
@@ -553,8 +547,6 @@ updateBattery();
 navigator.getBattery().then(function (battery) {
 	battery.addEventListener('levelchange', updateBattery);
 });
-
-
 async function dod() {
 	let x;
 	try {
@@ -569,11 +561,9 @@ async function dod() {
 			event.preventDefault();
 
 			const unid = event.dataTransfer.getData("Text");
-	await moveFileToFolder(unid, "Desktop/");
-	//dod()
+			await moveFileToFolder(unid, "Desktop/");
+			//dod()
 		});
-
-
 		dropZone.addEventListener('dragend', (event) => {
 			event.preventDefault();
 		});
@@ -583,7 +573,7 @@ async function dod() {
 			appShortcutDiv.className = "app-shortcut sizableuielement";
 			appShortcutDiv.setAttribute("onclick", "openfile('" + app.id + "')");
 			appShortcutDiv.setAttribute("unid", app.id);
-			
+
 			appShortcutDiv.setAttribute("draggable", true);
 			appShortcutDiv.setAttribute("ondragstart", "dragfl(event, this)");
 
@@ -614,8 +604,6 @@ async function dod() {
 					metaTagData = tagContent;
 				}
 			});
-
-
 			if (typeof metaTagData === "string") {
 				if (containsSmallSVGElement(metaTagData)) {
 					iconSpan.innerHTML = metaTagData;
@@ -627,8 +615,6 @@ async function dod() {
 				iconSpan.innerHTML = `<span class="app-icon">` + makedefic(app.name) + `</span>`;
 			}
 
-
-
 			// Create a span element for the app name
 			var nameSpan = document.createElement("span");
 			nameSpan.className = "appname";
@@ -639,7 +625,7 @@ async function dod() {
 			appShortcutDiv.appendChild(nameSpan);
 
 			gid("desktop").appendChild(appShortcutDiv);
-			
+
 		});
 		x = await getFileById(await getSetting("wall"));
 	} catch (error) {
@@ -694,25 +680,29 @@ function clwin(x) {
 }
 
 function getMetaTagContent(unshrunkContent, metaName, decode = false) {
-    const content = decode ? decodeBase64Content(unshrunkContent) : unshrunkContent;
-    const tempElement = document.createElement('div');
-    tempElement.innerHTML = content;
-    const metaTag = Array.from(tempElement.getElementsByTagName('meta')).find(tag =>
-        tag.getAttribute('name') === metaName && tag.getAttribute('content')
-    );
-    return metaTag ? metaTag.getAttribute('content') : null;
+	const content = decode ? decodeBase64Content(unshrunkContent) : unshrunkContent;
+	const tempElement = document.createElement('div');
+	tempElement.innerHTML = content;
+	const metaTag = Array.from(tempElement.getElementsByTagName('meta')).find(tag =>
+		tag.getAttribute('name') === metaName && tag.getAttribute('content')
+	);
+	return metaTag ? metaTag.getAttribute('content') : null;
 }
 
 function getAppTheme(unshrunkContent) {
-    return getMetaTagContent(unshrunkContent, 'theme-color');
+	return getMetaTagContent(unshrunkContent, 'theme-color');
 }
 
 function getAppAspectRatio(unshrunkContent) {
-    return unshrunkContent.includes("aspect-ratio") ? getMetaTagContent(unshrunkContent, 'aspect-ratio') : null;
+	return unshrunkContent.includes("aspect-ratio") ? getMetaTagContent(unshrunkContent, 'aspect-ratio') : null;
 }
 
-function getAppIcon(unshrunkContent, appid, jff) {
-    if (jff && appicns[appid]) return appicns[appid] || defaultAppIcon;
+async function getAppIcon(unshrunkContent, appid, jff) {
+    if (!appicns[appid] && appid && jff === "must") {
+        const file = await getFileById(appid);
+        return getAppIcon(file.content, appid);
+    }
+    if (jff && jff !== "must") return appicns[appid] || defaultAppIcon;
     if (appicns[appid]) return appicns[appid];
 
     const iconContent = getMetaTagContent(unshrunkContent, 'nova-icon', true);
@@ -723,6 +713,7 @@ function getAppIcon(unshrunkContent, appid, jff) {
 
     return null;
 }
+
 
 function decodeBase64Content(str) {
 	// Check if the string starts with a data URL prefix
@@ -982,56 +973,56 @@ async function createFile(folderName2, fileName, type, content, metadata = {}) {
 }
 
 async function extractAndRegisterCapabilities(appId, content) {
-    try {
+	try {
 		if (!content) {
 			content = await window.parent.getFileById(appId);
 			content = content.content;
 		}
 
 		if (isBase64(content)) {
-            content = decodeBase64Content(content);
-        }
+			content = decodeBase64Content(content);
+		}
 
-        let parser = new DOMParser();
-        let doc = parser.parseFromString(content, "text/html");
-        let metaTag = doc.querySelector('meta[name="capabilities"]');
+		let parser = new DOMParser();
+		let doc = parser.parseFromString(content, "text/html");
+		let metaTag = doc.querySelector('meta[name="capabilities"]');
 
-        if (metaTag) {
-            let capabilities = metaTag.getAttribute("content").split(',');
-            await registerApp(appId, capabilities);
-            console.log(`Registered capabilities: ${appId}`);
-        } else {
-            console.log(`No capabilities: ${appId}`);
-        }
-    } catch (error) {
-        console.error("Error extracting and registering capabilities:", error);
-    }
+		if (metaTag) {
+			let capabilities = metaTag.getAttribute("content").split(',');
+			await registerApp(appId, capabilities);
+			console.log(`Registered capabilities: ${appId}`);
+		} else {
+			console.log(`No capabilities: ${appId}`);
+		}
+	} catch (error) {
+		console.error("Error extracting and registering capabilities:", error);
+	}
 }
 
 async function registerApp(appId, capabilities) {
-    for (let fileType of capabilities) {
-        if (!fileTypeAssociations[fileType]) {
-            fileTypeAssociations[fileType] = [];
-        }
-        if (!fileTypeAssociations[fileType].includes(appId)) {
-            fileTypeAssociations[fileType].push(appId);
-        }
-    }
-    await setSetting('fileTypeAssociations', fileTypeAssociations);
+	for (let fileType of capabilities) {
+		if (!fileTypeAssociations[fileType]) {
+			fileTypeAssociations[fileType] = [];
+		}
+		if (!fileTypeAssociations[fileType].includes(appId)) {
+			fileTypeAssociations[fileType].push(appId);
+		}
+	}
+	await setSetting('fileTypeAssociations', fileTypeAssociations);
 }
 
 async function cleanupInvalidAssociations() {
-    const validAppIds = await getAllValidAppIds();
+	const validAppIds = await getAllValidAppIds();
 
-    for (let fileType in fileTypeAssociations) {
-        fileTypeAssociations[fileType] = fileTypeAssociations[fileType].filter(appId => validAppIds.includes(appId));
-        if (fileTypeAssociations[fileType].length === 0) {
-            delete fileTypeAssociations[fileType];
-        }
-    }
+	for (let fileType in fileTypeAssociations) {
+		fileTypeAssociations[fileType] = fileTypeAssociations[fileType].filter(appId => validAppIds.includes(appId));
+		if (fileTypeAssociations[fileType].length === 0) {
+			delete fileTypeAssociations[fileType];
+		}
+	}
 
-    await setSetting('fileTypeAssociations', fileTypeAssociations);
-    console.log('AFA cleanup completed');
+	await setSetting('fileTypeAssociations', fileTypeAssociations);
+	console.log('AFA cleanup completed');
 }
 
 async function getAllValidAppIds() {
@@ -1253,16 +1244,16 @@ async function installdefaultapps() {
 	async function waitForNonNull() {
 		let result = null;
 		while (result === null) {
-		  result = await updateMemoryData();
-		  if (result === null) {
-			gid('startupterms').innerText = "Waiting for DB to open..."
-			await new Promise(resolve => setTimeout(resolve, 1000));
-		  }
+			result = await updateMemoryData();
+			if (result === null) {
+				gid('startupterms').innerText = "Waiting for DB to open..."
+				await new Promise(resolve => setTimeout(resolve, 1000));
+			}
 		}
 		return result;
-	  }
-	  
-	  await waitForNonNull().then(async (memory) =>  {
+	}
+
+	await waitForNonNull().then(async (memory) => {
 		// Update each app sequentially
 		for (let i = 0; i < defAppsList.length; i++) {
 			await updateApp(defAppsList[i]);
@@ -1326,103 +1317,103 @@ async function prepareArrayToSearch() {
 }
 
 async function strtappse(event) {
-    if (fileslist.length === 0) {
-        await prepareArrayToSearch();
-    }
+	if (fileslist.length === 0) {
+		await prepareArrayToSearch();
+	}
 
-    const searchValue = gid("strtsear").value.toLowerCase().trim();
-    if (searchValue === "") return;
+	const searchValue = gid("strtsear").value.toLowerCase().trim();
+	if (searchValue === "") return;
 
-    const abracadra = await getSetting("smartsearch");
+	const abracadra = await getSetting("smartsearch");
 
-    let maxSimilarity = 0.5;
-    let appToOpen = null;
-    let mostRelevantItem = null;
-    const itemsWithSimilarity = [];
+	let maxSimilarity = 0.5;
+	let appToOpen = null;
+	let mostRelevantItem = null;
+	const itemsWithSimilarity = [];
 
-    fileslist.forEach(item => {
-        const itemName = item.name.toLowerCase();
-        if (item.type !== "folder") {
-            let similarity = abracadra ? calculateSimilarity(itemName, searchValue) : 0;
-            if (!abracadra && itemName.startsWith(searchValue)) {
-                similarity = 1;
-            }
+	fileslist.forEach(item => {
+		const itemName = item.name.toLowerCase();
+		if (item.type !== "folder") {
+			let similarity = abracadra ? calculateSimilarity(itemName, searchValue) : 0;
+			if (!abracadra && itemName.startsWith(searchValue)) {
+				similarity = 1;
+			}
 
-            if (similarity > maxSimilarity) {
-                maxSimilarity = similarity;
-                appToOpen = item;
-            }
+			if (similarity > maxSimilarity) {
+				maxSimilarity = similarity;
+				appToOpen = item;
+			}
 
-            if (similarity >= 0.2) {
-                itemsWithSimilarity.push({ item, similarity });
-            }
-        }
-    });
+			if (similarity >= 0.2) {
+				itemsWithSimilarity.push({ item, similarity });
+			}
+		}
+	});
 
-    if (event.key === "Enter") {
-        event.preventDefault();
+	if (event.key === "Enter") {
+		event.preventDefault();
 
-        if (searchValue === "i love nova") {
-            gid("searchwindow").close();
-            notify("hmm", "you're really goofy...", "Nova just replied you:");
-            really = true;
-            return;
-        }
+		if (searchValue === "i love nova") {
+			gid("searchwindow").close();
+			notify("hmm", "you're really goofy...", "Nova just replied you:");
+			really = true;
+			return;
+		}
 
-        if (appToOpen) {
-            console.log(appToOpen);
-            openfile(appToOpen.id);
-        }
-        return;
-    }
+		if (appToOpen) {
+			console.log(appToOpen);
+			openfile(appToOpen.id);
+		}
+		return;
+	}
 
-    itemsWithSimilarity.sort((a, b) => b.similarity - a.similarity);
+	itemsWithSimilarity.sort((a, b) => b.similarity - a.similarity);
 
-    // Group results by path
-    const groupedResults = itemsWithSimilarity.reduce((acc, { item }) => {
-        const path = item.path || '';
-        if (!acc[path]) acc[path] = [];
-        acc[path].push(item);
-        return acc;
-    }, {});
+	// Group results by path
+	const groupedResults = itemsWithSimilarity.reduce((acc, { item }) => {
+		const path = item.path || '';
+		if (!acc[path]) acc[path] = [];
+		acc[path].push(item);
+		return acc;
+	}, {});
 
-    // Clear previous search suggestions
-    gid("strtappsugs").innerHTML = "";
+	// Clear previous search suggestions
+	gid("strtappsugs").innerHTML = "";
 
-    let elements = 0;
+	let elements = 0;
 
-    Object.keys(groupedResults).forEach(path => {
-        const items = groupedResults[path];
-        const pathElement = document.createElement("div");
-        pathElement.innerHTML = `<strong>${path}</strong>`;
-        gid("strtappsugs").appendChild(pathElement);
+	Object.keys(groupedResults).forEach(path => {
+		const items = groupedResults[path];
+		const pathElement = document.createElement("div");
+		pathElement.innerHTML = `<strong>${path}</strong>`;
+		gid("strtappsugs").appendChild(pathElement);
 
-        items.forEach(item => {
-            if (!mostRelevantItem) mostRelevantItem = item;
+		items.forEach(item => {
+			if (!mostRelevantItem) mostRelevantItem = item;
 
-            const newElement = document.createElement("div");
-            newElement.innerHTML = `<div>${appicns[item.id] != undefined ? appicns[item.id] : defaultAppIcon} ${item.name}</div><span class="material-icons" onclick="openfile('${item.id}')">arrow_outward</span>`;
-            gid("strtappsugs").appendChild(newElement);
-            elements++;
-        });
-    });
+			const newElement = document.createElement("div");
+			newElement.innerHTML = `<div>${appicns[item.id] != undefined ? appicns[item.id] : defaultAppIcon} ${item.name}</div><span class="material-icons" onclick="openfile('${item.id}')">arrow_outward</span>`;
+			gid("strtappsugs").appendChild(newElement);
+			elements++;
+		});
+	});
 
-    if (mostRelevantItem) {
-        gid("partrecentapps").style.display = "none";
-        document.getElementsByClassName("previewsside")[0].style.display = "flex";
-        gid("seapppreview").style.display = "block";
+	if (mostRelevantItem) {
+		gid("partrecentapps").style.display = "none";
+		document.getElementsByClassName("previewsside")[0].style.display = "flex";
+		gid("seapppreview").style.display = "block";
 
-        gid('seprw-icon').innerHTML = appicns[mostRelevantItem.id] != undefined ? appicns[mostRelevantItem.id] : defaultAppIcon;
-        gid('seprw-appname').innerText = mostRelevantItem.name;
-        gid('seprw-openb').onclick = function () {
-            openfile(mostRelevantItem.id);
-        };
-    } else {
-        gid("partrecentapps").style.display = "block";
-        gid("seapppreview").style.display = "none";
-    }
+		gid('seprw-icon').innerHTML = appicns[mostRelevantItem.id] != undefined ? appicns[mostRelevantItem.id] : defaultAppIcon;
+		gid('seprw-appname').innerText = mostRelevantItem.name;
+		gid('seprw-openb').onclick = function () {
+			openfile(mostRelevantItem.id);
+		};
+	} else {
+		gid("partrecentapps").style.display = "block";
+		gid("seapppreview").style.display = "none";
+	}
 
-    gid("strtappsugs").style.display = elements > 0 ? "block" : "none";
+	gid("strtappsugs").style.display = elements > 0 ? "block" : "none";
 }
 function calculateSimilarity(string1, string2) {
 	const m = string1.length;
@@ -1575,8 +1566,6 @@ function displayTimeLeft(seconds) {
 	const display = `${minutes}:${remainderSeconds < 10 ? '0' : ''}${remainderSeconds}`;
 	document.getElementById('sleeptimer').textContent = display;
 }
-
-
 function notify(title, description, appname) {
 	if (document.getElementById("notification").style.display == "block") {
 		document.getElementById("notification").style.display = "none";
@@ -1657,8 +1646,6 @@ function runAsOSL(content) {
 	</style>`;
 	openwindow("Nova OSL Runner", cont);
 }
-
-
 function runAsWasm(content) {
 	const wasmBytes = new Uint8Array(content);
 
@@ -1679,12 +1666,8 @@ function runAsWasm(content) {
 		}
 	`;
 	div.appendChild(script);
-
-
 	openwindow("Nova Wasm Runner", div.innerHTML);
 }
-
-
 // hotkeys
 document.addEventListener('keydown', function (event) {
 	if (event.ctrlKey && (event.key === 'f' || event.keyCode === 70)) {
@@ -1696,8 +1679,6 @@ document.addEventListener('keydown', function (event) {
 		openapp('settings', 1);
 	}
 });
-
-
 document.addEventListener('keydown', function (event) {
 	if (event.key === 'Escape') {
 		var appdmod = document.getElementById('appdmod');
@@ -1720,13 +1701,15 @@ document.addEventListener('keydown', function (event) {
 		openn();
 	}
 });
-
-
 async function genTaskBar() {
 	var appbarelement = document.getElementById("dock")
 	appbarelement.innerHTML = "<span id='taskbarloader'></span>";
 	if (appbarelement) {
-		let x = await getFileNamesByFolder("Dock");
+		/*if (!await getSetting("aiFeatures")) {
+			gid("copilotbtn").style.display = "none";
+		} else {
+			gid("copilotbtn").style.display = "auto";
+		}*/
 		let dropZone = appbarelement;
 		dropZone.addEventListener('dragover', (event) => {
 			event.preventDefault();
@@ -1736,32 +1719,32 @@ async function genTaskBar() {
 			event.preventDefault();
 
 			const unid = event.dataTransfer.getData("Text");
-	await moveFileToFolder(unid, "Dock/");
-	genTaskBar();
+			await moveFileToFolder(unid, "Dock/");
+			genTaskBar();
 		});
-
 
 		dropZone.addEventListener('dragend', (event) => {
 			event.preventDefault();
 		});
-		if (x.length == 0) {
-			let y = await getFileNamesByFolder("Apps");
 
-			x = await Promise.all(y.map(async (item) => {
-				if (item.name === "Files.app" || item.name === "Settings.app" || item.name === "Store.app") {
-					return item;
-				}
-			}));
-
-			x = x.filter(item => item);
-
+		let x = await getFileNamesByFolder("Dock");
+		if (Array.isArray(x) && x.length === 0) {
+			const y = await getFileNamesByFolder("Apps");
+			
+			x = (await Promise.all(
+				y.filter(item => 
+					item.name === "Files.app" || 
+					item.name === "Settings.app" || 
+					item.name === "Store.app"
+				)
+			)).filter(Boolean);
 		}
+		
 		x.forEach(async function (app, index) {
 			index++
 			var islnk = false;
-			// Create a div element for the app shortcut
 			var appShortcutDiv = document.createElement("biv");
-			
+
 			appShortcutDiv.setAttribute("draggable", true);
 			appShortcutDiv.setAttribute("ondragstart", "dragfl(event, this)");
 			appShortcutDiv.setAttribute("unid", app.id || '');
@@ -1776,36 +1759,16 @@ async function genTaskBar() {
 
 			appShortcutDiv.setAttribute("onclick", "openfile('" + app.id + "')");
 			var iconSpan = document.createElement("span");
-
-			if (!appicns[app.id]) {
-				// Unshrink the content
-				const unshrunkContent = unshrinkbsf(app.content);
-
-				// Use the getAppIcon function to fetch the icon
-				const icon = getAppIcon(unshrunkContent, app.id);
-
-				if (icon) {
-					iconSpan.innerHTML = icon;
-				} else {
-					iconSpan.innerHTML = defaultAppIcon;
-				}
-			} else {
-				iconSpan.innerHTML = appicns[app.id];
-			}
+			iconSpan.innerHTML = await getAppIcon(0, app.id, "must");
 
 			var tooltisp = document.createElement("span");
 			tooltisp.className = "tooltiptext";
 			tooltisp.innerHTML = islnk ? basename(app.fileName) + `*` : basename(app.fileName);
 
-			// Append both spans to the app shortcut container
 			appShortcutDiv.appendChild(iconSpan);
 			appShortcutDiv.appendChild(tooltisp);
 
-			
-
 			appbarelement.appendChild(appShortcutDiv);
-
-			
 		})
 		gid('taskbarloader').remove()
 	}
@@ -2001,9 +1964,10 @@ const sendMessage = () => {
 
 	fetch('https://ai.milosantos.com/blackbox', {
 		method: 'POST',
-		headers: { 'Content-Type': 'application/json',
-			"Authorization" : "Bearer ml_uwYLJFCuVhgkqL6xl705SHGC"
-		 },
+		headers: {
+			'Content-Type': 'application/json',
+			"Authorization": "Bearer ml_uwYLJFCuVhgkqL6xl705SHGC"
+		},
 		body: JSON.stringify(payload),
 	})
 		.then(response => response.json())
@@ -2019,7 +1983,7 @@ const sendMessage = () => {
 		})
 		.catch(error => {
 			console.error('Error:', error);
-			const errorMessage = 'An error occurred. Please try again.';
+			const errorMessage = 'Sorry, the server isnt working. \nContact VerAI and ask them to fix it. NovaOS is sorry as we cannot do anything about it.';
 
 			chat.push({ "role": "assistant", "content": errorMessage });
 			nvacopilot.message(errorMessage, "bot");
@@ -2072,20 +2036,18 @@ async function logoutofnova() {
 }
 
 async function cleanupram() {
-    closeallwindows();
-    document.querySelectorAll('dialog[open].onramcloseable').forEach(dialog => dialog.close());
-    memory = null;
-    CurrentUsername = null;
-    password = 'nova';
-    MemoryTimeCache = null;
-    lethalpasswordtimes = true;
+	closeallwindows();
+	document.querySelectorAll('dialog[open].onramcloseable').forEach(dialog => dialog.close());
+	memory = null;
+	CurrentUsername = null;
+	password = 'nova';
+	MemoryTimeCache = null;
+	lethalpasswordtimes = true;
 }
-
-
 async function setandinitnewuser() {
 	gid("edison").showModal()
 	await cleanupram();
-	CurrentUsername = await ask("Enter a username:","");
+	CurrentUsername = await ask("Enter a username:", "");
 	await initialiseOS();
 	gid('loginmod').close();
 }
@@ -2119,24 +2081,24 @@ async function getFileNamesByFolder(folderName) {
 }
 
 async function getFileByPath(path) {
-    await updateMemoryData();
-		const segments = path.split('/');
-		let current = memory;
-	
-		for (let i = 0; i < segments.length; i++) {
-			const segment = segments[i];
-			const isLastSegment = i === segments.length - 1;
-	
-			if (segment + '/' in current && !isLastSegment) {
-				current = current[segment + '/'];
-			} else if (segment in current && isLastSegment) {
-				return current[segment];
-			} else {
-				return null;
-			}
+	await updateMemoryData();
+	const segments = path.split('/');
+	let current = memory;
+
+	for (let i = 0; i < segments.length; i++) {
+		const segment = segments[i];
+		const isLastSegment = i === segments.length - 1;
+
+		if (segment + '/' in current && !isLastSegment) {
+			current = current[segment + '/'];
+		} else if (segment in current && isLastSegment) {
+			return current[segment];
+		} else {
+			return null;
 		}
-	
-		return current;
+	}
+
+	return current;
 }
 
 async function getFileById(id) {

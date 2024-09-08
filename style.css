@@ -133,6 +133,7 @@ nav info {
 	gap: 0;
 	box-sizing: border-box;
 	transition: cubic-bezier(0.075, 0.82, 0.165, 1);
+    border: 1px solid var(--colors-BG-sub);
 }
 
 @media only screen and (max-width: 500px) {
