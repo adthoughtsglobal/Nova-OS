@@ -431,7 +431,7 @@ async function getSetting(key) {
 
 async function setSetting(key, value) {
     try {
-        if (!memory) return;
+        if (!memory) return null;
 
         await ensurePreferencesFileExists();
         let content = memory["System/"]["preferences.json"]["content"];

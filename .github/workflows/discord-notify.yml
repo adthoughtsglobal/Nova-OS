@@ -40,7 +40,7 @@ jobs:
             DIFF="No modified files."
           fi
 
-          MESSAGE="New Update on Dev Version:\n**${COMMIT_MESSAGE}**\n${DIFF}\n[View Code](${COMMIT_URL})"
+          MESSAGE="New Update on Dev Version:\n**${COMMIT_MESSAGE}**\n${DIFF}\n<[View Code](${COMMIT_URL})>"
 
           curl -H "Content-Type: application/json" \
                -X POST \

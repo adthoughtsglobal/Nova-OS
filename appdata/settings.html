@@ -1002,9 +1002,9 @@
 				<script>
 					async function defs() {
 						// dark mode 
-						document.getElementById("cbx-67").addEventListener("change", function () {
+						document.getElementById("cbx-67").addEventListener("change", async function () {
 							let newValue2 = document.getElementById("cbx-67").checked;
-							window.parent.setSetting("darkMode", newValue2)
+							await window.parent.setSetting("darkMode", newValue2)
 							window.parent.checkdmode();
 						});
 
@@ -1013,9 +1013,9 @@
 						}
 
 						// simple mode 
-						document.getElementById("cbx-68").addEventListener("change", function () {
+						document.getElementById("cbx-68").addEventListener("change", async function () {
 							let newValue2 = document.getElementById("cbx-68").checked;
-							window.parent.setSetting("simpleMode", newValue2)
+							await window.parent.setSetting("simpleMode", newValue2)
 							window.parent.checkdmode();
 						});
 
@@ -1029,36 +1029,30 @@
 							2: 1.3
 						};
 
-						// Retrieve stored UISizing value from localStorage
 						let storedUISizing = await window.parent.getSetting("UISizing");
 
-						// Iterate through sizes2323 object to find the matching key for storedUISizing
 						let matchingKey = Object.keys(sizes2323).find(key => sizes2323[key] === storedUISizing);
 
-						// Set the input value based on the matching key found
 						if (matchingKey !== undefined) {
 							document.getElementById("UISIZErangeslid").value = matchingKey;
 						} else {
-							// Handle case where storedUISizing doesn't match any value in sizes2323
 							console.error("No matching key found for stored UISizing value:", storedUISizing);
 						}
 
-						// Event listener to update localStorage when UISIZErangeslid input changes
-						document.getElementById("UISIZErangeslid").addEventListener("input", function () {
+						document.getElementById("UISIZErangeslid").addEventListener("input", async function () {
 							let newValue = sizes2323[document.getElementById("UISIZErangeslid").value];
-							window.parent.setSetting("UISizing", newValue);
+							await window.parent.setSetting("UISizing", newValue);
 							window.parent.checkdmode();
 						});
-
 					}
 
 					async function defs5() {
 						console.log("defs5 loaded");
 
 						// focus mode
-						document.getElementById("cbx-65").addEventListener("change", function () {
+						document.getElementById("cbx-65").addEventListener("change", async function () {
 							let newValue2 = document.getElementById("cbx-65").checked;
-							window.parent.setSetting("focusMode", newValue2);
+							await window.parent.setSetting("focusMode", newValue2);
 							window.parent.dewallblur()
 						});
 
@@ -1071,9 +1065,9 @@
 						}
 
 						// smartsearch
-						document.getElementById("cbx-69").addEventListener("change", function () {
+						document.getElementById("cbx-69").addEventListener("change", async function () {
 							let newValue2 = document.getElementById("cbx-69").checked;
-							window.parent.setSetting("smartsearch", newValue2)
+							await window.parent.setSetting("smartsearch", newValue2)
 							window.parent.qsetsRefresh()
 						});
 

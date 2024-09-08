@@ -949,15 +949,13 @@ nav info {
 	border: 0px;
 	overflow: hidden;
 	text-align: center;
-	background: #202020;
+    background: var(--colors-BG-normal);
 	transition: 0.8s;
 }
 
 #edison img {
 	width: 20vw;
 	aspect-ratio: 2 / 2;
-	border-radius: 10px;
-	box-shadow: 0 0 10px #202020;
 }
 
 @keyframes closeEffect {
@@ -2132,9 +2130,14 @@ dialog#terminal {
 	width: 0;
 	background-color: #76c7c0;
 	border-radius: 10px 0 0 10px;
-	box-shadow: 0px 0px 10px #3aff7c;
 	transition: width 0.5s ease;
-	border-radius: 1rem;
+    border-radius: var(--sizing-border-radius);
+}
+
+@keyframes progressanim {
+	50% {
+		box-shadow: 0px 0px 5px #3aff7c;
+	}
 }
 
 .edisonrl {
