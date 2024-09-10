@@ -5,17 +5,21 @@
 	--font-size-normal: 1rem;
 	--font-size-subheading: 1.25rem;
 	--font-size-big: 2rem;
+
     --colors-BG-normal: #101010;
     --colors-BG-sub: #262626;
     --colors-BG-section: #171717;
     --colors-BG-highlighted: #44403C;
     --colors-text-normal: white;
+
     --sizing-border-radius: 0.5rem;
 	--sizing-border-radius-normal: 0.75rem;
 	--sizing-border-radius-full: 1rem;
+
 	--sizing-huge: 1rem;
     --sizing-normal: 0.5rem;
 	--sizing-nano: 0.3rem;
+	
 	--vw: 1vw;
 	--vh: 1vh;
 	--font-size-default: calc((var(--vw) + var(--vh)) / 2);

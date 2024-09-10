@@ -122,7 +122,7 @@ nav info {
 	background-color: transparent;
 	border-radius: 5px;
 	color: white;
-	font-size: 0.8rem;
+	font-size: var(--font-size-normal);
 	padding: 0px;
 	overflow: hidden;
 	box-shadow: 0px 5px 1rem 1px #000000b0;
@@ -186,7 +186,7 @@ nav info {
 	justify-content: center;
 	align-content: center;
 	color: #748c9b;
-	font-size: 1rem;
+	font-size: var(--font-size-normal);
 	align-items: center;
 	justify-items: center;
 }
@@ -213,7 +213,7 @@ nav info {
 	cursor: pointer;
 	border-radius: 5px;
 	padding: 4px 5px;
-	font-size: 0.8rem !important;
+	font-size: var(--font-size-normal) !important;
 	opacity: 0.6;
 }
 
@@ -592,7 +592,7 @@ nav info {
     text-align: left;
     display: grid;
     flex: 1;
-    width: calc(100% - 1rem);
+    width: calc(100% - var(--sizing-huge));
     margin: auto;
     grid-template-columns: repeat(auto-fill, minmax(55px, 70px));
     justify-items: center;
@@ -612,7 +612,7 @@ nav info {
 	overflow: hidden;
 	animation: pop3 .2s ease-out;
 	z-index: 99;
-	font-size: 0.7rem;
+	font-size: var(--font-size-small);
 }
 
 @keyframes pop3 {
@@ -659,7 +659,7 @@ nav info {
 }
 
 .context-menu ul li a .material-icons {
-	font-size: 0.8rem;
+	font-size: var(--font-size-normal);
 	border-right: 1px solid grey;
 	padding-right: 3px;
 	padding-left: 2px;
@@ -952,7 +952,7 @@ nav info {
 	height: 100%;
 	padding: 2rem 1.5rem;
 	margin: auto;
-	border-radius: 1rem;
+	border-radius: var(--sizing-border-radius-full)
 }
 
 #loginmod .logincard {
@@ -970,11 +970,11 @@ nav info {
 }
 
 #loginform #loginform1 {
-	padding: 0.3rem 0.8rem;
+	padding: 0.3rem var(--font-size-normal);
 	border-radius: 0.5rem;
 	border: none;
 	background: #ffffffc2;
-	font-size: 0.8rem;
+	font-size: var(--font-size-normal);
 	transition: .2s;
 }
 
@@ -1004,7 +1004,7 @@ nav info {
 	display: block;
 	text-align: center;
 	margin: 10px;
-	font-size: 1rem;
+	font-size: var(--font-size-normal);
 	width: fit-content;
 	width: -moz-fit-content;
 	float: left;
@@ -1035,7 +1035,7 @@ nav info {
 }
 
 .logincardwelt {
-	font-size: 1.5rem;
+	font-size: var(--font-size-subheading);
 	display: block;
 	text-align: center;
 	margin: 0.5rem;
@@ -1150,7 +1150,7 @@ nav info {
 
 #sleepmessage {
 	color: white;
-	font-size: 1rem;
+	font-size: var(--font-size-normal);
 }
 
 #notification {
@@ -1238,7 +1238,7 @@ nav info {
 }
 
 .directxicons {
-	font-size: 1rem !important;
+	font-size: var(--font-size-normal) !important;
 }
 
 #nova-copilot-window {
@@ -1254,7 +1254,7 @@ nav info {
 	border: none;
 	user-select: none;
 	margin-bottom: 60px;
-	font-size: 0.8rem;
+	font-size: var(--font-size-normal);
 
 	.nvacoplt-nav {
 		display: flex;
@@ -1273,7 +1273,7 @@ nav info {
 
 	.left small {
 		opacity: 0.5;
-		font-size: 0.7rem;
+		font-size: var(--font-size-small);
 	}
 
 	.nvacoplt-nav i {
@@ -1316,7 +1316,7 @@ nav info {
 			background: #4d4d4d;
 			color: white;
 			padding: 0.4rem 0.7rem;
-			border-radius: 1rem;
+			border-radius: var(--sizing-border-radius-full);
 			max-width: 70%;
 			animation: message .3s ease-out;
 			user-select: text;
@@ -1365,7 +1365,7 @@ nav info {
 	}
 
 	.nvacoplt-sndbtn i {
-		font-size: 1rem;
+		font-size: var(--font-size-normal);
 	}
 }
 
@@ -1443,8 +1443,8 @@ dialog#terminal {
 	font-family: monospace;
 	background: #101010;
 	color: white;
-	font-size: 1rem;
-	padding: 1rem;
+	font-size: var(--font-size-normal);
+	padding: var(--sizing-huge);
 	margin: 1px;
 	border: none;
 }
@@ -1488,7 +1488,7 @@ dialog#terminal {
 	display: inline-block;
 	overflow: hidden;
 	position: absolute;
-	top: 1rem;
+	top: var(--sizing-huge);
 	background: #324f65;
 }
 
@@ -1520,7 +1520,7 @@ dialog#terminal {
 #startupterms {
 	color: white;
 	opacity: 0.3;
-	font-size: 0.7rem;
+	font-size: var(--font-size-small);
 	text-align: center;
 }
 
@@ -1546,7 +1546,7 @@ dialog#terminal {
 }
 
 .searchside .smalltitl {
-	font-size: 0.8rem;
+	font-size: var(--font-size-normal);
 	opacity: 0.7;
 	margin-top: 7px;
 }
@@ -1573,20 +1573,20 @@ dialog#terminal {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	width: calc(100% - 1rem);
-	font-size: 0.7rem;
+	width: calc(100% - var(--sizing-huge));
+	font-size: var(--font-size-small);
 	color: lightgrey;
 	padding: 0 0.5rem;
 	padding-top: 0.3rem;
 }
 
 .notiflistnav span.material-icons {
-	font-size: 0.8rem !important;
+	font-size: var(--font-size-normal) !important;
 }
 
 .searchside .notiflist {
 	color: #a1a1a1;
-	font-size: 0.8rem;
+	font-size: var(--font-size-normal);
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
@@ -1603,24 +1603,24 @@ dialog#terminal {
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	width: calc(100% - 1rem);
+	width: calc(100% - var(--sizing-huge));
 	overflow: hidden;
 	word-break: break-word;
 	text-align: left;
 }
 
 .searchside .notifTitle {
-	font-size: 1rem;
+	font-size: var(--font-size-normal);
 }
 
 .searchside .notifDesc {
 	text-align: left;
 	opacity: 0.7;
-	font-size: 0.7rem;
+	font-size: var(--font-size-small);
 }
 
 .searchside .notifAppName {
-	font-size: 0.7rem;
+	font-size: var(--font-size-small);
 	opacity: 0.8;
 }
 
@@ -1635,7 +1635,7 @@ dialog#terminal {
 
 .searchinputcont span {
 	width: fit-content;
-	font-size: 1rem;
+	font-size: var(--font-size-normal);
 	padding: 0.5rem;
 	opacity: 0.5;
 	display: grid;
@@ -1659,7 +1659,7 @@ dialog#terminal {
 	width: 0;
 	display: flex;
 	flex-direction: column;
-	padding: 1rem;
+	padding: var(--sizing-huge);
 	align-items: center;
 	justify-content: center;
 	transition: 0.3s;
@@ -1677,7 +1677,7 @@ dialog#terminal {
 	height: auto;
 	background: #63636330;
 	padding: 0.3rem;
-	border-radius: 1rem;
+	border-radius: var(--sizing-border-radius-full);
 	box-shadow: 0 5px 10px #0000004f;
 }
 
@@ -1687,7 +1687,7 @@ dialog#terminal {
 	padding: 0.3rem 0.7rem;
 	border: none;
 	box-shadow: 0 2px 0.3rem #02020242;
-	border-radius: 1rem;
+	border-radius: var(--sizing-border-radius-full);
 	cursor: pointer;
 	display: block;
 	margin: auto;
@@ -1704,7 +1704,7 @@ dialog#terminal {
 }
 
 #partrecentapps span.smalltitl {
-	font-size: 0.7rem;
+	font-size: var(--font-size-small);
 	opacity: 0.5;
 }
 
@@ -1997,7 +1997,7 @@ dialog#terminal {
 .windowloader .loader33 {
 	width: 5px;
 	height: 3px;
-	border-radius: 1rem;
+	border-radius: var(--sizing-border-radius-full);
 	display: block;
 	margin: 15px auto;
 	position: relative;
@@ -2064,8 +2064,8 @@ dialog#terminal {
 	width: 0;
 	max-width: 150px;
 	background-color: #141414;
-	border-radius: 1rem;
-	margin-bottom: 1rem;
+	border-radius: var(--sizing-border-radius-full);
+	margin-bottom: var(--sizing-huge);
 }
 
 .progress-bar {
@@ -2099,8 +2099,8 @@ dialog#terminal {
 		margin-right: 0.3rem;
 		border: none;
 		border-radius: 0.5rem;
-		padding: 0.5rem 1rem;
-		font-size: 1rem;
+		padding: 0.5rem var(--sizing-huge);
+		font-size: var(--font-size-normal);
 		color: white;
 	}
 }
@@ -2139,7 +2139,7 @@ noscript {
 .userselect h1 {
 	font-size: 15vh;
 	opacity: 0.8;
-	margin-bottom: 1rem;
+	margin-bottom: var(--sizing-huge);
 }
 
 .userselect .user {
@@ -2186,13 +2186,13 @@ margin-bottom: 0.3rem;
 .userselect .newusbtn {
 	background: transparent;
     color: white;
-    border-radius: 1rem;
+    border-radius: var(--sizing-border-radius-full);
     padding: 0.3rem 0.6rem;
     padding-right: 0.5rem;
     display: flex;
     width: fit-content;
     flex-direction: column;
-    margin-left: 1rem;
+    margin-left: var(--sizing-huge);
 	transition: .3s;
 }
 
@@ -2208,7 +2208,7 @@ margin-bottom: 0.3rem;
     display: flex;
     width: fit-content;
     flex-direction: column;
-    margin-left: 1rem;
+    margin-left: var(--sizing-huge);
 }
 
 .userselect .newusbtn:hover .name {
@@ -2235,7 +2235,7 @@ margin-bottom: 0.3rem;
 
 .strtappsugs strong {
 	opacity: 0.5;
-	font-size: 0.7rem;
+	font-size: var(--font-size-small);
 	font-weight: normal;
 	margin: 0.3rem 0;
 	padding: 0.2rem;

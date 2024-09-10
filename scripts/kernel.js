@@ -1,5 +1,7 @@
 var dragging = false;
 
+var novadotcsscache;
+
 async function openlaunchprotocol(appid, data, id, winuid) {
     console.log("Open Lanuch Protocol", appid, data,id)
     let x = {
@@ -299,8 +301,12 @@ async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
     
             if (contentString.includes("nova-include") && getMetaTagContent(contentString, 'nova-include') != null) {
                 try {
-                    const cssResponse = await fetch('nova.css');
-const cssText = await cssResponse.text();
+                
+                if (novadotcsscache == null) {
+                  novadotcsscache = await fetch('nova.css');
+                  novadotcsscache = await novadotcsscache.text()
+                }
+var novadotcss = novadotcsscache;
 
 // Get the current root CSS variables from the body element
 const computedStyles = getComputedStyle(document.body);
@@ -322,7 +328,7 @@ const variables = {
 };
 
 // Replace root CSS variable declarations in the fetched CSS
-const updatedCssText = cssText.replace(/:root\s*{([^}]*)}/, (match, declarations) => {
+const updatedCssText = novadotcss.replace(/:root\s*{([^}]*)}/, (match, declarations) => {
     let updatedDeclarations = declarations.trim();
     for (const [variable, value] of Object.entries(variables)) {
         const regex = new RegExp(`(${variable}\\s*:\\s*).*?;`, 'g');
