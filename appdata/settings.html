@@ -10,36 +10,11 @@
 	<meta name="nova-include" content="nova.css">
 	<meta name="nova-icon"
 		content="<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='40.8208' height='40.94891' viewBox='0,0,40.8208,40.94891'><g transform='translate(-219.51359,-159.63806)'><g data-paper-data='{&quot;isPaintingLayer&quot;:true}' fill-rule='nonzero' stroke-linecap='butt' stroke-linejoin='miter' stroke-miterlimit='10' stroke-dasharray='' stroke-dashoffset='0' style='mix-blend-mode: normal'><path d='M224.49728,191.97943c0,-6.51609 0,-20.12167 0,-23.80086c0,-1.79525 1.27743,-3.6813 3.28885,-3.6813c6.47459,0 20.55435,0 24.11403,0c1.56415,0 3.60258,1.44253 3.60258,3.6813c0,6.76316 0,20.4796 0,23.95744c0,1.53 -1.83996,3.36671 -3.60258,3.36671c-3.67444,0 -17.45008,0 -23.95744,0c-2.10186,0 -3.44544,-1.37709 -3.44544,-3.52329zM239.52997,189.92242c5.52285,0 10,-4.47715 10,-10c0,-5.52285 -4.47715,-10 -10,-10c-5.52285,0 -10,4.47715 -10,10c0,5.52285 4.47715,10 10,10z' fill='#ffffff' stroke='none' stroke-width='0'/><path d='M237.50865,199.43282c-4.60757,-4.60757 -14.22817,-14.22817 -16.82975,-16.82975c-1.26943,-1.26943 -1.69979,-3.50635 -0.2775,-4.92864c4.57823,-4.57823 14.53412,-14.53412 17.05119,-17.05119c1.10602,-1.10602 3.56743,-1.52738 5.15048,0.05567c4.78228,4.78228 14.48126,14.48126 16.94047,16.94047c1.08187,1.08187 1.07958,3.68167 -0.16678,4.92803c-2.59822,2.59822 -12.33907,12.33907 -16.94047,16.94047c-1.48624,1.48624 -3.41004,1.46254 -4.92764,-0.05506zM239.52997,189.92242c5.52285,0 10,-4.47715 10,-10c0,-5.52285 -4.47715,-10 -10,-10c-5.52285,0 -10,4.47715 -10,10c0,5.52285 4.47715,10 10,10z' fill='#ffffff' stroke='none' stroke-width='0'/><path d='M235.7745,180.11252c0,-2.2917 1.85779,-4.14949 4.14949,-4.14949c2.2917,0 4.14949,1.85779 4.14949,4.14949c0,2.2917 -1.85779,4.14949 -4.14949,4.14949c-2.2917,0 -4.14949,-1.85779 -4.14949,-4.14949z' fill='none' stroke='#ffffff' stroke-width='2.5'/></g></g></svg>">
-		
-	<link rel="stylesheet" href="nova.css">
-	<style>
-		@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
 
+	<style>
 		* {
 			box-sizing: border-box;
 		}
-
-		/* width */
-		::-webkit-scrollbar {
-			width: 0.5em;
-		}
-
-		/* Track */
-		::-webkit-scrollbar-track {
-			background: #0e0e0e;
-		}
-
-		/* Handle */
-		::-webkit-scrollbar-thumb {
-			background: #2b2b2b;
-			border-radius: 5px;
-		}
-
-		/* Handle on hover */
-		::-webkit-scrollbar-thumb:hover {
-			background: #555;
-		}
-
 
 		html {
 			height: 100%;
@@ -48,19 +23,16 @@
 		}
 
 		body {
-			color: white;
 			height: 100%;
 			margin: 0px;
-			background: #121212;
-			font-size: 12px;
-			font-family: 'Poppins', sans-serif;
+			background: var(--colors-BG-normal);
 		}
 
 		.tab {
 			flex-grow: 2;
 			height: calc(100% - 10px);
 			color: white;
-			overflow-y:auto;
+			overflow-y: auto;
 			max-width: 150px;
 			min-width: 100px;
 			padding-bottom: 25vh;
@@ -68,47 +40,47 @@
 
 		.tab::after {
 			height: 10vh;
-    width: calc(100% - 10px);
-    background: linear-gradient(0deg, var(--colors-BG-normal), transparent);
-    content: "";
-    display: block;
-    position: absolute;
-    bottom: 10px;
-    z-index: 1;
+			width: calc(100% - 10px);
+			background: linear-gradient(0deg, var(--colors-BG-normal), transparent);
+			content: "";
+			display: block;
+			position: absolute;
+			bottom: 10px;
+			z-index: 1;
 		}
 
 		.tab h3 {
 			padding-left: 5px;
 			margin: 5px 0px;
 			font-weight: normal;
-			font-size: 12px;
+			font-size: var(--font-size-normal);
 		}
 
 		/* Style the buttons inside the tab */
 		.tab button.active {
-			background-color: #212121;
+			background-color: var(--colors-BG-sub);
 			opacity: 1;
 		}
 
 		.tab button.active:hover {
-			background-color: #424242;
+			background-color: var(--colors-BG-section);
 			opacity: 0.8;
 		}
 
 		.tab button {
-			color: white;
+			color: inherit;
 			display: block;
 			border: 2px solid transparent;
 			background-color: transparent;
 			padding: 7px 7px;
 			width: calc(100% - 5px);
 			margin: 2px;
-			border-radius: 5px;
+			border-radius: var(--sizing-border-radius);
 			outline: none;
 			text-align: left;
 			cursor: pointer;
 			transition: 0.3s;
-			font-size: 13px;
+			font-size: inherit;
 			overflow: hidden;
 			white-space: nowrap;
 			text-overflow: ellipsis;
@@ -136,7 +108,7 @@
 			padding-bottom: 30vh;
 			background-color: inherit;
 			border-left: none;
-			border-radius: 6px;
+			border-radius: var(--sizing-border-radius);
 			height: calc(100% - 5px);
 			animation: tab .2s;
 			overflow-y: auto;
@@ -162,42 +134,44 @@
 		}
 
 		td {
-			font-size: 10px;
-			padding-bottom: 0.5rem;
-			padding-top: 0.5rem;
+			padding-bottom: var(--sizing-normal);
+			padding-top: var(--sizing-normal);
 			vertical-align: top;
-			padding-right: 1rem;
+			padding-right: var(--sizing-huge);
 			border-bottom: 1px solid #262626;
 		}
 
 		td b,
 		ul li {
 			color: #b4d2ff;
-			background: #2d2d2d;
+			background: var(--colors-BG-sub);
 			padding: 0.2rem 0.4rem;
-			border-radius: 0.3rem;
+			border-radius: var(--sizing-nano);
 			cursor: pointer;
 		}
 
 		ul {
-
+			margin: 0;
 			padding: 0;
 		}
 
 		ul li {
-			margin-bottom: 0.5rem;
+			margin-bottom: var(--sizing-normal);
+			width: fit-content;
+			list-style: none;
 		}
 
 		supportb {
-			border-radius: 0.5rem;
+			border-radius: var(--sizing-normal);
 			background: radial-gradient(circle at 0% 0%, #23539b, #6f326c);
 			display: block;
-			padding: 1rem;
+			padding: var(--sizing-huge);
 			max-width: 381px;
 		}
 
 		supportb b {
-			font-size: 1rem;
+			font-size: var(--font-size-subheading);
+			
 		}
 
 		supportb p {
@@ -207,15 +181,15 @@
 
 		supportb a {
 			display: inline-block;
-			border-radius: 0.35rem;
+			border-radius: var(--sizing-border-radius);
 			background: #ffffff;
 			width: fit-content;
-			padding: 0.5rem 1rem;
+			padding: var(--sizing-normal) var(--sizing-huge);
 			color: #1a4281;
 			text-decoration: none;
 			margin: 10px 0px;
 			margin-bottom: 0;
-			font-size: 0.78rem;
+			font-size: var(--font-size-normal);
 			transition: .3s;
 			cursor: pointer;
 		}
@@ -245,16 +219,16 @@
 
 		small {
 			display: block;
-    padding: var(--sizing-normal);
-    background: var(--colors-BG-sub);
-    border-radius: var(--sizing-border-radius);
-    opacity: 0.5;
+			padding: var(--sizing-normal);
+			background: var(--colors-BG-sub);
+			border-radius: var(--sizing-border-radius);
+			opacity: 0.5;
 		}
 
 		small b {
 			margin-top: 5px;
 			display: block;
-			font-size: 11px;
+			font-size: var(--font-size-small);
 		}
 
 		.checkbox-wrapper-51 input[type="checkbox"] {
@@ -314,7 +288,7 @@
 
 		.checkbox-wrapper-51 input[type="checkbox"]:checked+.toggle:before {
 			background: #9fff8c;
-    box-shadow: 0 2px 0.5rem #79e57947;
+			box-shadow: 0 2px var(--sizing-normal) #79e57947;
 		}
 
 		.checkbox-wrapper-51 input[type="checkbox"]:checked+.toggle span {
@@ -329,20 +303,19 @@
 
 		[settingn] {
 			background: var(--colors-BG-section);
-    padding: var(--sizing-normal);
-    margin: 0;
-    border-bottom: 1px solid var(--colors-BG-sub);
+			padding: var(--sizing-normal);
+			margin: 0;
+			border-bottom: 1px solid var(--colors-BG-sub);
 		}
 
 		[setting] {
 			background: var(--colors-BG-section);
-    padding: var(--sizing-normal);
-    margin: 0;
-    border-bottom: 1px solid var(--colors-BG-sub);
+			padding: var(--sizing-normal);
+			margin: 0;
+			border-bottom: 1px solid var(--colors-BG-sub);
 		}
 
 		[setting] b {
-			font-family: "DM Sans", sans-serif;
 			font-weight: 500;
 		}
 
@@ -366,7 +339,7 @@
 			width: 80%;
 			opacity: 0.5;
 			margin: 0;
-			font-size: 10px;
+			font-size: var(--font-size-small);
 		}
 
 		#chargingIcon {
@@ -375,16 +348,16 @@
 			background: #054305;
 			color: #4fb64f;
 			margin-left: 5px;
-			border-radius: 10px;
+			border-radius: var(--sizing-border-radius-normal);
 			display: inline-grid;
 		}
 
 		.nocss {
-			width: 29px;
+			width: var(--font-size-big);
 			padding: 0;
 			display: inline;
 			outline: none;
-			font-size: 10px;
+			font-size: var(--font-size-small);
 			color: white;
 			background: none;
 			margin: 0 3px;
@@ -394,7 +367,7 @@
 
 
 		.appli {
-			background-color: #252525;
+			background-color: var(--colors-BG-section);
 			padding: 9px;
 			margin-bottom: 0;
 			border-radius: 0;
@@ -403,7 +376,7 @@
 
 		#appdi {
 			margin: 5px 0;
-			border-radius: 5px;
+			border-radius: var(--sizing-border-radius);
 			overflow: hidden;
 			border: 1px solid #4d4d4d;
 		}
@@ -430,7 +403,7 @@
 			position: relative;
 			width: 18px;
 			height: 18px;
-			border-radius: 3px;
+			border-radius: var(--sizing-border-radius);
 			transform: scale(1);
 			vertical-align: middle;
 			border: 1px solid #9098A9;
@@ -494,13 +467,11 @@
 			}
 		}
 
-
-
 		.progbarma {
 			width: 100%;
 			background-color: #1d1d1d;
 			height: 20px;
-			border-radius: 20px;
+			border-radius: var(--sizing-border-radius-full);
 			overflow: hidden;
 			margin: 10px 0px;
 		}
@@ -517,38 +488,37 @@
 		}
 
 		button {
-			border-radius: 5px;
+			border-radius: var(--sizing-border-radius);
 			border: none;
 			padding: 7px 15px;
 			background: #2e363d;
 			color: white;
-			font-size: 11px;
+			font-size: inherit;
 			cursor: pointer;
 		}
 
 		[danger] {
 			background: #73414133;
-    color: #ff6262;
-    opacity: 1;
-	cursor: pointer;
+			color: #ff6262;
+			opacity: 1;
+			cursor: pointer;
 		}
 
 		.inpbox {
 			background: var(--colors-BG-section);
-    padding: var(--sizing-normal);
-    outline: none;
-    border-bottom: 1px solid var(--colors-BG-sub);
+			padding: var(--sizing-normal);
+			outline: none;
+			border-bottom: 1px solid var(--colors-BG-sub);
 		}
 
 		.inpbox select {
 			background: var(--colors-BG-highlighted);
 			color: white;
 			border: 1px solid var(--colors-BG-sub);
-			border-radius: 5px;
-			font-size: 0.8rem;
+			border-radius: var(--sizing-border-radius);
+			font-size: var(--font-size-normal);
 			padding: 3px 1px 3px 9px !important;
 			float: right;
-			display: inline-block;
 			outline: none;
 			transform: translate(3px, -2px);
 		}
@@ -573,25 +543,26 @@
 
 		h1 {
 			font-weight: normal;
-			font-size: 1rem;
+			font-size: var(--font-size-normal);
+			margin-top: var(--sizing-huge);
 		}
 
 		segr {
-			margin: 10px 0;
-    overflow: hidden;
-    border-radius: 5px;
-    display: block;
-    border: 1px solid var(--colors-BG-sub);
-    box-shadow: 0 3px 5px #000000;
-    animation: drop .2s ease-out;
-    max-width: 500px;
+			margin-bottom: var(--sizing-normal);
+			overflow: hidden;
+			border-radius: var(--sizing-border-radius);
+			display: block;
+			border: 1px solid var(--colors-BG-sub);
+			box-shadow: 0 3px 5px #0000007e;
+			animation: drop .2s ease-out;
+			max-width: 500px;
 		}
 
 		buttongrp {
 			display: flex;
 			flex-direction: row;
 			flex-wrap: wrap;
-			gap: 0.3rem;
+			gap: var(--sizing-nano);
 		}
 	</style>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -614,8 +585,7 @@
 				Performance</button>
 			<button class="tablinks" onclick="openCity(event, 'password')"><i class="material-icons">person</i>
 				User</button>
-			<button class="tablinks" onclick="openCity(event, 'exp'); defs();"><i
-					class="material-icons">monitor</i>
+			<button class="tablinks" onclick="openCity(event, 'exp'); defs();"><i class="material-icons">monitor</i>
 				Display</button>
 			<button class="tablinks" onclick="openCity(event, 'lclstgsc'); lclstgsc();"><i
 					class="material-icons">manage_search</i>
@@ -635,20 +605,20 @@
 					display: flex;
 					justify-content: space-between;
 					align-items: center;
-					padding: 0.1rem 0.5rem;
-					background: #1f1f1f;
-					border-radius: 0.5rem;
+					padding: 0.1rem var(--sizing-normal);
+					background: var(--colors-BG-section);
+					border-radius: var(--sizing-normal);
 				}
 
 				.datamangernav i {
 
-					font-size: 1rem !important;
+					font-size: var(--font-size-normal) !important;
 					transform: translateY(3px);
 				}
 
 				.lclstr {
-					border-bottom: 2px solid #1f1f1f;
-					padding: 0.2rem 0.5rem;
+					border-bottom: 2px solid var(--colors-BG-sub);
+					padding: 0.2rem var(--sizing-normal);
 					margin-top: 0.2rem;
 					display: flex;
 					flex-direction: row;
@@ -676,7 +646,7 @@
 
 				.lclstr .material-icons {
 					width: 20px;
-					font-size: 1rem;
+					font-size: var(--sizing-huge);
 					display: grid;
 					justify-items: center;
 					align-items: center;
@@ -735,7 +705,7 @@
 					width: 100%;
 					aspect-ratio: 2 / 1;
 					background: #141414;
-					border-radius: 0.5rem;
+					border-radius: var(--sizing-normal);
 				}
 
 				.bigtext {
@@ -748,8 +718,8 @@
 				#fpsprof::after {
 					content: 'FPS';
 					padding: 7px 10px;
-					font-size: 13px;
-					border-radius: 20px;
+					font-size: var(--font-size-normal);
+					border-radius: var(--sizing-border-radius-full);
 					background-color: #384a57;
 					display: inline-block;
 					border: 1px solid #55879d;
@@ -890,9 +860,9 @@
 					</script>
 					<buttongrp>
 
-					<button danger onclick="erdbsur()">Remove User</button>
-					<button danger onclick="erdbs()">Erase Device</button>
-					<button danger onclick="ercache()">Reset cached</button>
+						<button danger onclick="erdbsur()">Remove User</button>
+						<button danger onclick="erdbs()">Erase Device</button>
+						<button danger onclick="ercache()">Reset cached</button>
 					</buttongrp>
 				</div>
 			</segr>
@@ -1220,8 +1190,8 @@
 						max-width: 1.5rem;
 						background: #57575733;
 						padding: 3px;
-						min-width: 0.5rem;
-						border-radius: 0.3rem;
+						min-width: var(--sizing-normal);
+						border-radius: var(--sizing-nano);
 					}
 
 					.table {
@@ -1229,7 +1199,7 @@
 						flex-direction: column;
 						width: 100%;
 						border: 1px solid #232323;
-						border-radius: 0.5rem;
+						border-radius: var(--sizing-normal);
 						overflow: hidden;
 					}
 
@@ -1244,7 +1214,7 @@
 						background-color: #252525;
 						font-weight: normal;
 						opacity: 0.7;
-						font-size: 0.7rem;
+						font-size: var(--font-size-small);
 					}
 
 					.cell {
@@ -1255,7 +1225,7 @@
 					}
 
 					.file-type-cell {
-						font-size: 1rem;
+						font-size: var(--font-size-normal);
 					}
 
 					.file-type-header,
@@ -1285,18 +1255,18 @@
 
 						.material-icons {
 							color: #7b7b7b;
-							font-size: 1rem !important;
+							font-size: var(--sizing-huge) !important;
 							transform: translateY(-2px);
-							margin-right: 0.5rem;
+							margin-right: var(--sizing-normal);
 						}
 					}
 				}
 			</style>
-			<button onclick="rldfltyptable()" style="margin-bottom: 0.5rem;">Reload Table</button>
+			<button onclick="rldfltyptable()" style="margin-bottom: var(--sizing-normal);">Reload Table</button>
 			<div id="appfileassos">
 
 			</div>
-			<small style="margin-top: 0.5rem;">
+			<small style="margin-top: var(--sizing-normal);">
 				<h3>Unable to find the app you looked for?</h3>
 				<p>Check if the app supports the file in its installed version, if yes, reinstall it with the NovaOS
 					files app and open this page again. Contact the Developer of the app if the issue presists.</p>
@@ -1493,11 +1463,11 @@
 					</tr>
 					<tr>
 						<td><b onclick="openlink('https://github.com/funsparktv-ai')">FunsparkTV</b></td>
-						<td>Concept Developer</td>
+						<td>Concept developer</td>
 					</tr>
 					<tr>
 						<td><b onclick="openlink('https://mistium.com/')">Mistium</b></td>
-						<td>literally a random person</td>
+						<td>Concept developer</td>
 					</tr>
 					<tr>
 						<td><b onclick="openlink('https://github.com/RoturTW')">RoturTW</b></td>
@@ -1528,13 +1498,12 @@
 				.task {
 					padding: 10px;
 					background: var(--colors-BG-sub);
-					border-radius: 5px;
+					border-radius: var(--sizing-border-radius);
 					margin: 5px 0;
 				}
 
 				.task .stpicn {
 					float: right;
-					font-size: 13px;
 					transform: translateY(1px);
 					cursor: pointer;
 					padding: 2px;
@@ -1654,7 +1623,6 @@
 					overflow: hidden;
 					white-space: nowrap;
 					text-overflow: ellipsis;
-					font-size: 15px;
 				}
 
 				.device [boo] {
@@ -1676,7 +1644,7 @@
 					display: flex;
 					flex-direction: row;
 					justify-content: space-between;
-    align-items: center;
+					align-items: center;
 				}
 			</style>
 			<div id="deviceslist">
@@ -1851,68 +1819,168 @@
 				</div>
 			</segr>
 			<h1>Colors</h1>
+			<style>
+				.jscolor {
+					width: 35px;
+					height: 35px;
+					border-radius: var(--sizing-border-radius);
+				}
+
+				/* Styles for the color picker itself */
+				.jscolor-palette {
+					background: #333;
+					border: 1px solid #555;
+				}
+
+				/* Styles for the color palette elements */
+				.jscolor-palette .jscolor-palette-cell {
+					border: 1px solid #444;
+				}
+
+				/* Styles for the color picker input */
+				.jscolor-picker {
+					background: #222;
+					color: #ddd;
+					border: 1px solid #444;
+				}
+
+				/* Adjust color of the text and input areas */
+				.jscolor-input {
+					background: #333;
+					color: #eee;
+				}
+
+				/* Additional adjustments for hover and focus states */
+				.jscolor-picker:hover,
+				.jscolor-picker:focus {
+					border-color: #777;
+				}
+
+				.jscolor-palette-cell:hover {
+					background: #444;
+				}
+			</style>
 			<segr>
 				<div setting class="colorsetting">
-				  <b>Normal background</b>
-				  <button id="normal-bg" data-jscolor="{preset:'dark', width:150, paletteCols:0, onInput:'updateColor(this, \"--colors-BG-normal\")'}"></button>
+					<b>Background</b>
+					<button id="normal-bg"
+						data-jscolor="{preset:'dark', width:150, paletteCols:0, onInput:'updateColor(this, \"
+						--colors-BG-normal\")'}"></button>
 				</div>
 				<div setting class="colorsetting">
-					<b>Sub background</b>
-					<button id="sub-bg" data-jscolor="{preset:'dark', width:150, paletteCols:0, onInput:'updateColor(this, \"--colors-BG-sub\")'}"></button>
-				  </div>
-				<div setting class="colorsetting">
-				  <b>Section background</b>
-				  <button id="section-bg" data-jscolor="{preset:'dark', width:150, paletteCols:0, onInput:'updateColor(this, \"--colors-BG-section\")'}"></button>
+					<b>Accent color</b>
+					<button id="highlighted-bg"
+						data-jscolor="{preset:'dark', width:150, paletteCols:0, onInput:'updateColor(this, \"
+						--colors-BG-highlighted\")'}"></button>
 				</div>
 				<div setting class="colorsetting">
-				  <b>Highlighted color</b>
-				  <button id="highlighted-bg" data-jscolor="{preset:'dark', width:150, paletteCols:0, onInput:'updateColor(this, \"--colors-BG-highlighted\")'}"></button>
+					<b>Text color</b>
+					<button id="text-normal"
+						data-jscolor="{preset:'dark', width:150, paletteCols:0, onInput:'updateColor(this, \"
+						--colors-text-normal\")'}"></button>
 				</div>
-				  <div setting class="colorsetting">
-					<b>Normal text color</b>
-					<button id="text-normal" data-jscolor="{preset:'dark', width:150, paletteCols:0, onInput:'updateColor(this, \"--colors-text-normal\")'}"></button>
-				  </div>
-				  
+
 				<div setting class="colorsetting">
-				  <button id="save-btn">Save</button>
+					<button id="save-btn">Save</button>
 				</div>
-			  </segr>
-			  
-			  <script>
-			 function updateColor(picker, variableName) {
-  const colorValue = picker.toHEXString();
-  window.parent.document.documentElement.style.setProperty(variableName, colorValue);
-}
+			</segr>
 
-function getCSSVariableValue(varName) {
-  return window.parent.getComputedStyle(window.parent.document.documentElement).getPropertyValue(varName).trim();
-}
+			<script>
+				function updateColor(picker, variableName) {
+					const colorValue = picker.toHEXString();
+					window.parent.document.documentElement.style.setProperty(variableName, colorValue);
+				}
 
-function initColorPickers() {
-  document.querySelector("#normal-bg").jscolor.fromString(getCSSVariableValue('--colors-BG-normal'));
-  document.querySelector("#section-bg").jscolor.fromString(getCSSVariableValue('--colors-BG-section'));
-  document.querySelector("#highlighted-bg").jscolor.fromString(getCSSVariableValue('--colors-BG-highlighted'));
-  document.querySelector("#sub-bg").jscolor.fromString(getCSSVariableValue('--colors-BG-sub'));
-  document.querySelector("#text-normal").jscolor.fromString(getCSSVariableValue('--colors-text-normal'));
-}
+				function getCSSVariableValue(varName) {
+					return window.parent.getComputedStyle(window.parent.document.documentElement).getPropertyValue(varName).trim();
+				}
 
-function saveColors() {
-  const normalBgColor = document.querySelector("#normal-bg").jscolor.toHEXString();
-  const sectionBgColor = document.querySelector("#section-bg").jscolor.toHEXString();
-  const highlightedBgColor = document.querySelector("#highlighted-bg").jscolor.toHEXString();
-  const subBgColor = document.querySelector("#sub-bg").jscolor.toHEXString();
-  const textNormalColor = document.querySelector("#text-normal").jscolor.toHEXString();
-  
-  window.parent.document.documentElement.style.setProperty('--colors-BG-normal', normalBgColor);
-  window.parent.document.documentElement.style.setProperty('--colors-BG-section', sectionBgColor);
-  window.parent.document.documentElement.style.setProperty('--colors-BG-highlighted', highlightedBgColor);
-  window.parent.document.documentElement.style.setProperty('--colors-BG-sub', subBgColor);
-  window.parent.document.documentElement.style.setProperty('--colors-text-normal', textNormalColor);
-}
+				// Convert HEX to HSL
+				function hexToHSL(hex) {
+					let r = parseInt(hex.substring(1, 3), 16) / 255;
+					let g = parseInt(hex.substring(3, 5), 16) / 255;
+					let b = parseInt(hex.substring(5, 7), 16) / 255;
 
-window.addEventListener('load', initColorPickers);
-document.querySelector("#save-btn").addEventListener('click', saveColors);
-			  </script>
+					let max = Math.max(r, g, b);
+					let min = Math.min(r, g, b);
+					let h, s, l = (max + min) / 2;
+
+					if (max === min) {
+						h = s = 0; // achromatic
+					} else {
+						let d = max - min;
+						s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+						switch (max) {
+							case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+							case g: h = (b - r) / d + 2; break;
+							case b: h = (r - g) / d + 4; break;
+						}
+						h /= 6;
+					}
+
+					return { h: h * 360, s: s * 100, l: l * 100 };
+				}
+
+				// Convert HSL to HEX
+				function hslToHex(h, s, l) {
+					s /= 100;
+					l /= 100;
+
+					let c = (1 - Math.abs(2 * l - 1)) * s;
+					let x = c * (1 - Math.abs((h / 60) % 2 - 1));
+					let m = l - c / 2;
+					let r, g, b;
+
+					if (0 <= h && h < 60) { r = c; g = x; b = 0; }
+					else if (60 <= h && h < 120) { r = x; g = c; b = 0; }
+					else if (120 <= h && h < 180) { r = 0; g = c; b = x; }
+					else if (180 <= h && h < 240) { r = 0; g = x; b = c; }
+					else if (240 <= h && h < 300) { r = x; g = 0; b = c; }
+					else { r = c; g = 0; b = x; }
+
+					return `#${((1 << 24) + (Math.round((r + m) * 255) << 16) + (Math.round((g + m) * 255) << 8) + Math.round((b + m) * 255)).toString(16).slice(1)}`;
+				}
+
+				// Adjust color brightness based on saturation
+				function adjustBrightness(hex, amount) {
+					let { h, s, l } = hexToHSL(hex);
+
+					if (s === 0) {
+						// Color is grayscale, adjust brightness
+						l = Math.min(100, Math.max(0, l + amount));
+					} else {
+						// Color is not grayscale, adjust lightness
+						l = Math.min(100, Math.max(0, l + (amount * 0.1)));
+					}
+
+					return hslToHex(h, s, l);
+				}
+
+				function initColorPickers() {
+					document.querySelector("#normal-bg").jscolor.fromString(getCSSVariableValue('--colors-BG-normal'));
+					document.querySelector("#highlighted-bg").jscolor.fromString(getCSSVariableValue('--colors-BG-highlighted'));
+					document.querySelector("#text-normal").jscolor.fromString(getCSSVariableValue('--colors-text-normal'));
+				}
+
+				function saveColors() {
+					const normalBgColor = document.querySelector("#normal-bg").jscolor.toHEXString();
+					const highlightedBgColor = document.querySelector("#highlighted-bg").jscolor.toHEXString();
+					const textNormalColor = document.querySelector("#text-normal").jscolor.toHEXString();
+
+					// Adjust the normalBgColor slightly for other background-related variables
+					const sectionBgColor = adjustBrightness(normalBgColor, 10); // Lighten by 10
+					const subBgColor = adjustBrightness(normalBgColor, -10); // Darken by 10
+
+					window.parent.document.documentElement.style.setProperty('--colors-BG-normal', normalBgColor);
+					window.parent.document.documentElement.style.setProperty('--colors-BG-section', sectionBgColor);
+					window.parent.document.documentElement.style.setProperty('--colors-BG-highlighted', highlightedBgColor);
+					window.parent.document.documentElement.style.setProperty('--colors-BG-sub', subBgColor);
+					window.parent.document.documentElement.style.setProperty('--colors-text-normal', textNormalColor);
+				}
+
+				window.addEventListener('load', initColorPickers);
+				document.querySelector("#save-btn").addEventListener('click', saveColors);
+			</script>
 			<h1>Personalization</h1>
 			<segr>
 				<div class="inpbox">
@@ -1931,13 +1999,13 @@ document.querySelector("#save-btn").addEventListener('click', saveColors);
 				.colorpickerbx {
 					display: flex;
 					flex-direction: row;
-					gap: 0.3rem;
+					gap: var(--sizing-nano);
 					align-items: stretch;
-					margin-top: 0.5rem;
+					margin-top: var(--sizing-normal);
 					background: #1f1f1f;
-					border-radius: 0.5rem;
+					border-radius: var(--sizing-normal);
 					width: fit-content;
-					padding: 0.3rem;
+					padding: var(--sizing-nano);
 
 					select {
 						transform: none;
@@ -1951,22 +2019,22 @@ document.querySelector("#save-btn").addEventListener('click', saveColors);
 
 				#UISIZErangeslid {
 					width: 79%;
-    height: 2px;
-    display: block;
-    margin: var(--sizing-normal) auto;
-    margin-top: 1rem;
+					height: 2px;
+					display: block;
+					margin: var(--sizing-normal) auto;
+					margin-top: var(--sizing-huge);
 				}
 
 				.UISIZEslider-labels {
 					display: flex;
 					justify-content: space-between;
 					width: 100%;
-					margin-top: 0.5rem;
+					margin-top: var(--sizing-normal);
 				}
 
 				.UISIZEslider-labels span {
 					opacity: 0.5;
-					font-size: 0.8rem;
+					font-size: var(--font-size-small);
 					width: 0;
 					text-align: center;
 					flex: 1;
