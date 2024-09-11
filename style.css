@@ -51,7 +51,7 @@ nav {
 nav .flodiv {
 	display: flex;
 	justify-content: center;
-	align-items: center;
+    align-items: stretch;
 	flex-direction: row;
 	border-radius: 7px;
 	background: transparent;
@@ -67,8 +67,8 @@ nav [navobj] {
 	justify-content: center;
 	align-items: center;
 	flex-direction: row;
-	height: 35px;
 	animation: pop .2s;
+	transition: .2s ease-out;
 }
 
 nav [navobj] div {
@@ -76,11 +76,6 @@ nav [navobj] div {
 	margin: 5px 7px;
 	text-align: center;
 	font-size: 11px;
-	font-family: monospace;
-}
-
-nav info {
-	align-self: flex-end;
 }
 
 #battery-display {
@@ -94,7 +89,6 @@ nav info {
 }
 
 #date-display {
-	font-size: 9px;
 	line-height: 10px;
 	display: block;
 }
@@ -106,13 +100,15 @@ nav info {
 	transition: .2s;
 }
 
-[navobj] [app-shortcut]:hover {
+[navobj]:hover {
 	transform: scale(1.1);
+	z-index: 2;
+	margin: 3px 7px;
 }
 
 .mmic {
-	width: 10px;
-	height: 23px;
+    width: 1.8rem;
+    height: 1.5rem;
 }
 
 .window {
@@ -254,7 +250,6 @@ nav info {
 
 .app-shortcut span {
 	overflow: hidden;
-	margin-bottom: 5px;
 	padding: 0;
 	display: grid;
 	border-radius: 10px;
@@ -339,7 +334,7 @@ nav info {
 
 #appdmod {
 	padding: 5px;
-	margin-bottom: 50px;
+    margin-bottom: 60px;
 	animation: dmodthingy 0.2s;
 	padding-bottom: 1.2rem;
 }
@@ -1238,7 +1233,14 @@ nav info {
 }
 
 .directxicons {
-	font-size: var(--font-size-normal) !important;
+	font-size: var(--font-size-subheading) !important;
+}
+
+#time-display {
+    overflow: hidden;
+    display: block;
+    white-space: nowrap;
+    text-align: center;
 }
 
 #nova-copilot-window {
@@ -1416,8 +1418,8 @@ codeblock {
 }
 
 .adock svg {
-	width: 19px !important;
-	height: 19px !important;
+	width: 1.7rem !important;
+	height: 1.7rem !important;
 }
 
 dialog#terminal {

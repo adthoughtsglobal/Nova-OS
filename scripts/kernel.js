@@ -3,21 +3,21 @@ var dragging = false;
 var novadotcsscache;
 
 async function openlaunchprotocol(appid, data, id, winuid) {
-    console.log("Open Lanuch Protocol", appid, data,id)
+    console.log("Open Lanuch Protocol", appid, data, id)
     let x = {
         "appid": appid,
         "data": data,
-        "winuid":winuid
+        "winuid": winuid
     };
     Gtodo = x;
     openfile(x.appid, { data: Gtodo });
 }
 
 function OLPreturn(fileID, transferID) {
-    
+
     if (iframeReferences[transferID]) {
-        iframeReferences[transferID].postMessage({returned:fileID, id:transferID, action:'loadlocalfile'}, '*');
-      }
+        iframeReferences[transferID].postMessage({ returned: fileID, id: transferID, action: 'loadlocalfile' }, '*');
+    }
 }
 
 const iframeReferences = {};
@@ -61,7 +61,7 @@ async function openfile(x) {
             if (appIdToOpen) {
                 openlaunchprotocol(appIdToOpen, unid);
             } else {
-                
+
             }
 
         }
@@ -121,11 +121,6 @@ async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
         appsHistory = appsHistory.slice(-5);
     }
 
-    content = cont;
-    if (content == undefined) {
-        content = "<center><h1>Unavailable</h1>App Data cannot be read.</center>";
-    }
-
     let winuid = genUID();
     winds[title + winuid] = 1;
 
@@ -148,32 +143,32 @@ async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
         if (aspectratio == null) {
             aspectratio = "9/6";
         }
-        
+
         let [widthFactor, heightFactor] = aspectratio.split('/').map(Number);
         let aspectRatioValue = widthFactor / heightFactor;
-        
+
         const maxVW = 90;
         const maxVH = 90;
-        
+
         const maxWidthPx = (window.innerWidth * maxVW) / 100;
         const maxHeightPx = (window.innerHeight * maxVH) / 100;
-        
-        let heightPx = (maxHeightPx / 100) * 70; 
-        let widthPx = heightPx * aspectRatioValue; 
-    
+
+        let heightPx = (maxHeightPx / 100) * 70;
+        let widthPx = heightPx * aspectRatioValue;
+
         if (widthPx > maxWidthPx) {
             widthPx = maxWidthPx;
             heightPx = widthPx / aspectRatioValue;
         }
-        
+
         const widthVW = (widthPx / window.innerWidth) * 100;
         const heightVH = (heightPx / window.innerHeight) * 100;
         windowDiv.style = `left: calc(50vw - ${widthVW / 2}vw); top: calc(50vh - ${heightVH / 2}vh); width: ${widthVW}vw; height: ${heightVH}vh; z-index: 0;`;
-        
+
         let offset = 5 * Object.keys(winds).length;
         let newLeft = `calc(50vw - ${widthVW / 2}vw + ${offset}px)`;
         let newTop = `calc(50vh - ${heightVH / 2}vh + ${offset}px)`;
-        
+
         windowDiv.style.left = newLeft;
         windowDiv.style.top = newTop;
     } else {
@@ -271,17 +266,24 @@ async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
 
     var windowContent = document.createElement("div");
     windowContent.classList += "windowcontent";
-    var contentString = isBase64(content) ? decodeBase64Content(content) : content;
 
     var windowLoader = document.createElement("div");
     windowLoader.classList += "windowloader";
     var loaderdiv = document.createElement("div");
     loaderdiv.classList = "loader33";
-    windowLoader.innerHTML = await getAppIcon(contentString, appid);
-    windowLoader.appendChild(loaderdiv);
 
-    function loadIframeContent(windowLoader, windowContent, iframe) {
+    async function loadIframeContent(windowLoader, windowContent, iframe) {
         const appstart = performance.now();
+        const content2 = cont;
+        
+        var contentString = isBase64(content2) ? decodeBase64Content(content2) : content2;
+
+        if (content2 == undefined) {
+            content2 = "<center><h1>Unavailable</h1>App Data cannot be read.</center>";
+        }
+
+        windowLoader.innerHTML = await getAppIcon(contentString, appid);
+        windowLoader.appendChild(loaderdiv);
         var iframe = document.createElement("iframe");
         var blobURL = URL.createObjectURL(new Blob([contentString], { type: 'text/html' }));
 
@@ -298,54 +300,54 @@ async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
                 windowID: winuid,
                 ...(params && { params })
             };
-    
+
             if (contentString.includes("nova-include") && getMetaTagContent(contentString, 'nova-include') != null) {
                 try {
-                
-                if (novadotcsscache == null) {
-                  novadotcsscache = await fetch('nova.css');
-                  novadotcsscache = await novadotcsscache.text()
-                }
-var novadotcss = novadotcsscache;
 
-// Get the current root CSS variables from the body element
-const computedStyles = getComputedStyle(document.body);
-const variables = {
-    '--font-size-small': computedStyles.getPropertyValue('--font-size-small'),
-    '--font-size-normal': computedStyles.getPropertyValue('--font-size-normal'),
-    '--font-size-big': computedStyles.getPropertyValue('--font-size-big'),
-    '--colors-BG-normal': computedStyles.getPropertyValue('--colors-BG-normal'),
-    '--colors-BG-sub': computedStyles.getPropertyValue('--colors-BG-sub'),
-    '--colors-BG-section': computedStyles.getPropertyValue('--colors-BG-section'),
-    '--colors-BG-highlighted': computedStyles.getPropertyValue('--colors-BG-highlighted'),
-    '--colors-text-normal': computedStyles.getPropertyValue('--colors-text-normal'),
-    '--sizing-border-radius': computedStyles.getPropertyValue('--sizing-border-radius'),
-    '--sizing-normal': computedStyles.getPropertyValue('--sizing-normal'),
-    '--sizing-nano': computedStyles.getPropertyValue('--sizing-nano'),
-    '--vw': computedStyles.getPropertyValue('--vw'),
-    '--vh': computedStyles.getPropertyValue('--vh'),
-    '--font-size-default': computedStyles.getPropertyValue('--font-size-default')
-};
+                    if (novadotcsscache == null) {
+                        novadotcsscache = await fetch('nova.css');
+                        novadotcsscache = await novadotcsscache.text()
+                    }
+                    var novadotcss = novadotcsscache;
 
-// Replace root CSS variable declarations in the fetched CSS
-const updatedCssText = novadotcss.replace(/:root\s*{([^}]*)}/, (match, declarations) => {
-    let updatedDeclarations = declarations.trim();
-    for (const [variable, value] of Object.entries(variables)) {
-        const regex = new RegExp(`(${variable}\\s*:\\s*).*?;`, 'g');
-        updatedDeclarations = updatedDeclarations.replace(regex, `$1${value.trim()};`);
-    }
-    return `:root { ${updatedDeclarations} }`;
-});
+                    // Get the current root CSS variables from the body element
+                    const computedStyles = getComputedStyle(document.body);
+                    const variables = {
+                        '--font-size-small': computedStyles.getPropertyValue('--font-size-small'),
+                        '--font-size-normal': computedStyles.getPropertyValue('--font-size-normal'),
+                        '--font-size-big': computedStyles.getPropertyValue('--font-size-big'),
+                        '--colors-BG-normal': computedStyles.getPropertyValue('--colors-BG-normal'),
+                        '--colors-BG-sub': computedStyles.getPropertyValue('--colors-BG-sub'),
+                        '--colors-BG-section': computedStyles.getPropertyValue('--colors-BG-section'),
+                        '--colors-BG-highlighted': computedStyles.getPropertyValue('--colors-BG-highlighted'),
+                        '--colors-text-normal': computedStyles.getPropertyValue('--colors-text-normal'),
+                        '--sizing-border-radius': computedStyles.getPropertyValue('--sizing-border-radius'),
+                        '--sizing-normal': computedStyles.getPropertyValue('--sizing-normal'),
+                        '--sizing-nano': computedStyles.getPropertyValue('--sizing-nano'),
+                        '--vw': computedStyles.getPropertyValue('--vw'),
+                        '--vh': computedStyles.getPropertyValue('--vh'),
+                        '--font-size-default': computedStyles.getPropertyValue('--font-size-default')
+                    };
 
-// Inject the updated CSS into the iframe
-const style = document.createElement('style');
-style.textContent = updatedCssText;
-iframe.contentDocument.head.appendChild(style);
+                    // Replace root CSS variable declarations in the fetched CSS
+                    const updatedCssText = novadotcss.replace(/:root\s*{([^}]*)}/, (match, declarations) => {
+                        let updatedDeclarations = declarations.trim();
+                        for (const [variable, value] of Object.entries(variables)) {
+                            const regex = new RegExp(`(${variable}\\s*:\\s*).*?;`, 'g');
+                            updatedDeclarations = updatedDeclarations.replace(regex, `$1${value.trim()};`);
+                        }
+                        return `:root { ${updatedDeclarations} }`;
+                    });
+
+                    // Inject the updated CSS into the iframe
+                    const style = document.createElement('style');
+                    style.textContent = updatedCssText;
+                    iframe.contentDocument.head.appendChild(style);
                 } catch (error) {
                     console.error('Error fetching or injecting CSS:', error);
                 }
             }
-    
+
             // Inject the JavaScript code
             const script = document.createElement('script');
             script.innerHTML = `
@@ -354,16 +356,16 @@ iframe.contentDocument.head.appendChild(style);
                 });
             `;
             iframe.contentDocument.body.appendChild(script);
-    
+
             try {
                 await iframe.contentWindow.greenflag();
             } catch (e) {
                 console.error('Error during iframe initialization:', e);
             }
-            
+
             const end = performance.now();
             console.log(`App startup took ${(end - appstart).toFixed(2)}ms`);
-    
+
             windowLoader.remove();
         };
 
@@ -476,59 +478,59 @@ async function checksnapping(x, event) {
     }
 }
 function dragElement(elmnt) {
-	var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-	if (gid(elmnt.id + "header")) {
-		gid(elmnt.id + "header").onmousedown = dragMouseDown;
-	} else {
-		elmnt.onmousedown = dragMouseDown;
-	}
+    var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    if (gid(elmnt.id + "header")) {
+        gid(elmnt.id + "header").onmousedown = dragMouseDown;
+    } else {
+        elmnt.onmousedown = dragMouseDown;
+    }
 
-	function dragMouseDown(e) {
-		e = e || window.event;
-		e.preventDefault();
-		pos3 = e.clientX;
-		pos4 = e.clientY;
-		document.onmouseup = closeDragElement;
-		document.onmousemove = elementDrag;
-	}
+    function dragMouseDown(e) {
+        e = e || window.event;
+        e.preventDefault();
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onmouseup = closeDragElement;
+        document.onmousemove = elementDrag;
+    }
 
-	function elementDrag(e) {
-		e = e || window.event;
-		e.preventDefault();
-		pos1 = pos3 - e.clientX;
-		pos2 = pos4 - e.clientY;
-		pos3 = e.clientX;
-		pos4 = e.clientY;
+    function elementDrag(e) {
+        e = e || window.event;
+        e.preventDefault();
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
 
-		let newTop = elmnt.offsetTop - pos2;
-		let newLeft = elmnt.offsetLeft - pos1;
+        let newTop = elmnt.offsetTop - pos2;
+        let newLeft = elmnt.offsetLeft - pos1;
 
-		let boundaryTop = 0;
-		let boundaryLeft = 0;
-		let boundaryBottom = window.innerHeight - elmnt.offsetHeight;
-		let boundaryRight = window.innerWidth - elmnt.offsetWidth;
+        let boundaryTop = 0;
+        let boundaryLeft = 0;
+        let boundaryBottom = window.innerHeight - elmnt.offsetHeight;
+        let boundaryRight = window.innerWidth - elmnt.offsetWidth;
 
-		if (newTop < boundaryTop) {
-			newTop = boundaryTop;
-		}
-		if (newTop > boundaryBottom) {
-			newTop = boundaryBottom;
-		}
-		if (newLeft < boundaryLeft) {
-			newLeft = boundaryLeft;
-		}
-		if (newLeft > boundaryRight) {
-			newLeft = boundaryRight;
-		}
+        if (newTop < boundaryTop) {
+            newTop = boundaryTop;
+        }
+        if (newTop > boundaryBottom) {
+            newTop = boundaryBottom;
+        }
+        if (newLeft < boundaryLeft) {
+            newLeft = boundaryLeft;
+        }
+        if (newLeft > boundaryRight) {
+            newLeft = boundaryRight;
+        }
 
-		elmnt.style.top = newTop + "px";
-		elmnt.style.left = newLeft + "px";
-	}
+        elmnt.style.top = newTop + "px";
+        elmnt.style.left = newLeft + "px";
+    }
 
-	function closeDragElement() {
-		document.onmouseup = null;
-		document.onmousemove = null;
-	}
+    function closeDragElement() {
+        document.onmouseup = null;
+        document.onmousemove = null;
+    }
 }
 
 async function openapp(x, od) {
