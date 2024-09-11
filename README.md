@@ -33,6 +33,9 @@ Nova OS does not send and receive data from any external server to process your 
 > "NovaOS is a game-changer for anyone looking for a versatile, web-based operating system. Built with simplicity and user privacy in mind, it's perfect for any device. As one of the developers, I’m excited about the upcoming NovaOS 2, which will bring a local account system and enhanced filesystem, making it even easier for users to manage their files and data. Whether you're a developer or just someone who loves exploring new tech, NovaOS has something to offer."
 - FunSparkTV
 
+> Nova is a highly impressive and rapidly expanding web OS.
+- Vizronix
+
 # You're always welcome to the creators!
 We have made an amazing place for developers too in Nova OS, starting with a Studio app to make apps in Nova OS itself, to a detailed documentation and a discord server for your help! We have got you covered!
 
