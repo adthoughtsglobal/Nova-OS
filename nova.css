@@ -10,6 +10,7 @@
     --colors-BG-sub: #262626;
     --colors-BG-section: #171717;
     --colors-BG-highlighted: #44403C;
+	--colors-BG-accent: #44403C;
     --colors-text-normal: white;
 
     --sizing-border-radius: 0.5rem;

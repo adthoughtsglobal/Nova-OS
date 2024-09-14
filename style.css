@@ -910,8 +910,7 @@ nav [navobj] div {
 
 .closeEffect {
 	animation-name: closeEffect;
-	animation-duration: 1.05s;
-	/* Adjust the duration as needed */
+	animation-duration: .5s;
 }
 
 .gradient-text {

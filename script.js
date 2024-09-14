@@ -155,23 +155,18 @@ async function startup() {
 		'color: lightgrey; padding:0.5rem;'
 	);
 
-	setsrtpprgbr(20)
+	setsrtpprgbr(50);
 	const start = performance.now();
 	await updateMemoryData().then(async () => {
 		try {
-			gid('startupterms').innerHTML = "Initialising clock...";
-			setInterval(updateTime, 1000);
-
-			gid('startupterms').innerHTML = "Checking themes...";
+			gid('startupterms').innerHTML = "Initialising...";
+			updateTime();
 			await checkdmode();
 			setsrtpprgbr(100)
 			gid('startupterms').innerHTML = "Startup completed";
 
 		} catch (err) { console.error("startup error:", err); }
 
-		const end = performance.now();
-
-		console.log(`Startup took ${(end - start).toFixed(2)}ms`);
 		closeElementedis();
 		async function fetchDataAndUpdate() {
 			let localupdatedataver = localStorage.getItem("updver");
@@ -196,7 +191,8 @@ async function startup() {
 		fetchDataAndUpdate();
 		await genTaskBar();
 		await dod();
-		removeInvalidMagicStrings()
+		removeInvalidMagicStrings();
+		setInterval(updateTime, 1000);
 
 		// Initialize the associations from settings
 		async function loadFileTypeAssociations() {
@@ -215,6 +211,10 @@ async function startup() {
 			}
 			runScriptsSequentially(onstartup, 1000)
 		} catch (e) { }
+		
+		const end = performance.now();
+
+		console.log(`Startup took ${(end - start).toFixed(2)}ms`);
 	})
 
 }
@@ -656,7 +656,7 @@ function closeElementedis() {
 	setTimeout(function () {
 		element.close()
 		element.classList.remove("closeEffect");
-	}, 1000);
+	}, 500);
 }
 
 function isElement(element) {
