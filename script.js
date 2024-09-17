@@ -165,7 +165,7 @@ async function startup() {
 			setsrtpprgbr(100)
 			gid('startupterms').innerHTML = "Startup completed";
 
-		} catch (err) { console.error("startup error:", err); }
+		
 
 		closeElementedis();
 		async function fetchDataAndUpdate() {
@@ -213,7 +213,7 @@ async function startup() {
 		} catch (e) { }
 		
 		const end = performance.now();
-
+	} catch (err) { console.error("startup error:", err); }
 		console.log(`Startup took ${(end - start).toFixed(2)}ms`);
 	})
 

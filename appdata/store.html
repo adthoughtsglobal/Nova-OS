@@ -712,7 +712,7 @@
 			var response
 			const filePath = "appdata/" + appName + ".html";
 			try {
-				response = await fetch(filePath);
+				response = await window.parent.fetch(filePath);
 				if (!response.ok) {
 					// Set background color to red
 					div.style.backgroundColor = "red";
