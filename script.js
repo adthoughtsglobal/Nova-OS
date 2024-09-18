@@ -1974,7 +1974,7 @@ const sendMessage = () => {
 		model: 'blackbox'
 	};
 
-	fetch('https://ai.milosantos.com/blackbox', {
+	fetch('https://api.milosantos.com/v1/chat/completions', {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',

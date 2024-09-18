@@ -218,7 +218,7 @@ nav [navobj] div {
 	padding: 10px;
 	margin: 5px;
 	cursor: pointer;
-	width: 40px;
+	width: 70px;
 	animation: pop .2s;
 	display: inline-block;
 	border: 1px solid transparent;
@@ -307,7 +307,7 @@ nav [navobj] div {
 	text-align: center;
 	padding: 0.1rem 0.5rem;
 	background: var(--colors-BG-normal)42;
-	max-width: 46px;
+    max-width: 67px;
 	text-transform: capitalize;
 }
 
@@ -583,7 +583,7 @@ nav [navobj] div {
     flex: 1;
     width: calc(100% - var(--sizing-huge));
     margin: auto;
-    grid-template-columns: repeat(auto-fill, minmax(55px, 70px));
+    grid-template-columns: repeat(auto-fill, minmax(80px, 85px));
     justify-items: center;
     justify-content: space-around;
     align-items: start;
@@ -792,23 +792,23 @@ nav [navobj] div {
 
 .tooltip .tooltiptext {
 	visibility: hidden;
-	width: 68px;
-	background-color: var(--colors-BG-highlighted);
-	color: var(--colors-text-normal);
-	word-break: normal;
-	backdrop-filter: blur(1rem);
-	text-align: center;
-	border-radius: 0.3rem;
-	padding: 2px;
-	position: absolute;
-	z-index: 1;
-	bottom: 110%;
-	left: 50%;
-	margin-left: -33px;
-	font-size: var(--font-size-normal);
-	opacity: 0;
-	transition: opacity 0.3s ease-out;
-	box-shadow: 0 3px 1rem var(--colors-BG-normal)9e;
+    width: 80px;
+    background-color: var(--colors-BG-highlighted);
+    color: var(--colors-text-normal);
+    word-break: normal;
+    backdrop-filter: blur(1rem);
+    text-align: center;
+    border-radius: 0.3rem;
+    padding: 2px;
+    position: absolute;
+    z-index: 1;
+    bottom: 110%;
+    left: 50%;
+    margin-left: -39px;
+    font-size: var(--font-size-normal);
+    opacity: 0;
+    transition: opacity 0.3s ease-out;
+    box-shadow: 0 3px 1rem var(--colors-BG-normal) 9e;
 }
 
 .tooltip:hover .tooltiptext {
@@ -1143,16 +1143,16 @@ nav [navobj] div {
 
 #notification {
 	position: absolute;
-	right: 10px;
-	width: 250px;
-	background: #2a29299c;
-	backdrop-filter: blur(10px) brightness(50%);
-	border-radius: 10px;
-	padding: 10px;
-	bottom: 61px;
-	box-shadow: 0 0 2rem rgb(0 0 0 / 77%);
-	display: none;
-	animation: notifpull .2s ease-out;
+    right: 10px;
+    width: 250px;
+    background: #40404080;
+    backdrop-filter: blur(10px) brightness(50%);
+    border-radius: 10px;
+    padding: 10px;
+    bottom: 61px;
+    box-shadow: 0 1rem 2rem rgb(0 0 0 / 77%);
+    display: none;
+    animation: notifpull .2s ease-out;
 }
 
 @keyframes notifpull {
@@ -1169,7 +1169,7 @@ nav [navobj] div {
 
 #notification span {
 	opacity: 0.5;
-	font-size: var(--font-size-normal);
+	font-size: var(--font-size-small);
 }
 
 #notification h2 {
@@ -1179,8 +1179,9 @@ nav [navobj] div {
 }
 
 #notification p {
-	font-size: var(--font-size-normal);
-	margin: 10px 0;
+	font-size: var(--font-size-small);
+    margin: 10px 0;
+    opacity: 0.7;
 }
 
 .snapping {
@@ -1188,7 +1189,7 @@ nav [navobj] div {
 }
 
 .windowheader svg {
-	width: 10px;
+    width: var(--sizing-huge);
     aspect-ratio: 1 / 1;
     margin: 5px 2px;
     display: flex;
@@ -1208,6 +1209,7 @@ nav [navobj] div {
 	width: fit-content;
     text-overflow: ellipsis;
     overflow: hidden;
+    font-size: var(--font-size-normal);
 }
 
 .rightsidesmadivs {

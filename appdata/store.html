@@ -211,8 +211,7 @@
 			color: #ffffff;
 		}
 
-		#sugapps {
-			margin: 10px 10px;
+		.section {
 			padding: 0;
 			padding-left: 10px;
 			display: flex;
@@ -546,7 +545,6 @@
 			
 		</div>
 		<div>
-			<small>Newest Apps</small>
 			<div id="sugapps">
 				:( unexpected error
 			</div>
@@ -585,7 +583,6 @@
 	<script defer>
 
 		function greenflag() {
-			// Fetch JSON data from the URL
 			document.getElementById("sugapps").innerHTML = `<div class="loader"></div>`;
 
 			fetch('https://adthoughtsglobal.github.io/Nova-Store/database.json')
@@ -595,19 +592,25 @@
 				})
 				.then(data => {
 					var vdevs = data.vdevs;
+					var featured = data.Featured;
 					data.data.sort((a, b) => {
 						const appNameA = Object.keys(a)[0];
 						const appNameB = Object.keys(b)[0];
 						return appNameA.localeCompare(appNameB);
 					});
-					document.getElementById("sugapps").innerHTML = ``
-					// Iterate through the 'data' array
+					document.getElementById("sugapps").innerHTML = `
+					<small>Featured</small>
+  <div id="featured-section" class="section"></div>
+  <small>Games</small>
+  <div id="games-section" class="section"></div>
+  <small>For NovaOS</small>
+  <div id="nova-section" class="section"></div>
+  <small>Apps</small>
+  <div id="apps-section" class="section"></div>`;
 					data.data.forEach(app => {
-						// Extract app details
 						const appName = Object.keys(app)[0];
 						const appDetails = JSON.parse(JSON.stringify(app[appName]));
 
-						// Create HTML elements
 						const appDiv = document.createElement('div');
 						appDiv.className = 'app';
 						appDiv.setAttribute("onclick", `openappinstr('${appName}', ${JSON.stringify(appDetails)})`);
@@ -620,10 +623,9 @@
 								return tinycolor(hslColor).toRgbString();
 							}
 
-							// Event listeners
 							appDiv.addEventListener('mouseenter', () => {
 								const shadowColor = appDetails.find(item => item.th).th;
-								const rotatedColor = rotateHue(shadowColor, 25); // Rotate by 25 degrees
+								const rotatedColor = rotateHue(shadowColor, 25);
 
 								appDiv.style.borderRight = `2px solid ${rotatedColor}`;
 								appDiv.style.borderBottom = `2px solid ${rotatedColor}`;
@@ -639,7 +641,6 @@
 							});
 
 						} catch (error) {
-							console.log("yap, " + error)
 						}
 
 						const appfesDiv = document.createElement('div');
@@ -682,14 +683,25 @@
 
 					appDiv.appendChild(p);
 
-					// Append the appDiv to the document body or any desired container
-					document.getElementById("sugapps").appendChild(appDiv);
+					if (featured.includes(appName)) {
+						document.getElementById("featured-section").appendChild(appDiv);
+					} else {
+						if (appDetails.find(item => item.by).by != "adthoughtsglobal") {
+
+if (appDetails.find(item => item.cat).cat == "game") {
+document.getElementById("games-section").appendChild(appDiv);
+} else {
+document.getElementById("apps-section").appendChild(appDiv);
+}
+} else {
+document.getElementById("nova-section").appendChild(appDiv);
+}
+					}
 				});
+					
 		})
 				.catch (error => console.error('Error fetching JSON:', error));
 
-		// add default apps.
-		// Iterate through the 'data' array
 		console.log(window.parent.defAppsList)
 		let data = window.parent.defAppsList;
 		data.forEach(appName => {
