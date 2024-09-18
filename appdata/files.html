@@ -53,7 +53,6 @@
 		.flappsearch {
 			flex-grow: 10 !important;
 			text-align: center !important;
-			font-size: 11px;
 			color: #b8b8b8;
 			display: grid;
 			align-items: center;
@@ -66,6 +65,7 @@
 		}
 
 		div#filetools {
+			width: 100%;
 			overflow-x: auto;
 		}
 
@@ -112,7 +112,6 @@
 		}
 
 		.sdfld span {
-			font-size: 15px;
 			transform: translate(1px, 3px);
 			margin-right: 6px;
 			color: #fff996;
@@ -121,7 +120,6 @@
 		[flap-sidenav] {
 			width: 0;
 			overflow-y: scroll;
-			font-size: 11px !important;
 			min-width: 120px;
 			background: var(--colors-BG-section);
 			padding-bottom: 50px;
@@ -149,7 +147,6 @@
 			display: flex;
 			margin: 0rem 5px;
 			margin-bottom: 0.1rem;
-			font-size: 9px;
 			opacity: 70%;
 			flex-direction: row;
 			background-color: #181818;
@@ -201,7 +198,7 @@
 
 		.file[grid] {
 			display: inline-block;
-			height: 83px;
+			height: 87px;
 			min-width: 80px;
 			width: auto;
 			margin: 5px;
@@ -243,7 +240,6 @@
 			display: inline-block;
 			transform: translate(-3px, 4px);
 			opacity: 0.5;
-			font-size: 11px;
 			width: 0;
 			overflow: hidden;
 			text-overflow: ellipsis;
@@ -273,7 +269,6 @@
 		}
 
 		.file[grid]>[flname] {
-			font-size: 14px;
 			display: flex;
 			overflow: hidden;
 			white-space: nowrap;
@@ -301,7 +296,6 @@
 		}
 
 		.file[list]>[flname] {
-			font-size: 14px;
 			display: flex;
 			width: 0;
 			flex: 1;
@@ -352,14 +346,12 @@
 			text-align: left;
 			border: 1px solid;
 			padding: 3px 5px;
-			font-size: 14px;
 		}
 
 		[flap-fl-bottomnav] {
 			padding: 5px 7px;
 			background: var(--colors-BG-section);
 			border-radius: 0.3rem;
-			font-size: 12px;
 			transition: .3s ease-out;
 			margin: 0.2rem;
 			width: calc(100% - 25px);
@@ -399,7 +391,6 @@
 			background: var(--colors-BG-highlighted);
 			color: white;
 			font-family: inherit;
-			font-size: 11px;
 			cursor: pointer;
 		}
 
@@ -457,7 +448,6 @@
 			width: fit-content;
 			border-radius: 10px;
 			opacity: 0.5;
-			font-size: 11px;
 			margin: 5px auto;
 			margin-bottom: 10px;
 		}
@@ -508,7 +498,6 @@
 			color: white;
 			padding: 2px 10px;
 			margin-right: 10px;
-			font-size: 11px;
 			border: none;
 		}
 
@@ -517,21 +506,19 @@
 			color: white;
 			padding: 2px 10px;
 			margin-right: 10px;
-			font-size: 11px;
 			border: none;
 		}
 
 		.notdropbtn {
 			background-color: #2d2d2d;
 			color: white;
-			font-size: 11px;
 			border: none;
 			padding: 5px;
 			transform: translate(-5px, 2px);
 		}
 
 		.notdropbtn span {
-			font-size: 11px !important;
+			font-size: 14px !important;
 		}
 
 		/* The container <div> - needed to position the dropup content */
@@ -548,13 +535,14 @@
 			justify-content: flex-start;
 		}
 
-		/* Dropup content (Hidden by Default) */
 		.dropup-content {
 			display: flex;
-			flex-direction: row;
-			align-items: flex-start;
-			border-radius: 5px;
-			overflow: auto;
+    flex-direction: row;
+    align-items: flex-start;
+    border-radius: 5px;
+    overflow: auto;
+    gap: 0.3rem;
+    padding: 0 0.3rem;
 		}
 
 		/* Links inside the dropup */
@@ -564,10 +552,9 @@
 			display: flex;
 			flex-direction: column;
 			cursor: pointer;
-			width: 40px;
+			width: 50px;
 			transform: scale(0.75) !important;
 			animation: poprs .2s ease-out;
-			font-size: 11px;
 			white-space: nowrap;
 			text-overflow: ellipsis;
 			align-items: center;
@@ -578,7 +565,7 @@
 		}
 
 		a.dropdownerthebob span {
-			font-size: 19px !important;
+			font-size: 24px !important;
 			border-radius: 2px;
 			color: #cacaca;
 		}
@@ -646,7 +633,8 @@
 		}
 
 		.newfoldbtn span {
-			font-size: 0.8rem;
+    font-size: 1rem;
+    margin: 4px;
 		}
 
 		.drivenav {
@@ -692,8 +680,8 @@
 		}
 
 		.jstree-anchor {
-			padding: 0 6px 0 3px;
-			border-radius: 0.3rem !important;
+			padding: 4px 6px 4px 5px !important;
+			border-radius: 0.5rem !important;
 		}
 
 		.jstree-default .jstree-icon:empty {
@@ -753,7 +741,7 @@
 		#choosefile input {
 			flex: 1;
 			padding: 0.3rem;
-			font-size: 0.7rem;
+			font-size: 0.8rem;
 			font-family: inherit;
 			color: white;
 			border-radius: 0;
@@ -765,7 +753,7 @@
 
 		#choosefile button {
 			padding: 0.3rem;
-			font-size: 0.7rem;
+			font-size: 0.8rem;
 			font-family: inherit;
 			color: white;
 			border-radius: 0;
@@ -979,7 +967,7 @@
 					Import</a>
 			</div>
 		</div>
-		<div style="height: calc(100% - 48px);">
+		<div style="height: calc(100% - 66px);">
 			<div class="themainstuff">
 				<div flap-sidenav id="flap-sidenav">
 					<div class="drivenav">
@@ -1060,7 +1048,6 @@
 
 		#makefiledia label {
 			text-transform: capitalize;
-			font-size: 14px;
 			font-weight: normal;
 			opacity: 0.8;
 			margin-bottom: 0.3rem;
@@ -1077,7 +1064,6 @@
 		}
 
 		.makefilediv p {
-			font-size: 14px;
 			text-align: center;
 			opacity: 0.5;
 			margin: auto;

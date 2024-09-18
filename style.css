@@ -111,7 +111,6 @@ nav [navobj] div {
 	min-height: 200px;
 	background-color: transparent;
 	border-radius: 5px;
-	color: white;
 	font-size: var(--font-size-normal);
 	padding: 0px;
 	overflow: hidden;
@@ -252,7 +251,6 @@ nav [navobj] div {
 .app-shortcut span svg {
 	width: 31px;
     height: 31px;
-    background: #89898929;
     padding: 5px;
     border-radius: 15% / 40%;
 }
@@ -319,7 +317,7 @@ nav [navobj] div {
 	max-height: 70%;
 	transition: 0.2s;
 	background: #7d7d7d73;
-	overflow: hidden;
+	overflow: visible;
 	color: white;
 	backdrop-filter: blur(14px);
 	box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
