@@ -1909,6 +1909,7 @@ async function checkifpassright() {
 	if (await checkPassword(trypass)) {
 		gid('loginmod').close();
 		password = trypass;
+		lethalpasswordtimes = false;
 		startup();
 	} else {
 		gid("loginform1").classList.add("thatsnotrightcls");
@@ -1917,7 +1918,6 @@ async function checkifpassright() {
 			gid("loginform1").classList.remove("thatsnotrightcls");
 		}, 1000)
 	}
-	lethalpasswordtimes = false;
 }
 
 var chat;
