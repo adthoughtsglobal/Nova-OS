@@ -971,6 +971,14 @@ nav [navobj] div {
 	opacity: 0.7;
 }
 
+.backbtnscont {
+	position: fixed;
+	bottom: 10vh;
+	display: flex;
+	gap: 0.5rem;
+	flex-direction: row;
+}
+
 #loginmod .backbtnuserspg {
 	display: flex;
 	align-items: center;
@@ -981,8 +989,6 @@ nav [navobj] div {
 	padding: 0.3rem 0.9rem;
 	padding-left: 5px;
 	border: 1px solid #414141;
-	position: fixed;
-	bottom: 10vh;
 	animation: appshow 0.5s 1;
 }
 
@@ -1183,7 +1189,7 @@ nav [navobj] div {
 }
 
 .snapping {
-	transition: 0.5s ease-out;
+	transition: 0.5s cubic-bezier(1, 0.56, 0.31, 1.09);
 }
 
 .windowheader svg {

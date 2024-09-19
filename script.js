@@ -48,14 +48,14 @@ Object.defineProperty(window, 'nowapp', {
 });
 
 function loginscreenbackbtn() {
-	document.getElementsByClassName("backbtnuserspg")[0].style.display = "none";
+	document.getElementsByClassName("backbtnscont")[0].style.display = "none";
 	document.getElementsByClassName("userselect")[0].style.flex = "1";
 	document.getElementsByClassName("logincard")[0].style.flex = "0";
 }
 
 async function showloginmod() {
 	closeElementedis();
-	document.getElementsByClassName("backbtnuserspg")[0].style.display = "none";
+	document.getElementsByClassName("backbtnscont")[0].style.display = "none";
 
 	function createUserDivs(users) {
 		const usersChooser = document.getElementById('userschooser');
@@ -91,7 +91,7 @@ async function showloginmod() {
 					startup();
 				} else {
 					console.log("Password check: bad: ", password, isdefaultpass);
-					document.getElementsByClassName("backbtnuserspg")[0].style.display = "flex";
+					document.getElementsByClassName("backbtnscont")[0].style.display = "flex";
 					document.getElementsByClassName("userselect")[0].style.flex = "0";
 					document.getElementsByClassName("logincard")[0].style.flex = "1";
 					gid("loginform1").focus();
