@@ -1181,8 +1181,6 @@
 
 		<div id="defaultappsforfiles" class="tabcontent">
 			<h1>Defaults</h1>
-			<p>Choose which app opens your file by default.</p>
-			<small style="margin-bottom: 5px;"><b>Highly Ondev: </b>Sorry, you will be able to edit these soon.</small>
 			<style>
 				#appfileassos {
 					svg {
@@ -1266,12 +1264,8 @@
 			<div id="appfileassos">
 
 			</div>
-			<small style="margin-top: var(--sizing-normal);">
-				<h3>Unable to find the app you looked for?</h3>
-				<p>Check if the app supports the file in its installed version, if yes, reinstall it with the NovaOS
-					files app and open this page again. Contact the Developer of the app if the issue presists.</p>
-			</small>
 			<script>
+				var currentreqID, replaceableapp;
 				async function rldfltyptable() {
 					const fileAssociations = window.parent.fileTypeAssociations;
 
@@ -1304,13 +1298,13 @@
 
 							const defaultAppCell = document.createElement('div');
 							defaultAppCell.className = 'cell default-app-cell';
-							let subappsContent = apps.length > 1 ?
-								`<div class="subapps"><span class="material-icons">extension</span>` +
-								apps.slice(1).map(async (app, index) => await window.parent.getAppIcon(index + 1, app, true)).join(', ') +
-								`</div>` : '';
-
-							defaultAppCell.innerHTML = await window.parent.getAppIcon(0, apps[0], true) + '<br>' + subappsContent;
-
+							defaultAppCell.innerHTML = await window.parent.getAppIcon(0, apps[0], true)
+							defaultAppCell.onclick = () => {
+								replaceableapp = apps[0];
+								currentreqID = window.parent.genUID();
+				let appIdToOpen = window.parent.fileTypeAssociations['file'][0] || null;
+				window.parent.openlaunchprotocol(appIdToOpen, {"opener":"app", "dir":"Apps/"}, currentreqID, myWindow.windowID);
+							}
 
 							row.appendChild(fileTypeCell);
 							row.appendChild(defaultAppCell);
@@ -1319,11 +1313,30 @@
 
 						return table;
 					}
-					document.getElementById('appfileassos').innerHTML = '';
-					document.getElementById('appfileassos').appendChild(createTable(fileAssociations));
+					const table = await createTable(fileAssociations);
+					document.getElementById('appfileassos').innerHTML = ''
+					document.getElementById('appfileassos').appendChild(table);
 				}
 
-				rldfltyptable()
+				rldfltyptable();
+
+				window.addEventListener('message', async (event) => {
+					
+					const fileAssociations = window.parent.fileTypeAssociations;
+                if (event.data.action === 'loadlocalfile') {
+                    if (event.data.id === myWindow.windowID) {
+					  let targetAppId = replaceableapp;
+let newAppId = event.data.returned;
+
+for (let key in fileAssociations) {
+    if (fileAssociations.hasOwnProperty(key)) {
+        fileAssociations[key] = fileAssociations[key].map(appId => appId === targetAppId ? newAppId : appId);
+    }
+}
+await setSetting('fileTypeAssociations', fileAssociations);
+                    }
+                }
+            });
 			</script>
 		</div>
 

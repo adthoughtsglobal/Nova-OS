@@ -137,28 +137,30 @@ async function flushBatch() {
                 }
             }
         });
-
-        // Process all batchQueue items before starting the transaction
+        
+		const start = performance.now();
         const processedBatch = await Promise.all(batchQueue.map(async ({ value }) => {
             try {
                 const cryptoKey = await getKey(password);
-                const compresseddata = compressString(JSON.stringify(value));
-                const encryptedValue = await encryptData(cryptoKey, compresseddata);
-                return { encryptedValue };  // Prepare the data for the transaction
+                const compressedData = compressString(JSON.stringify(value));
+                const encryptedValue = await encryptData(cryptoKey, compressedData);
+                const end = performance.now();
+                console.log(`Saving took ${(end - start).toFixed(2)}ms`);
+                return { encryptedValue }; 
             } catch (error) {
                 console.error("Error processing batch item:", error);
-                return null;  // Skip this item if an error occurs
+                return null; 
             }
         }));
+        
 
-        // Start the transaction and store the pre-processed data
         const transaction = db.transaction(key, 'readwrite');
         const store = transaction.objectStore(key);
 
-        processedBatch.forEach(({ encryptedValue }, index) => {
-            if (encryptedValue) {
-                store.put({ key: CurrentUsername, value: encryptedValue });
-                batchQueue[index].resolve();  // Resolve the original promise
+        processedBatch.forEach((batchItem, index) => {
+            if (batchItem && batchItem.encryptedValue) {
+                store.put({ key: CurrentUsername, value: batchItem.encryptedValue });
+                batchQueue[index].resolve();
             } else {
                 batchQueue[index].reject(new Error("Failed to process batch item"));
             }
@@ -166,7 +168,7 @@ async function flushBatch() {
 
         await transaction.complete;
 
-        console.log(`Batch of ${processedBatch.length} saved to ` + CurrentUsername);
+        console.log(`Batch of ${processedBatch.length} saved to ${CurrentUsername}`);
         batchQueue = [];
     } catch (error) {
         console.error("Error in flushBatch function:", error);
@@ -174,7 +176,6 @@ async function flushBatch() {
         batchTimeout = null;
     }
 }
-
 const maxBatchSize = 10;
 
 function setdb(value) {
@@ -235,14 +236,58 @@ async function getdb() {
     }
 }
 
-function compressString(input) {
-    return btoa(String.fromCharCode.apply(null, flate.gzip_encode_raw(new TextEncoder().encode(JSON.stringify(input)))));
-  }
-  
-  function decompressString(compressedBase64) {
-    return JSON.parse(new TextDecoder().decode(flate.gzip_decode_raw(Uint8Array.from(atob(compressedBase64), c => c.charCodeAt(0)))));
-  }
+    // Helper function to convert Uint8Array to Base64
+    function arrayBufferToBase64(buffer) {
+        let binary = '';
+        const bytes = new Uint8Array(buffer);
+        for (let i = 0; i < bytes.byteLength; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return btoa(binary);
+    }
 
+    // Helper function to convert Base64 to Uint8Array
+    function base64ToArrayBuffer(base64) {
+        const binaryString = atob(base64);
+        const len = binaryString.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+        }
+        return bytes;
+    }
+
+    // Synchronous function to compress data
+    function compressString(input) {
+        try {
+            const inputUint8Array = new TextEncoder().encode(JSON.stringify(input));
+
+            // Compress synchronously using fflate (gzipSync)
+            const compressed = fflate.gzipSync(inputUint8Array);
+
+            // Convert compressed data to base64
+            return arrayBufferToBase64(compressed);
+        } catch (error) {
+            console.error("Compression Error:", error);
+            throw error;
+        }
+    }
+
+    // Synchronous function to decompress data
+    function decompressString(compressedBase64) {
+        try {
+            const compressedData = base64ToArrayBuffer(compressedBase64);
+
+            // Decompress synchronously using fflate (gunzipSync)
+            const decompressed = fflate.gunzipSync(compressedData);
+
+            // Decode decompressed data to JSON object
+            return JSON.parse(new TextDecoder().decode(decompressed));
+        } catch (error) {
+            console.error("Decompression Error:", error);
+            throw error;
+        }
+    }
 async function removeInvalidMagicStrings() {
     const validUsernames = new Set(await getAllUsers());
     const magicStrings = JSON.parse(localStorage.getItem('magicStrings'));
