@@ -979,6 +979,11 @@ nav [navobj] div {
 	flex-direction: row;
 }
 
+.backbtnscont ion-icon {
+    font-size: 15px;
+    margin: 5px;
+}
+
 #loginmod .backbtnuserspg {
 	display: flex;
 	align-items: center;

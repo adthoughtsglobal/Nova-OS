@@ -31,7 +31,6 @@
 		.tab {
 			flex-grow: 2;
 			height: calc(100% - 10px);
-			color: white;
 			overflow-y: auto;
 			max-width: 150px;
 			min-width: 100px;
@@ -90,7 +89,7 @@
 
 		/* Change background color of buttons on hover */
 		.tab button:hover {
-			background-color: #424242;
+			background-color: var(--colors-BG-sub);
 		}
 
 		.tab button i {
@@ -378,7 +377,6 @@
 			margin: 5px 0;
 			border-radius: var(--sizing-border-radius);
 			overflow: hidden;
-			border: 1px solid #4d4d4d;
 		}
 
 		.checkbox-wrapper-46 input[type="checkbox"] {
@@ -469,7 +467,7 @@
 
 		.progbarma {
 			width: 100%;
-			background-color: #1d1d1d;
+			background-color: var(--colors-BG-section);
 			height: 20px;
 			border-radius: var(--sizing-border-radius-full);
 			overflow: hidden;
@@ -477,7 +475,7 @@
 		}
 
 		.appli:hover {
-			background-color: #434343;
+			background-color: var(--colors-BG-sub);
 		}
 
 		.progbar {
@@ -492,7 +490,7 @@
 			border: none;
 			padding: 7px 15px;
 			background: #2e363d;
-			color: white;
+			color: inherit;
 			font-size: inherit;
 			cursor: pointer;
 		}
@@ -512,8 +510,8 @@
 		}
 
 		.inpbox select {
-			background: var(--colors-BG-highlighted);
-			color: white;
+			background: var(--colors-BG-sub);
+			color: inherit;
 			border: 1px solid var(--colors-BG-sub);
 			border-radius: var(--sizing-border-radius);
 			font-size: var(--font-size-normal);
@@ -1196,7 +1194,6 @@
 						display: flex;
 						flex-direction: column;
 						width: 100%;
-						border: 1px solid #232323;
 						border-radius: var(--sizing-normal);
 						overflow: hidden;
 					}
@@ -1875,14 +1872,34 @@ await setSetting('fileTypeAssociations', fileAssociations);
 			</style>
 			<segr>
 				<div setting class="colorsetting">
-					<b>Background</b>
+					<b>Normal Background</b>
 					<button id="normal-bg"
 						data-jscolor="{preset:'dark', width:150, paletteCols:0, onInput:'updateColor(this, \"
 						--colors-BG-normal\")'}"></button>
 				</div>
 				<div setting class="colorsetting">
+					<b>Sub Background</b>
+					<button id="sub-bg"
+						data-jscolor="{preset:'dark', width:150, paletteCols:0, onInput:'updateColor(this, \"
+						--colors-BG-sub\")'}"></button>
+				</div>
+				<div setting class="colorsetting">
+					<b>Section Background</b>
+					<button id="section-bg"
+						data-jscolor="{preset:'dark', width:150, paletteCols:0, onInput:'updateColor(this, \"
+						--colors-BG-section\")'}"></button>
+				</div>
+				<div setting class="colorsetting">
+					<b>Highlighted Background</b>
+					<button id="high-bg"
+						data-jscolor="{preset:'dark', width:150, paletteCols:0, onInput:'updateColor(this, \"
+						--colors-BG-highlighted\")'}"></button>
+				</div>
+			</segr>
+			<segr>
+				<div setting class="colorsetting">
 					<b>Accent color</b>
-					<button id="highlighted-bg"
+					<button id="accent-bg"
 						data-jscolor="{preset:'dark', width:150, paletteCols:0, onInput:'updateColor(this, \"
 						--colors-BG-highlighted\")'}"></button>
 				</div>
@@ -1893,11 +1910,10 @@ await setSetting('fileTypeAssociations', fileAssociations);
 						--colors-text-normal\")'}"></button>
 				</div>
 
-				<div setting class="colorsetting">
-					<button id="save-btn">Save</button>
-				</div>
 			</segr>
-
+			<div setting class="colorsetting">
+				<button id="save-btn">Save</button>
+			</div>
 			<script>
 				function updateColor(picker, variableName) {
 					const colorValue = picker.toHEXString();
@@ -1970,19 +1986,26 @@ await setSetting('fileTypeAssociations', fileAssociations);
 				}
 
 				function initColorPickers() {
+					// normal bg
 					document.querySelector("#normal-bg").jscolor.fromString(getCSSVariableValue('--colors-BG-normal'));
-					document.querySelector("#highlighted-bg").jscolor.fromString(getCSSVariableValue('--colors-BG-highlighted'));
+					// text normal
 					document.querySelector("#text-normal").jscolor.fromString(getCSSVariableValue('--colors-text-normal'));
+					// section bg
+					document.querySelector("#section-bg").jscolor.fromString(getCSSVariableValue('--colors-BG-section'));
+					// high bg
+					document.querySelector("#high-bg").jscolor.fromString(getCSSVariableValue('--colors-BG-highlighted'));
+					// sub bg
+					document.querySelector("#sub-bg").jscolor.fromString(getCSSVariableValue('--colors-BG-sub'));
 				}
 
 				function saveColors() {
 					const normalBgColor = document.querySelector("#normal-bg").jscolor.toHEXString();
-					const highlightedBgColor = document.querySelector("#highlighted-bg").jscolor.toHEXString();
+					const highlightedBgColor = document.querySelector("#high-bg").jscolor.toHEXString();
 					const textNormalColor = document.querySelector("#text-normal").jscolor.toHEXString();
 
 					// Adjust the normalBgColor slightly for other background-related variables
-					const sectionBgColor = adjustBrightness(normalBgColor, 10); // Lighten by 10
-					const subBgColor = adjustBrightness(normalBgColor, -10); // Darken by 10
+					const sectionBgColor = document.querySelector("#section-bg").jscolor.toHEXString();
+					const subBgColor = document.querySelector("#sub-bg").jscolor.toHEXString();
 
 					window.parent.document.documentElement.style.setProperty('--colors-BG-normal', normalBgColor);
 					window.parent.document.documentElement.style.setProperty('--colors-BG-section', sectionBgColor);

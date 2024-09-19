@@ -27,6 +27,9 @@
 	<link rel="stylesheet"
 		href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
+
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+
 	<!-- Google tag (gtag.js) -->
 	<script async src="https://www.googletagmanager.com/gtag/js?id=G-ZPX50XG58Q"></script>
 	<script>
@@ -244,17 +247,15 @@
 				<span class="logincardwelt">Welcome Back!</span>
 				<div id="loginform">
 					<input placeholder="Enter your password" id="loginform1" type="password">
-					<button onclick="checkifpassright()"><span class="material-icons">
+					<button onclick="checkifpassright()">
+					<span class="material-icons">
 							chevron_right
-						</span></button>
+						</span>
+					</button>
 				</div>
 				<div class="backbtnscont">
-					<button class="backbtnuserspg" onclick="loginscreenbackbtn()"><span class="material-icons">
-						chevron_left
-					</span> Login to a different account</button>
-					<button class="backbtnuserspg" onclick="removeUser()"><span class="material-icons">
-						delete_forever
-					</span> Remove</button>
+					<button class="backbtnuserspg" onclick="loginscreenbackbtn()"><ion-icon name="chevron-back-outline"></ion-icon> Login to a different account</button>
+					<button class="backbtnuserspg" onclick="removeUser()"><ion-icon name="close-outline"></ion-icon> Remove</button>
 				</div>
 				
 			</div>
