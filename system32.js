@@ -236,13 +236,12 @@ async function getdb() {
 }
 
 function compressString(input) {
-    return LZUTF8.compress(input, { outputEncoding: 'Base64' });
-}
-
-// Function to decompress a string
-function decompressString(compressed) {
-    return LZUTF8.decompress(compressed, { inputEncoding: 'Base64' });
-}
+    return btoa(String.fromCharCode.apply(null, flate.gzip_encode_raw(new TextEncoder().encode(JSON.stringify(input)))));
+  }
+  
+  function decompressString(compressedBase64) {
+    return JSON.parse(new TextDecoder().decode(flate.gzip_decode_raw(Uint8Array.from(atob(compressedBase64), c => c.charCodeAt(0)))));
+  }
 
 async function removeInvalidMagicStrings() {
     const validUsernames = new Set(await getAllUsers());

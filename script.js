@@ -213,8 +213,8 @@ async function startup() {
 		} catch (e) { }
 		
 		const end = performance.now();
-	} catch (err) { console.error("startup error:", err); }
 		console.log(`Startup took ${(end - start).toFixed(2)}ms`);
+	} catch (err) { console.error("startup error:", err); }
 	})
 
 }
