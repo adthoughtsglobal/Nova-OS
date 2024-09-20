@@ -1,4 +1,6 @@
-<html><head>
+<html>
+
+<head>
 	<title>Nova New Tab</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -51,17 +53,17 @@
 			font-family: 'Poppins', sans-serif;
 			transition: 2s;
 			background-repeat: no-repeat;
-			display:flex;
+			display: flex;
 			flex-direction: column;
 		}
 
 		.logo {
 			font-family: "poppins", sans-serif;
-    font-size: 1.5rem;
-    margin: 10px;
-    background: #00000030;
-    padding: 1rem 2rem;
-    border-radius: 1rem;
+			font-size: 1.5rem;
+			margin: 10px;
+			background: #00000030;
+			padding: 1rem 2rem;
+			border-radius: 1rem;
 		}
 
 		.mains {
@@ -71,18 +73,20 @@
 			align-items: center;
 			min-height: 214px;
 			height: 0;
-			flex:9;
+			flex: 9;
 			justify-items: center;
 		}
 
 		#news-section {
 			overflow-x: hidden;
-    overflow-y: scroll;
-    border-radius: 10px;
-    margin: 1rem 1rem;
-    height: 0;
-    flex: 0;
-    padding-right: 0.3rem;
+			overflow-y: scroll;
+			border-radius: 10px;
+			margin: 1rem 1rem;
+			height: 0;
+    flex-direction: column;
+    flex-wrap: nowrap;
+			flex: 0;
+			padding-right: 0.3rem;
 		}
 
 		.news-item {
@@ -99,14 +103,14 @@
 
 		.searchbr {
 			overflow: hidden;
-    border-radius: 25px;
-    padding: 0;
-    background: #2b2b2b;    
-	display: flex;
-    flex-direction: row;
-    align-items: center;
-	width: 45vw;
-	gap:0.3rem;
+			border-radius: 25px;
+			padding: 0;
+			background: #2b2b2b;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			width: 45vw;
+			gap: 0.3rem;
 		}
 
 		.searchbr form {
@@ -116,14 +120,14 @@
 
 		.searchbr input {
 			min-width: 180px;
-			flex:1;
+			flex: 1;
 			padding: 5px;
 			padding-left: 1rem;
 			font-size: 1rem;
 			border: none;
 			margin: 0;
-			background-color:inherit;
-			color:inherit;
+			background-color: inherit;
+			color: inherit;
 			display: inline-block;
 		}
 
@@ -135,28 +139,28 @@
 			border-radius: 50%;
 			aspect-ratio: 1 / 1;
 			display: flex;
-    align-items: center;
-    justify-content: center;
+			align-items: center;
+			justify-content: center;
 		}
 
 		#newses {
 			margin: 1rem;
-    border-radius: 1rem;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    background: #101010;
-}
+			border-radius: 1rem;
+			display: flex;
+			flex-direction: column;
+			height: 0;
+			flex: 1;
+			background: #101010;
+		}
 
-#slideshow-container {
-	width: 80%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    opacity: .5;
-    white-space: nowrap;
-    font-size: 0.8rem;
-}
+		#slideshow-container {
+			width: 80%;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			opacity: .5;
+			white-space: nowrap;
+			font-size: 0.8rem;
+		}
 
 		[subb] {
 			height: fit-content;
@@ -169,13 +173,13 @@
 		}
 
 		.newsnav {
-    display: flex;
-    padding: 0.5rem 1rem;
-    background: #2b2b2b;
-    align-items: center;
-    justify-content: space-between;
-	cursor: pointer;
-}
+			display: flex;
+			padding: 0.5rem 1rem;
+			background: #2b2b2b;
+			align-items: center;
+			justify-content: space-between;
+			cursor: pointer;
+		}
 	</style>
 </head>
 
@@ -184,10 +188,10 @@
 		<h1 class="logo" id="titlet">Good afternoon!</h1>
 		<div class="searchbr">
 			<form action="https://www.bing.com/search">
-			<input placeholder="Search Bing..." name="q" id="q">
-			<button><span class="material-icons">search</span></button>
+				<input placeholder="Search Bing..." name="q" id="q">
+				<button><span class="material-icons">search</span></button>
 			</form>
-			
+
 		</div>
 	</div>
 	<div id="newses">
@@ -195,36 +199,48 @@
 			<span>News <div id="slideshow-container"></div></span>
 			<span class="material-icons">expand_less</span>
 		</div>
-<div id="news-section">
+		<div id="news-section">
 
-</div>
-	  </div>
+		</div>
+	</div>
 	<script>
 
-const slideshowContainer = document.getElementById('slideshow-container');
-let currentIndex = 0;
-const fadeDuration = 3000;
+		const slideshowContainer = document.getElementById('slideshow-container');
+		let currentIndex = 0;
+		const fadeDuration = 3000;
+		var newssection = document.querySelector("#newses");
+		var searchsec = document.querySelector(".mains");
+		const newsContainer = document.getElementById('news-section');
 
 		var newsopen = false;
-		var newssection = document.querySelector("#newses");
-		const newsContainer = document.getElementById('news-section');
+		newsContainer.style.display = "none";
+		newsopen = false;
+		newsContainer.style.flex = 0;
+		newssection.style.flex = 0;
+		newssection.style.height = "fit-content";
 
 		function togglenews() {
 			if (newsopen) {
-				newssection.style.flex = 1;
+				newsContainer.style.display = "none";
 				newsopen = false;
 				newsContainer.style.flex = 0;
+				newssection.style.height = "fit-content";
+				newssection.style.flex = 0;
+				searchsec.style.display = "grid";
 			} else {
-				newssection.style.flex = 10;
+				newsContainer.style.display = "flex";
 				newsContainer.style.flex = 1;
+				newssection.style.flex = 6;
+				newssection.style.height = 0;
 				newsopen = true;
+				searchsec.style.display = "none";
 			}
 		}
 
 		function nwpsearch() {
 			location.href = "https://adthoughtsglobal.github.io/Search?q=" + document.getElementById("q").value
 		}
-		
+
 		var titlet = document.getElementById("titlet");
 		var now = new Date();
 		var hour = now.getHours();
@@ -262,7 +278,7 @@ const fadeDuration = 3000;
 			"12-26": "Happy Boxing Day!"
 		};
 
-		var currentDate = now.toISOString().slice(5,10).replace("-", "");
+		var currentDate = now.toISOString().slice(5, 10).replace("-", "");
 
 		if (holidays[currentDate]) {
 			greeting = holidays[currentDate];
@@ -282,26 +298,26 @@ const fadeDuration = 3000;
 			const script = document.createElement('script');
 			const callbackName = 'wikinewsCallback';
 
-			window[callbackName] = function(data) {
+			window[callbackName] = function (data) {
 				callback(data);
 				delete window[callbackName];
 				document.body.removeChild(script);
 			};
 
-			script.src = 'https://en.wikinews.org/w/api.php?action=query&cmdir=desc&cmlimit=5&cmprop=ids%7Ctitle%7Ctimestamp&cmsort=timestamp&cmtitle=Category%3APolitics_and_conflicts&list=categorymembers&format=json&callback=' + callbackName;
+			script.src = 'https://en.wikinews.org/w/api.php?action=query&list=recentchanges&rcnamespace=0&rclimit=20&rcprop=title|ids|timestamp|sizes|flags&format=json&callback=' + callbackName;
 			document.body.appendChild(script);
 		}
 
 		async function news() {
-			fetchWikinews(function(data) {
-				newsItems = data.query.categorymembers;
-				console.log(newsItems)
+			fetchWikinews(function (data) {
+				newsItems = data.query.recentchanges.filter(item => item.type === 'new' || item.type === 'edit');
+				console.log(newsItems); // Log the items to check the structure
 
-				newsItems.forEach(function(newsItem) {
+				newsItems.forEach(function (newsItem) {
 					const div = document.createElement('div');
 					div.classList.add('news-item');
-					div.onclick = function (){
-						window.parent.newtab("https://en.wikinews.org/wiki/"+newsItem.title+"?dpl_id=" + newsItem.pageid)
+					div.onclick = function () {
+						window.parent.newtab("https://en.wikinews.org/wiki/" + newsItem.title + "?dpl_id=" + newsItem.pageid);
 					}
 
 					const title = document.createElement('h3');
@@ -313,32 +329,34 @@ const fadeDuration = 3000;
 					div.appendChild(title);
 					div.appendChild(timestamp);
 
-					newsContainer.appendChild(div);
+					document.getElementById('news-section').appendChild(div);
 				});
-				
-startSlideshow();
+
+				// Start the slideshow after news items are rendered
+				startSlideshow();
 			});
 		}
 
-		news();
-
 		function startSlideshow() {
-  if (newsItems.length === 0) return;
-  
-  slideshowContainer.textContent = newsItems[currentIndex].title;
-  
+			if (newsItems.length === 0) return;
 
-  setInterval(() => {
-    
-    currentIndex = (currentIndex + 1) % newsItems.length;
-    
-    slideshowContainer.textContent = newsItems[currentIndex].title; // Update title text
-  }, fadeDuration);
-}
+			// Initial render of the first news item in the slideshow
+			slideshowContainer.textContent = newsItems[currentIndex].title;
 
+			setInterval(() => {
+				// Move to the next news item
+				currentIndex = (currentIndex + 1) % newsItems.length;
+
+				// Update the slideshow content
+				slideshowContainer.textContent = newsItems[currentIndex].title;
+			}, fadeDuration); // Update every `fadeDuration` milliseconds
+		}
+
+		// Call the news fetching function
+		news();
 	</script>
 
 
 </body>
-</html>
 
+</html>

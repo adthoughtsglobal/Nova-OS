@@ -159,7 +159,8 @@
         <button onclick="toggleDarkMode()" class="navbutton">Dark Mode</button>
         <script>
             var mode = "new";
-            var currentfile = null;
+            var currentfile = {};
+            currentfile.type = "text/plain";
             var currentreqID = null;
 
             function openfromfiles() {
