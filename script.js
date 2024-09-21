@@ -99,7 +99,7 @@ async function showloginmod() {
 				}
 			};
 
-			userDiv.addEventListener("pointerdown", selectUser);
+			userDiv.addEventListener("click", selectUser);
 
 			userDiv.addEventListener("keydown", function (event) {
 				if (event.key === "Enter") {
