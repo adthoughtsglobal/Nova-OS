@@ -68,11 +68,13 @@ async function showloginmod() {
 			userDiv.tabIndex = 0;
 			const selectUser = async function () {
 
-				navigator.registerProtocolHandler(
+				try {
+					navigator.registerProtocolHandler(
 					'web+nova',
 					`${location.origin}/?path=%s`,
 					'NovaOS'
 				);
+			
 				await cleanupram();
 				CurrentUsername = cacusername;
 				let isdefaultpass = false;
@@ -97,10 +99,13 @@ async function showloginmod() {
 					gid("loginform1").focus();
 					gid('loginmod').showModal()
 				}
+			} catch (err) {
+
+			}
 			};
 
-userDiv.addEventListener("click", selectUser);
-userDiv.addEventListener("touchstart", selectUser);
+			userDiv.addEventListener("click", selectUser);
+			userDiv.addEventListener("touchstart", selectUser);
 
 			userDiv.addEventListener("keydown", function (event) {
 				if (event.key === "Enter") {

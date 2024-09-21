@@ -4,18 +4,18 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
+	<meta name="nova-include" content="nova.css">
 	<meta name="nova-icon"
 		content="<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='58.43947' height='59.00267' viewBox='0,0,58.43947,59.00267'><g transform='translate(-210.7176,-150.87572)'><g data-paper-data='{&quot;isPaintingLayer&quot;:true}' fill-rule='nonzero' stroke='none' stroke-width='0' stroke-linecap='butt' stroke-linejoin='miter' stroke-miterlimit='10' stroke-dasharray='' stroke-dashoffset='0' style='mix-blend-mode: normal'><path d='M210.87572,209.12428v-58.24856h58.24856v58.24856z' fill='#ffffff'/><path d='M210.8163,204.06103l21.03728,-21.03728c0,0 13.36479,13.36479 18.17929,18.17929c3.17308,3.17308 7.89653,7.89654 7.89653,7.89654l-47.2118,0.77882z' fill='#9fd1ff'/><path d='M230.00342,209.46128l26.96478,-30.65673l12.17737,14.1504l0.01152,16.24595z' fill='#358ada'/><path d='M219.25,168.625c0,-3.72792 3.02208,-6.75 6.75,-6.75c3.72792,0 6.75,3.02208 6.75,6.75c0,3.72792 -3.02208,6.75 -6.75,6.75c-3.72792,0 -6.75,-3.02208 -6.75,-6.75z' fill='#fff69e'/></g></g></svg>">
 	<title>Gallery</title>
 	<style>
-		@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 		body {
-			color: white;
-			font-family: "Poppins", sans-serif;
+			color: var(--colors-text-normal);
 			font-weight: 400;
 			font-style: normal;
-			background-color: black;
+			background-color: var(--colors-BG-normal);
+			padding: 0 var(--sizing-huge);
 		}
 
 		h1 {
@@ -24,9 +24,8 @@
 			padding-bottom: 5px;
 			margin: 3px;
 			margin-top: 6vh;
-			border-bottom: 1px solid #353535;
+			border-bottom: 1px solid var(--colors-BG-highlighted);
 			margin-bottom: 20px;
-			font-family: "Poppins", sans-serif;
 			font-weight: normal;
 			font-style: normal;
 		}
@@ -93,7 +92,7 @@
 
 		.nofiles {
 			padding: 10px 20px;
-			background: #1c1c1c;
+			background: var(--colors-BG-sub);
 			border-radius: 10px;
 		}
 
@@ -118,7 +117,7 @@
 		.nofiles button {
 			margin: 20px 0;
 			padding: 8px 10px;
-			background: #2f2f2f;
+			background: var(--colors-BG-highlighted);
 			color: #c3c3c3;
 			border: none;
 			cursor: pointer;
@@ -126,7 +125,7 @@
 		}
 
 		.nofiles button:hover {
-			background: #3f3f3f;
+			background: var(--colors-BG-section);
 		}
 
 		.nofiles svg {
@@ -145,7 +144,7 @@
 			position: absolute;
 			top: 0px;
 			padding: 5px 10px;
-			background: #101010;
+			background: var(--colors-BG-section);
 		}
 	</style>
 	<link rel="stylesheet"
@@ -165,7 +164,7 @@
 
 		async function greenflag() {
 			try {
-								const lcldata = await window.parent.getFileNamesByFolder("Media/");
+				const lcldata = await window.parent.getFileNamesByFolder("Media/");
 				if (lcldata.length < 1) {
 					document.getElementById("cont").innerHTML = nofilesimg;
 					return;
@@ -174,22 +173,22 @@
 				// Define a map to store day divs
 				const dayDivs = {};
 
-				
-								for (const item of lcldata) {
-					
-									let x = await window.parent.getFileById(item.id);
+
+				for (const item of lcldata) {
+
+					let x = await window.parent.getFileById(item.id);
 					if (window.parent.getbaseflty(window.parent.ptypext(item.name)) != "image") {
-												return;
+						return;
 					}
 					console.time('executionTime');
 					// Assuming metadata is stored as a JSON object within the file
 					let metadata = {};
-					
-										if (x.metadata) {
-						
-												try {
+
+					if (x.metadata) {
+
+						try {
 							metadata = JSON.parse(x.metadata);
-													} catch (error) {
+						} catch (error) {
 							console.error("Error parsing metadata:", error);
 						}
 					}
@@ -203,7 +202,7 @@
 					// Check if datetime is defined and has required identifiers (e.g., 'month', 'year')
 					if (datetime && datetime.year && datetime.month && datetime.day) {
 						const dateIdentifier = `${datetime.year}-${datetime.month}-${datetime.day}`;
-												// Create day div if it doesn't exist
+						// Create day div if it doesn't exist
 						if (!dayDivs[dateIdentifier]) {
 							dayDivs[dateIdentifier] = document.createElement("div");
 							let dayHeader = document.createElement("div");
@@ -213,7 +212,7 @@
 						}
 
 						let content = await window.parent.unshrinkbsf(x.content);
-												// Create an image element
+						// Create an image element
 						const img = new Image();
 						img.src = content;
 
@@ -222,7 +221,7 @@
 							img.onload = resolve;
 						});
 
-						
+
 						img.src = content;
 
 						// Add an event listener to display the full image on click
@@ -232,7 +231,7 @@
 							let x = await window.parent.getFileById(item.id);
 
 							let y = await window.parent.unshrinkbsf(x.content);
-														if (x.metadata) {
+							if (x.metadata) {
 								const parsedMetadata = JSON.parse(x.metadata);
 								document.getElementById("flint").innerHTML = `${parsedMetadata.datetime.hour}:${parsedMetadata.datetime.minute}, ${parsedMetadata.datetime.day}/${parsedMetadata.datetime.month}/${parsedMetadata.datetime.year}`;
 							}
@@ -245,17 +244,17 @@
 					}
 					console.timeEnd('executionTime');
 				}
-			
+
 			} catch (error) {
 				console.error(error);
 			}
 		}
-			const modal = document.getElementById("fullfmd");
-			modal.addEventListener('click', function (event) {
-				if (event.target === modal) {
-					modal.close();
-				}
-			});
+		const modal = document.getElementById("fullfmd");
+		modal.addEventListener('click', function (event) {
+			if (event.target === modal) {
+				modal.close();
+			}
+		});
 	</script>
 </body>
 
