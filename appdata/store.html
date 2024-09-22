@@ -4,46 +4,21 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
+    <meta name="nova-include" content="nova.css">
 	<meta name="nova-icon"
 		content="<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='31.91668' height='31.91668' viewBox='0,0,31.91668,31.91668'><g transform='translate(-224.04166,-164.04166)'><g data-paper-data='{&quot;isPaintingLayer&quot;:true}' fill-rule='nonzero' stroke='none' stroke-linecap='butt' stroke-linejoin='miter' stroke-miterlimit='10' stroke-dasharray='' stroke-dashoffset='0' style='mix-blend-mode: normal'><path d='M224.04166,192c0,-6.80976 0,-20.37172 0,-24.11111c0,-1.87183 2.04092,-3.84723 3.95834,-3.84723c3.74381,0 17.07715,0 23.88889,0c2.46001,0 4.06945,2.04092 4.06945,3.95834c0,3.80587 0,17.52187 0,24.22222c0,2.27105 -1.56108,3.73612 -3.95834,3.73612c-6.7768,0 -20.23574,0 -24,0c-1.91742,0 -3.95834,-1.56062 -3.95834,-3.95834z' fill='#ffffff' stroke-width='NaN'/><path d='M228.75317,177.39085l1.21587,-4.42302h20.06191l1.21587,4.42302z' fill='##1f1f1f' stroke-width='0'/><path d='M229.96905,173.11069v-1.36786h20.06191v1.36786z' fill='##1f1f1f' stroke-width='0'/><path d='M229.96905,188.40003v-10.38226h20.06191v10.38226c0,0 -8.25342,0 -13.6544,0c-0.23641,0 -0.03639,-6.41414 -0.26267,-6.41414c-1.16272,0 -2.18029,0 -2.93619,0c-0.30373,0 0.03929,6.41414 -0.17238,6.41414c-1.18213,0 -3.03627,0 -3.03627,0z' fill='##1f1f1f' stroke-width='0'/><path d='M239.26143,184.2452v-2.0726h7.59955v2.0726z' fill='#ffffff' stroke-width='0'/></g></g></svg>">
 	<title>store</title>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	<style>
-		@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
 
 		html {
 			height: 100%;
 			width: 100%;
 		}
 
-		/* width */
-		::-webkit-scrollbar {
-			width: 5px;
-		}
-
-		/* Track */
-		::-webkit-scrollbar-track {
-			background: #111;
-		}
-
-		/* Handle */
-		::-webkit-scrollbar-thumb {
-			background: #2b2b2b;
-			border-radius: 5px;
-		}
-
-		/* Handle on hover */
-		::-webkit-scrollbar-thumb:hover {
-			background: #555;
-		}
-
 		body {
-			font-family: 'Poppins', sans-serif;
 			margin: 0;
-			background: #101010;
-			color: white;
 			padding-bottom: 10px;
-			font-size: 12px;
 		}
 
 		.mains {
@@ -85,7 +60,7 @@
 			display: flex;
 			border-radius: 10px;
 			padding: 5px;
-			background: #171717;
+			background: var(--colors-BG-section);
 			margin: auto 10px;
 			margin-top: 5px;
 			margin-bottom: 10px;
@@ -94,12 +69,12 @@
 		#topse input {
 			flex-grow: 5;
 			border: none;
-			font-size: 15px;
+			font-size: var(--font-size-normal);
 			outline: none;
 			padding: 5px 0;
 			margin-left: 5px;
 			background-color: transparent;
-			color: white;
+			color: var(--colors-text-normal);
 			border-radius: 15px;
 		}
 
@@ -111,12 +86,12 @@
 			padding: 7px;
 			cursor: pointer;
 			transition: .2s;
-			background: #49ac49;
+			background: var(--colors-special-good);
 			color: #dce9fc;
 		}
 
 		.installbtnicn {
-			font-size: 10px !important;
+			font-size: var(--font-size-normal) !important;
 			transform: translateY(0px) scale(1.5);
 			margin-left: 3px;
 		}
@@ -134,8 +109,8 @@
 			padding: 4px 9px;
 			animation: fa 0.5s;
 			border-radius: 11px;
-			background: linear-gradient(45deg, #131313, #1e1e1e);
-			color: white;
+			background: var(--colors-BG-section);
+			color: var(--colors-text-normal);
 			border: 2px solid transparent;
 			display: flex;
 			margin: 10px;
@@ -159,7 +134,7 @@
 			margin: 10px 0px;
 			margin-bottom: 1px;
 			font-weight: normal;
-			font-size: 1rem;
+			font-size: var(--font-size-subheading);
 		}
 
 		.app .appfes {
@@ -168,7 +143,7 @@
 
 		.app .appfes div {
 			display: inline-block;
-			font-size: smaller;
+			font-size: var(--font-size-small);
 			border: none;
 			opacity: 0.5;
 			max-width: 81px;
@@ -236,7 +211,7 @@
 			width: fit-content;
 			margin: 15px auto;
 			background: #2a2d2f;
-			color: white;
+			color: var(--colors-text-normal);
 			border: 1px solid #5b6268;
 			padding: 9px 16px;
 			border-radius: 25px;
@@ -246,7 +221,7 @@
 			padding: 5px 10px;
 			border: none;
 			background: #668aad;
-			color: white;
+			color: var(--colors-text-normal);
 			border-radius: 21px;
 			cursor: pointer;
 		}
@@ -264,24 +239,24 @@
 			opacity: 0.5;
 			margin-top: 1em;
 			display: block;
-			font-size: 0.8em;
+			font-size: var(--font-size-small);
 		}
 
 		.catonappdiv {
 			display: inline-block;
-			font-size: 13px !important;
+			font-size: var(--font-size-small) !important;
 			opacity: 0.5;
 			transform: translateY(-2px);
 			margin-left: 3px;
 		}
 
 		.app p {
-			height: 28px;
+			height: 61px;
 			width: 80%;
 			overflow: hidden;
 			word-wrap: break-word;
 			line-height: 1.25;
-			font-size: 11px;
+			font-size: var(--font-size-normal);
 			border-radius: 5px;
 			white-space: normal;
 			text-overflow: ellipsis;
@@ -402,7 +377,7 @@
 		.featured button {
 			background: #62778b;
 			border: none;
-			color: white;
+			color: var(--colors-text-normal);
 			padding: 7px 10px;
 			border-radius: 5px;
 			width: 50%;
@@ -412,9 +387,9 @@
 			width: 100%;
 			height: 100%;
 			border: none;
-			padding: 16px;
-			background: #1f1f1f;
-			color: white;
+			padding: 18px;
+			background: var(--colors-BG-sub);
+			color: var(--colors-text-normal);
 		}
 
 		.containdiv {
@@ -440,8 +415,8 @@
 			float: right;
 			padding: 5px 15px;
 			border: none;
-			background: #49ac49;
-			color: white;
+			background: var(--colors-special-good);
+			color: var(--colors-text-normal);
 			outline: 0;
 			border-radius: 4px;
 			width: fit-content;
@@ -450,11 +425,11 @@
 		}
 
 		#installer button:hover {
-			background-color: #2f2f2f;
+			background-color: var(--colors-BG-sub);
 		}
 
 		.dostuffwithit button {
-			background-color: #49ac49 !important;
+			background-color: var(--colors-special-good) !important;
 			margin-right: 5px;
 		}
 
@@ -473,8 +448,8 @@
 			align-items: center;
 			justify-items: center;
 			padding: 1rem 0;
-			font-size: 1.5rem;
-			background: #141414;
+			font-size: var(--font-size-subheading);
+			background: var(--colors-BG-section);
 			border-radius: 5px;
 			text-shadow: 0 0 10px BLACK;
 		}
@@ -488,7 +463,7 @@
 
 		#installer p button {
 			float: none;
-			background: #2f2f2f;
+			background: var(--colors-BG-highlighted);
 		}
 
 		nav .material-icons {
@@ -826,7 +801,7 @@ document.getElementById("nova-section").appendChild(appDiv);
 							};
 						} else {
 							installButton.textContent = 'Install';
-							installButton.style.backgroundColor = "#49ac49";
+							installButton.style.backgroundColor = "var(--colors-special-good)";
 							installButton.onclick = function () {
 								installapp(appDetails.find(item => item.src), appName, this);
 							};
