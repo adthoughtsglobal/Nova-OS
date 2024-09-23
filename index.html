@@ -40,6 +40,13 @@
 
 		gtag('config', 'G-ZPX50XG58Q');
 		}
+
+		
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('novaCrypt.js')
+        .then(reg => console.log('Service Worker registered:', reg))
+        .catch(err => console.error('Service Worker registration failed:', err));
+}
 	</script>
 
 </head>

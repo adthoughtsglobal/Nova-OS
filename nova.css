@@ -33,7 +33,7 @@
 }
 
 ::-webkit-scrollbar-track {
-    background: #77777714;
+    background: var(--colors-BG-normal);
     border-radius: var(--sizing-border-radius);
 }
 

@@ -167,8 +167,6 @@
 		.dostuffwithit {
 			display: inline-flex;
 			width: fit-content;
-			float: right;
-			transform: translateY(-45px);
 			align-items: center;
 			justify-content: center;
 		}
@@ -404,11 +402,12 @@
 
 		#installer h1 {
 			display: inline-block;
-			margin-bottom: 6px;
 			width: calc(100% - 110px);
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
+			width: 0;
+			flex: 1;
 		}
 
 		#installer button {
@@ -426,6 +425,11 @@
 
 		#installer button:hover {
 			background-color: var(--colors-BG-sub);
+		}
+
+		.installerappbasedata {
+			display: flex;
+			flex-direction: row;
 		}
 
 		.dostuffwithit button {
@@ -545,10 +549,12 @@
 			<div id="apptheme">
 				Theme
 			</div>
-			<h1 id="installerappname">Loading...</h1>
-			<div class="dostuffwithit">
-			<button id="openbtn">Open</button>
-			<button id="installButton">...</button>
+			<div class="installerappbasedata">
+				<h1 id="installerappname">Loading...</h1>
+				<div class="dostuffwithit">
+				<button id="openbtn">Open</button>
+				<button id="installButton">...</button>
+				</div>
 			</div>
 			<b id="installerappby">...</b>
 			<b>Overview</b>

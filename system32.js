@@ -98,27 +98,27 @@ async function encryptData(key, data) {
 }
 
 async function decryptData(key, encryptedData) {
-    const iv = new Uint8Array(encryptedData.iv);
-    const data = new Uint8Array(encryptedData.data);
+    return new Promise((resolve, reject) => {
+        if (navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({
+                type: 'decrypt',
+                key,
+                encryptedData
+            });
 
-    try {
-        const decrypted = await window.crypto.subtle.decrypt(
-            { name: "AES-GCM", iv },
-            key,
-            data
-        );
-
-        return decoder.decode(decrypted);
-    } catch (error) {
-        console.error("Incorrect password or corrupted data", password, error);
-        if (!lethalpasswordtimes) {
-            document.body.innerHTML = `<div style="padding: 2rem;" class="bsod"><hitbx class="hitbox" title="time">
-						<span id="time-display">time</span><br>
-						<span id="date-display">date</span>
-					</hitbx><h1>System Error</h1><p>We have found that<br>Your System is running on an incorrect password or corrupted data. This is what you can do about it:<br><br><button onclick="erdbsfull()">Erase all data</button><button onclick="location.reload()">Reload System</button></div><br><br>`;
+            navigator.serviceWorker.addEventListener('message', function handler(event) {
+                if (event.data.type === 'decrypted') {
+                    resolve(event.data.result);
+                    navigator.serviceWorker.removeEventListener('message', handler);
+                } else if (event.data.type === 'error') {
+                    reject(event.data.error);
+                    navigator.serviceWorker.removeEventListener('message', handler);
+                }
+            });
+        } else {
+            reject(new Error('Service Worker not available.'));
         }
-        throw error;
-    }
+    });
 }
 
 let batchQueue = [];
@@ -644,6 +644,7 @@ async function removeUser(username = CurrentUsername) {
 
 function removeSWs() {
 	if ('serviceWorker' in navigator) {
+
         // Get all service worker registrations
         navigator.serviceWorker.getRegistrations()
           .then(registrations => {

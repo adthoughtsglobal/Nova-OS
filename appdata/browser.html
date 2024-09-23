@@ -29,7 +29,7 @@
 		}
 
 		iframe {
-			height: calc(100vh - 90px);
+			height: calc(100vh - 98px);
 			width: calc(100vw - 6px);
 			margin: 3px;
 			border-radius: 5px;
@@ -67,7 +67,7 @@
 		}
 
 		.urlnav .inpgrp {
-			width: calc(100% - 135px);
+			width: calc(100% - 140px);
 			background: #181818;
 			border-radius: 25px;
 			padding: 1px 4px;
@@ -488,56 +488,41 @@
 		}
 
 		function isitago(eve) {
-			if (eve.key === "Enter") {
-				eve.preventDefault();
-				let input = document.getElementById("deinput").value;
-				if (isValidURL(input)[0]) {
-					input = isValidURL(input)[1];
+    if (eve.key === "Enter") {
+        eve.preventDefault();
+        let input = document.getElementById("deinput").value;
+        const [isValid, validatedUrl] = isValidURL(input);
+        let finalUrl = isValid ? validatedUrl : "https://adthoughtsglobal.github.io/Search?q=" + encodeURIComponent(input);
 
-					if (!proxy) {
-						document.getElementById("ifr" + nowtab).src = input;
-					} else {
-						fetch(`${proxyurl}${encodeURIComponent(input)}`)
-							.then(response => response.json())
-							.then(data => {
-								console.log(data)
-								const blob = new Blob([data.contents], {type: 'text/html'});
-								console.log(blob);
-								const url = URL.createObjectURL(blob);
-								document.getElementById("ifr" + nowtab).src = url;
-							})
-							.catch(error => console.error('Error fetching the resource:', error));
-					}
+        try {
+            let qsets = localStorage.getItem("qsets");
+            if (qsets && !isValid) {
+                let qsetsObj = JSON.parse(qsets);
+                if (qsetsObj.defSearchEngine === "Bing") {
+                    finalUrl = "https://www.bing.com/search?q=" + encodeURIComponent(input);
+                }
+            }
+        } catch (error) {
+            console.log(`safe error: ${error.message.includes("cross-origin ") ? "CORS error" : error}`);
+        }
 
-					tabhistory.push(input)
-				} else {
-					let searchQuery = "https://adthoughtsglobal.github.io/Search?q=" + encodeURIComponent(input);
-					try {
-						let qsets = localStorage.getItem("qsets");
-						if (qsets) {
-							let qsetsObj = JSON.parse(qsets);
-							if (qsetsObj.defSearchEngine == "Bing") {
-								searchQuery = "https://www.bing.com/search?q=" + encodeURIComponent(input);
-							}
-						}
-					} catch (error) {
-						console.log(`safe error: ${error.message.includes("cross-origin ") ? "CORS error" : error}`);
-					}
+        if (proxy) {
+            const proxyUrl = proxyurl + (isValid ? validatedUrl : encodeURIComponent(finalUrl)); // No need to double encode valid URLs
+            fetch(proxyUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const blob = new Blob([data.contents], { type: 'text/html' });
+                    const url = URL.createObjectURL(blob);
+                    document.getElementById("ifr" + nowtab).src = url;
+                })
+                .catch(error => console.error('Error fetching the resource:', error));
+        } else {
+            document.getElementById("ifr" + nowtab).src = finalUrl;
+        }
 
-					const proxyUrl = "https://cors-anywhere.herokuapp.com/";
-
-					fetch(proxyUrl + searchQuery)
-						.then(response => response.blob())
-						.then(blob, response => {
-							console.log(response, blob)
-							const url = URL.createObjectURL(blob);
-							document.getElementById("ifr" + nowtab).src = url;
-						})
-						.catch(error => console.error('Error fetching the resource:', error));
-					tabhistory.push(searchQuery)
-				}
-			}
-		}
+        tabhistory.push(finalUrl);
+    }
+}
 
 		function truncateMiddle(str, frontChars, backChars, maxLength) {
 			if (str.length <= maxLength) {
