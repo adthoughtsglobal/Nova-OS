@@ -942,6 +942,24 @@
 					<p>If enabled, Nova will try to cache the os and save it offline.
 					</p>
 				</div>
+
+				<div setting>
+					<div class="checkbox-wrapper-51">
+						<input type="checkbox" id="cbx-71" role="submit">
+						<label for="cbx-71" class="toggle">
+							<span>
+								<svg width="10px" height="10px" viewBox="0 0 10 10">
+									<path
+										d="M5,1 L5,1 C2.790861,1 1,2.790861 1,5 L1,5 C1,7.209139 2.790861,9 5,9 L5,9 C7.209139,9 9,7.209139 9,5 L9,5 C9,2.790861 7.209139,1 5,1 L5,9 L5,1 Z">
+									</path>
+								</svg>
+							</span>
+						</label>
+					</div>
+					<b>Enable Nova Copilot</b>
+					<p>AI copilot in your Nova Nav.
+					</p>
+				</div>
 				<div setting>
 					<div class="checkbox-wrapper-51">
 						<input type="checkbox" id="cbx-69" role="submit">
@@ -1062,6 +1080,21 @@
 						try {
 							if (await window.parent.getSetting("novaOffline")) {
 								document.getElementById("cbx-70").checked = true;
+							}
+						} catch (error) {
+							console.error(error)
+						}
+
+						
+						// nova copilot
+						document.getElementById("cbx-71").addEventListener("change", function () {
+							let newValue2 = document.getElementById("cbx-71").checked;
+							window.parent.setSetting("copilot", newValue2)
+						});
+
+						try {
+							if (await window.parent.getSetting("copilot")) {
+								document.getElementById("cbx-71").checked = true;
 							}
 						} catch (error) {
 							console.error(error)
@@ -1829,6 +1862,9 @@ await setSetting('fileTypeAssociations', fileAssociations);
 				</div>
 			</segr>
 			<h1>Colors</h1>
+			<button onclick="applyColorsFromImageURL()">Adapt from image</button>
+
+			<canvas id="canvas" style="display:none;"></canvas>
 			<style>
 				.jscolor {
 					width: 35px;
@@ -2016,6 +2052,75 @@ await setSetting('fileTypeAssociations', fileAssociations);
 
 				window.addEventListener('load', initColorPickers);
 				document.querySelector("#save-btn").addEventListener('click', saveColors);
+
+				function applyColorsFromImageURL(imageURL = prompt("Enter image URL")) {
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            const image = new Image();
+            
+            image.crossOrigin = 'Anonymous'; // This ensures the image can be processed if it's hosted on another domain
+
+            image.onload = () => {
+                canvas.width = image.width;
+                canvas.height = image.height;
+                ctx.drawImage(image, 0, 0, image.width, image.height);
+                const imgData = ctx.getImageData(0, 0, image.width, image.height);
+
+                const avgColor = getAverageColor(imgData);
+                const invertedColor = invertColor(avgColor);
+
+                // Apply the colors to CSS variables
+                document.documentElement.style.setProperty('--colors-BG-normal', colorToString(avgColor));
+                document.documentElement.style.setProperty('--colors-text-normal', colorToString(invertedColor));
+                document.documentElement.style.setProperty('--colors-BG-sub', colorToString(adjustBrightness(avgColor, -0.2)));
+                document.documentElement.style.setProperty('--colors-BG-section', colorToString(adjustBrightness(avgColor, -0.1)));
+                document.documentElement.style.setProperty('--colors-BG-highlighted', colorToString(adjustBrightness(avgColor, 0.2)));
+                document.documentElement.style.setProperty('--colors-BG-accent', colorToString(adjustBrightness(avgColor, 0.3)));
+                
+                // Apply colors to jscolor inputs
+                document.querySelector("#normal-bg").jscolor.fromString(colorToString(avgColor));
+                document.querySelector("#text-normal").jscolor.fromString(colorToString(invertedColor));
+                document.querySelector("#section-bg").jscolor.fromString(colorToString(adjustBrightness(avgColor, -0.1)));
+                document.querySelector("#high-bg").jscolor.fromString(colorToString(adjustBrightness(avgColor, 0.2)));
+                document.querySelector("#sub-bg").jscolor.fromString(colorToString(adjustBrightness(avgColor, -0.2)));
+            };
+
+            image.src = imageURL;
+        }
+
+        function getAverageColor(imgData) {
+            const data = imgData.data;
+            let r = 0, g = 0, b = 0;
+            const pixelCount = imgData.width * imgData.height;
+
+            for (let i = 0; i < data.length; i += 4) {
+                r += data[i];
+                g += data[i + 1];
+                b += data[i + 2];
+            }
+
+            r = Math.floor(r / pixelCount);
+            g = Math.floor(g / pixelCount);
+            b = Math.floor(b / pixelCount);
+
+            return { r, g, b };
+        }
+
+        function invertColor({ r, g, b }) {
+            return { r: 255 - r, g: 255 - g, b: 255 - b };
+        }
+
+        function adjustBrightness({ r, g, b }, factor) {
+            return {
+                r: Math.min(255, Math.max(0, Math.floor(r * (1 + factor)))),
+                g: Math.min(255, Math.max(0, Math.floor(g * (1 + factor)))),
+                b: Math.min(255, Math.max(0, Math.floor(b * (1 + factor))))
+            };
+        }
+
+        function colorToString({ r, g, b }) {
+            return `rgb(${r}, ${g}, ${b})`;
+        }
 			</script>
 			<h1>Personalization</h1>
 			<segr>

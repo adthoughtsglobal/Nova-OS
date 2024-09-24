@@ -236,7 +236,7 @@ if ('serviceWorker' in navigator) {
 
 	async function waitForNonNull() {
 		const startTime = Date.now();
-		const maxWaitTime = 3000; // 3 seconds
+		const maxWaitTime = 3000;
 
 		while (Date.now() - startTime < maxWaitTime) {
 			const result = await updateMemoryData();
@@ -657,6 +657,12 @@ async function dod() {
 			remSetting("wall");
 		}
 	};
+
+	if (await getSetting("copilot")) {
+		gid("copilotbtn").style.display = "";
+	} else {
+		gid("copilotbtn").style.display = "none";
+	}
 
 	scaleUIElements(await getSetting("UISizing"))
 }
@@ -1983,19 +1989,20 @@ const sendMessage = () => {
 
 	const payload = {
 		messages: chat,
-		model: 'blackbox'
+		model: 'novaOS'
 	};
 
 	fetch('https://api.milosantos.com/v1/chat/completions', {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
-			"Authorization": "Bearer ml_uwYLJFCuVhgkqL6xl705SHGC"
+			"Authorization": "Bearer ml_rulKTOnMNP5dT4ieX4CqyWhS"
 		},
 		body: JSON.stringify(payload),
 	})
 		.then(response => response.json())
 		.then(data => {
+			console.log(data);
 			const responseMessage = data.choices[0].message.content;
 
 			chat.push({ "role": "assistant", "content": responseMessage });
@@ -2007,7 +2014,7 @@ const sendMessage = () => {
 		})
 		.catch(error => {
 			console.error('Error:', error);
-			const errorMessage = 'Sorry, the server isnt working. \nContact VerAI and ask them to fix it. NovaOS is sorry as we cannot do anything about it.';
+			const errorMessage = 'Sorry, we are unable to provide this service at the moment.';
 
 			chat.push({ "role": "assistant", "content": errorMessage });
 			nvacopilot.message(errorMessage, "bot");

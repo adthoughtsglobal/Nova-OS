@@ -53,7 +53,7 @@
 		.flappsearch {
 			flex-grow: 10 !important;
 			text-align: center !important;
-			color: #b8b8b8;
+			color: var(--colors-text-normal);
 			display: grid;
 			align-items: center;
 		}
@@ -108,7 +108,7 @@
 		}
 
 		.sdfld:hover {
-			background-color: #2f2f2f;
+			background-color: var(--colors-BG-sub);
 		}
 
 		.sdfld span {
@@ -149,7 +149,7 @@
 			margin-bottom: 0.1rem;
 			opacity: 70%;
 			flex-direction: row;
-			background-color: #181818;
+			background-color: var(--colors-BG-normal);
 			border-radius: 0.3rem;
 			padding: 3px 0px;
 		}
@@ -232,7 +232,7 @@
 		}
 
 		.file:hover {
-			background: #373737;
+			background: var(--colors-BG-highlighted);
 		}
 
 		.file small {
@@ -338,7 +338,7 @@
 		}
 
 		#slfile[grid] [flname] {
-			background: #78716C;
+			background: var(--colors-BG-highlighted);
 		}
 
 		[bottomnav] {
@@ -567,12 +567,14 @@
 		a.dropdownerthebob span {
 			font-size: 24px !important;
 			border-radius: 2px;
-			color: #cacaca;
+			opacity: 0.7;
+			color: var(--colors-text-normal);
 		}
 
 		/* Change color of dropup links on hover */
 		.dropup-content a:hover {
-			color: white;
+			opacity: 1;
+			color: var(--colors-text-normal);
 		}
 
 		/* Change the background color of the dropup button when the dropup content is shown */
@@ -605,7 +607,7 @@
 			padding: 0.5em;
 			border-radius: 7.5px;
 			height: 37px;
-			background-color: #2b2b2b;
+			background-color: var(--colors-BG-highlighted);
 			box-shadow: 0 3px 1rem rgba(0, 0, 0, 0.685);
 			opacity: 0.8;
 			transition: .2s;
@@ -614,7 +616,7 @@
 
 		.newfilebtn:hover {
 			opacity: 1;
-			background-color: #3a3a3a;
+			background-color: var(--colors-BG-sub);
 			box-shadow: 0 3px 1.5rem black;
 		}
 
@@ -1110,12 +1112,12 @@
 		}
 
 		.jstree-default .jstree-clicked {
-			background: #2c2c2c;
+			background: var(--colors-BG-highlighted);
 			box-shadow: none;
 		}
 
 		.jstree-default .jstree-hovered {
-			background: #272727;
+			background: var(--colors-BG-sub);
 			box-shadow: none;
 		}
 
