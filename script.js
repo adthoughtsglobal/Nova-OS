@@ -227,6 +227,12 @@ async function startup() {
 
 document.addEventListener("DOMContentLoaded", async function () {
 	console.log("DOMCL");
+		
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('novaCrypt.js')
+        .then(reg => console.log('Service Worker registered:', reg))
+        .catch(err => console.error('Service Worker registration failed:', err));
+}
 
 	async function waitForNonNull() {
 		const startTime = Date.now();
