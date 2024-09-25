@@ -388,6 +388,8 @@
 		</span></button>
 		<a onclick="theskibidiscan()">Scan everything for music</a>
 	</dialog>
+
+    <canvas id="particleCanvas"></canvas>
 	<div class="main-flex-container">
 		<div class="player">
 			<div class="details">
@@ -430,11 +432,6 @@
 					<button onclick="shuffle()">
 						<span class="material-symbols-rounded">
 							shuffle
-						</span>
-					</button>
-					<button onclick="minimode()">
-						<span class="material-symbols-rounded">
-							featured_video
 						</span>
 					</button>
 				</div>
@@ -561,7 +558,6 @@
 		renderQueue()
 
 		function loadTrack(trackName) {
-    console.log("Loading track: " + trackName);
 
     // Check if the track exists in the track_list
     if (!track_list.hasOwnProperty(trackName)) {
@@ -595,7 +591,6 @@
     jsmediatags.read(blob, {
         onSuccess: function(tag) {
             const metadata = tag.tags;
-            console.log('Metadata:', metadata);
 
             // Update UI with track information
             track_name.textContent = trackName;
@@ -666,24 +661,25 @@ function sliderbgupt() {
 		}
 
 		function openfromfiles() {
-			window.parent.openlaunchprotocol("files", { "type": "open" })
+			currentreqID = window.parent.genUID();
+            let appIdToOpen = window.parent.fileTypeAssociations['file'][0] || null;
+            window.parent.openlaunchprotocol(appIdToOpen, { "opener":'any', "dir": "Downloads/" }, currentreqID, myWindow.windowID);
 			primaryalert.close();
 			primaryalert.style.display = "none"
 		}
 
-		window.addEventListener('storage', async (event) => {
-			if (event.key === 'todo') {
+		window.addEventListener('message', async (event) => {
+                console.log(event, currentreqID)
+                if (event.data.action === 'loadlocalfile') {
+                    if (event.data.id === myWindow.windowID) {
+                        const file = await window.parent.getFileById(event.data.returned);
+                        readthefile(file.content, file, file.fileName);
+                    }
+                }
+            });
 
-				if (JSON.parse(localStorage.getItem("todo")).type == "opentotext") {
-
-
-					const file = await window.parent.getFileById(JSON.parse(localStorage.getItem("todo")).lclfile);
-
-					readthefile(window.parent.unshrinkbsf(file.content), file.fileName)
-				}
-			}
-		});
-		function readthefile(base64Url, fileName = 'Unknown Title') {
+		function readthefile(base64Url, filethings, fileName = 'Unknown Title') {
+			console.log(fileName);
     const base64String = base64Url.split(',')[1];
     const binaryString = atob(base64String);
     const bytes = new Uint8Array(binaryString.length);
@@ -851,10 +847,10 @@ function theskibidiscan() {
             return bytes.buffer;
         };
 
-        const processFile = async (fileContent, fileInfo) => {
+        const processFile = async (fileContent, fileInfo, filename) => {
             // Simulating async file read operation
             await new Promise(resolve => setTimeout(resolve, 0));
-            readthefile(window.parent.unshrinkbsf(fileContent), fileInfo);
+            readthefile(fileContent, fileInfo, filename);
         };
 
         const processFolder = async (folder, basePath = '') => {
@@ -863,7 +859,7 @@ function theskibidiscan() {
                 if (key.endsWith('/')) {
                     filePromises.push(processFolder(folder[key], `${basePath}${key}`));
                 } else if (isMusicFile(key)) {
-                    filePromises.push(processFile(folder[key].content, folder[key]));
+                    filePromises.push(processFile(folder[key].content, folder[key], key));
                 }
             }
             await Promise.all(filePromises);
@@ -894,30 +890,96 @@ primaryalert.close();
     return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
 }
 
-function minimode() {
-	playmoedrn = 'mini'
-	myWindow.element.style = `left: 1rem;
-    top: 1rem;
-    width: 22rem;
-    height: 12rem;
-    min-height: 0;
-    z-index: 0;`;
-	let basebodystyle = `    background: #00000080;
-    backdrop-filter: blur(2rem) saturate(0);`
-	document.body.style = basebodystyle;
-	myWindow.titleElement.parentElement.parentElement.style = basebodystyle;
-	gid("queuewindow").style.display = "none";
-	document.getElementsByClassName("player")[0].style.margin = "0";
-	document.getElementsByClassName("player")[0].style.flexDirection = "row";
-	document.getElementsByClassName("player")[0].style.flexWrap = "wrap";
-	document.getElementsByClassName("details")[0].style.width = "50%";
-	document.getElementsByClassName("details")[0].style.marginTop = "0";
-	document.getElementsByClassName("buttons")[0].style.width = "fit-content";
-	document.getElementsByClassName("buttons")[0].style.background = "transparent";
-	document.getElementsByClassName("slider_container")[0].style = "position: absolute; top: 0;";
-	document.getElementsByClassName("slider_container")[1].style.display = "none";
-	gid('baseimg').style.display = "none";
-}
+
+const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particlesArray = [];
+        const numParticles = 100;
+
+        // Create particles
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = 1;
+                this.speedX = Math.random() * 2 - 1;
+                this.speedY = Math.random() * 2 - 1;
+                this.baseSize = 1; // Initial particle size
+            }
+
+            update(audioData) {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                // Wrap around edges
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+
+                // Update size based on audio data
+                this.size = this.baseSize + audioData * 0.5; // Adjust size sensitivity here
+            }
+
+            draw() {
+                ctx.fillStyle = 'white';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.closePath();
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            for (let i = 0; i < numParticles; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+        
+        curr_track.addEventListener('play', () => {
+            // Ensure the audio context starts on play
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const audioSource = audioContext.createMediaElementSource(curr_track); // Pass the correct audio element
+            const analyser = audioContext.createAnalyser();
+
+            audioSource.connect(analyser);
+            analyser.connect(audioContext.destination);
+
+            analyser.fftSize = 256;
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+
+            function getAudioData() {
+                analyser.getByteFrequencyData(dataArray);
+                return dataArray.reduce((sum, value) => sum + value, 0) / bufferLength;
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                const audioData = getAudioData() / 255;
+
+                particlesArray.forEach(particle => {
+                    particle.update(audioData);
+                    particle.draw();
+                });
+
+                requestAnimationFrame(animate);
+            }
+
+            initParticles();
+            animate();
+        });
+
+        // Handle resizing of canvas
+        window.addEventListener('resize', function() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
 	</script>
 </body>
 

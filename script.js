@@ -1373,7 +1373,7 @@ async function strtappse(event) {
 
 		if (searchValue === "i love nova") {
 			gid("searchwindow").close();
-			notify("hmm", "you're really goofy...", "Nova just replied you:");
+			notify("Aw i read what you just typed in,", "I love you too! :)", "Nova just replied you:");
 			really = true;
 			return;
 		}
@@ -1431,7 +1431,9 @@ async function strtappse(event) {
 		gid("seapppreview").style.display = "none";
 	}
 
-	gid("strtappsugs").style.display = elements > 0 ? "block" : "none";
+	if (elements == 0) {
+		gid("strtappsugs").innerHTML =`<p style="margin:1rem; opacity: 0.5;">No results</p>`
+	}
 }
 function calculateSimilarity(string1, string2) {
 	const m = string1.length;
