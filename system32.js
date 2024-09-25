@@ -222,6 +222,7 @@ async function getdb() {
 				resolve(memory);
 			  } catch (error) {
 				console.error("Decryption error:", error);
+                (lethalpasswordtimes) ? null : location.reload();
 				reject(3);
 			  }
 		    } else {
