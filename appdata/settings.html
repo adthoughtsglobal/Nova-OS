@@ -1177,7 +1177,8 @@
 						}
 						document.getElementById("timefrmt").addEventListener("change", function () {
 							let newValue = document.getElementById("timefrmt").value;
-							window.parent.setSetting("timefrmt", newValue)
+							window.parent.setSetting("timefrmt", newValue);
+							window.parent.say("Reload NovaOS for the changes to take effect.");
 						});
 
 						let selinp2 = document.getElementById("defSearchEngine");

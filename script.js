@@ -165,8 +165,14 @@ async function startup() {
 	const start = performance.now();
 	await updateMemoryData().then(async () => {
 		try {
+			setsrtpprgbr(70);
+			try {
+				qsetsRefresh()
+				timetypecondition = await getSetting("timefrmt") == '24 Hour' ? false : true;
+			} catch { }
 			gid('startupterms').innerHTML = "Initialising...";
 			updateTime();
+			setsrtpprgbr(80);
 			await checkdmode();
 			setsrtpprgbr(100)
 			gid('startupterms').innerHTML = "Startup completed";
@@ -284,23 +290,21 @@ if ('serviceWorker' in navigator) {
 });
 
 let timeFormat;
-var condition = true;
-try {
-	qsetsRefresh()
-	condition = getSetting("timefrmt") == '24 Hour' ? false : true;
-} catch { }
+var timetypecondition = true;
 
 function updateTime() {
 	const now = new Date();
 	let hours = now.getHours();
-	if (condition) {
+	if (timetypecondition) {
 		// 12-hour format
 		const ampm = hours >= 12 ? 'PM' : 'AM';
 		hours = (hours % 12) || 12;
 		timeFormat = `${hours}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')} ${ampm}`;
+		gid('time-display').style.fontSize = "11px";
 	} else {
 		// 24-hour format
 		timeFormat = `${hours.toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+		gid('time-display').style.fontSize = "var(--font-size-small)";
 	}
 
 	const date = `${now.getDate().toString().padStart(2, '0')}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getFullYear()}`;
@@ -520,7 +524,7 @@ function updateBattery() {
 		var batteryLevel = Math.floor(battery.level * 100);
 		var isCharging = battery.charging;
 
-		// Display or hide the battery info based on conditions
+		// Display or hide the battery info based on timetypeconditions
 		if ((batteryLevel === 100 && isCharging) || (batteryLevel === 0 && isCharging)) {
 			document.getElementById("batterydisdiv").style.display = "none";
 		} else {
