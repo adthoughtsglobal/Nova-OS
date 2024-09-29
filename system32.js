@@ -667,3 +667,258 @@ function removeSWs() {
         console.log('Service workers not supported.');
       }
   }
+
+  
+// MEMORY MANAGEMENT FUNCTIONS
+
+async function getFileNamesByFolder(folderName) {
+	try {
+		const filesInFolder = [];
+
+		for (const key in memory) {
+			if (key === folderName || key.startsWith(folderName)) {
+				const isFolder = key.endsWith('/');
+				if (isFolder) {
+					const folder = memory[key];
+					for (const fileName in folder) {
+						if (!fileName.endsWith('/')) {
+							const file = folder[fileName];
+							filesInFolder.push({ id: file.id, name: fileName });
+						}
+					}
+				}
+			}
+		}
+
+		return filesInFolder;
+	} catch (error) {
+		console.error("Error fetching data:", error);
+		return null;
+	}
+}
+
+async function getFileByPath(path) {
+	await updateMemoryData();
+	const segments = path.split('/');
+	let current = memory;
+
+	for (let i = 0; i < segments.length; i++) {
+		const segment = segments[i];
+		const isLastSegment = i === segments.length - 1;
+
+		if (segment + '/' in current && !isLastSegment) {
+			current = current[segment + '/'];
+		} else if (segment in current && isLastSegment) {
+			return current[segment];
+		} else {
+			return null;
+		}
+	}
+
+	return current;
+}
+
+var idMap = {};
+
+async function getFileById(id) {
+	if (!id) return undefined;
+	await updateMemoryData();
+
+	if (idMap[id]) {
+		return {
+			path: idMap[id],
+			...findFileDetails(id, memory)
+		};
+	}
+
+	function findFileDetails(id, folder, currentPath = '') {
+		for (let key in folder) {
+			const item = folder[key];
+			if (item && typeof item === 'object') {
+				if (item.id === id) {
+					idMap[id] = currentPath;
+					return {
+						fileName: key,
+						id: item.id,
+						content: item.content,
+						metadata: item.metadata,
+						path: currentPath
+					};
+				} else if (key.endsWith('/')) {
+					const result = findFileDetails(id, item, currentPath + key);
+					if (result) return result;
+				}
+			}
+		}
+		return null;
+	}
+
+	return findFileDetails(id, memory);
+}
+
+async function getFolderNames() {
+	try {
+		await updateMemoryData()
+		const folderNames = [];
+
+		for (const key in memory) {
+			if (key.endsWith('/')) {
+				folderNames.push(key);
+			}
+		}
+
+		return folderNames;
+	} catch (error) {
+		console.error("Error fetching data:", error);
+		return null;
+	}
+}
+
+async function moveFileToFolder(flid, dest) {
+	console.log("Moving file: " + flid + " to: " + dest);
+
+	let fileToMove = await getFileById(flid);
+
+	await createFile(dest, fileToMove.fileName, fileToMove.type, fileToMove.content, fileToMove.metadata);
+
+	await remfile(flid);
+}
+
+async function remfile(ID) {
+	try {
+		await updateMemoryData();
+
+		function removeFileFromFolder(folder) {
+			for (const [name, content] of Object.entries(folder)) {
+				if (name.endsWith('/')) {
+					if (removeFileFromFolder(content)) return true;
+				} else if (content.id === ID) {
+					delete folder[name];
+					console.log("File eliminated.");
+					return true;
+				}
+			}
+			return false;
+		}
+
+		let fileRemoved = removeFileFromFolder(memory);
+
+		if (!fileRemoved) {
+			console.error(`File with ID "${ID}" not found.`);
+		} else {
+			await setdb(memory);
+		}
+	} catch (error) {
+		console.error("Error fetching or updating data:", error);
+	}
+}
+
+async function remfolder(folderPath) {
+	try {
+		await updateMemoryData()
+
+		let parts = folderPath.split('/').filter(part => part);
+		let current = memory;
+		let parent = null;
+		let key = null;
+
+		for (let i = 0; i < parts.length; i++) {
+			let part = parts[i] + '/';
+			if (current.hasOwnProperty(part)) {
+				parent = current;
+				key = part;
+				current = current[part];
+			} else {
+				console.error(`Folder "${folderPath}" not found.`);
+				return;
+			}
+		}
+		if (parent && key) {
+			delete parent[key];
+			console.log(`Folder Eliminated: "${folderPath}"`);
+		} else {
+			console.error(`Unable to delete folder "${folderPath}".`);
+			return;
+		}
+
+		await setdb(memory);
+	} catch (error) {
+		console.error("Error removing folder:", error);
+	}
+}
+async function updateFile(folderName, fileId, newData) {
+	function findFile(folder, fileId) {
+		for (let key in folder) {
+			if (typeof folder[key] === 'object' && folder[key] !== null) {
+				if (folder[key].id === fileId) {
+					return { parent: folder, key: key };
+				} else if (key.endsWith('/') && typeof folder[key] === 'object') {
+					let result = findFile(folder[key], fileId);
+					if (result) {
+						return result;
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	try {
+		let targetFolder = memory;
+		let folderNames = folderName.split('/');
+		for (let name of folderNames) {
+			if (name) {
+				targetFolder = targetFolder[name + '/'];
+				if (!targetFolder) {
+					throw new Error(`Folder "${name}" not found.`);
+				}
+			}
+		}
+
+		let fileLocation = findFile(targetFolder, fileId);
+
+		if (fileLocation) {
+			let fileToUpdate = fileLocation.parent[fileLocation.key];
+			fileToUpdate.metadata = newData.metadata !== undefined ? JSON.stringify(newData.metadata) : fileToUpdate.metadata;
+			fileToUpdate.content = newData.content !== undefined ? newData.content : fileToUpdate.content;
+			fileToUpdate.fileName = newData.fileName !== undefined ? newData.fileName : fileLocation.key;
+			fileToUpdate.type = newData.type !== undefined ? newData.type : fileToUpdate.type;
+
+			if (newData.fileName !== undefined && newData.fileName !== fileLocation.key) {
+				fileLocation.parent[newData.fileName] = fileToUpdate;
+				delete fileLocation.parent[fileLocation.key];
+			}
+
+			await setdb(memory);
+			console.log(`Modified: "${fileToUpdate.fileName}"`);
+		} else {
+			console.log(`Creating New: "${fileId}"`);
+			targetFolder[newData.fileName || `NewFile_${fileId}`] = {
+				id: fileId,
+				metadata: newData.metadata ? JSON.stringify(newData.metadata) : '',
+				content: newData.content || '',
+				type: newData.type || ''
+			};
+			await setdb(memory);
+		}
+	} catch (error) {
+		console.error("Error updating file:", error);
+	}
+}
+
+function createFolderStructure(folderName) {
+	let parts = folderName.split('/');
+	let current = memory;
+	for (let part of parts) {
+		part += '/';
+		if (!current[part]) {
+			current[part] = {};
+		}
+		current = current[part];
+	}
+	return current;
+}
+
+function dragfl(ev, obj) {
+	ev.dataTransfer.setData("Text", obj.getAttribute('unid'));
+}

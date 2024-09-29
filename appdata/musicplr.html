@@ -29,14 +29,31 @@
 			color: white;
 		}
 
+		.pagebody {
+			display: relative;
+		}
+
 		.material-symbols-rounded {
 			font-weight: 200;
 		}
 
 		.main-flex-container {
 			display: flex;
-			flex-direction: row;
+    flex-direction: row;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    z-index: 2;
+    left: 0;
+		}
+
+		#particleCanvas {
 			height: 100%;
+	position: absolute;
+    top: 0;
+    left: 0;
+	z-index: 1;
 		}
 
 		.player {
@@ -82,7 +99,8 @@
     align-items: center;
     width: 60%;
     justify-content: space-evenly;
-    background: #1f1f1f;
+    background: #34343445;
+    backdrop-filter: blur(0.8rem);
     border-radius: 3rem;
     padding: 0.5rem;
     margin-top: 1rem;
@@ -178,12 +196,12 @@
 
 		#queuewindow {
 			flex: 1;
-			width: 0;
-			background: inherit;
-			margin: 1rem;
-			border-radius: 1rem;
-			padding: 1rem;
-			backdrop-filter: brightness(1.5);
+    width: 0;
+    margin: 1rem;
+    border-radius: 1rem;
+    padding: 1rem;
+    background: #34343445;
+    backdrop-filter: blur(0.8rem);
 		}
 
 		.queuewinnav {
@@ -389,76 +407,79 @@
 		<a onclick="theskibidiscan()">Scan everything for music</a>
 	</dialog>
 
-    <canvas id="particleCanvas"></canvas>
-	<div class="main-flex-container">
-		<div class="player">
-			<div class="details">
-				<img id="baseimg" src="">
-				<div class="track-name">Track Name</div>
-				<div class="track-artist">Track Artist</div>
-			</div>
-			<div class="buttons">
-				<div class="prev-track" onclick="prevTrack()"><span class="material-symbols-rounded">
-						skip_previous
-					</span></div>
-				<div class="playpause-track" onclick="playpauseTrack()"><span class="material-symbols-rounded">
-						play_circle
-					</span></div>
-				<div class="next-track" onclick="nextTrack()"><span class="material-symbols-rounded">
-						skip_next
-					</span></div>
-			</div>
-			<div class="slider_container">
-				<div class="current-time">00:00</div>
-				<input type="range" min="1" max="100" value="0" class="seek_slider" onchange="seekTo()">
-				<div class="total-duration">00:00</div>
-			</div>
-			<div class="slider_container">
-				<span class="material-symbols-rounded">
-					no_sound
-				</span>
-				<input type="range" min="1" max="100" value="99" class="volume_slider" onchange="setVolume()">
-				<span class="material-symbols-rounded">
-					volume_up
-				</span>
-			</div>
-		</div>
-		<div id="queuewindow">
-			<div class="queuewinnav">
-				<span class="queuenavtit">Queue
-					<div class="now-playing">Playing 1 / 1</div>
-				</span>
-				<div class="buttonside">
-					<button onclick="shuffle()">
-						<span class="material-symbols-rounded">
-							shuffle
-						</span>
-					</button>
+	<div class="pagebody">
+			
+		<canvas id="particleCanvas"></canvas>
+		<div class="main-flex-container">
+			<div class="player">
+				<div class="details">
+					<img id="baseimg" src="">
+					<div class="track-name">Track Name</div>
+					<div class="track-artist">Track Artist</div>
 				</div>
-			</div>
-			<div id="tracklist">
-				<div class="trackwid">
-					<div class="icon">
-						<span class="material-symbols-rounded">
-							music_note
-						</span>
-					</div>
-					<div class="detailswid">
-						<b class="TrackName">Track Name</b>
-						<span class="ArtistName">Artist Name</span>
-					</div>
-					<span class="material-symbols-rounded rmtrfrqu">
-						close
+				<div class="buttons">
+					<div class="prev-track" onclick="prevTrack()"><span class="material-symbols-rounded">
+							skip_previous
+						</span></div>
+					<div class="playpause-track" onclick="playpauseTrack()"><span class="material-symbols-rounded">
+							play_circle
+						</span></div>
+					<div class="next-track" onclick="nextTrack()"><span class="material-symbols-rounded">
+							skip_next
+						</span></div>
+				</div>
+				<div class="slider_container">
+					<div class="current-time">00:00</div>
+					<input type="range" min="1" max="100" value="0" class="seek_slider" onchange="seekTo()">
+					<div class="total-duration">00:00</div>
+				</div>
+				<div class="slider_container">
+					<span class="material-symbols-rounded">
+						no_sound
+					</span>
+					<input type="range" min="1" max="100" value="99" class="volume_slider" onchange="setVolume()">
+					<span class="material-symbols-rounded">
+						volume_up
 					</span>
 				</div>
 			</div>
-			<button class="createtrackbtn" onclick="openfromfiles()">
-				<span class="material-symbols-rounded">
-					add
-				</span>
-			</button>
-		</div>
+			<div id="queuewindow">
+				<div class="queuewinnav">
+					<span class="queuenavtit">Queue
+						<div class="now-playing">Playing 1 / 1</div>
+					</span>
+					<div class="buttonside">
+						<button onclick="shuffle()">
+							<span class="material-symbols-rounded">
+								shuffle
+							</span>
+						</button>
+					</div>
+				</div>
+				<div id="tracklist">
+					<div class="trackwid">
+						<div class="icon">
+							<span class="material-symbols-rounded">
+								music_note
+							</span>
+						</div>
+						<div class="detailswid">
+							<b class="TrackName">Track Name</b>
+							<span class="ArtistName">Artist Name</span>
+						</div>
+						<span class="material-symbols-rounded rmtrfrqu">
+							close
+						</span>
+					</div>
+				</div>
+				<button class="createtrackbtn" onclick="openfromfiles()">
+					<span class="material-symbols-rounded">
+						add
+					</span>
+				</button>
+			</div>
 
+		</div>
 	</div>
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
@@ -485,7 +506,7 @@
 		let updateTimer;
 
 		// Create new audio element
-		let curr_track = document.createElement('audio');
+		var curr_track = document.createElement('audio');
 
 		let track_list = {};
 
@@ -889,97 +910,142 @@ primaryalert.close();
 	function rgbToHex(r, g, b) {
     return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
 }
-
-
 const canvas = document.getElementById('particleCanvas');
-        const ctx = canvas.getContext('2d');
+const ctx = canvas.getContext('2d');
 
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-        const particlesArray = [];
-        const numParticles = 25;
+let particlesArray = [];
+let baseNumParticles = 25;
 
-        // Create particles
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = 1;
-                this.speedX = Math.random() * 2 - 1;
-                this.speedY = Math.random() * 2 - 1;
-                this.baseSize = 1; // Initial particle size
+class Particle {
+    constructor() {
+        this.reset();
+    }
+
+    reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 1 + 1;
+        this.speedX = 0;
+        this.speedY = 0;
+        this.baseSize = 1;
+        this.lifespan = Math.random() * 200 + 30;
+        this.opacity = 0;
+        this.maxOpacity = Math.random() * 0.7 + 0.3;
+        this.fadeIn = true;
+    }
+
+    update(volume, speedFactor) {
+        this.x += this.speedX * speedFactor;
+        this.y += this.speedY * speedFactor;
+
+        if (this.x > canvas.width) this.x = 0;
+        if (this.x < 0) this.x = canvas.width;
+        if (this.y > canvas.height) this.y = 0;
+        if (this.y < 0) this.y = canvas.height;
+
+        this.size = this.baseSize + volume * 25;
+
+        if (this.fadeIn) {
+            this.opacity += 0.02;
+            if (this.opacity >= this.maxOpacity) {
+                this.fadeIn = false;
             }
-
-            update(audioData) {
-                this.x += this.speedX;
-                this.y += this.speedY;
-
-                // Wrap around edges
-                if (this.x > canvas.width) this.x = 0;
-                if (this.x < 0) this.x = canvas.width;
-                if (this.y > canvas.height) this.y = 0;
-                if (this.y < 0) this.y = canvas.height;
-
-                // Update size based on audio data
-                this.size = this.baseSize + audioData * 0.5; // Adjust size sensitivity here
-            }
-
-            draw() {
-                ctx.fillStyle = 'white';
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.closePath();
-                ctx.fill();
+        } else {
+            this.lifespan -= 1;
+            if (this.lifespan <= 0) {
+                this.opacity -= 0.02;
             }
         }
 
-        function initParticles() {
-            for (let i = 0; i < numParticles; i++) {
-                particlesArray.push(new Particle());
-            }
+        if (this.opacity <= 0) {
+            this.reset();
         }
-        
-        curr_track.addEventListener('play', () => {
-            // Ensure the audio context starts on play
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const audioSource = audioContext.createMediaElementSource(curr_track); // Pass the correct audio element
-            const analyser = audioContext.createAnalyser();
+    }
 
-            audioSource.connect(analyser);
-            analyser.connect(audioContext.destination);
+    draw() {
+        ctx.fillStyle = `rgba(30, 30, 30, ${this.opacity})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.fill();
+    }
+}
 
-            analyser.fftSize = 256;
-            const bufferLength = analyser.frequencyBinCount;
-            const dataArray = new Uint8Array(bufferLength);
+function initParticles(num) {
+    for (let i = 0; i < num; i++) {
+        particlesArray.push(new Particle());
+    }
+}
 
-            function getAudioData() {
-                analyser.getByteFrequencyData(dataArray);
-                return dataArray.reduce((sum, value) => sum + value, 0) / bufferLength;
-            }
+function removeOldParticles() {
+    particlesArray = particlesArray.filter(particle => particle.opacity > 0);
+}
 
-            function animate() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
+let audioContext;
+let analyser;
+let audioSource;
+let bufferLength;
+let dataArray;
 
-                const audioData = getAudioData() / 255;
+function initAudioAnalyser() {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioContext.createAnalyser();
+        analyser.fftSize = 256;
+        bufferLength = analyser.frequencyBinCount;
+        dataArray = new Uint8Array(bufferLength);
 
-                particlesArray.forEach(particle => {
-                    particle.update(audioData);
-                    particle.draw();
-                });
+        audioSource = audioContext.createMediaElementSource(curr_track);
+        audioSource.connect(analyser);
+        analyser.connect(audioContext.destination);
+    }
+}
 
-                requestAnimationFrame(animate);
-            }
+curr_track.addEventListener('play', () => {
+    initAudioAnalyser();
 
-            initParticles();
-            animate();
+    function getAudioData() {
+        analyser.getByteFrequencyData(dataArray);
+
+        const volume = dataArray.reduce((sum, value) => sum + value, 0) / bufferLength;
+        const lowFrequency = dataArray[10];
+        const highFrequency = dataArray[bufferLength - 1];
+        const speedFactor = (lowFrequency + highFrequency) / 255;
+
+        return { volume, speedFactor };
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const { volume, speedFactor } = getAudioData();
+
+        const additionalParticles = Math.floor(volume / 10);
+        if (particlesArray.length < baseNumParticles + additionalParticles) {
+            initParticles(additionalParticles);
+        }
+
+        particlesArray.forEach(particle => {
+            particle.update(volume / 255, speedFactor);
+            particle.draw();
         });
 
-        // Handle resizing of canvas
-        window.addEventListener('resize', function() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
+        removeOldParticles();
+
+        requestAnimationFrame(animate);
+    }
+
+    initParticles(baseNumParticles);
+    animate();
+});
+
+window.addEventListener('resize', function() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
 	</script>
 </body>
 
