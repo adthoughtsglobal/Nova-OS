@@ -1848,7 +1848,7 @@ await setSetting('fileTypeAssociations', fileAssociations);
 			</segr>
 			<segr>
 				<div setting>
-					<b>UI Size</b>
+					<b>UI Size <label real="">BETA</label></b>
 					<div class="UISIZEcontainer">
 
 						<div class="UISIZEslider-labels">
@@ -1862,11 +1862,19 @@ await setSetting('fileTypeAssociations', fileAssociations);
 					</div>
 				</div>
 			</segr>
-			<h1>Colors</h1>
-			<button onclick="applyColorsFromImageURL()">Adapt from image</button>
+			<h1>Colors <label real>BETA</label></h1> 
+			<button onclick="applyColorsFromImageURL()" style="margin-bottom: 1rem;">Adapt from image URL</button>
 
 			<canvas id="canvas" style="display:none;"></canvas>
 			<style>
+				label[real] {
+					font-size: var(--font-size-small);
+    background-color: rgb(139 62 62);
+    color: white;
+    border-radius: 5px;
+    padding: 3px 5px;
+    margin-left: 5px;
+				}
 				.jscolor {
 					width: 35px;
 					height: 35px;
@@ -1938,7 +1946,7 @@ await setSetting('fileTypeAssociations', fileAssociations);
 					<b>Accent color</b>
 					<button id="accent-bg"
 						data-jscolor="{preset:'dark', width:150, paletteCols:0, onInput:'updateColor(this, \"
-						--colors-BG-highlighted\")'}"></button>
+						--colors-BG-accent\")'}"></button>
 				</div>
 				<div setting class="colorsetting">
 					<b>Text color</b>
@@ -1948,9 +1956,7 @@ await setSetting('fileTypeAssociations', fileAssociations);
 				</div>
 
 			</segr>
-			<div setting class="colorsetting">
 				<button id="save-btn">Save</button>
-			</div>
 			<script>
 				function updateColor(picker, variableName) {
 					const colorValue = picker.toHEXString();
@@ -2031,6 +2037,8 @@ await setSetting('fileTypeAssociations', fileAssociations);
 					document.querySelector("#section-bg").jscolor.fromString(getCSSVariableValue('--colors-BG-section'));
 					// high bg
 					document.querySelector("#high-bg").jscolor.fromString(getCSSVariableValue('--colors-BG-highlighted'));
+					// accent bg
+					document.querySelector("#accent-bg").jscolor.fromString(getCSSVariableValue('--colors-BG-accent'));
 					// sub bg
 					document.querySelector("#sub-bg").jscolor.fromString(getCSSVariableValue('--colors-BG-sub'));
 				}
@@ -2047,6 +2055,7 @@ await setSetting('fileTypeAssociations', fileAssociations);
 					window.parent.document.documentElement.style.setProperty('--colors-BG-normal', normalBgColor);
 					window.parent.document.documentElement.style.setProperty('--colors-BG-section', sectionBgColor);
 					window.parent.document.documentElement.style.setProperty('--colors-BG-highlighted', highlightedBgColor);
+					window.parent.document.documentElement.style.setProperty('--colors-BG-accent', highlightedBgColor);
 					window.parent.document.documentElement.style.setProperty('--colors-BG-sub', subBgColor);
 					window.parent.document.documentElement.style.setProperty('--colors-text-normal', textNormalColor);
 				}

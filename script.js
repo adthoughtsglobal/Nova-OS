@@ -1,4 +1,4 @@
-var batteryLevel, winds = {}, rp, flwint = true, memory, _nowapp, fulsapp = false, nowappdo, appsHistory = [], nowwindow, appicns = {}, dev = true, appfound = 'files', fileslist = [], qsetscache = {};
+var batteryLevel, winds = {}, rp, flwint = true, memory = {tree: {}, contentpool: new Map()}, _nowapp, fulsapp = false, nowappdo, appsHistory = [], nowwindow, appicns = {}, dev = true, appfound = 'files', fileslist = [], qsetscache = {};
 var really = false, initmenuload = true, fileTypeAssociations = {}, Gtodo, notifLog = {}, initialization = false, onstartup = [];
 var novaFeaturedImage = `Dev.png`;
 
@@ -822,61 +822,63 @@ function genUID() {
 	}
 	return randomString;
 }
-
 async function createFolder(folderNames, folderData) {
-	try {
-		await updateMemoryData();
+    try {
+        await updateMemoryData();
 
-		if (typeof folderNames === 'string') {
-			folderNames = [folderNames];
-		} else if (!(folderNames instanceof Set)) {
-			throw new Error('folderNames should be a Set or a string');
-		}
+        if (typeof folderNames === 'string') {
+            folderNames = [folderNames];
+        } else if (!(folderNames instanceof Set || Array.isArray(folderNames))) {
+            throw new Error('folderNames should be a Set or a string');
+        }
 
-		// Convert Set to array if necessary
-		folderNames = Array.isArray(folderNames) ? folderNames : [...folderNames];
+        folderNames = Array.from(folderNames); // Ensure folderNames is an array
 
-		folderNames.forEach(folderName => {
-			let parts = folderName.replace(/\/$/, '').split('/');
-			let current = memory;
+        for (const folderName of folderNames) {
+            const parts = folderName.replace(/\/$/, '').split('/'); // Remove trailing slash for folder name
+            let current = memory.tree;
 
-			parts.forEach(part => {
-				part += '/';
-				current[part] = current[part] || {};
-				current = current[part];
-			});
-		});
+            for (const part of parts) {
+                const folderKey = part + '/'; // Always append a trailing slash
+                current[folderKey] = current[folderKey] || {}; // Create folder if it doesn't exist
+                current = current[folderKey]; // Move deeper into the tree
+            }
+        }
 
-		(function insertData(target, data) {
-			for (let key in data) {
-				if (typeof data[key] === 'object' && !data[key].id) {
-					insertData(target[key + '/'] = target[key + '/'] || {}, data[key]);
-				} else {
-					target[key] = data[key];
-				}
-			}
-		})(memory, folderData);
+        // Insert data into the folder structure
+        const insertData = (target, data) => {
+            for (const key in data) {
+                if (typeof data[key] === 'object' && data[key] !== null) {
+                    target[key] = target[key] || {}; // Ensure target exists
+                    insertData(target[key], data[key]); // Recursive insertion for nested objects
+                } else {
+                    target[key] = data[key]; // Directly assign data
+                }
+            }
+        };
 
-		await setdb(memory);
-		console.log('Folders created successfully.');
-	} catch (error) {
-		console.error("Error creating folders and data:", error);
-	}
+        insertData(memory.tree, folderData); // Insert data into the tree
+
+        await setdb(memory); // Save changes to the database
+        console.log('Folders created successfully.');
+    } catch (error) {
+        console.error("Error creating folders and data:", error);
+    }
 }
 
 function folderExists(folderName) {
-	let parts = folderName.replace(/\/$/, '').split('/');
-	let current = memory;
+    const parts = folderName.replace(/\/$/, '').split('/');
+    let current = memory.tree; // Update to point to memory.tree
 
-	for (let part of parts) {
-		part += '/';
-		if (!current[part]) {
-			return false;
-		}
-		current = current[part];
-	}
+    for (let part of parts) {
+        part += '/';
+        if (!current[part]) {
+            return false; // Folder does not exist
+        }
+        current = current[part];
+    }
 
-	return true;
+    return true; // Folder exists
 }
 
 function isBase64(str) {
@@ -921,79 +923,64 @@ function isBase64(str) {
 		return false;
 	}
 }
+async function createFile(folderName, fileName, type, content, metadata = {}) {
+    const fileNameWithExtension = type ? `${fileName}.${type}` : fileName;
 
-async function createFile(folderName2, fileName, type, content, metadata = {}) {
-	const folderName = folderName2.replace(/\/$/, '');
-	const fileName2 = type ? `${fileName}.${type}` : fileName;
+    if (!fileNameWithExtension) return null;
 
-	if (!fileName2) {
-		console.log("Cannot find file name. Can't create file.");
-		return null;
-	}
+    await updateMemoryData();
 
-	await updateMemoryData();
+    // Ensure the folder exists with the trailing slash
+    if (!folderExists(folderName)) await createFolder(folderName);
 
-	if (!folderExists(folderName)) {
-		await createFolder(folderName);
-	}
+    const folder = memory.tree[folderName] || {};
 
-	const folder = createFolderStructure(folderName);
+    try {
+        let base64data = isBase64(content) ? content : '';
 
-	try {
-		let base64data = isBase64(content) ? content : '';
+        if (!base64data) {
+            const mimeType = type ? `application/${type}` : 'application/octet-stream';
+            const blob = new Blob([content], { type: mimeType });
+            const reader = new FileReader();
+            reader.readAsDataURL(blob);
+            reader.onloadend = async function () {
+                base64data = reader.result;
+                await handleFile(folder, folderName, fileNameWithExtension, base64data, type, metadata);
+            };
+        } else {
+            await handleFile(folder, folderName, fileNameWithExtension, base64data, type, metadata);
+        }
+    } catch (error) {
+        console.error("Error in createFile:", error);
+        return null;
+    }
 
-		if (!base64data) {
-			// Create a Blob from the content
-			const mimeType = type ? `application/${type}` : 'application/octet-stream';
-			const blob = new Blob([content], { type: mimeType });
+    async function handleFile(folder, folderName, fileNameWithExtension, base64data, type, metadata) {
+        if (type === "app" && fileNameWithExtension.endsWith(".app")) {
+            const appData = await getFileByPath(`Apps/${fileNameWithExtension}`);
+            if (appData) {
+                await updateFile("Apps", appData.id, { metadata, content: base64data, fileName: fileNameWithExtension, type });
+                extractAndRegisterCapabilities(appData.id, base64data);
+                return appData.id || null;
+            }
+        }
 
-			// Create a URL for the Blob and convert to Base64
-			const reader = new FileReader();
-			reader.readAsDataURL(blob);
-			reader.onloadend = async function () {
-				base64data = reader.result; // Use the full Data URL with prefix
-
-				await handleFile(folder, folderName, fileName2, base64data, type, metadata);
-			};
-		} else {
-			await handleFile(folder, folderName, fileName2, base64data, type, metadata);
-		}
-	} catch (error) {
-		console.error("Error creating file:", error);
-		return null;
-	}
-
-	// Helper function to handle file creation or update
-	async function handleFile(folder, folderName, fileName2, base64data, type, metadata) {
-		if (type === "app" && fileName2.endsWith(".app")) {
-			console.log("Installing NovaOS Application");
-			const appData = await getFileByPath(`Apps/${fileName2}`);
-			if (appData) {
-				await updateFile("Apps", appData.id, { metadata, content: base64data, fileName: fileName2, type });
-				extractAndRegisterCapabilities(appData.id, base64data);
-				return appData.id || null;
-			}
-		}
-
-		const existingFile = Object.values(folder).find(file => file.fileName === fileName2);
-		if (existingFile) {
-			console.log(`Updating "${folderName}/${fileName2}"`);
-			await updateFile(folderName, existingFile.id, { metadata, content: base64data, fileName: fileName2, type });
-			return existingFile.id;
-		} else {
-			const uid = genUID();
-			metadata.datetime = getfourthdimension();
-			folder[fileName2] = { id: uid, type, content: base64data, metadata: JSON.stringify(metadata) };
-			console.log(`Created "${folderName}/${fileName2}"`);
-			if (type === "app" && fileName2.endsWith(".app")) {
-				extractAndRegisterCapabilities(uid, base64data);
-			}
-			await setdb(memory);
-			return uid;
-		}
-	}
+        const existingFile = Object.values(folder).find(file => file.fileName === fileNameWithExtension);
+        if (existingFile) {
+            await updateFile(folderName, existingFile.id, { metadata, content: base64data, fileName: fileNameWithExtension, type });
+            return existingFile.id;
+        } else {
+            const uid = genUID();
+            metadata.datetime = getfourthdimension();
+            folder[fileNameWithExtension] = { id: uid, type, metadata: JSON.stringify(metadata) };
+            if (type === "app" && fileNameWithExtension.endsWith(".app")) extractAndRegisterCapabilities(uid, base64data);
+            memory.tree[folderName] = folder;
+            memory.contentpool[uid] = base64data;
+            await setdb(memory);
+            return uid;
+        }
+    }
 }
-
 async function extractAndRegisterCapabilities(appId, content) {
 	try {
 		if (!content) {
@@ -1196,20 +1183,24 @@ async function makewall(deid) {
 async function initialiseOS() {
 	console.log("Setting Up NovaOS\n\nUsername: " + CurrentUsername + "\nWith: Sample preset\nUsing host: " + location.href)
 	initialization = true
-	const memory = {
-		"Downloads/": {
-			"Welcome.txt": {
-				"id": "sibq81",
-				"content": "Welcome to Nova OS! kindly reach us https://adthoughtsglobal.github.io and connect via the available options, we will respond you back! Enjoy!"
-			},
-			"Subfolder/": {
-				"Subfile.txt": {
-					"id": "1283jh",
-					"content": "This is a file inside a subfolder."
+	memory = {
+		"tree":{
+			"Downloads": {
+				"Welcome.txt": {
+					"id": "sibq81"
+				},
+				"Subfolder/": {
+					"Subfile.txt": {
+						"id": "1283jh"
+					}
 				}
-			}
+			},
+			"Apps": {}
 		},
-		"Apps/": {}
+		"contentpool":new Map([
+			['1283jh', 'Welcome to Nova OS! kindly reach us https://adthoughtsglobal.github.io and connect via the available options, we will respond you back! Enjoy!'],
+			['sibq81', 'This is a file inside a subfolder.']
+		  ])
 	};
 
 	setdb(memory).then(async function () {
@@ -1251,7 +1242,7 @@ async function installdefaultapps() {
 			}
 			const fileContent = await response.text();
 
-			createFile("Apps", toTitleCase(appName), "app", fileContent);
+			createFile("Apps/", toTitleCase(appName), "app", fileContent);
 		} catch (error) {
 			console.error("Error updating " + appName + ":", error.message);
 			if (attempt < maxRetries) {

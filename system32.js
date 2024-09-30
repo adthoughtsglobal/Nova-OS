@@ -123,7 +123,7 @@ async function decryptData(key, encryptedData) {
 
 let batchQueue = [];
 let batchTimeout = null;
-const batchInterval = 500; // Time interval for batching in milliseconds
+const batchInterval = 500; 
 
 async function flushBatch() {
     const databaseName = 'trojencat';
@@ -153,20 +153,25 @@ async function flushBatch() {
             }
         }));
         
-
         const transaction = db.transaction(key, 'readwrite');
         const store = transaction.objectStore(key);
-
-        processedBatch.forEach((batchItem, index) => {
+        
+        for (let index = 0; index < processedBatch.length; index++) {
+            const batchItem = processedBatch[index];
             if (batchItem && batchItem.encryptedValue) {
-                store.put({ key: CurrentUsername, value: batchItem.encryptedValue });
-                batchQueue[index].resolve();
+                const memoryValue = { key: CurrentUsername, value: batchItem.encryptedValue };
+        
+                await store.put(memoryValue);
+                batchQueue[index].resolve(); // Resolve the corresponding promise
             } else {
                 batchQueue[index].reject(new Error("Failed to process batch item"));
             }
+        }
+        
+        await new Promise((resolve, reject) => {
+            transaction.oncomplete = () => resolve();
+            transaction.onerror = () => reject(transaction.error);
         });
-
-        await transaction.complete;
 
         console.log(`Batch of ${processedBatch.length} saved to ${CurrentUsername}`);
         batchQueue = [];
@@ -207,37 +212,39 @@ function setdb(value) {
 }
 async function getdb() {
     try {
-	  const db = await openDB(databaseName, 1);
-	  const transaction = db.transaction('dataStore', 'readonly');
-	  const store = transaction.objectStore('dataStore');
-	  const request = store.get(CurrentUsername);
+        const db = await openDB(databaseName, 1);
+        const transaction = db.transaction('dataStore', 'readonly');
+        const store = transaction.objectStore('dataStore');
+        const request = store.get(CurrentUsername);
 
-	  return new Promise((resolve, reject) => {
-		request.onsuccess = async () => {
-		    if (request.result) {
-			  try {
-				const cryptoKey = await getKey(password);
-				const decryptedValue = await decryptData(cryptoKey, request.result.value);
-				memory = parseEscapedJsonString(decompressString(decryptedValue));
-				resolve(memory);
-			  } catch (error) {
-				console.error("Decryption error:", error);
-                (lethalpasswordtimes) ? null : location.reload();
-				reject(3);
-			  }
-		    } else {
-			  resolve(null);
-		    }
-		};
+        return new Promise((resolve, reject) => {
+            request.onsuccess = async () => {
+                if (request.result) {
+                    try {
+                        const cryptoKey = await getKey(password);
+                        const decryptedValue = await decryptData(cryptoKey, request.result.value);
+                        memory = parseEscapedJsonString(decompressString(decryptedValue));
+                        resolve(memory);
+                    } catch (error) {
+                        console.error("Decryption error:", error);
+                        if (!lethalpasswordtimes) {
+                            location.reload();
+                        }
+                        reject(3);
+                    }
+                } else {
+                    resolve(null);
+                }
+            };
 
-		request.onerror = () => reject(request.error);
-	  });
+            request.onerror = () => reject(request.error);
+        });
     } catch (error) {
-	  console.error("Error in getdb function:", error);
+        console.error("Error in getdb function:", error);
+        throw error;
     }
 }
-
-    // Helper function to convert Uint8Array to Base64
+    
     function arrayBufferToBase64(buffer) {
         let binary = '';
         const bytes = new Uint8Array(buffer);
@@ -247,7 +254,7 @@ async function getdb() {
         return btoa(binary);
     }
 
-    // Helper function to convert Base64 to Uint8Array
+    
     function base64ToArrayBuffer(base64) {
         const binaryString = atob(base64);
         const len = binaryString.length;
@@ -258,15 +265,15 @@ async function getdb() {
         return bytes;
     }
 
-    // Synchronous function to compress data
+    
     function compressString(input) {
         try {
             const inputUint8Array = new TextEncoder().encode(JSON.stringify(input));
 
-            // Compress synchronously using fflate (gzipSync)
+            
             const compressed = fflate.gzipSync(inputUint8Array);
 
-            // Convert compressed data to base64
+            
             return arrayBufferToBase64(compressed);
         } catch (error) {
             console.error("Compression Error:", error);
@@ -274,15 +281,15 @@ async function getdb() {
         }
     }
 
-    // Synchronous function to decompress data
+    
     function decompressString(compressedBase64) {
         try {
             const compressedData = base64ToArrayBuffer(compressedBase64);
 
-            // Decompress synchronously using fflate (gunzipSync)
+            
             const decompressed = fflate.gunzipSync(compressedData);
 
-            // Decode decompressed data to JSON object
+            
             return JSON.parse(new TextDecoder().decode(decompressed));
         } catch (error) {
             console.error("Decompression Error:", error);
@@ -350,7 +357,7 @@ async function getallusers() {
     }
 }
 
-// settings store functions
+
 let MemoryTimeCache = null;
 let isFetchingMemory = false;
 let cachedData = null;
@@ -429,24 +436,18 @@ function parseEscapedJsonString(escapedString) {
 async function ensurePreferencesFileExists() {
     await updateMemoryData();
     try {
-        if (!memory["System/"]) {
-            memory["System/"] = {};
+        memory.tree["System/"] = memory.tree["System/"] || {};
+        if (!memory.tree["System/"]["preferences.json"]) {
+            const defaultPreferences = {
+                "defFileLayout": "List",
+                "wsnapping": true,
+                "smartsearch": true,
+                "CamImgFormat": "WEBP",
+                "defSearchEngine": "Bing"
+            };
+            const dataUri = `data:application/json;base64,${btoa(JSON.stringify(defaultPreferences))}`;
+            await createFile("System/", "preferences.json", false, dataUri);
         }
-        if (!memory["System/"]["preferences.json"]) {
-    const defaultPreferences = {
-        "defFileLayout": "List",
-        "wsnapping": true,
-        "smartsearch": true,
-        "CamImgFormat": "WEBP",
-        "defSearchEngine": "Bing"
-    };
-
-    // Encode the default preferences as Base64 with MIME type
-    const defaultContent = btoa(JSON.stringify(defaultPreferences));
-    const dataUri = `data:application/json;base64,${defaultContent}`;
-
-    await createFile("System/", "preferences.json", false, dataUri);
-}
     } catch (err) {
         console.log("Error ensuring preferences file exists", err);
     }
@@ -463,10 +464,11 @@ async function getSetting(key) {
         if (cached && (Date.now() - cached.t < settingscacheDuration)) return cached.v;
 
         await ensurePreferencesFileExists();
-        const content = memory["System/"]["preferences.json"]["content"];
+        const content = memory.tree["System/"]["preferences.json"];
         if (!content) return;
 
-        const preferences = JSON.parse(atob(content.split(",")[1]));
+        const base64Content = memory.contentpool[content.id]; // Directly access content
+        const preferences = JSON.parse(atob(base64Content.split(",")[1])); // Extract Base64 content
         settingsCache[key] = { v: preferences[key], t: Date.now() };
         return preferences[key];
     } catch (error) {
@@ -479,20 +481,14 @@ async function setSetting(key, value) {
         if (!memory) return null;
 
         await ensurePreferencesFileExists();
-        let content = memory["System/"]["preferences.json"]["content"];
-        
-        let preferences = {};
+        const content = memory.tree["System/"]["preferences.json"];
+        let preferences = content ? JSON.parse(atob(memory.contentpool[content.id])) : {};
 
-        if (content) {
-            const base64Content = content.split(",")[1]; // Extract Base64 content from the MIME type prefix
-            preferences = JSON.parse(atob(base64Content));
-        }
-
-        preferences[key] = value;
+        preferences[key] = value; // Set the specified key to the new value
 
         // Prepend MIME type prefix when saving
         const newContent = `data:application/json;base64,${btoa(JSON.stringify(preferences))}`;
-        memory["System/"]["preferences.json"]["content"] = newContent;
+        memory.contentpool[content.id] = newContent; // Save the new content
         
         await setdb(memory);
     } catch (error) {
@@ -500,12 +496,13 @@ async function setSetting(key, value) {
     }
 }
 
-async function resetSettings(value) {
+async function resetSettings(defaultPreferences) {
     try {
-        if (!memory) {return}
+        if (!memory) return;
+
         await ensurePreferencesFileExists();
-        let preferences = value;
-        memory["System/"]["preferences.json"]["content"] = btoa(JSON.stringify(preferences));
+        const content = memory.tree["System/"]["preferences.json"];
+        memory.contentpool[content.id] = btoa(JSON.stringify(defaultPreferences));
         await setdb(memory);
     } catch (error) {
         console.log("Error resetting settings", error);
@@ -515,16 +512,17 @@ async function resetSettings(value) {
 async function remSetting(key) {
     await updateMemoryData();
     try {
-        if (memory["System/"] && memory["System/"]["preferences.json"]) {
-            let preferences = JSON.parse(memory["System/"]["preferences.json"]["content"]);
+        if (memory.tree["System/"] && memory.tree["System/"]["preferences.json"]) {
+            const content = memory.tree["System/"]["preferences.json"];
+            let preferences = JSON.parse(atob(memory.contentpool[content.id]));
             if (preferences[key]) {
                 delete preferences[key];
-                memory["System/"]["preferences.json"]["content"] = JSON.stringify(preferences);
+                memory.contentpool[content.id] = btoa(JSON.stringify(preferences));
                 await setdb(memory);
             }
         }
     } catch (error) {
-        console.log("error removing settings");
+        console.log("Error removing settings", error);
     }
 }
 
@@ -646,16 +644,16 @@ async function removeUser(username = CurrentUsername) {
 function removeSWs() {
 	if ('serviceWorker' in navigator) {
 
-        // Get all service worker registrations
+        
         navigator.serviceWorker.getRegistrations()
           .then(registrations => {
-            // Unregister all service workers and delete all caches
+            
             const promises = registrations.map(registration => 
               caches.keys()
                 .then(cacheNames => Promise.all(cacheNames.map(cacheName => caches.delete(cacheName))))
-                .then(() => registration.unregister())  // Unregister each service worker
+                .then(() => registration.unregister())  
             );
-            return Promise.all(promises);  // Wait for all to complete
+            return Promise.all(promises);  
           })
           .then(() => {
             console.log('All service workers and caches have been removed.');
@@ -668,24 +666,18 @@ function removeSWs() {
       }
   }
 
-  
-// MEMORY MANAGEMENT FUNCTIONS
+// memory management
 
 async function getFileNamesByFolder(folderName) {
 	try {
 		const filesInFolder = [];
+		const targetFolder = memory.tree[folderName + '/'];
 
-		for (const key in memory) {
-			if (key === folderName || key.startsWith(folderName)) {
-				const isFolder = key.endsWith('/');
-				if (isFolder) {
-					const folder = memory[key];
-					for (const fileName in folder) {
-						if (!fileName.endsWith('/')) {
-							const file = folder[fileName];
-							filesInFolder.push({ id: file.id, name: fileName });
-						}
-					}
+		if (targetFolder) {
+			for (const fileName in targetFolder) {
+				if (!fileName.endsWith('/')) {
+					const file = targetFolder[fileName];
+					filesInFolder.push({ id: file.id, name: fileName });
 				}
 			}
 		}
@@ -699,23 +691,23 @@ async function getFileNamesByFolder(folderName) {
 
 async function getFileByPath(path) {
 	await updateMemoryData();
-	const segments = path.split('/');
-	let current = memory;
+	const segments = path.split('/').filter(segment => segment);
+	let current = memory.tree;
 
 	for (let i = 0; i < segments.length; i++) {
 		const segment = segments[i];
 		const isLastSegment = i === segments.length - 1;
 
-		if (segment + '/' in current && !isLastSegment) {
+		if (current[segment + '/'] && !isLastSegment) {
 			current = current[segment + '/'];
-		} else if (segment in current && isLastSegment) {
+		} else if (current[segment] && isLastSegment) {
 			return current[segment];
 		} else {
 			return null;
 		}
 	}
 
-	return current;
+	return null;
 }
 
 var idMap = {};
@@ -727,7 +719,7 @@ async function getFileById(id) {
 	if (idMap[id]) {
 		return {
 			path: idMap[id],
-			...findFileDetails(id, memory)
+			...findFileDetails(id, memory.tree)
 		};
 	}
 
@@ -737,10 +729,11 @@ async function getFileById(id) {
 			if (item && typeof item === 'object') {
 				if (item.id === id) {
 					idMap[id] = currentPath;
+					const content = memory.contentpool[id];
 					return {
 						fileName: key,
 						id: item.id,
-						content: item.content,
+						content: content,
 						metadata: item.metadata,
 						path: currentPath
 					};
@@ -753,15 +746,15 @@ async function getFileById(id) {
 		return null;
 	}
 
-	return findFileDetails(id, memory);
+	return findFileDetails(id, memory.tree);
 }
 
 async function getFolderNames() {
 	try {
-		await updateMemoryData()
+		await updateMemoryData();
 		const folderNames = [];
 
-		for (const key in memory) {
+		for (const key in memory.tree) {
 			if (key.endsWith('/')) {
 				folderNames.push(key);
 			}
@@ -778,9 +771,9 @@ async function moveFileToFolder(flid, dest) {
 	console.log("Moving file: " + flid + " to: " + dest);
 
 	let fileToMove = await getFileById(flid);
+	if (!fileToMove) return; // Ensure the file exists
 
 	await createFile(dest, fileToMove.fileName, fileToMove.type, fileToMove.content, fileToMove.metadata);
-
 	await remfile(flid);
 }
 
@@ -794,6 +787,7 @@ async function remfile(ID) {
 					if (removeFileFromFolder(content)) return true;
 				} else if (content.id === ID) {
 					delete folder[name];
+					delete memory.contentpool[ID]; // Remove content from contentpool
 					console.log("File eliminated.");
 					return true;
 				}
@@ -801,7 +795,7 @@ async function remfile(ID) {
 			return false;
 		}
 
-		let fileRemoved = removeFileFromFolder(memory);
+		let fileRemoved = removeFileFromFolder(memory.tree);
 
 		if (!fileRemoved) {
 			console.error(`File with ID "${ID}" not found.`);
@@ -815,10 +809,10 @@ async function remfile(ID) {
 
 async function remfolder(folderPath) {
 	try {
-		await updateMemoryData()
+		await updateMemoryData();
 
 		let parts = folderPath.split('/').filter(part => part);
-		let current = memory;
+		let current = memory.tree;
 		let parent = null;
 		let key = null;
 
@@ -846,6 +840,7 @@ async function remfolder(folderPath) {
 		console.error("Error removing folder:", error);
 	}
 }
+
 async function updateFile(folderName, fileId, newData) {
 	function findFile(folder, fileId) {
 		for (let key in folder) {
@@ -864,7 +859,7 @@ async function updateFile(folderName, fileId, newData) {
 	}
 
 	try {
-		let targetFolder = memory;
+		let targetFolder = memory.tree;
 		let folderNames = folderName.split('/');
 		for (let name of folderNames) {
 			if (name) {
@@ -880,13 +875,16 @@ async function updateFile(folderName, fileId, newData) {
 		if (fileLocation) {
 			let fileToUpdate = fileLocation.parent[fileLocation.key];
 			fileToUpdate.metadata = newData.metadata !== undefined ? JSON.stringify(newData.metadata) : fileToUpdate.metadata;
-			fileToUpdate.content = newData.content !== undefined ? newData.content : fileToUpdate.content;
 			fileToUpdate.fileName = newData.fileName !== undefined ? newData.fileName : fileLocation.key;
 			fileToUpdate.type = newData.type !== undefined ? newData.type : fileToUpdate.type;
 
 			if (newData.fileName !== undefined && newData.fileName !== fileLocation.key) {
 				fileLocation.parent[newData.fileName] = fileToUpdate;
 				delete fileLocation.parent[fileLocation.key];
+			}
+
+			if (newData.content !== undefined) {
+				memory.contentpool[fileId] = newData.content;
 			}
 
 			await setdb(memory);
@@ -896,9 +894,11 @@ async function updateFile(folderName, fileId, newData) {
 			targetFolder[newData.fileName || `NewFile_${fileId}`] = {
 				id: fileId,
 				metadata: newData.metadata ? JSON.stringify(newData.metadata) : '',
-				content: newData.content || '',
 				type: newData.type || ''
 			};
+
+			memory.contentpool[fileId] = newData.content || '';
+
 			await setdb(memory);
 		}
 	} catch (error) {
@@ -908,7 +908,7 @@ async function updateFile(folderName, fileId, newData) {
 
 function createFolderStructure(folderName) {
 	let parts = folderName.split('/');
-	let current = memory;
+	let current = memory.tree;
 	for (let part of parts) {
 		part += '/';
 		if (!current[part]) {
@@ -918,6 +918,7 @@ function createFolderStructure(folderName) {
 	}
 	return current;
 }
+
 
 function dragfl(ev, obj) {
 	ev.dataTransfer.setData("Text", obj.getAttribute('unid'));
