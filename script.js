@@ -15,6 +15,7 @@ var defAppsList = [
 	"store",
 	"files",
 	"settings",
+	"musicplr"
 ];
 
 gid("nowrunninapps").style.display = "none";
@@ -320,7 +321,7 @@ async function openn() {
 	gid("strtsear").value = ""
 	gid("strtappsugs").style.display = "none";
 
-	let x = await getFileNamesByFolder("Apps");
+	let x = await getFileNamesByFolder("Apps/");
 	x.sort((a, b) => a.name.localeCompare(b.name));
 	if (x.length == 0 && initmenuload) {
 		initmenuload = false
@@ -342,24 +343,9 @@ async function openn() {
 		// Create a span element for the app icon
 		var iconSpan = document.createElement("span");
 
-		if (!appicns[app.id]) {
-			// Fetch the content asynchronously using getFileById
-			const content = await getFileById(app.id);
-
-			// Unshrink the content
-			const unshrunkContent = unshrinkbsf(content.content);
-
-			// Use the getAppIcon function to fetch the icon
-			const icon = await getAppIcon(unshrunkContent, app.id);
-
-			if (icon) {
-				iconSpan.innerHTML = icon;
-			} else {
-				iconSpan.innerHTML = defaultAppIcon;
-			}
-		} else {
-			iconSpan.innerHTML = appicns[app.id];
-		}
+		getAppIcon(false, app.id).then(appIcon => {
+			iconSpan.innerHTML = appIcon;
+		});
 
 		function getapnme(x) {
 			return x.split('.')[0];
@@ -720,7 +706,7 @@ function getAppAspectRatio(unshrunkContent) {
 }
 
 async function getAppIcon(unshrunkContent, appid, jff) {
-    if (!appicns[appid] && appid && jff === "must") {
+    if (!unshrunkContent) {
         const file = await getFileById(appid);
         return getAppIcon(file.content, appid);
     }
@@ -959,7 +945,7 @@ async function createFile(folderName, fileName, type, content, metadata = {}) {
         if (type === "app" && fileNameWithExtension.endsWith(".app")) {
             const appData = await getFileByPath(`Apps/${fileNameWithExtension}`);
             if (appData) {
-                await updateFile("Apps", appData.id, { metadata, content: base64data, fileName: fileNameWithExtension, type });
+                await updateFile("Apps/", appData.id, { metadata, content: base64data, fileName: fileNameWithExtension, type });
                 extractAndRegisterCapabilities(appData.id, base64data);
                 return appData.id || null;
             }

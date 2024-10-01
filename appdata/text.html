@@ -310,7 +310,7 @@
             const mimePrefix = file.content.match(/^data:([^;]+);base64,/i);
 
             if (mimePrefix) {
-                file.type = mimePrefix[1];
+                file.type = mimePrefix[0];
                 file.content = file.content.replace(/^data:([^;]+);base64,/i, '');
                 processFileContent(file);
             } else {

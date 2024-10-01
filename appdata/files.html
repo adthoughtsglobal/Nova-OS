@@ -1197,7 +1197,7 @@
 				return;
 			}
 
-			await window.parent.createFile(currentPath, window.parent.basename(fname), window.parent.mtpetxt(fname), "data:" + await window.parent.getMimeType(window.parent.mtpetxt(fname)) + ";base64,")
+			await window.parent.createFile(currentPath, window.parent.basename(fname), window.parent.mtpetxt(fname), "")
 				.then(function () {
 					document.getElementById('makefiledia').close();
 					window.parent.notify("Created file", "File " + fname + " created at " + currentPath, "Files");

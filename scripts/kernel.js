@@ -547,7 +547,7 @@ async function openapp(x, od) {
             var y;
             if (od == 1) {
                 y = await fetchData("appdata/" + x + ".html");
-                od = await createFile("Apps", toTitleCase(x), "app", y);
+                od = await createFile("Apps/", toTitleCase(x), "app", y);
             } else {
                 y = await getFileById(od);
                 y = y.content;

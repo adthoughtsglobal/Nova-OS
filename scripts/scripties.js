@@ -191,13 +191,31 @@ async function checkAndRunFromURL() {
 	});
   }
 }
+const hardcodedMimeTypes = {
+    'html': 'text/html',
+    'js': 'application/javascript',
+    'css': 'text/css',
+    'json': 'application/json',
+    'jpg': 'image/jpeg',
+    'jpeg': 'image/jpeg',
+    'png': 'image/png',
+    'gif': 'image/gif',
+    'txt': 'text/plain',
+    'pdf': 'application/pdf',
+};
 
 async function getMimeType(extension) {
-	if (globalmimeDb == null) {
-		const mimeDbUrl = 'https://cdn.jsdelivr.net/npm/mime-db@1.52.0/db.json';
-		const responseformimedb = await fetch(mimeDbUrl);
-		globalmimeDb = await responseformimedb.json();
-	}
+    if (globalmimeDb == null) {
+        const mimeDbUrl = 'https://cdn.jsdelivr.net/npm/mime-db@1.52.0/db.json';
+        try {
+            const responseformimedb = await fetch(mimeDbUrl);
+            if (!responseformimedb.ok) throw new Error('Network response was not ok');
+            globalmimeDb = await responseformimedb.json();
+        } catch (error) {
+            // Use the hardcoded dictionary in case of network issues
+            return hardcodedMimeTypes[extension] || 'application/octet-stream';
+        }
+    }
     for (const [key, value] of Object.entries(globalmimeDb)) {
         if (value.extensions && value.extensions.includes(extension)) {
             return key;
