@@ -162,10 +162,11 @@
 
 		supportb {
 			border-radius: var(--sizing-normal);
-			background: radial-gradient(circle at 0% 0%, #23539b, #6f326c);
-			display: block;
-			padding: var(--sizing-huge);
-			max-width: 381px;
+    background: radial-gradient(circle at 0% 0%, #3d8bff99, #ff57f763);
+    display: block;
+    padding: var(--sizing-huge);
+    max-width: 500px;
+    margin-bottom: 0.5rem;
 		}
 
 		supportb b {
@@ -1494,13 +1495,24 @@ await setSetting('fileTypeAssociations', fileAssociations);
 				<b>Make the change.</b>
 				<p>Support us making NovaOS into a better and more powerful place for you.
 					<br>
-					<a onclick="window.open('https://www.patreon.com/adthoughtsglobal/membership')">Patreon</a> <a okay
-						onclick="window.open('https://discord.gg/atkqbwEQU8')">Let's talk</a>
+					<a onclick="window.open('https://www.patreon.com/adthoughtsglobal/shop')">Donate</a> <a okay
+						onclick="window.open('https://www.patreon.com/adthoughtsglobal/membership')">Memberships</a>
 				</p>
 			</supportb>
+			<segr>
+			<div setting>
+				<b>NovaOS Discord</b>
+				<button style="margin-top: 5px;float: right;" onclick="window.open('https://discord.gg/atkqbwEQU8')">Join</button>
+				<p>Join us for support, exclusive news and much more.</p>
+			</div>
+			</segr>
 			<h3>Credits</h3>
 			<table>
 				<tbody style="width: 100%;">
+					<tr>
+						<td><b>You</b></td>
+						<td>Using NovaOS</td>
+					</tr>
 					<tr>
 						<td><b onclick="openlink('https://github.com/Felix9390')">Felix</b></td>
 						<td>Developer</td>
@@ -1515,16 +1527,14 @@ await setSetting('fileTypeAssociations', fileAssociations);
 					</tr>
 					<tr>
 						<td><b onclick="openlink('https://github.com/RoturTW')">RoturTW</b></td>
-						<td>Networking?</td>
+						<td>Networking</td>
 					</tr>
 					<tr>
 						<td>Libraries</td>
 						<td>
 							<ul>
-								<li onclick="openlink('https://nodeca.github.io/pako/')">Pako</li>
-								<li onclick="openlink('https://jquery.com/')">jquery</li>
 								<li onclick="openlink('https://fonts.google.com/')">Google Fonts</li>
-								<li>LZ-UTF8.js</li>
+								<li>FFlate</li>
 							</ul>
 						</td>
 					</tr>

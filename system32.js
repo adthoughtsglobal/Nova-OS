@@ -482,17 +482,28 @@ async function setSetting(key, value) {
 
         await ensurePreferencesFileExists();
         const content = memory.tree["System/"]["preferences.json"];
-        let preferences = content ? JSON.parse(atob(memory.contentpool[content.id])) : {};
+        let preferences = {};
+
+        if (content) {
+            const existingContent = memory.contentpool[content.id];
+
+            // Check if the prefix is present and handle accordingly
+            const base64Content = existingContent.startsWith("data:application/json;base64,")
+                ? existingContent.split(",")[1] // Extract Base64 content if prefix is there
+                : existingContent; // If no prefix, assume it's already just base64 content
+
+            preferences = JSON.parse(atob(base64Content)); // Decode base64 content
+        }
 
         preferences[key] = value; // Set the specified key to the new value
 
-        // Prepend MIME type prefix when saving
+        // Prepend MIME type prefix when saving, ensuring it's only added once
         const newContent = `data:application/json;base64,${btoa(JSON.stringify(preferences))}`;
         memory.contentpool[content.id] = newContent; // Save the new content
         
         await setdb(memory);
     } catch (error) {
-        console.log("Error setting settings", error);
+        console.log("Error setting settings", error, key);
     }
 }
 
@@ -669,6 +680,7 @@ function removeSWs() {
 // memory management
 
 async function getFileNamesByFolder(folderName) {
+    folderName = folderName.replace(/\/$/, "")
 	try {
 		const filesInFolder = [];
 		const targetFolder = memory.tree[folderName + '/'];

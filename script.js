@@ -1185,7 +1185,7 @@ async function initialiseOS() {
 	initialization = true
 	memory = {
 		"tree":{
-			"Downloads": {
+			"Downloads/": {
 				"Welcome.txt": {
 					"id": "sibq81"
 				},
@@ -1195,12 +1195,12 @@ async function initialiseOS() {
 					}
 				}
 			},
-			"Apps": {}
+			"Apps/": {}
 		},
-		"contentpool":new Map([
-			['1283jh', 'Welcome to Nova OS! kindly reach us https://adthoughtsglobal.github.io and connect via the available options, we will respond you back! Enjoy!'],
-			['sibq81', 'This is a file inside a subfolder.']
-		  ])
+		"contentpool":{
+			'1283jh': 'Welcome to Nova OS! kindly reach us https://adthoughtsglobal.github.io and connect via the available options, we will respond you back! Enjoy!',
+			'sibq81': 'This is a file inside a subfolder.'
+		}
 	};
 
 	setdb(memory).then(async function () {

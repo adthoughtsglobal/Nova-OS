@@ -747,10 +747,45 @@ function sliderbgupt() {
 		}
 
 		function playTrack() {
-    if (curr_track) {
-        curr_track.addEventListener('canplaythrough', function() {
+			if (curr_track.readyState >= 2) {
             curr_track.play()
                 .then(() => {
+					initAudioAnalyser();
+
+    function getAudioData() {
+        analyser.getByteFrequencyData(dataArray);
+
+        const volume = dataArray.reduce((sum, value) => sum + value, 0) / bufferLength;
+        const lowFrequency = dataArray[10];
+        const highFrequency = dataArray[bufferLength - 1];
+        const speedFactor = (lowFrequency + highFrequency) / 255;
+
+        return { volume, speedFactor };
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const { volume, speedFactor } = getAudioData();
+
+        const additionalParticles = Math.floor(volume / 10);
+        if (particlesArray.length < baseNumParticles + additionalParticles) {
+            initParticles(additionalParticles);
+        }
+
+        particlesArray.forEach(particle => {
+            particle.update(volume / 255, speedFactor);
+            particle.draw();
+        });
+
+        removeOldParticles();
+
+        requestAnimationFrame(animate);
+    }
+
+    initParticles(baseNumParticles);
+    animate();
+
                     isPlaying = true;
                     playpause_btn.innerHTML = `<span class="material-symbols-rounded">
                         pause_circle
@@ -760,7 +795,6 @@ function sliderbgupt() {
                 .catch(error => {
                     console.error('Error playing track:', error);
                 });
-        }, false);
     } else {
         console.error('curr_track is not defined or is invalid.');
     }
@@ -880,7 +914,7 @@ function theskibidiscan() {
                 if (key.endsWith('/')) {
                     filePromises.push(processFolder(folder[key], `${basePath}${key}`));
                 } else if (isMusicFile(key)) {
-                    filePromises.push(processFile(folder[key].content, folder[key], key));
+                    filePromises.push(processFile(window.parent.memory.contentpool[folder[key].id], folder[key], key));
                 }
             }
             await Promise.all(filePromises);
@@ -890,7 +924,7 @@ function theskibidiscan() {
     };
 
 
-scanFolders(window.parent.memory);
+scanFolders(window.parent.memory.tree);
 
 primaryalert.close();
 			primaryalert.style.display = "none"
@@ -1003,44 +1037,6 @@ function initAudioAnalyser() {
         analyser.connect(audioContext.destination);
     }
 }
-
-curr_track.addEventListener('play', () => {
-    initAudioAnalyser();
-
-    function getAudioData() {
-        analyser.getByteFrequencyData(dataArray);
-
-        const volume = dataArray.reduce((sum, value) => sum + value, 0) / bufferLength;
-        const lowFrequency = dataArray[10];
-        const highFrequency = dataArray[bufferLength - 1];
-        const speedFactor = (lowFrequency + highFrequency) / 255;
-
-        return { volume, speedFactor };
-    }
-
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        const { volume, speedFactor } = getAudioData();
-
-        const additionalParticles = Math.floor(volume / 10);
-        if (particlesArray.length < baseNumParticles + additionalParticles) {
-            initParticles(additionalParticles);
-        }
-
-        particlesArray.forEach(particle => {
-            particle.update(volume / 255, speedFactor);
-            particle.draw();
-        });
-
-        removeOldParticles();
-
-        requestAnimationFrame(animate);
-    }
-
-    initParticles(baseNumParticles);
-    animate();
-});
 
 window.addEventListener('resize', function() {
     canvas.width = window.innerWidth;

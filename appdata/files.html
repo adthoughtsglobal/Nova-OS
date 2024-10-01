@@ -1360,7 +1360,7 @@ if (navigator.onLine) {
 			}
 			$(function () {
 				// Convert memory to jsTree data
-				const jsTreeData = memoryToJsTree(memory);
+				const jsTreeData = memoryToJsTree(memory.tree);
 
 				if ($('#jstree').jstree(true)) {
 					$('#jstree').jstree('destroy').empty();
@@ -1457,7 +1457,7 @@ if (navigator.onLine) {
 			}
 
 			// Find the folder with the given name
-			const folder = findFolder(folderName, memory);
+			const folder = findFolder(folderName, memory.tree);
 			if (folder) {
 				const dropupDiv = document.getElementById("filetools");
 				dropupDiv.innerHTML = ""
@@ -1555,7 +1555,6 @@ if (navigator.onLine) {
 								continue;
 							}
 							document.getElementById("filelist").setAttribute('flmode', flmode);
-							fileData = await window.parent.getFileById(item.id);
 							let fileElement = document.createElement('div');
 							fileElement.classList.add("file");
 							fileElement.setAttribute(flmode, '');
@@ -1567,16 +1566,6 @@ if (navigator.onLine) {
 								fileElement.setAttribute("ondragstart", "dragfl(event, this)");
 							}
 							let icon = item.type === 'folder' ? geticon('folder') : geticon(ptypext(item.name), item.id);
-							if (window.parent.getbaseflty(ptypext(item.name)) == "music" && false) {
-								jsmediatags.read(window.parent.unshrinkbsf(fileData.content), {
-									onSuccess: function (tag) {
-										icon = tag;
-									},
-									onError: function (error) {
-										console.error('Error reading metadata:', error);
-									}
-								});
-							}
 
 							fileElement.innerHTML = `<span class="fileicons">${icon}</span><span flname><span class='flfrname'> ${item.name}</span> <small>${item.id || '>'}</small></span>`;
 							fileElement.setAttribute("title", `${item.name}\nID: ${item.id || 'Folder'}`);
@@ -1889,7 +1878,7 @@ if (navigator.onLine) {
 			};
 
 
-			let folders = getFolderNames(memory);
+			let folders = getFolderNames(memory.tree);
 			let filteredFolders = folders.filter(folder => folder.trim() !== currentPath);
 
 			let selectedFolder = await window.parent.showDropdownModal("Select a folder", "Move to", filteredFolders);
