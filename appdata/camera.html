@@ -259,11 +259,7 @@
 			let cakebuff = obj.innerHTML;
 			obj.innerHTML = "..."
 			let x = await captureCameraImage();
-			console.log("capturedata", x)
 			x = window.parent.shrinkbsf(x);
-			let y = {
-				"via": "camera"
-			}
 
 			let FileFormat;
 			var condition = true;
@@ -286,11 +282,11 @@
     let hours = String(now.getHours()).padStart(2, '0');
     let minutes = String(now.getMinutes()).padStart(2, '0');
 
-    let timestamp = `${year}-${month}-${day}, ${hours}:${minutes}`;
+    let timestamp = `${year}-${month}-${day}, ${hours}:${minutes}, ${window.parent.genUID()}`;
 
     let capturedString = `captured_${timestamp}`;
 
-    window.parent.createFile("Media", capturedString, FileFormat, x, y);
+    window.parent.createFile("Media", capturedString, FileFormat, x);
 }
 
 createFileWithTimestamp();

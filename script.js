@@ -236,9 +236,21 @@ document.addEventListener("DOMContentLoaded", async function () {
 	console.log("DOMCL");
 		
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('novaCrypt.js')
+   await navigator.serviceWorker.register('novaCrypt.js')
         .then(reg => console.log('Service Worker registered:', reg))
         .catch(err => console.error('Service Worker registration failed:', err));
+}
+
+const params = new URLSearchParams(window.location.search);
+const value = params.get('rel');
+if (value == "initrel") {
+	
+params.set('rel', '');
+
+const newUrl = `${window.location.pathname}?${params.toString()}`;
+window.history.pushState({}, '', newUrl);
+	initialiseOS();
+	return;
 }
 
 	async function waitForNonNull() {
@@ -252,10 +264,10 @@ if ('serviceWorker' in navigator) {
 				return result;
 			}
 			console.log("No data: retrying")
-			await new Promise(resolve => setTimeout(resolve, 100)); // Wait 100ms before trying again
+			await new Promise(resolve => setTimeout(resolve, 100));
 		}
 
-		return null; // Return null if no non-null value is found within 3 seconds
+		return null;
 	}
 
 	waitForNonNull().then(async (result) => {
@@ -267,11 +279,6 @@ if ('serviceWorker' in navigator) {
 			if (result || result == 3) {
 				await showloginmod();
 			} else {
-				await say(`
-                    <h2>Terms of service and License</h2>
-                    <p>By using Nova OS, you agree to the <a href="https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use">Adthoughtsglobal Nova Terms of Use</a>. 
-                    <br><small>We do not store your personal information. <br>Read the terms before use.</small></p>
-                `);
 				initialiseOS();
 			}
 		} catch (error) {
@@ -1167,6 +1174,11 @@ async function makewall(deid) {
 }
 
 async function initialiseOS() {
+	await say(`
+		<h2>Terms of service and License</h2>
+		<p>By using Nova OS, you agree to the <a href="https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use">Adthoughtsglobal Nova Terms of Use</a>. 
+		<br><small>We do not store your personal information. <br>Read the terms before use.</small></p>
+	`);
 	console.log("Setting Up NovaOS\n\nUsername: " + CurrentUsername + "\nWith: Sample preset\nUsing host: " + location.href)
 	initialization = true
 	memory = {

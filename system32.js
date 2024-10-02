@@ -117,6 +117,12 @@ async function decryptData(key, encryptedData) {
             });
         } else {
             reject(new Error('Service Worker not available.'));
+            const params = new URLSearchParams(window.location.search);
+params.set('rel', 'initrel');
+
+const newUrl = `${window.location.pathname}?${params.toString()}`;
+window.history.pushState({}, '', newUrl);
+            location.reload()
         }
     });
 }
