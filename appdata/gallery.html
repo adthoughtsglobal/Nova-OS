@@ -199,6 +199,18 @@
 						datetime = metadata.datetime;
 					}
 
+					let content = window.parent.contentpool[x.id];
+						// Create an image element
+						const img = new Image();
+						img.src = content;
+
+						// Wait for the image to load
+						await new Promise((resolve) => {
+							img.onload = resolve;
+						});
+
+
+						img.src = content;
 					// Check if datetime is defined and has required identifiers (e.g., 'month', 'year')
 					if (datetime && datetime.year && datetime.month && datetime.day) {
 						const dateIdentifier = `${datetime.year}-${datetime.month}-${datetime.day}`;
@@ -211,18 +223,6 @@
 							document.getElementById("cont").appendChild(dayDivs[dateIdentifier]);
 						}
 
-						let content = await window.parent.unshrinkbsf(x.content);
-						// Create an image element
-						const img = new Image();
-						img.src = content;
-
-						// Wait for the image to load
-						await new Promise((resolve) => {
-							img.onload = resolve;
-						});
-
-
-						img.src = content;
 
 						// Add an event listener to display the full image on click
 						img.onclick = async function () {
@@ -239,9 +239,9 @@
 							modal.showModal();
 						};
 
+					}
 						// Append the compressed image to the dayDiv
 						dayDivs[dateIdentifier].appendChild(img);
-					}
 					console.timeEnd('executionTime');
 				}
 

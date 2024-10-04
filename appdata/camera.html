@@ -286,7 +286,7 @@
 
     let capturedString = `captured_${timestamp}`;
 
-    window.parent.createFile("Media", capturedString, FileFormat, x);
+    window.parent.createFile("Media/", capturedString, FileFormat, x);
 }
 
 createFileWithTimestamp();

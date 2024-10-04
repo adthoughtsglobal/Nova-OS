@@ -1,4 +1,4 @@
-var batteryLevel, winds = {}, rp, flwint = true, memory = {tree: {}, contentpool: new Map()}, _nowapp, fulsapp = false, nowappdo, appsHistory = [], nowwindow, appicns = {}, dev = true, appfound = 'files', fileslist = [], qsetscache = {};
+var batteryLevel, winds = {}, rp, flwint = true, contentpool = {},  memory = {}, _nowapp, fulsapp = false, nowappdo, appsHistory = [], nowwindow, appicns = {}, dev = true, appfound = 'files', fileslist = [], qsetscache = {};
 var really = false, initmenuload = true, fileTypeAssociations = {}, Gtodo, notifLog = {}, initialization = false, onstartup = [];
 var novaFeaturedImage = `Dev.png`;
 
@@ -106,7 +106,8 @@ async function showloginmod() {
 			};
 
 			userDiv.addEventListener("click", selectUser);
-			userDiv.addEventListener("touchstart", selectUser);
+			userDiv.addEventListener("touchstart", selectUser, { passive: true });
+
 
 			userDiv.addEventListener("keydown", function (event) {
 				if (event.key === "Enter") {
@@ -829,12 +830,12 @@ async function createFolder(folderNames, folderData) {
 
         for (const folderName of folderNames) {
             const parts = folderName.replace(/\/$/, '').split('/'); // Remove trailing slash for folder name
-            let current = memory.tree;
+            let current = memory.root;
 
             for (const part of parts) {
-                const folderKey = part + '/'; // Always append a trailing slash
-                current[folderKey] = current[folderKey] || {}; // Create folder if it doesn't exist
-                current = current[folderKey]; // Move deeper into the tree
+                const folderKey = part + '/';
+                current[folderKey] = current[folderKey] || {};
+                current = current[folderKey];
             }
         }
 
@@ -850,9 +851,9 @@ async function createFolder(folderNames, folderData) {
             }
         };
 
-        insertData(memory.tree, folderData); // Insert data into the tree
+        insertData(memory.root, folderData); // Insert data into the tree
 
-        await setdb(memory); // Save changes to the database
+        await setdb(); // Save changes to the database
         console.log('Folders created successfully.');
     } catch (error) {
         console.error("Error creating folders and data:", error);
@@ -861,7 +862,7 @@ async function createFolder(folderNames, folderData) {
 
 function folderExists(folderName) {
     const parts = folderName.replace(/\/$/, '').split('/');
-    let current = memory.tree; // Update to point to memory.tree
+    let current = memory.root; // Update to point to memory.root
 
     for (let part of parts) {
         part += '/';
@@ -926,7 +927,7 @@ async function createFile(folderName, fileName, type, content, metadata = {}) {
     // Ensure the folder exists with the trailing slash
     if (!folderExists(folderName)) await createFolder(folderName);
 
-    const folder = memory.tree[folderName] || {};
+    const folder = memory.root[folderName] || {};
 
     try {
         let base64data = isBase64(content) ? content : '';
@@ -967,9 +968,9 @@ async function createFile(folderName, fileName, type, content, metadata = {}) {
             metadata.datetime = getfourthdimension();
             folder[fileNameWithExtension] = { id: uid, type, metadata: JSON.stringify(metadata) };
             if (type === "app" && fileNameWithExtension.endsWith(".app")) extractAndRegisterCapabilities(uid, base64data);
-            memory.tree[folderName] = folder;
-            memory.contentpool[uid] = base64data;
-            await setdb(memory);
+            memory.root[folderName] = folder;
+            contentpool[uid] = base64data;
+            await setdb();
             return uid;
         }
     }
@@ -1182,7 +1183,7 @@ async function initialiseOS() {
 	console.log("Setting Up NovaOS\n\nUsername: " + CurrentUsername + "\nWith: Sample preset\nUsing host: " + location.href)
 	initialization = true
 	memory = {
-		"tree":{
+		"root": {
 			"Downloads/": {
 				"Welcome.txt": {
 					"id": "sibq81"
@@ -1194,14 +1195,16 @@ async function initialiseOS() {
 				}
 			},
 			"Apps/": {}
-		},
-		"contentpool":{
-			'1283jh': 'Welcome to Nova OS! kindly reach us https://adthoughtsglobal.github.io and connect via the available options, we will respond you back! Enjoy!',
-			'sibq81': 'This is a file inside a subfolder.'
 		}
 	};
-
-	setdb(memory).then(async function () {
+	
+	contentpool = {
+		'1283jh': 'Welcome to Nova OS! kindly reach us https://adthoughtsglobal.github.io and connect via the available options, we will respond you back! Enjoy!',
+		'sibq81': 'This is a file inside a subfolder.'
+	};
+	
+	// Pass both memory and contentpool to setdb
+	setdb().then(async function () {
 		await saveMagicStringInLocalStorage(password);
 		await ensurePreferencesFileExists()
 			.then(async () => await installdefaultapps())
@@ -2051,6 +2054,7 @@ function markdownToHTML(markdown) {
 
 async function logoutofnova() {
 	memory = null;
+	contentpool = null;
 	password = 'nova';
 	closeallwindows();
 	await showloginmod();
@@ -2065,6 +2069,7 @@ async function cleanupram() {
 	closeallwindows();
 	document.querySelectorAll('dialog[open].onramcloseable').forEach(dialog => dialog.close());
 	memory = null;
+	contentpool = null;
 	CurrentUsername = null;
 	password = 'nova';
 	MemoryTimeCache = null;

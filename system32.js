@@ -130,7 +130,6 @@ window.history.pushState({}, '', newUrl);
 let batchQueue = [];
 let batchTimeout = null;
 const batchInterval = 500; 
-
 async function flushBatch() {
     const databaseName = 'trojencat';
     const key = 'dataStore';
@@ -144,15 +143,21 @@ async function flushBatch() {
             }
         });
         
-		const start = performance.now();
+        const start = performance.now();
         const processedBatch = await Promise.all(batchQueue.map(async ({ value }) => {
             try {
                 const cryptoKey = await getKey(password);
-                const compressedData = compressString(JSON.stringify(value));
-                const encryptedValue = await encryptData(cryptoKey, compressedData);
+                const encryptedContentPool = {};
+
+                // Compress and encrypt only the contentpool values
+                for (let id in value.contentpool) {
+                    const compressedContent = compressString(value.contentpool[id]);
+                    encryptedContentPool[id] = await encryptData(cryptoKey, compressedContent);
+                }
+
                 const end = performance.now();
                 console.log(`Saving took ${(end - start).toFixed(2)}ms`);
-                return { encryptedValue }; 
+                return { memory: value.memory, encryptedContentPool }; 
             } catch (error) {
                 console.error("Error processing batch item:", error);
                 return null; 
@@ -164,13 +169,17 @@ async function flushBatch() {
         
         for (let index = 0; index < processedBatch.length; index++) {
             const batchItem = processedBatch[index];
-            if (batchItem && batchItem.encryptedValue) {
-                const memoryValue = { key: CurrentUsername, value: batchItem.encryptedValue };
-        
+            if (batchItem && batchItem.memory && batchItem.encryptedContentPool) {
+                const memoryValue = {
+                    key: batchItem.memory.CurrentUsername || 'user1',
+                    memory: batchItem.memory,
+                    contentpool: batchItem.encryptedContentPool
+                };
+                
                 await store.put(memoryValue);
-                batchQueue[index].resolve(); // Resolve the corresponding promise
+                batchQueue[index].resolve();  
             } else {
-                batchQueue[index].reject(new Error("Failed to process batch item"));
+                batchQueue[index].reject(new Error("Failed to process batch item: " + (batchItem.memory || 'unknown')));
             }
         }
         
@@ -187,9 +196,12 @@ async function flushBatch() {
         batchTimeout = null;
     }
 }
+
 const maxBatchSize = 10;
 
-function setdb(value) {
+function setdb() {
+    var value = { memory, contentpool };
+    console.log("getdb");
     return new Promise((resolve, reject) => {
         batchQueue.push({ value, resolve, reject });
 
@@ -216,7 +228,9 @@ function setdb(value) {
         }
     });
 }
+
 async function getdb() {
+    console.log("getdb");
     try {
         const db = await openDB(databaseName, 1);
         const transaction = db.transaction('dataStore', 'readonly');
@@ -228,9 +242,18 @@ async function getdb() {
                 if (request.result) {
                     try {
                         const cryptoKey = await getKey(password);
-                        const decryptedValue = await decryptData(cryptoKey, request.result.value);
-                        memory = parseEscapedJsonString(decompressString(decryptedValue));
-                        resolve(memory);
+                        const decryptedContentPool = {};
+
+                        // Decrypt and decompress only the contentpool
+                        for (let id in request.result.contentpool) {
+                            const decryptedContent = await decryptData(cryptoKey, request.result.contentpool[id]);
+                            decryptedContentPool[id] = decompressString(decryptedContent);
+                        }
+
+                        memory = request.result.memory
+contentpool = decryptedContentPool
+resolve(memory)
+
                     } catch (error) {
                         console.error("Decryption error:", error);
                         if (!lethalpasswordtimes) {
@@ -442,8 +465,8 @@ function parseEscapedJsonString(escapedString) {
 async function ensurePreferencesFileExists() {
     await updateMemoryData();
     try {
-        memory.tree["System/"] = memory.tree["System/"] || {};
-        if (!memory.tree["System/"]["preferences.json"]) {
+        memory.root["System/"] = memory.root["System/"] || {};
+        if (!memory.root["System/"]["preferences.json"]) {
             const defaultPreferences = {
                 "defFileLayout": "List",
                 "wsnapping": true,
@@ -470,10 +493,10 @@ async function getSetting(key) {
         if (cached && (Date.now() - cached.t < settingscacheDuration)) return cached.v;
 
         await ensurePreferencesFileExists();
-        const content = memory.tree["System/"]["preferences.json"];
+        const content = memory.root["System/"]["preferences.json"];
         if (!content) return;
 
-        const base64Content = memory.contentpool[content.id]; // Directly access content
+        const base64Content = contentpool[content.id]; // Directly access content
         const preferences = JSON.parse(atob(base64Content.split(",")[1])); // Extract Base64 content
         settingsCache[key] = { v: preferences[key], t: Date.now() };
         return preferences[key];
@@ -487,11 +510,11 @@ async function setSetting(key, value) {
         if (!memory) return null;
 
         await ensurePreferencesFileExists();
-        const content = memory.tree["System/"]["preferences.json"];
+        const content = memory.root["System/"]["preferences.json"];
         let preferences = {};
 
         if (content) {
-            const existingContent = memory.contentpool[content.id];
+            const existingContent = contentpool[content.id];
 
             // Check if the prefix is present and handle accordingly
             const base64Content = existingContent.startsWith("data:application/json;base64,")
@@ -505,9 +528,9 @@ async function setSetting(key, value) {
 
         // Prepend MIME type prefix when saving, ensuring it's only added once
         const newContent = `data:application/json;base64,${btoa(JSON.stringify(preferences))}`;
-        memory.contentpool[content.id] = newContent; // Save the new content
+        contentpool[content.id] = newContent; // Save the new content
         
-        await setdb(memory);
+        await setdb();
     } catch (error) {
         console.log("Error setting settings", error, key);
     }
@@ -518,9 +541,9 @@ async function resetSettings(defaultPreferences) {
         if (!memory) return;
 
         await ensurePreferencesFileExists();
-        const content = memory.tree["System/"]["preferences.json"];
-        memory.contentpool[content.id] = btoa(JSON.stringify(defaultPreferences));
-        await setdb(memory);
+        const content = memory.root["System/"]["preferences.json"];
+        contentpool[content.id] = btoa(JSON.stringify(defaultPreferences));
+        await setdb();
     } catch (error) {
         console.log("Error resetting settings", error);
     }
@@ -529,13 +552,13 @@ async function resetSettings(defaultPreferences) {
 async function remSetting(key) {
     await updateMemoryData();
     try {
-        if (memory.tree["System/"] && memory.tree["System/"]["preferences.json"]) {
-            const content = memory.tree["System/"]["preferences.json"];
-            let preferences = JSON.parse(atob(memory.contentpool[content.id]));
+        if (memory.root["System/"] && memory.root["System/"]["preferences.json"]) {
+            const content = memory.root["System/"]["preferences.json"];
+            let preferences = JSON.parse(atob(contentpool[content.id]));
             if (preferences[key]) {
                 delete preferences[key];
-                memory.contentpool[content.id] = btoa(JSON.stringify(preferences));
-                await setdb(memory);
+                contentpool[content.id] = btoa(JSON.stringify(preferences));
+                await setdb();
             }
         }
     } catch (error) {
@@ -580,7 +603,7 @@ async function changePassword(oldPassword, newPassword) {
     try {
         memory = await getdb();
         password = newPassword;
-        await setdb(memory);
+        await setdb();
 
         await saveMagicStringInLocalStorage(newPassword);
 
@@ -686,31 +709,36 @@ function removeSWs() {
 // memory management
 
 async function getFileNamesByFolder(folderName) {
-    folderName = folderName.replace(/\/$/, "")
-	try {
-		const filesInFolder = [];
-		const targetFolder = memory.tree[folderName + '/'];
+    folderName = folderName.replace(/\/$/, "") + '/';
+    console.log("searching for files in ", folderName);
 
-		if (targetFolder) {
-			for (const fileName in targetFolder) {
-				if (!fileName.endsWith('/')) {
-					const file = targetFolder[fileName];
-					filesInFolder.push({ id: file.id, name: fileName });
-				}
-			}
-		}
+    try {
+        const filesInFolder = [];
+        const targetFolder = memory.root[folderName];
 
-		return filesInFolder;
-	} catch (error) {
-		console.error("Error fetching data:", error);
-		return null;
-	}
+        if (targetFolder) {
+            for (const fileName in targetFolder) {
+                if (!fileName.endsWith('/')) {
+                    const file = targetFolder[fileName];
+                    if (file && contentpool[file.id]) {
+                        filesInFolder.push({ id: file.id, name: fileName });
+                    }
+                }
+            }
+        }
+
+        return filesInFolder;
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        return null;
+    }
 }
+
 
 async function getFileByPath(path) {
 	await updateMemoryData();
 	const segments = path.split('/').filter(segment => segment);
-	let current = memory.tree;
+	let current = memory.root;
 
 	for (let i = 0; i < segments.length; i++) {
 		const segment = segments[i];
@@ -737,7 +765,7 @@ async function getFileById(id) {
 	if (idMap[id]) {
 		return {
 			path: idMap[id],
-			...findFileDetails(id, memory.tree)
+			...findFileDetails(id, memory.root)
 		};
 	}
 
@@ -747,7 +775,7 @@ async function getFileById(id) {
 			if (item && typeof item === 'object') {
 				if (item.id === id) {
 					idMap[id] = currentPath;
-					const content = memory.contentpool[id];
+					const content = contentpool[id];
 					return {
 						fileName: key,
 						id: item.id,
@@ -764,7 +792,7 @@ async function getFileById(id) {
 		return null;
 	}
 
-	return findFileDetails(id, memory.tree);
+	return findFileDetails(id, memory.root);
 }
 
 async function getFolderNames() {
@@ -772,7 +800,7 @@ async function getFolderNames() {
 		await updateMemoryData();
 		const folderNames = [];
 
-		for (const key in memory.tree) {
+		for (const key in memory.root) {
 			if (key.endsWith('/')) {
 				folderNames.push(key);
 			}
@@ -805,7 +833,7 @@ async function remfile(ID) {
 					if (removeFileFromFolder(content)) return true;
 				} else if (content.id === ID) {
 					delete folder[name];
-					delete memory.contentpool[ID]; // Remove content from contentpool
+					delete contentpool[ID]; // Remove content from contentpool
 					console.log("File eliminated.");
 					return true;
 				}
@@ -813,12 +841,12 @@ async function remfile(ID) {
 			return false;
 		}
 
-		let fileRemoved = removeFileFromFolder(memory.tree);
+		let fileRemoved = removeFileFromFolder(memory.root);
 
 		if (!fileRemoved) {
 			console.error(`File with ID "${ID}" not found.`);
 		} else {
-			await setdb(memory);
+			await setdb();
 		}
 	} catch (error) {
 		console.error("Error fetching or updating data:", error);
@@ -830,7 +858,7 @@ async function remfolder(folderPath) {
 		await updateMemoryData();
 
 		let parts = folderPath.split('/').filter(part => part);
-		let current = memory.tree;
+		let current = memory.root;
 		let parent = null;
 		let key = null;
 
@@ -853,7 +881,7 @@ async function remfolder(folderPath) {
 			return;
 		}
 
-		await setdb(memory);
+		await setdb();
 	} catch (error) {
 		console.error("Error removing folder:", error);
 	}
@@ -877,7 +905,7 @@ async function updateFile(folderName, fileId, newData) {
 	}
 
 	try {
-		let targetFolder = memory.tree;
+		let targetFolder = memory.root;
 		let folderNames = folderName.split('/');
 		for (let name of folderNames) {
 			if (name) {
@@ -902,10 +930,10 @@ async function updateFile(folderName, fileId, newData) {
 			}
 
 			if (newData.content !== undefined) {
-				memory.contentpool[fileId] = newData.content;
+				contentpool[fileId] = newData.content;
 			}
 
-			await setdb(memory);
+			await setdb();
 			console.log(`Modified: "${fileToUpdate.fileName}"`);
 		} else {
 			console.log(`Creating New: "${fileId}"`);
@@ -915,9 +943,9 @@ async function updateFile(folderName, fileId, newData) {
 				type: newData.type || ''
 			};
 
-			memory.contentpool[fileId] = newData.content || '';
+			contentpool[fileId] = newData.content || '';
 
-			await setdb(memory);
+			await setdb();
 		}
 	} catch (error) {
 		console.error("Error updating file:", error);
@@ -926,7 +954,7 @@ async function updateFile(folderName, fileId, newData) {
 
 function createFolderStructure(folderName) {
 	let parts = folderName.split('/');
-	let current = memory.tree;
+	let current = memory.root;
 	for (let part of parts) {
 		part += '/';
 		if (!current[part]) {

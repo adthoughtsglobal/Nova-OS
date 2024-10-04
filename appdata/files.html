@@ -119,7 +119,7 @@
 
 		[flap-sidenav] {
 			width: 0;
-			overflow-y: scroll;
+			overflow-y: auto;
 			min-width: 120px;
 			background: var(--colors-BG-section);
 			padding-bottom: 50px;
@@ -149,13 +149,13 @@
 			margin-bottom: 0.1rem;
 			opacity: 70%;
 			flex-direction: row;
-			background-color: var(--colors-BG-normal);
+			background-color: var(--colors-BG-section);
 			border-radius: 0.3rem;
 			padding: 3px 0px;
 		}
 
 		[flap-files] {
-			overflow-y: scroll;
+			overflow-y: auto;
 			flex-grow: 8;
 			padding-bottom: 50px !important;
 			padding: 5px;
@@ -363,7 +363,7 @@
 			margin: auto;
 			display: block;
 			position: relative;
-			overflow: scroll;
+			overflow: auto;
 		}
 
 		input[type="file"]::file-selector-button {
@@ -1239,7 +1239,6 @@
 		});
 
 		var currentPath = '', nowfile, flmode = 'grid', onlyshow = false;
-		var memory;
 		var fllist;
 		var fdlist;
 		var binmode = false;
@@ -1284,21 +1283,7 @@ if (navigator.onLine) {
 				console.error(error)
 			}
 
-			window.parent.updateMemoryData()
-				.then((result) => {
-					try {
-						if (result !== null) {
-							memory = result;
-							refresh()
-
-						}
-					} catch (error) {
-						console.error('Error:', error);
-					}
-				})
-				.catch((error) => {
-					console.error('Database operation failed:', error);
-				});
+			window.parent.updateMemoryData();
 			const backdrop = document.getElementById('upmod');
 
 			backdrop.addEventListener('click', (event) => {
@@ -1359,8 +1344,7 @@ if (navigator.onLine) {
 				return;
 			}
 			$(function () {
-				// Convert memory to jsTree data
-				const jsTreeData = memoryToJsTree(memory.tree);
+				const jsTreeData = memoryToJsTree(window.parent.memory.root);
 
 				if ($('#jstree').jstree(true)) {
 					$('#jstree').jstree('destroy').empty();
@@ -1389,7 +1373,7 @@ if (navigator.onLine) {
 			});
 		}
 		async function refresh() {
-			memory = await window.parent.updateMemoryData();
+			window.parent.updateMemoryData();
 			const refreshButton = document.getElementById('ogrefreshbtn');
 
 			// Start the rotation animation
@@ -1423,175 +1407,149 @@ if (navigator.onLine) {
 		}
 
 		async function listFiles(folderName, gen) {
-			const startTime = performance.now();
-			if (currentPath == folderName && gen) {
-				return;
-			}
-			fllist.innerHTML = `<div class="loader33" id='listfilesloader'></div>`
+    const startTime = performance.now();
+    if (currentPath == folderName && gen) {
+        return;
+    }
+    fllist.innerHTML = `<div class="loader33" id='listfilesloader'></div>`;
 
-			function findFolder(path, obj) {
-				let parts = path.split('/').map((part, index, array) => {
-					if (part === '' && array[index + 1] === '') {
-						return '/';
-					}
-					if (part !== '' && index < array.length - 1 && array[index + 1] === '') {
-						return part + '/';
-					}
-					return part;
-				});
+    function findFolder(path, obj) {
+        let parts = path.split('/').map((part, index, array) => {
+            if (part === '' && array[index + 1] === '') {
+                return '/';
+            }
+            if (part !== '' && index < array.length - 1 && array[index + 1] === '') {
+                return part + '/';
+            }
+            return part;
+        });
 
+        for (let part of parts) {
+            if (part) {
+                if (obj[part + '/']) {
+                    obj = obj[part + '/'];
+                } else if (obj[part]) {
+                    obj = obj[part];
+                } else {
+                    return null;
+                }
+            }
+        }
+        return obj;
+    }
 
-				for (let part of parts) {
-					if (part) {
-						if (obj[part + '/']) {
-							obj = obj[part + '/'];
-						} else if (obj[part]) {
-							obj = obj[part];
-						} else {
-							return null;
-						}
-					}
-				}
+    const folder = findFolder(folderName, window.parent.memory.root);
+    if (folder) {
+        const dropupDiv = document.getElementById("filetools");
+        dropupDiv.innerHTML = "";
 
-				return obj;
-			}
+		const dropupContentDiv = document.createElement("div");
+dropupContentDiv.className = "dropup-content";
 
-			// Find the folder with the given name
-			const folder = findFolder(folderName, memory.tree);
-			if (folder) {
-				const dropupDiv = document.getElementById("filetools");
-				dropupDiv.innerHTML = ""
+const actions = [
+    {
+        id: "deleteFolder",
+        title: "Delete folder",
+        onclick: folderName === "System/" || folderName === "" ? (e) => e.preventDefault() : remfold,
+        innerHTML: `<span class="material-symbols-rounded">delete</span> Delete`,
+        disabled: folderName === "System/" || folderName === ""
+    },
+    {
+        id: "createFolder",
+        title: "Create folder",
+        onclick: makefolderhuh,
+        innerHTML: `<span class="material-symbols-rounded">add</span> Folder`
+    },
+    {
+        id: "parentFolder",
+        title: "Parent folder",
+        onclick: () => {
+            if (currentPath.split('/').length > 1) {
+                listFiles(currentPath.substring(0, currentPath.lastIndexOf('/', currentPath.lastIndexOf('/') - 1) + 1));
+            }
+        },
+        innerHTML: `<span class="material-symbols-rounded">keyboard_return</span> Parent`,
+        disabled: currentPath.split('/').length <= 1
+    },
+    {
+        id: "toggleView",
+        title: flmode === 'grid' ? 'List view' : 'Grid view',
+        onclick: () => {
+            flmode = flmode === 'grid' ? 'list' : 'grid';
+            changeview(flmode);
+            toggleViewButton.title = flmode === 'grid' ? 'List view' : 'Grid view';
+            toggleViewButton.innerHTML = flmode === 'grid' ? 
+                `<span class="material-symbols-rounded">view_list</span> List View` : 
+                `<span class="material-symbols-rounded">grid_view</span> Grid View`;
+        },
+        innerHTML: flmode === 'grid' ? `<span class="material-symbols-rounded">view_list</span> List View` : `<span class="material-symbols-rounded">grid_view</span> Grid View`
+    }
+];
 
-				const dropupContentDiv = document.createElement("div");
-				dropupContentDiv.className = "dropup-content";
+actions.forEach(({ id, title, onclick, innerHTML, disabled }) => {
+    const link = document.createElement("a");
+    link.classList.add("dropdownerthebob");
+    link.title = title;
+    link.onclick = onclick;
+    link.innerHTML = innerHTML;
+    link.id = `topbarAction-${id}`;  // Setting the ID with the prefix
+    if (disabled) link.classList.add("disabled");
+    dropupContentDiv.appendChild(link);
+});
 
-				const delfolde = document.createElement("a");
-				delfolde.classList.add("dropdownerthebob");
-				delfolde.title = "Delete folder";
-				delfolde.onclick = () => remfold();
+dropupDiv.appendChild(dropupContentDiv);
+    currentPath = folderName;
+    updpth();
 
+    const filesInFolder = await window.parent.getFileNamesByFolder(folderName);
+        if (filesInFolder) {
+            if (filesInFolder.length > 0) {
+                // Sort files by file name
+                filesInFolder.sort((a, b) => a.name.localeCompare(b.name));
 
-				if (folderName === "System/" || folderName === "") {
-					delfolde.classList.add("disabled");
-					delfolde.onclick = (e) => e.preventDefault();
-				}
+                for (let item of filesInFolder) {
+                    try {
+                        if (onlyshow && !item.name.endsWith(onlyshow)) {
+                            continue;
+                        }
+                        document.getElementById("filelist").setAttribute('flmode', flmode);
+                        let fileElement = document.createElement('div');
+                        fileElement.classList.add("file");
+                        fileElement.setAttribute(flmode, '');
+                        item.id ? fileElement.setAttribute("unid", item.id) : null;
+                        fileElement.setAttribute("draggable", !item.name.endsWith('/'));
 
-				delfolde.innerHTML = `<span class="material-symbols-rounded">delete</span> Delete`;
-				dropupContentDiv.appendChild(delfolde);
-
-				const createfoldbtn = document.createElement("a");
-				createfoldbtn.classList.add("dropdownerthebob");
-				createfoldbtn.title = "Create folder";
-				createfoldbtn.onclick = () => makefolderhuh();
-
-				createfoldbtn.innerHTML = `<span class="material-symbols-rounded">add</span> Folder`;
-				dropupContentDiv.appendChild(createfoldbtn);
-
-				const navupbtn = document.createElement("a");
-				navupbtn.classList.add("dropdownerthebob");
-				navupbtn.title = "Parent folder";
-				let str = currentPath;
-				let count = 1;
-				for (let i = 0; i < str.length; i++) {
-					if (str[i] === '/') {
-						count++;
-					}
-				}
-				navupbtn.innerHTML = `<span class="material-symbols-rounded">keyboard_return</span> Parent`;
-				
-				if (count > 1) {
-					navupbtn.onclick = () => {
-						listFiles(currentPath.substring(0, currentPath.lastIndexOf('/', currentPath.lastIndexOf('/') - 1) + 1));
-					};
-				} else {
-					navupbtn.classList.add("disabled");
-				}
-				dropupContentDiv.appendChild(navupbtn);
-				
-				const toggleViewButton = document.createElement("a");
-				toggleViewButton.classList.add("dropdownerthebob");
-				toggleViewButton.title = flmode === 'grid' ? 'List view' : 'Grid view';
-				toggleViewButton.onclick = () => {
-					if (flmode === 'grid') {
-						changeview('list');
-						flmode = 'list';
-						toggleViewButton.title = 'Grid view';
-						toggleViewButton.innerHTML = `<span class="material-symbols-rounded">view_list</span> List View`;
-					} else {
-						changeview('grid');
-						flmode = 'grid';
-						toggleViewButton.title = 'List view';
-						toggleViewButton.innerHTML = `<span class="material-symbols-rounded">grid_view</span> Grid View`;
-					}
-				};
-
-				toggleViewButton.innerHTML = flmode === 'grid'
-					? `<span class="material-symbols-rounded">view_list</span> List View`
-					: `<span class="material-symbols-rounded">grid_view</span> Grid View`;
-
-				dropupContentDiv.appendChild(toggleViewButton);
-
-				dropupDiv.appendChild(dropupContentDiv);
-
-
-				currentPath = folderName;
-				updpth();
-
-				// Display files and subfolders in the folder
-				const content = Object.keys(folder).map(key => ({
-					name: key,
-					...folder[key],
-					type: key.endsWith('/') ? 'folder' : 'file'
-				}));
-
-				if (content.length > 0) {
-					// Sort files by file name
-					content.sort((a, b) => a.name.localeCompare(b.name));
-
-					for (let item of content) {
-
-						try {
-							if (onlyshow && !item.name.endsWith(onlyshow)) {
-								continue;
-							}
-							document.getElementById("filelist").setAttribute('flmode', flmode);
-							let fileElement = document.createElement('div');
-							fileElement.classList.add("file");
-							fileElement.setAttribute(flmode, '');
-							(item.id) ? fileElement.setAttribute("unid", item.id) : null;
-							fileElement.setAttribute("draggable", !item.name.endsWith('/'));
-
-							fileElement.setAttribute("onclick", "slfile(this, '" + item.id + "');");
-							if (!item.name.endsWith('/')) {
-								fileElement.setAttribute("ondragstart", "dragfl(event, this)");
-							}
-							let icon = item.type === 'folder' ? geticon('folder') : geticon(ptypext(item.name), item.id);
-
-							fileElement.innerHTML = `<span class="fileicons">${icon}</span><span flname><span class='flfrname'> ${item.name}</span> <small>${item.id || '>'}</small></span>`;
-							fileElement.setAttribute("title", `${item.name}\nID: ${item.id || 'Folder'}`);
-							fllist.appendChild(fileElement);
-						} catch (error) {
-							console.error("Safe Error processing item:", error, item.id);
-							// error files
-
-						}
-					}
-					const endTime = performance.now(); // End the timer if the file is not found
-					const timeTaken = endTime - startTime;
-					document.getElementById("fileinfobn").style.opacity = 0.5;
-					document.getElementById("fileinfobn").innerHTML = `Listed ${content.length} item(s) in ` + timeTaken.toFixed(2) + "ms";
-				} else {
+                        fileElement.setAttribute("onclick", "slfile(this, '" + item.id + "');");
+                        if (!item.name.endsWith('/')) {
+                            fileElement.setAttribute("ondragstart", "dragfl(event, this)");
+                        }
+                        let icon = geticon(ptypext(item.name), item.id);
+                        
+                        fileElement.innerHTML = `<span class="fileicons">${icon}</span><span flname><span class='flfrname'> ${item.name}</span> <small>${item.id || '>'}</small></span>`;
+                        fileElement.setAttribute("title", `${item.name}\nID: ${item.id}` || 'Folder');
+                        fllist.appendChild(fileElement);
+                    } catch (error) {
+                        console.error("Safe Error processing item:", error, item.id);
+                    }
+                }
+                const endTime = performance.now();
+                const timeTaken = endTime - startTime;
+                document.getElementById("fileinfobn").style.opacity = 0.5;
+                document.getElementById("fileinfobn").innerHTML = `Listed ${filesInFolder.length} item(s) in ${timeTaken.toFixed(2)}` + "ms";
+            } else {
 					fllist.innerHTML = `<center class='thisfolderisempty'><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="74.20199" height="94.1023" viewBox="0,0,74.20199,94.1023"><g transform="translate(-224.61774,-142.87893)"><g data-paper-data="{&quot;isPaintingLayer&quot;:true}" fill-rule="nonzero" stroke="#ffffff" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" style="mix-blend-mode: normal"><path d="M227.11774,158.26119c0,-7.11468 5.76758,-12.88226 12.88226,-12.88226c7.11468,0 12.88226,5.76758 12.88226,12.88226c0,7.11468 -5.76758,12.88226 -12.88226,12.88226c-7.11468,0 -12.88226,-5.76758 -12.88226,-12.88226z" fill="none" stroke-width="5" stroke-linecap="butt"/><path d="M244.56247,233.94447l9.12493,-32.20565l-8.58817,-28.98508" fill="none" stroke-width="5" stroke-linecap="round"/><path d="M253.6874,202.81234l17.71311,31.66888" fill="none" stroke-width="5" stroke-linecap="round"/><path d="M246.17275,178.6581l-7.51465,27.37481" fill="none" stroke-width="5" stroke-linecap="round"/><path d="M250.46684,179.73163l28.44833,-12.3455" fill="none" stroke-width="5" stroke-linecap="round"/><path d="M260.82196,192.96703l-1.81137,-23.54791l37.99776,-2.9229l1.81138,23.54791z" fill="#aa8b00" stroke-width="0" stroke-linecap="butt"/><path d="M256.80524,189.29958l2.20535,-19.88046l37.99776,-2.9229l-2.20535,19.53118z" fill="#ffcf00" stroke-width="0" stroke-linecap="butt"/><path d="M279.06646,168.81576l-0.1513,-1.42964" fill="none" stroke-width="5" stroke-linecap="round"/></g></g></svg><br>This folder is empty.</center>`;
+				
 				}
-				try {
-					document.getElementById("listfilesloader").remove()
-				} catch { }
-			} else {
-				console.log("0003 b: no folder.");
-			}
-
-
-		}
+            try {
+                document.getElementById("listfilesloader").remove();
+            } catch { }
+        } else {
+            console.log("No files found.");
+        }
+    } else {
+        console.log("0003 b: no folder.");
+    }
+}
 
 		function updpth() {
 			const pathDisp = document.getElementById("pathdisp");
@@ -1869,7 +1827,7 @@ if (navigator.onLine) {
 				Object.keys(memory).forEach(key => {
 					const fullPath = parentPath + key;
 					if (fullPath.endsWith('/')) {
-						const indent = '-'.repeat(level * 2); // 2 spaces per level
+						const indent = '-'.repeat(level * 2);
 						folders.push(indent + fullPath);
 						folders = folders.concat(getFolderNames(memory[key], fullPath, level + 1));
 					}
@@ -1878,7 +1836,7 @@ if (navigator.onLine) {
 			};
 
 
-			let folders = getFolderNames(memory.tree);
+			let folders = getFolderNames(window.parent.memory.root);
 			let filteredFolders = folders.filter(folder => folder.trim() !== currentPath);
 
 			let selectedFolder = await window.parent.showDropdownModal("Select a folder", "Move to", filteredFolders);
