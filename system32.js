@@ -707,34 +707,28 @@ function removeSWs() {
   }
 
 // memory management
-
-async function getFileNamesByFolder(folderName) {
-    folderName = folderName.replace(/\/$/, "") + '/';
-    console.log("searching for files in ", folderName);
-
+async function getFileNamesByFolder(folderPath) {
+    folderPath = folderPath.endsWith('/') ? folderPath : folderPath + '/';
     try {
-        const filesInFolder = [];
-        const targetFolder = memory.root[folderName];
+        const root = memory["root"];
+        const folderNames = folderPath.split('/').filter(Boolean);
+        let currentFolder = root;
 
-        if (targetFolder) {
-            for (const fileName in targetFolder) {
-                if (!fileName.endsWith('/')) {
-                    const file = targetFolder[fileName];
-                    if (file && contentpool[file.id]) {
-                        filesInFolder.push({ id: file.id, name: fileName });
-                    }
-                }
+        for (const name of folderNames) {
+            if (!currentFolder[name + '/']) {
+                return [];
             }
+            currentFolder = currentFolder[name + '/'];
         }
 
-        return filesInFolder;
+        return Object.entries(currentFolder).map(([fileName, file]) => 
+            fileName.endsWith('/') ? { name: fileName } : { id: file.id, name: fileName }
+        );
     } catch (error) {
         console.error("Error fetching data:", error);
         return null;
     }
 }
-
-
 async function getFileByPath(path) {
 	await updateMemoryData();
 	const segments = path.split('/').filter(segment => segment);
