@@ -9,7 +9,6 @@
 		content="<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='58.43947' height='59.00267' viewBox='0,0,58.43947,59.00267'><g transform='translate(-210.7176,-150.87572)'><g data-paper-data='{&quot;isPaintingLayer&quot;:true}' fill-rule='nonzero' stroke='none' stroke-width='0' stroke-linecap='butt' stroke-linejoin='miter' stroke-miterlimit='10' stroke-dasharray='' stroke-dashoffset='0' style='mix-blend-mode: normal'><path d='M210.87572,209.12428v-58.24856h58.24856v58.24856z' fill='#ffffff'/><path d='M210.8163,204.06103l21.03728,-21.03728c0,0 13.36479,13.36479 18.17929,18.17929c3.17308,3.17308 7.89653,7.89654 7.89653,7.89654l-47.2118,0.77882z' fill='#9fd1ff'/><path d='M230.00342,209.46128l26.96478,-30.65673l12.17737,14.1504l0.01152,16.24595z' fill='#358ada'/><path d='M219.25,168.625c0,-3.72792 3.02208,-6.75 6.75,-6.75c3.72792,0 6.75,3.02208 6.75,6.75c0,3.72792 -3.02208,6.75 -6.75,6.75c-3.72792,0 -6.75,-3.02208 -6.75,-6.75z' fill='#fff69e'/></g></g></svg>">
 	<title>Gallery</title>
 	<style>
-
 		body {
 			color: var(--colors-text-normal);
 			font-weight: 400;
@@ -170,8 +169,7 @@
 					return;
 				}
 
-				// Define a map to store day divs
-				const dayDivs = {};
+				const dyDivs = {};
 
 
 				for (const item of lcldata) {
@@ -180,43 +178,34 @@
 					if (window.parent.getbaseflty(window.parent.ptypext(item.name)) != "image") {
 						return;
 					}
-					console.time('executionTime');
-					// Assuming metadata is stored as a JSON object within the file
 					let metadata = {};
 
 					if (x.metadata) {
-
-						try {
-							metadata = JSON.parse(x.metadata);
-						} catch (error) {
-							console.error("Error parsing metadata:", error);
-						}
+						metadata = x.metadata;
 					}
 
-					// Extract datetime from metadata if available
 					let datetime = null;
 					if (metadata.datetime) {
-						datetime = metadata.datetime;
-					}
+						let datetime = new Date(metadata.datetime);
 
-					// Check if datetime is defined and has required identifiers (e.g., 'month', 'year')
-					if (datetime && datetime.year && datetime.month && datetime.day) {
-						const dateIdentifier = `${datetime.year}-${datetime.month}-${datetime.day}`;
-						// Create day div if it doesn't exist
-						if (!dayDivs[dateIdentifier]) {
-							dayDivs[dateIdentifier] = document.createElement("div");
-							let dayHeader = document.createElement("div");
-							dayHeader.innerHTML = '<b>' + dateIdentifier + '</b>';
-							dayDivs[dateIdentifier].appendChild(dayHeader);
-							document.getElementById("cont").appendChild(dayDivs[dateIdentifier]);
+						const yr = datetime.getFullYear();
+						const mo = (datetime.getMonth() + 1).toString().padStart(2, '0');
+						const dy = datetime.getDate().toString().padStart(2, '0');
+						const dateIdentifier = `${yr}-${mo}-${dy}`;
+
+						if (!dyDivs[dateIdentifier]) {
+							dyDivs[dateIdentifier] = document.createElement("div");
+							let dyHeader = document.createElement("div");
+							dyHeader.innerHTML = '<b>' + dateIdentifier + '</b>';
+							dyDivs[dateIdentifier].appendChild(dyHeader);
+							document.getElementById("cont").appendChild(dyDivs[dateIdentifier]);
 						}
 
+
 						let content = await window.parent.unshrinkbsf(x.content);
-						// Create an image element
 						const img = new Image();
 						img.src = content;
 
-						// Wait for the image to load
 						await new Promise((resolve) => {
 							img.onload = resolve;
 						});
@@ -224,7 +213,6 @@
 
 						img.src = content;
 
-						// Add an event listener to display the full image on click
 						img.onclick = async function () {
 							const image = document.getElementById("bigshowcase");
 							const modal = document.getElementById("fullfmd");
@@ -232,15 +220,18 @@
 
 							let y = await window.parent.unshrinkbsf(x.content);
 							if (x.metadata) {
-								const parsedMetadata = JSON.parse(x.metadata);
-								document.getElementById("flint").innerHTML = `${parsedMetadata.datetime.hour}:${parsedMetadata.datetime.minute}, ${parsedMetadata.datetime.day}/${parsedMetadata.datetime.month}/${parsedMetadata.datetime.year}`;
+								const currentDate = new Date(Date.now());
+								const hour = currentDate.getHours().toString().padStart(2, '0');
+								const minute = currentDate.getMinutes().toString().padStart(2, '0');
+								const dy = currentDate.getDate().toString().padStart(2, '0');
+								const mo = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+								const yr = currentDate.getFullYear();
+								document.getElementById("flint").innerHTML = `${hour}:${minute}, ${dy}/${mo}/${yr}`;
 							}
 							image.src = y;
 							modal.showModal();
 						};
-
-						// Append the compressed image to the dayDiv
-						dayDivs[dateIdentifier].appendChild(img);
+						dyDivs[dateIdentifier].appendChild(img);
 					}
 					console.timeEnd('executionTime');
 				}

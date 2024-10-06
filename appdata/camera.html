@@ -11,23 +11,37 @@
 		body {
 			display: flex;
 			justify-content: center;
-			align-items: center;
+			align-items: stretch;
+			flex-direction: row;
 			margin: 0;
 			height: 100vh;
 			background-color: black;
 		}
 
+		.videopart {
+			flex: 1;
+		}
+
+		.toolpart {
+			width: fit-content;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0.5rem;
+		}
+
 		#video-container {
-			position: relative;
+			
+			width: 100%;
+    height: 100%;
 		}
 
 		#video {
 			height: 100%;
-			max-width: 95vw;
-			max-height: 95vh;
-			border-radius: 0.5rem;
-			transform: scaleX(1);
-			transition: 0.2s ease-in-out;
+    border-radius: 0.5rem;
+    object-fit: contain;
+    width: 100%;
+    transition: 0.2s ease-in-out;
 		}
 
 		.floattopnav {
@@ -80,16 +94,15 @@
 		}
 
 		#photo-btn {
-			position: fixed;
-			bottom: 5%;
-			border: cornsilk;
 			height: 15%;
-			aspect-ratio: 1 / 1;
-			display: grid;
-			border-radius: 50%;
-			opacity: 75%;
-			align-items: center;
-			justify-items: center;
+    border: none;
+    aspect-ratio: 1 / 1;
+    display: grid;
+    border-radius: 50%;
+    align-items: center;
+    justify-items: center;
+    background: #1e1e1e;
+    color: white;
 		}
 
 		#photo-btn:active {
@@ -100,12 +113,16 @@
 </head>
 
 <body>
+	<div class="videopart">
+		
 	<div id="video-container">
 		<video id="video" playsinline autoplay></video>
 	</div>
 	<div id="timer">
 		3
 	</div>
+</div>
+<div class="toolpart">
 	<div class="floattopnav">
 		<select id="camera-select"></select>
 		<button id="mirror-btn" onclick="toggleMirror()"><span class="material-icons">
@@ -121,10 +138,11 @@
 			<option value="10000">10s</option>
 		</select>
 	</div>
+
 	<button id="photo-btn" onclick="capture(this)"><span class="material-icons">
 			camera
 		</span></button>
-
+	</div>
 	<script>
 		let isMirrored = false;
 		let isFlashlightOn = false;
@@ -288,9 +306,9 @@
 
 					let timestamp = `${year}-${month}-${day}, ${hours}:${minutes}`;
 
-					let capturedString = `captured_${timestamp + window.parent.genUID()}`;
+					let capturedString = `captured_${timestamp} ${window.parent.genUID()}`;
 
-					window.parent.createFile("Media", capturedString, FileFormat, x, y);
+					window.parent.createFile("Media/", capturedString, FileFormat, x);
 				}
 
 				createFileWithTimestamp();

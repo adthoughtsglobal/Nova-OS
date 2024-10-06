@@ -917,64 +917,7 @@ function isBase64(str) {
 		return false;
 	}
 }
-async function createFile(folderName, fileName, type, content, metadata = {}) {
-    const fileNameWithExtension = type ? `${fileName}.${type}` : fileName;
 
-    if (!fileNameWithExtension) return null;
-
-    await updateMemoryData();
-
-    // Ensure the folder exists with the trailing slash
-    if (!folderExists(folderName)) await createFolder(folderName);
-
-    const folder = memory.root[folderName] || {};
-
-    try {
-        let base64data = isBase64(content) ? content : '';
-
-        if (!base64data) {
-            const mimeType = type ? `application/${type}` : 'application/octet-stream';
-            const blob = new Blob([content], { type: mimeType });
-            const reader = new FileReader();
-            reader.readAsDataURL(blob);
-            reader.onloadend = async function () {
-                base64data = reader.result;
-                await handleFile(folder, folderName, fileNameWithExtension, base64data, type, metadata);
-            };
-        } else {
-            await handleFile(folder, folderName, fileNameWithExtension, base64data, type, metadata);
-        }
-    } catch (error) {
-        console.error("Error in createFile:", error);
-        return null;
-    }
-
-    async function handleFile(folder, folderName, fileNameWithExtension, base64data, type, metadata) {
-        if (type === "app" && fileNameWithExtension.endsWith(".app")) {
-            const appData = await getFileByPath(`Apps/${fileNameWithExtension}`);
-            if (appData) {
-                await updateFile("Apps/", appData.id, { metadata, content: base64data, fileName: fileNameWithExtension, type });
-                extractAndRegisterCapabilities(appData.id, base64data);
-                return appData.id || null;
-            }
-        }
-
-        const existingFile = Object.values(folder).find(file => file.fileName === fileNameWithExtension);
-        if (existingFile) {
-            await updateFile(folderName, existingFile.id, { metadata, content: base64data, fileName: fileNameWithExtension, type });
-            return existingFile.id;
-        } else {
-            const uid = genUID();
-            metadata.datetime = getfourthdimension();
-            folder[fileNameWithExtension] = { id: uid, type, metadata: JSON.stringify(metadata) };
-            if (type === "app" && fileNameWithExtension.endsWith(".app")) extractAndRegisterCapabilities(uid, base64data);
-            memory.root[folderName] = folder;
-            contentpool[uid] = base64data;
-            await setdb();
-            return uid;
-        }
-    }
-}
 async function extractAndRegisterCapabilities(appId, content) {
 	try {
 		if (!content) {
@@ -1292,15 +1235,7 @@ async function installdefaultapps() {
 }
 
 function getfourthdimension() {
-	const currentDate = new Date();
-	return {
-		year: currentDate.getFullYear(),
-		month: currentDate.getMonth() + 1,
-		day: currentDate.getDate(),
-		hour: currentDate.getHours(),
-		minute: currentDate.getMinutes(),
-		second: currentDate.getSeconds()
-	};
+	return Date.now();
 }
 
 async function prepareArrayToSearch() {
