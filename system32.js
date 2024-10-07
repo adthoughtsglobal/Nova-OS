@@ -483,7 +483,7 @@ async function ensurePreferencesFileExists() {
 }
 
 let settingsCache = {};
-const settingscacheDuration = 500;
+const settingscacheDuration = 250;
 
 async function getSetting(key) {
     try {
@@ -496,8 +496,8 @@ async function getSetting(key) {
         const content = memory.root["System/"]["preferences.json"];
         if (!content) return;
 
-        const base64Content = contentpool[content.id]; // Directly access content
-        const preferences = JSON.parse(atob(base64Content.split(",")[1])); // Extract Base64 content
+        const base64Content = contentpool[content.id];
+        const preferences = JSON.parse(atob(base64Content.split(",")[1]));
         settingsCache[key] = { v: preferences[key], t: Date.now() };
         return preferences[key];
     } catch (error) {
@@ -515,20 +515,17 @@ async function setSetting(key, value) {
 
         if (content) {
             const existingContent = contentpool[content.id];
-
-            // Check if the prefix is present and handle accordingly
             const base64Content = existingContent.startsWith("data:application/json;base64,")
-                ? existingContent.split(",")[1] // Extract Base64 content if prefix is there
-                : existingContent; // If no prefix, assume it's already just base64 content
+                ? existingContent.split(",")[1]
+                : existingContent;
 
-            preferences = JSON.parse(atob(base64Content)); // Decode base64 content
+            preferences = JSON.parse(atob(base64Content));
         }
 
-        preferences[key] = value; // Set the specified key to the new value
+        preferences[key] = value;
 
-        // Prepend MIME type prefix when saving, ensuring it's only added once
         const newContent = `data:application/json;base64,${btoa(JSON.stringify(preferences))}`;
-        contentpool[content.id] = newContent; // Save the new content
+        contentpool[content.id] = newContent;
         
         await setdb();
     } catch (error) {
@@ -629,21 +626,10 @@ async function erdbsfull() {
         try {
           let deleteRequest = indexedDB.deleteDatabase(dbName);
     
-          deleteRequest.onsuccess = function (event) {
-            
+          deleteRequest.onsuccess = function () {
             location.reload();
           };
-    
-          deleteRequest.onerror = function (event) {
-            
-          };
-    
-          deleteRequest.onblocked = function () {
-            
-          };
-        } catch (error) {
-          
-        }
+        } catch (err) {}
     };
 }
 
@@ -960,6 +946,7 @@ function createFolderStructure(folderName) {
 }
 
 async function createFile(folderName, fileName, type, content, metadata = {}) {
+    folderName = folderName.endsWith('/') ? folderName : folderName + '/';
     const fileNameWithExtension = type ? `${fileName}.${type}` : fileName;
 
     if (!fileNameWithExtension) return null;
@@ -1008,7 +995,7 @@ async function createFile(folderName, fileName, type, content, metadata = {}) {
             const uid = genUID();
             metadata.datetime = getfourthdimension();
             folder[fileNameWithExtension] = { id: uid, type, metadata };
-            if (type === "app" && fileNameWithExtension.endsWith(".app")) extractAndRegisterCapabilities(uid, base64data);
+            if (fileNameWithExtension.endsWith(".app")) extractAndRegisterCapabilities(uid, base64data);
             memory.root[folderName] = folder;
             contentpool[uid] = base64data;
             await setdb();
@@ -1016,7 +1003,6 @@ async function createFile(folderName, fileName, type, content, metadata = {}) {
         }
     }
 }
-
 
 function dragfl(ev, obj) {
 	ev.dataTransfer.setData("Text", obj.getAttribute('unid'));

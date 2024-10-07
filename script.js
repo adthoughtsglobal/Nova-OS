@@ -343,14 +343,13 @@ async function openn() {
 
 	initmenuload = false;
 	Promise.all(x.map(async (app) => {
-		// Create a div element for the app shortcut
 		var appShortcutDiv = document.createElement("div");
 		appShortcutDiv.className = "app-shortcut tooltip sizableuielement";
 		appShortcutDiv.setAttribute("onclick", "openfile('" + app.id + "')");
 
-		// Create a span element for the app icon
 		var iconSpan = document.createElement("span");
 
+		iconSpan.innerHTML = "<span class='taskbarloader'></span>"
 		getAppIcon(false, app.id).then(appIcon => {
 			iconSpan.innerHTML = appIcon;
 		});
@@ -359,7 +358,6 @@ async function openn() {
 			return x.split('.')[0];
 		}
 
-		// Create a span element for the app name
 		var nameSpan = document.createElement("span");
 		nameSpan.className = "appname";
 		nameSpan.textContent = getapnme(app.name);
@@ -368,7 +366,6 @@ async function openn() {
 		tooltisp.className = "tooltiptext";
 		tooltisp.textContent = getapnme(app.name);
 
-		// Append both spans to the app shortcut container
 		appShortcutDiv.appendChild(iconSpan);
 		appShortcutDiv.appendChild(nameSpan);
 		appShortcutDiv.appendChild(tooltisp);
@@ -713,35 +710,29 @@ function getAppAspectRatio(unshrunkContent) {
 	return unshrunkContent.includes("aspect-ratio") ? getMetaTagContent(unshrunkContent, 'aspect-ratio') : null;
 }
 
-async function getAppIcon(unshrunkContent, appid, jff) {
-    if (!unshrunkContent) {
-        const file = await getFileById(appid);
-        return getAppIcon(file.content, appid);
+async function getAppIcon(content, id, lazy = 0) {
+    if (!content) {
+        const file = await getFileById(id);
+        return getAppIcon(file.content, id);
     }
-    if (jff && jff !== "must") return appicns[appid] || defaultAppIcon;
-    if (appicns[appid]) return appicns[appid];
-
-    const iconContent = getMetaTagContent(unshrunkContent, 'nova-icon', true);
+    if (lazy) return appicns[id] || defaultAppIcon;
+    if (appicns[id]) return appicns[id];
+    const iconContent = getMetaTagContent(content, 'nova-icon', true);
     if (iconContent && containsSmallSVGElement(iconContent)) {
-        appicns[appid] = iconContent;
+        appicns[id] = iconContent;
         return iconContent;
     }
-
-    return null;
+    return defaultAppIcon;
 }
 
-
 function decodeBase64Content(str) {
-	// Check if the string starts with a data URL prefix
 	const base64Prefix = ';base64,';
 	const prefixIndex = str.indexOf(base64Prefix);
 
 	if (prefixIndex !== -1) {
-		// Strip the prefix
 		str = str.substring(prefixIndex + base64Prefix.length);
 	}
 
-	// Decode only if the string is a valid Base64
 	return isBase64(str) ? atob(str) : str;
 }
 
@@ -763,13 +754,8 @@ var content;
 
 function putwinontop(x) {
 	if (Object.keys(winds).length > 1) {
-		// Convert the values of winds into an array of numbers
 		const windValues = Object.values(winds).map(Number);
-
-		// Calculate the maximum value from the array
 		const maxWindValue = Math.max(...windValues);
-
-		// Set the zIndex
 		document.getElementById(x).style.zIndex = maxWindValue + 1;
 	} else {
 		document.getElementById(x).style.zIndex = 0;
@@ -1666,7 +1652,7 @@ document.addEventListener('keydown', function (event) {
 });
 async function genTaskBar() {
 	var appbarelement = document.getElementById("dock")
-	appbarelement.innerHTML = "<span id='taskbarloader'></span>";
+	appbarelement.innerHTML = "<span class='taskbarloader' id='taskbarloaderprime'></span>";
 	if (appbarelement) {
 		/*if (!await getSetting("aiFeatures")) {
 			gid("copilotbtn").style.display = "none";
@@ -1722,7 +1708,7 @@ async function genTaskBar() {
 
 			appShortcutDiv.setAttribute("onclick", "openfile('" + app.id + "')");
 			var iconSpan = document.createElement("span");
-			iconSpan.innerHTML = await getAppIcon(0, app.id, "must");
+			iconSpan.innerHTML = await getAppIcon(0, app.id, 0);
 
 			var tooltisp = document.createElement("span");
 			tooltisp.className = "tooltiptext";
@@ -1733,7 +1719,7 @@ async function genTaskBar() {
 
 			appbarelement.appendChild(appShortcutDiv);
 		})
-		gid('taskbarloader').remove()
+		document.querySelector('#taskbarloaderprime').remove();
 	}
 }
 

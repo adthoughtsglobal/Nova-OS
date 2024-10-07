@@ -124,7 +124,6 @@ async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
     let winuid = genUID();
     winds[title + winuid] = 1;
 
-    // Create the window element
     var windowDiv = document.createElement("div");
     windowDiv.id = "window" + winuid;
     windowDiv.setAttribute("data-winds", title + winuid);
@@ -183,7 +182,6 @@ async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
         windowDiv.style.background = (x) ? x : 'transparent';
     })();
 
-    // Create the window header
     var windowHeader = document.createElement("div");
     windowHeader.id = "window" + winuid + "header";
     windowHeader.classList += "windowheader";
@@ -241,7 +239,6 @@ async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
         flwin(flButton);
     };
 
-    // Create the close button in the header
     var closeButton = document.createElement("span");
     closeButton.classList.add("material-symbols-rounded", "wincl", "winclosebtn");
     closeButton.textContent = "close";
@@ -255,7 +252,6 @@ async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
         loadtaskspanel();
     };
 
-    // Append the close button to the header
     ibtnsside.appendChild(closeButton);
     if (!isitmob) {
         ibtnsside.appendChild(flButton);
@@ -310,7 +306,6 @@ async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
                     }
                     var novadotcss = novadotcsscache;
 
-                    // Get the current root CSS variables from the body element
                     const computedStyles = getComputedStyle(document.body);
                     const variables = {
                         '--font-size-small': computedStyles.getPropertyValue('--font-size-small'),
@@ -329,8 +324,7 @@ async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
                         '--font-size-default': computedStyles.getPropertyValue('--font-size-default')
                     };
 
-                    // Replace root CSS variable declarations in the fetched CSS
-                    const updatedCssText = novadotcss.replace(/:root\s*{([^}]*)}/, (match, declarations) => {
+                    const updatedCssText = novadotcss.replace(/:root\s*{([^}]*)}/, (declarations) => {
                         let updatedDeclarations = declarations.trim();
                         for (const [variable, value] of Object.entries(variables)) {
                             const regex = new RegExp(`(${variable}\\s*:\\s*).*?;`, 'g');
@@ -339,7 +333,6 @@ async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
                         return `:root { ${updatedDeclarations} }`;
                     });
 
-                    // Inject the updated CSS into the iframe
                     const style = document.createElement('style');
                     style.textContent = updatedCssText;
                     iframe.contentDocument.head.appendChild(style);
@@ -348,7 +341,6 @@ async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
                 }
             }
 
-            // Inject the JavaScript code
             const script = document.createElement('script');
             script.innerHTML = `
                 document.addEventListener('mousedown', function(event) {
@@ -381,15 +373,12 @@ async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
     }
 
     nowwindow = 'window' + winuid;
-    // Append the header and content to the window
     windowDiv.appendChild(windowHeader);
     windowDiv.appendChild(windowContent);
     windowDiv.appendChild(windowLoader);
 
-    // Append the window to the document body
     document.body.appendChild(windowDiv);
 
-    // Initial load
     loadIframeContent(windowLoader, windowContent);
 
     dragElement(windowDiv);
@@ -409,7 +398,6 @@ async function checksnapping(x, event) {
     const VWInPixels = (3 * viewportWidthInPixels) / 100;
     const VHInPixels = (3 * viewportHeightInPixels) / 100;
 
-    // Fixed aspect ratio of 9/6
     const aspectRatioValue = 9 / 6;
 
     const maxVW = 100;
@@ -552,14 +540,12 @@ async function openapp(x, od) {
                 y = await getFileById(od);
                 y = y.content;
             }
-            // Assuming you have a predefined function openwindow
             openwindow(x, y, await getAppIcon(y, x), getAppTheme(y), getAppAspectRatio(y), od, Gtodo);
             Gtodo = null;
         } catch (error) {
             console.error("Error fetching data:", error);
         }
     };
-    // Call fetchDataAndSave with the desired value of x
     fetchDataAndSave(x);
 }
 

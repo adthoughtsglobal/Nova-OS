@@ -2250,32 +2250,24 @@ margin-bottom: 0.3rem;
 	width: 100%;
 }
 
-#taskbarloader {
-	width: 16px;
-	height: 16px;
+.taskbarloader {
+	width: 20px;
+	height: 20px;
 	border-radius: 50%;
-	background-color: #fff;
-	box-shadow: 32px 0 #fff, -32px 0 #fff;
-	position: relative;
-	animation: flash 0.5s ease-out infinite alternate;
+	display: inline-block;
+	border-top: 3px solid #FFF;
+	border-right: 3px solid transparent;
+	box-sizing: border-box;
+	animation: rotation 1s linear infinite;
 }
-
-@keyframes flash {
+@keyframes rotation {
 	0% {
-		background-color: #FFF2;
-		box-shadow: 32px 0 #FFF2, -32px 0 #FFF;
+	  transform: rotate(0deg);
 	}
-
-	50% {
-		background-color: #FFF;
-		box-shadow: 32px 0 #FFF2, -32px 0 #FFF2;
-	}
-
 	100% {
-		background-color: #FFF2;
-		box-shadow: 32px 0 #FFF, -32px 0 #FFF2;
+	  transform: rotate(360deg);
 	}
-}
+  } 
 
 .winclosebtn:hover {
 	background-color: rgb(153, 41, 41);
