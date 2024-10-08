@@ -107,20 +107,20 @@
 		var disp;
 		async function greenflag() {
 			try {
-				openfile(myWindow.params.data)
+				if (myWindow.params.appid == myWindow.appID) {
+					openfile(myWindow.params.data)
+				}
 			} catch (error) {
-				console.error("Error parsing todofile JSON:", error);
 				document.getElementById("nomedia").showModal()
 			}
 		}
-		function openfile(fileID) {
+		async function openfile(fileID) {
 			document.getElementById("nomedia").close()
 			disp = document.getElementById("displays");
-			var file = window.parent.getFileById(fileID);
-			console.log(file, fileID)
+			var file = await window.parent.getFileById(fileID);
+			console.log(file, fileID);
 			if (file && file.content) {
 
-                file.content = file.content.replace(/^data:([^;]+);base64,/i, '');
 				document.getElementById("tils").innerText = file.fileName;
 				console.log(file)
 				const type = file.type || 'application/octet-stream';

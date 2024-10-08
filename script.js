@@ -163,6 +163,8 @@ async function startup() {
 		'color: lightgrey; padding:0.5rem;'
 	);
 
+	
+
 	setsrtpprgbr(50);
 	const start = performance.now();
 	await updateMemoryData().then(async () => {
@@ -197,10 +199,21 @@ async function startup() {
 						say("You can always update app on settings app/Preferances")
 					}
 				}
+
+				const data = {
+					Username: CurrentUsername, 
+					LocalVersion: localupdatedataver, 
+					TimeFrmt12: timetypecondition,
+					OSVersion: fetchupdatedataver
+				}
+				  
+				  rllog(data);
 			} else {
 				console.error("Failed to fetch data from the server.");
 			}
 		}
+
+		
 
 		fetchDataAndUpdate();
 		await genTaskBar();
@@ -208,7 +221,6 @@ async function startup() {
 		removeInvalidMagicStrings();
 		setInterval(updateTime, 1000);
 
-		// Initialize the associations from settings
 		async function loadFileTypeAssociations() {
 			const associations = await getSetting('fileTypeAssociations');
 			fileTypeAssociations = associations || {};

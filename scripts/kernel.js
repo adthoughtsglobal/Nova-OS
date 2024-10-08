@@ -269,7 +269,6 @@ async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
     loaderdiv.classList = "loader33";
 
     async function loadIframeContent(windowLoader, windowContent, iframe) {
-        const appstart = performance.now();
         const content2 = cont;
         
         var contentString = isBase64(content2) ? decodeBase64Content(content2) : content2;
@@ -324,7 +323,7 @@ async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
                         '--font-size-default': computedStyles.getPropertyValue('--font-size-default')
                     };
 
-                    const updatedCssText = novadotcss.replace(/:root\s*{([^}]*)}/, (declarations) => {
+                    const updatedCssText = novadotcss.replace(/:root\s*{([^}]*)}/, (match, declarations) => {
                         let updatedDeclarations = declarations.trim();
                         for (const [variable, value] of Object.entries(variables)) {
                             const regex = new RegExp(`(${variable}\\s*:\\s*).*?;`, 'g');
@@ -354,9 +353,6 @@ async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
             } catch (e) {
                 console.error('Error during iframe initialization:', e);
             }
-
-            const end = performance.now();
-            console.log(`App startup took ${(end - appstart).toFixed(2)}ms`);
 
             windowLoader.remove();
         };

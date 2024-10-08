@@ -16,6 +16,7 @@
 			margin: 0;
 			height: calc(100vh - 5px);
 			background-color: black;
+			user-select:none;
 		}
 
 		.videopart {
@@ -52,7 +53,6 @@
     border-radius: 7px;
     padding: 4px;
     display: flex;
-    background-color: #7b7b7b75;
     gap: 3px;
     transition: 0.2s ease-out;
 		}
@@ -65,10 +65,10 @@
 			max-width: 130px;
     background-color: #7d7d7d;
     color: #d7d7d7;
-    opacity: 0.5;
     border: none;
     padding: 5px;
     overflow: hidden;
+	opacity: 0.7;
     border-radius: 5px;
     text-overflow: ellipsis;
     display: inline-flex;
@@ -79,9 +79,10 @@
 			padding: 4px 7px;
 			aspect-ratio: 1 / 1;
 			display: inline-grid;
-			background-color: #69696954;
+			background-color: #7d7d7d;
 			color: #fff;
 			border: none;
+			opacity: 0.7;
 			border-radius: 5px;
 			cursor: pointer;
 			justify-items: center;
@@ -91,7 +92,7 @@
 		#mirror-btn span,
 		#flashlight-btn span {
 			font-size: 1rem !important;
-			opacity: 0.6;
+			opacity: 1;
 		}
 
 		#photo-btn {
@@ -126,7 +127,23 @@
     align-content: center;
     color: white;
     text-shadow: 0 0 1rem #0000007a;
+	display: none;
 		}
+
+		@keyframes fade-in {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.timer-animate {
+    animation: fade-in 0.5s ease-out;
+}
 	</style>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
@@ -152,12 +169,11 @@
 			</span></button>
 		<select id="timer-select">
 			<option selected value="0">0s</option>
-			<option value="3000">3s</option>
-			<option value="5000">5s</option>
-			<option value="10000">10s</option>
+			<option value="2">3s</option>
+			<option value="5">5s</option>
+			<option value="10">10s</option>
 		</select>
 	</div>
-
 	<button id="photo-btn" onclick="capture(this)"><span class="material-icons">
 			camera
 		</span></button>
@@ -166,6 +182,7 @@
 		let isMirrored = false;
 		let isFlashlightOn = false;
 		let currentStream = null;
+		var timerelem = document.getElementById("timer");
 
 		async function getVideoSources() {
 			const devices = await navigator.mediaDevices.enumerateDevices();
@@ -293,50 +310,70 @@
 		}
 
 		async function capture(obj) {
-			setTimeout(async () => {
-				const video = document.getElementById('video');
-				video.style.display = "none";
-				let cakebuff = obj.innerHTML;
-				obj.innerHTML = "..."
-				let x = await captureCameraImage();
-				x = window.parent.shrinkbsf(x);
+    const video = document.getElementById('video');
+    let cakebuff = obj.innerHTML;
+    obj.innerHTML = "...";
+    
+    let timerValue = parseInt(document.getElementById('timer-select').value);
+    timerelem.textContent = timerValue+1;
+    timerelem.style.display = 'grid';
 
+    let countdown = setInterval(() => {
+        timerelem.textContent = timerValue;
+        
+        timerelem.classList.remove('timer-animate');
+        void timerelem.offsetWidth;
+        timerelem.classList.add('timer-animate');
 
-				let FileFormat;
-				var condition = true;
-				try {
-					let qsets = await window.parent.getSetting("CamImgFormat")
-					if (qsets) {
-						if (qsets) {
-							FileFormat = qsets.toLowerCase();
-						}
-					}
-				} catch (error) {
-					console.log("safe error: " + error);
-				}
-				function createFileWithTimestamp() {
-					let now = new Date();
+        timerValue--;
 
-					let year = now.getFullYear();
-					let month = String(now.getMonth() + 1).padStart(2, '0');
-					let day = String(now.getDate()).padStart(2, '0');
-					let hours = String(now.getHours()).padStart(2, '0');
-					let minutes = String(now.getMinutes()).padStart(2, '0');
+        if (timerValue < 0) {
+            clearInterval(countdown);
+			video.style.display = "none";
+            timerelem.textContent = "";
+            startCaptureProcess();
+        }
+    }, 1000);
 
-					let timestamp = `${year}-${month}-${day}, ${hours}:${minutes}`;
+    async function startCaptureProcess() {
+        try {
+            let x = await captureCameraImage();
+            x = window.parent.shrinkbsf(x);
 
-					let capturedString = `captured_${timestamp} ${window.parent.genUID()}`;
+            let FileFormat;
+            let qsets = await window.parent.getSetting("CamImgFormat");
+            if (qsets) {
+                FileFormat = qsets.toLowerCase();
+            }
 
-					window.parent.createFile("Media/", capturedString, FileFormat, x);
-				}
+            function createFileWithTimestamp() {
+                let now = new Date();
+                let year = now.getFullYear();
+                let month = String(now.getMonth() + 1).padStart(2, '0');
+                let day = String(now.getDate()).padStart(2, '0');
+                let hours = String(now.getHours()).padStart(2, '0');
+                let minutes = String(now.getMinutes()).padStart(2, '0');
 
-				createFileWithTimestamp();
-				obj.innerHTML = cakebuff;
-				setTimeout(() => {
-					video.style.display = "block";
-				}, 50);
-			}, document.getElementById('timer-select').value)
-		}
+                let timestamp = `${year}-${month}-${day}, ${hours}:${minutes}`;
+                let capturedString = `captured_${timestamp} ${window.parent.genUID()}`;
+
+                window.parent.createFile("Media/", capturedString, FileFormat, x);
+            }
+
+            createFileWithTimestamp();
+            obj.innerHTML = cakebuff;
+
+            setTimeout(() => {
+                video.style.display = "block";
+            }, 50);
+        } catch (error) {
+            console.log("Capture error:", error);
+            obj.innerHTML = cakebuff;
+        }
+
+		timerelem.style.display = 'none';
+    }
+}
 	</script>
 </body>
 
