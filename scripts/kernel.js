@@ -270,7 +270,7 @@ async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
 
     async function loadIframeContent(windowLoader, windowContent, iframe) {
         const content2 = cont;
-        
+
         var contentString = isBase64(content2) ? decodeBase64Content(content2) : content2;
 
         if (content2 == undefined) {
@@ -351,10 +351,17 @@ async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
             try {
                 await iframe.contentWindow.greenflag();
             } catch (e) {
-                console.error('Error during iframe initialization:', e);
+                if (!e.message.includes("greenflag")) {
+                    console.warn(e);
+                }
             }
 
-            windowLoader.remove();
+            windowLoader.classList.add("transp5")
+
+            setTimeout(() => {
+                windowLoader.remove();
+            }, 700);
+
         };
 
         iframe.src = blobURL;

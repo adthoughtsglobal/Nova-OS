@@ -235,3 +235,15 @@ function useNovaOffline() {
 		  });
 	  }
 }
+
+function getReadableTimestamp() {
+	const now = new Date();
+	const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+	const date = now.toLocaleDateString();
+	return `${time} ${date}`;
+}
+
+const draggableTimeDiv = document.getElementById('draggable-time');
+draggableTimeDiv.addEventListener('dragstart', (e) => {
+	e.dataTransfer.setData('text/plain', getReadableTimestamp());
+});

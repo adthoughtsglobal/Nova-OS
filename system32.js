@@ -769,6 +769,24 @@ async function getFileById(id) {
     return findFileDetails(id, memory.root);
 }
 
+async function getFileNameByID(id) {
+    if (!id) return;
+    
+    await updateMemoryData();
+    return findFileDetails(id, memory.root);
+
+    function findFileDetails(id, folder, path = '') {
+        for (let key in folder) {
+            const item = folder[key], newPath = path + key;
+            if (item?.id === id) return ;
+            if (key.endsWith('/')) {
+                const result = findFileDetails(id, item, newPath);
+                if (result) return result;
+            }
+        }
+    }
+}
+
 async function getFolderNames() {
     try {
         await updateMemoryData();

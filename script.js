@@ -427,7 +427,7 @@ async function loadrecentapps() {
 		var iconSpan = document.createElement("span");
 		if (!appicns[app.id]) {
 			const content = await getFileById(app.id);
-			const unshrunkContent = unshrinkbsf(content.content);
+			const unshrunkContent = decodeBase64Content(content.content);
 			const tempElement = document.createElement('div');
 			tempElement.innerHTML = unshrunkContent;
 			const metaTags = tempElement.getElementsByTagName('meta');
@@ -581,41 +581,34 @@ async function dod() {
 
 			const unid = event.dataTransfer.getData("Text");
 			await moveFileToFolder(unid, "Desktop/");
-			//dod()
+			dod()
 		});
 		dropZone.addEventListener('dragend', (event) => {
 			event.preventDefault();
 		});
 		y.forEach(async function (app) {
-			// Create a div element for the app shortcut
 			var appShortcutDiv = document.createElement("div");
 			appShortcutDiv.className = "app-shortcut sizableuielement";
 			appShortcutDiv.setAttribute("onclick", "openfile('" + app.id + "')");
 			appShortcutDiv.setAttribute("unid", app.id);
 
+			if (mtpetxt(app.fileName) == "lnk") {
+				let z = JSON.parse(decodeBase64Content(app.content));
+				app = await getFileById(z.open)
+				islnk = true;
+			}
+
 			appShortcutDiv.setAttribute("draggable", true);
 			appShortcutDiv.setAttribute("ondragstart", "dragfl(event, this)");
 
-			// Create a span element for the app icon
 			var iconSpan = document.createElement("span");
-
-			// Fetch the content asynchronously using getFileById
 			const content = await getFileById(app.id);
-
-			// Unshrink the content
-			const unshrunkContent = unshrinkbsf(content.content);
-
-			// Create a temporary div to parse the content
+			const unshrunkContent = decodeBase64Content(content.content);
 			const tempElement = document.createElement('div');
 			tempElement.innerHTML = unshrunkContent;
-
-			// Get all meta tags
 			const metaTags = tempElement.getElementsByTagName('meta');
-
-			// Create an object to store meta tag data
 			let metaTagData = null;
 
-			// Iterate through meta tags and extract data
 			Array.from(metaTags).forEach(tag => {
 				const tagName = tag.getAttribute('name');
 				const tagContent = tag.getAttribute('content');
@@ -634,12 +627,10 @@ async function dod() {
 				iconSpan.innerHTML = `<span class="app-icon">` + makedefic(app.name) + `</span>`;
 			}
 
-			// Create a span element for the app name
 			var nameSpan = document.createElement("span");
 			nameSpan.className = "appname";
 			nameSpan.textContent = app.name;
 
-			// Append both spans to the app shortcut container
 			appShortcutDiv.appendChild(iconSpan);
 			appShortcutDiv.appendChild(nameSpan);
 
@@ -996,7 +987,6 @@ function openModal(type, { title = '', message, options = null, status = null, p
 		const yesButton = modal.querySelector('.yes-button');
 		const noButton = modal.querySelector('.notbn');
 
-		// Reset modal
 		h1.textContent = title;
 		p.innerHTML = message;
 		dropdown.style.display = 'none';
@@ -1004,7 +994,6 @@ function openModal(type, { title = '', message, options = null, status = null, p
 		noButton.style.display = 'none';
 		yesButton.textContent = 'OK';
 
-		// Customize based on type
 		if (type === 'confirm') {
 			noButton.style.display = 'inline-block';
 			yesButton.textContent = 'Yes';
@@ -1712,8 +1701,8 @@ async function genTaskBar() {
 			appShortcutDiv.className = "app-shortcut tooltip adock sizableuielement";
 			app = await getFileById(app.id)
 
-			if (app.type == "lnk") {
-				let z = JSON.parse(app.content);
+			if (mtpetxt(app.fileName) == "lnk") {
+				let z = JSON.parse(decodeBase64Content(app.content));
 				app = await getFileById(z.open)
 				islnk = true;
 			}
