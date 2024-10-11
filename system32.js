@@ -477,7 +477,7 @@ async function ensurePreferencesFileExists() {
 }
 
 let settingsCache = {};
-const settingscacheDuration = 250;
+const settingscacheDuration = 10;
 
 async function getSetting(key) {
     try {

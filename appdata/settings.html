@@ -2145,37 +2145,25 @@ await setSetting('fileTypeAssociations', fileAssociations);
 			<h1>Personalization</h1>
 			<segr>
 				<div class="inpbox">
-					<span>Window Background color </span>
-					<div class="colorpickerbx">
-						<select id="windbgs" style="float: none;">
-							<option>transparent</option>
-							<option>#101010</option>
-							<option>Custom color</option>
-						</select>
-						<input type="color" id="colorPicker">
+					<span>Wallpaper</span>
+					<div class="inputwithbtn">
+						<input placeholder="Paste a URL here..." id="wallpaperurl">
+						<button>Save</button>
 					</div>
 				</div>
 			</segr>
 			<style>
-				.colorpickerbx {
+				.inputwithbtn {
+					width: 100%;
 					display: flex;
 					flex-direction: row;
-					gap: var(--sizing-nano);
-					align-items: stretch;
-					margin-top: var(--sizing-normal);
-					background: #1f1f1f;
-					border-radius: var(--sizing-normal);
-					width: fit-content;
-					padding: var(--sizing-nano);
-
-					select {
-						transform: none;
-					}
+					gap: 0.5rem;
 				}
 
-				#colorPicker {
-					float: right;
-					display: none;
+				.inputwithbtn input {
+					background-color: var(--colors-BG-normal);
+					color: var(--colors-text-normal);
+					flex: 1;
 				}
 
 				#UISIZErangeslid {

@@ -542,12 +542,12 @@ nav [navobj] div {
 }
 
 .strtappsugs div span {
-	font-size: var(--font-size-normal);
-	background: #2f2f2f78;
-	cursor: pointer;
-	border-radius: 5px;
-	padding: 5px;
-	align-self: flex-end;
+    font-size: var(--font-size-normal);
+    background: #2f2f2f78;
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 3px;
+    align-self: flex-end;
 }
 
 .strtappsugs div span:hover {
@@ -1186,14 +1186,14 @@ nav [navobj] div {
 }
 
 #notification h2 {
-	font-size: 15px;
-	font-weight: normal;
-	margin: 5px 0;
+    font-size: var(--font-size-subheading);
+    font-weight: normal;
+    margin: 0px 0;
 }
 
 #notification p {
 	font-size: var(--font-size-small);
-    margin: 10px 0;
+    margin: 3px 0;
     opacity: 0.7;
 }
 
@@ -1553,6 +1553,7 @@ dialog#terminal {
 	flex-wrap: nowrap;
 	width: 0;
 	transition: 0.3s;
+    gap: 0.5rem;
 }
 
 .searchside .smalltitl {
@@ -1577,6 +1578,8 @@ dialog#terminal {
 	width: 100%;
 	padding: 0.5rem;
 	box-sizing: border-box;
+	scroll-snap-type: y mandatory;
+	scroll-behavior: smooth;
 }
 
 .notiflistnav {
@@ -1617,6 +1620,7 @@ dialog#terminal {
 	overflow: hidden;
 	word-break: break-word;
 	text-align: left;
+	scroll-snap-align: start;
 }
 
 .searchside .notifTitle {

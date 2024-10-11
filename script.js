@@ -71,10 +71,10 @@ async function showloginmod() {
 
 				try {
 					navigator.registerProtocolHandler(
-					'web+nova',
-					`${location.origin}/?path=%s`,
-					'NovaOS'
-				);
+						'web+nova',
+						`${location.origin}/?path=%s`,
+						'NovaOS'
+					);
 			
 				await cleanupram();
 				CurrentUsername = cacusername;
@@ -100,15 +100,10 @@ async function showloginmod() {
 					gid("loginform1").focus();
 					gid('loginmod').showModal()
 				}
-			} catch (err) {
-
-			}
+			} catch (err) {}
 			};
 
-			userDiv.addEventListener("click", selectUser);
-			userDiv.addEventListener("touchstart", selectUser, { passive: true });
-
-
+			userDiv.onclick = selectUser;
 			userDiv.addEventListener("keydown", function (event) {
 				if (event.key === "Enter") {
 					selectUser();
@@ -1227,8 +1222,8 @@ async function prepareArrayToSearch() {
 		}
 	}
 
-	for (const folder in memory) {
-		scanFolder(folder, memory[folder]);
+	for (const folder in memory["root"]) {
+		scanFolder(folder, memory["root"][folder]);
 	}
 
 	fileslist = arrayToSearch;
@@ -1540,7 +1535,7 @@ function displayNotifications(x) {
 	if (Object.values(notifLog).length == 0) {
 		document.querySelector(".notiflist").style.display = "none";
 	} else {
-		document.querySelector(".notiflist").style.display = "block";
+		document.querySelector(".notiflist").style.display = "flex";
 	}
 
 	Object.values(notifLog).forEach(({ title, description, appname }) => {
