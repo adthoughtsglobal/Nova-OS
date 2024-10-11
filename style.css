@@ -242,10 +242,11 @@ nav [navobj] div {
 }
 
 .app-shortcut span {
-	overflow: hidden;
-	padding: 0;
-	display: grid;
-	border-radius: 10px;
+    overflow: hidden;
+    padding: 0;
+    display: flex;
+    border-radius: 10px;
+    justify-content: center;
 }
 
 .app-shortcut span svg {

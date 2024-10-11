@@ -589,47 +589,29 @@ async function dod() {
 		y.forEach(async function (app) {
 			var appShortcutDiv = document.createElement("div");
 			appShortcutDiv.className = "app-shortcut sizableuielement";
-			appShortcutDiv.setAttribute("onclick", "openfile('" + app.id + "')");
-			appShortcutDiv.setAttribute("unid", app.id);
+			app = await getFileById(app.id);
 
+			let islnk = false;
 			if (mtpetxt(app.fileName) == "lnk") {
 				let z = JSON.parse(decodeBase64Content(app.content));
-				app = await getFileById(z.open)
+				app = await getFileById(z.open);
 				islnk = true;
 			}
 
 			appShortcutDiv.setAttribute("draggable", true);
 			appShortcutDiv.setAttribute("ondragstart", "dragfl(event, this)");
+			appShortcutDiv.setAttribute("onclick", "openfile('" + app.id + "')");
+			appShortcutDiv.setAttribute("unid", app.id);
 
 			var iconSpan = document.createElement("span");
-			const content = await getFileById(app.id);
-			const unshrunkContent = decodeBase64Content(content.content);
-			const tempElement = document.createElement('div');
-			tempElement.innerHTML = unshrunkContent;
-			const metaTags = tempElement.getElementsByTagName('meta');
-			let metaTagData = null;
 
-			Array.from(metaTags).forEach(tag => {
-				const tagName = tag.getAttribute('name');
-				const tagContent = tag.getAttribute('content');
-				if (tagName === 'nova-icon' && tagContent) {
-					metaTagData = tagContent;
-				}
-			});
-			if (typeof metaTagData === "string") {
-				if (containsSmallSVGElement(metaTagData)) {
-					iconSpan.innerHTML = metaTagData;
-				} else {
-
-					iconSpan.innerHTML = `<span class="app-icon">` + makedefic(app.name) + `</span>`;
-				}
-			} else {
-				iconSpan.innerHTML = `<span class="app-icon">` + makedefic(app.name) + `</span>`;
-			}
+			getAppIcon(app.content, app.id).then((icon) => {
+				iconSpan.innerHTML = `${icon}`;
+			})
 
 			var nameSpan = document.createElement("span");
 			nameSpan.className = "appname";
-			nameSpan.textContent = app.name;
+			nameSpan.textContent = islnk ? basename(app.fileName) + `*` : basename(app.fileName);
 
 			appShortcutDiv.appendChild(iconSpan);
 			appShortcutDiv.appendChild(nameSpan);
@@ -1618,6 +1600,7 @@ function runAsWasm(content) {
 	div.appendChild(script);
 	openwindow("Nova Wasm Runner", div.innerHTML);
 }
+
 // hotkeys
 document.addEventListener('keydown', function (event) {
 	if (event.ctrlKey && (event.key === 'f' || event.keyCode === 70)) {
@@ -1655,11 +1638,6 @@ async function genTaskBar() {
 	var appbarelement = document.getElementById("dock")
 	appbarelement.innerHTML = "<span class='taskbarloader' id='taskbarloaderprime'></span>";
 	if (appbarelement) {
-		/*if (!await getSetting("aiFeatures")) {
-			gid("copilotbtn").style.display = "none";
-		} else {
-			gid("copilotbtn").style.display = "auto";
-		}*/
 		let dropZone = appbarelement;
 		dropZone.addEventListener('dragover', (event) => {
 			event.preventDefault();

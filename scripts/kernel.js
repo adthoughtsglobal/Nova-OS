@@ -470,6 +470,8 @@ async function checksnapping(x, event) {
 }
 function dragElement(elmnt) {
     var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    var iframeOverlay = null;
+
     if (gid(elmnt.id + "header")) {
         gid(elmnt.id + "header").onmousedown = dragMouseDown;
     } else {
@@ -478,9 +480,24 @@ function dragElement(elmnt) {
 
     function dragMouseDown(e) {
         e = e || window.event;
+        if (isInsideIbtnsSide(e.target)) {
+            return;
+        }
         e.preventDefault();
         pos3 = e.clientX;
         pos4 = e.clientY;
+        
+        iframeOverlay = document.createElement('div');
+        iframeOverlay.style.position = 'absolute';
+        iframeOverlay.style.top = 0;
+        iframeOverlay.style.left = 0;
+        iframeOverlay.style.width = '100%';
+        iframeOverlay.style.height = '100%';
+        iframeOverlay.style.zIndex = 999;
+        iframeOverlay.style.backgroundColor = 'transparent';
+        iframeOverlay.style.cursor = 'grabbing';
+        document.body.appendChild(iframeOverlay);
+
         document.onmouseup = closeDragElement;
         document.onmousemove = elementDrag;
     }
@@ -521,9 +538,23 @@ function dragElement(elmnt) {
     function closeDragElement() {
         document.onmouseup = null;
         document.onmousemove = null;
+
+        if (iframeOverlay) {
+            document.body.removeChild(iframeOverlay);
+            iframeOverlay = null;
+        }
+    }
+
+    function isInsideIbtnsSide(target) {
+        while (target) {
+            if (target.classList && target.classList.contains('ibtnsside')) {
+                return true;
+            }
+            target = target.parentElement;
+        }
+        return false;
     }
 }
-
 async function openapp(x, od) {
     // od is the app id, x is the app name
     if (gid('appdmod').open) {
