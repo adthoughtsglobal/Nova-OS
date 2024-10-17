@@ -1,4 +1,4 @@
-var batteryLevel, winds = {}, rp, flwint = true, contentpool = {},  memory = {}, _nowapp, fulsapp = false, nowappdo, appsHistory = [], nowwindow, appicns = {}, dev = true, appfound = 'files', fileslist = [], qsetscache = {};
+var batteryLevel, winds = {}, rp, flwint = true, contentpool = {}, memory = {}, _nowapp, fulsapp = false, nowappdo, appsHistory = [], nowwindow, appicns = {}, dev = true, appfound = 'files', fileslist = [], qsetscache = {};
 var really = false, initmenuload = true, fileTypeAssociations = {}, Gtodo, notifLog = {}, initialization = false, onstartup = [];
 var novaFeaturedImage = `Dev.png`;
 
@@ -75,32 +75,32 @@ async function showloginmod() {
 						`${location.origin}/?path=%s`,
 						'NovaOS'
 					);
-			
-				await cleanupram();
-				CurrentUsername = cacusername;
-				let isdefaultpass = false;
 
-				try {
-					isdefaultpass = await checkPassword('nova');
-				} catch (err) {
-					console.error("Password check failed:", err);
-				}
+					await cleanupram();
+					CurrentUsername = cacusername;
+					let isdefaultpass = false;
 
-				if (isdefaultpass) {
-					console.log("Password check: good: ", password, isdefaultpass);
-					gid('loginmod').close();
-					gid('edison').showModal();
+					try {
+						isdefaultpass = await checkPassword('nova');
+					} catch (err) {
+						console.error("Password check failed:", err);
+					}
 
-					startup();
-				} else {
-					console.log("Password check: bad: ", password, isdefaultpass);
-					document.getElementsByClassName("backbtnscont")[0].style.display = "flex";
-					document.getElementsByClassName("userselect")[0].style.flex = "0";
-					document.getElementsByClassName("logincard")[0].style.flex = "1";
-					gid("loginform1").focus();
-					gid('loginmod').showModal()
-				}
-			} catch (err) {}
+					if (isdefaultpass) {
+						console.log("Password check: good: ", password, isdefaultpass);
+						gid('loginmod').close();
+						gid('edison').showModal();
+
+						startup();
+					} else {
+						console.log("Password check: bad: ", password, isdefaultpass);
+						document.getElementsByClassName("backbtnscont")[0].style.display = "flex";
+						document.getElementsByClassName("userselect")[0].style.flex = "0";
+						document.getElementsByClassName("logincard")[0].style.flex = "1";
+						gid("loginform1").focus();
+						gid('loginmod').showModal()
+					}
+				} catch (err) { }
 			};
 
 			userDiv.onclick = selectUser;
@@ -158,7 +158,7 @@ async function startup() {
 		'color: lightgrey; padding:0.5rem;'
 	);
 
-	
+	lethalpasswordtimes = false;
 
 	setsrtpprgbr(50);
 	const start = performance.now();
@@ -176,90 +176,90 @@ async function startup() {
 			setsrtpprgbr(100)
 			gid('startupterms').innerHTML = "Startup completed";
 
-		
 
-		closeElementedis();
-		async function fetchDataAndUpdate() {
-			let localupdatedataver = localStorage.getItem("updver");
-			let fetchupdatedata = await fetch("versions.json");
 
-			if (fetchupdatedata.ok) {
-				let fetchupdatedataver = (await fetchupdatedata.json()).osver;
+			closeElementedis();
+			async function fetchDataAndUpdate() {
+				let localupdatedataver = localStorage.getItem("updver");
+				let fetchupdatedata = await fetch("versions.json");
 
-				if (localupdatedataver !== fetchupdatedataver) {
-					if (await justConfirm("Update default apps?", "Your default apps are old. Update them to access new features and fixes.")) {
-						await installdefaultapps();
-						startup();
-					} else {
-						say("You can always update app on settings app/Preferances")
+				if (fetchupdatedata.ok) {
+					let fetchupdatedataver = (await fetchupdatedata.json()).osver;
+
+					if (localupdatedataver !== fetchupdatedataver) {
+						if (await justConfirm("Update default apps?", "Your default apps are old. Update them to access new features and fixes.")) {
+							await installdefaultapps();
+							startup();
+						} else {
+							say("You can always update app on settings app/Preferances")
+						}
 					}
+
+					const data = {
+						Username: CurrentUsername,
+						LocalVersion: localupdatedataver,
+						TimeFrmt12: timetypecondition,
+						OSVersion: fetchupdatedataver
+					}
+
+					rllog(data);
+				} else {
+					console.error("Failed to fetch data from the server.");
 				}
+			}
 
-				const data = {
-					Username: CurrentUsername, 
-					LocalVersion: localupdatedataver, 
-					TimeFrmt12: timetypecondition,
-					OSVersion: fetchupdatedataver
+
+
+			fetchDataAndUpdate();
+			await genTaskBar();
+			await dod();
+			removeInvalidMagicStrings();
+			setInterval(updateTime, 1000);
+
+			async function loadFileTypeAssociations() {
+				const associations = await getSetting('fileTypeAssociations');
+				fileTypeAssociations = associations || {};
+				cleanupInvalidAssociations();
+			}
+
+			await loadFileTypeAssociations();
+
+			try {
+				function runScriptsSequentially(scripts, delay) {
+					scripts.forEach((script, index) => {
+						setTimeout(script, index * delay);
+					});
 				}
-				  
-				  rllog(data);
-			} else {
-				console.error("Failed to fetch data from the server.");
-			}
-		}
+				runScriptsSequentially(onstartup, 1000)
+			} catch (e) { }
 
-		
-
-		fetchDataAndUpdate();
-		await genTaskBar();
-		await dod();
-		removeInvalidMagicStrings();
-		setInterval(updateTime, 1000);
-
-		async function loadFileTypeAssociations() {
-			const associations = await getSetting('fileTypeAssociations');
-			fileTypeAssociations = associations || {};
-			cleanupInvalidAssociations();
-		}
-
-		await loadFileTypeAssociations();
-
-		try {
-			function runScriptsSequentially(scripts, delay) {
-				scripts.forEach((script, index) => {
-					setTimeout(script, index * delay);
-				});
-			}
-			runScriptsSequentially(onstartup, 1000)
-		} catch (e) { }
-		
-		const end = performance.now();
-		console.log(`Startup took ${(end - start).toFixed(2)}ms`);
-	} catch (err) { console.error("startup error:", err); }
+			const end = performance.now();
+			console.log(`Startup took ${(end - start).toFixed(2)}ms`);
+		} catch (err) { console.error("startup error:", err); }
 	})
 
 }
 
 document.addEventListener("DOMContentLoaded", async function () {
 	console.log("DOMCL");
-		
-if ('serviceWorker' in navigator) {
-   await navigator.serviceWorker.register('novaCrypt.js')
-        .then(reg => console.log('Service Worker registered:', reg))
-        .catch(err => console.error('Service Worker registration failed:', err));
-}
 
-const params = new URLSearchParams(window.location.search);
-const value = params.get('rel');
-if (value == "initrel") {
-	
-params.set('rel', '');
+	if ('serviceWorker' in navigator) {
+		await navigator.serviceWorker.register('novaCrypt.js')
+			.then(reg => console.log('Service Worker registered:', reg))
+			.catch(err => console.error('Service Worker registration failed:', err));
+	}
 
-const newUrl = `${window.location.pathname}?${params.toString()}`;
-window.history.pushState({}, '', newUrl);
-	initialiseOS();
-	return;
-}
+	const params = new URLSearchParams(window.location.search);
+	const value = params.get('rel');
+	if (value == "initrel") {
+
+		params.set('rel', '');
+
+		const newUrl = `${window.location.pathname}?${params.toString()}`;
+		window.history.pushState({}, '', newUrl);
+		initialiseOS();
+		return;
+	}
 
 	async function waitForNonNull() {
 		const startTime = Date.now();
@@ -614,19 +614,25 @@ async function dod() {
 			gid("desktop").appendChild(appShortcutDiv);
 
 		});
-		x = await getFileById(await getSetting("wall"));
+		x = await getSetting("wall");
 	} catch (error) {
 		console.error(error)
 		remSetting("wall");
 	}
 
 	if (x != undefined) {
+		let unshrinkbsfX;
 		console.log("Setting custom wallpaper", x)
-		let unshrinkbsfX = unshrinkbsf(x.content);
+		try {
+			new URL(str);
+			unshrinkbsfX = x;
+		} catch (_) {
+			unshrinkbsfX = await getFileById(x).content;
+		}
 		document.getElementById('bgimage').src = unshrinkbsfX;
 	}
-	document.getElementById("bgimage").onerror = async function () {
-		console.log("wallpaper error")
+	document.getElementById("bgimage").onerror = async function (event) {
+		console.log("wallpaper error", event)
 		document.getElementById("bgimage").src = novaFeaturedImage;
 		if (await getSetting("wall")) {
 			remSetting("wall");
@@ -691,18 +697,18 @@ function getAppAspectRatio(unshrunkContent) {
 }
 
 async function getAppIcon(content, id, lazy = 0) {
-    if (!content) {
-        const file = await getFileById(id);
-        return getAppIcon(file.content, id);
-    }
-    if (lazy) return appicns[id] || defaultAppIcon;
-    if (appicns[id]) return appicns[id];
-    const iconContent = getMetaTagContent(content, 'nova-icon', true);
-    if (iconContent && containsSmallSVGElement(iconContent)) {
-        appicns[id] = iconContent;
-        return iconContent;
-    }
-    return defaultAppIcon;
+	if (!content) {
+		const file = await getFileById(id);
+		return getAppIcon(file.content, id);
+	}
+	if (lazy) return appicns[id] || defaultAppIcon;
+	if (appicns[id]) return appicns[id];
+	const iconContent = getMetaTagContent(content, 'nova-icon', true);
+	if (iconContent && containsSmallSVGElement(iconContent)) {
+		appicns[id] = iconContent;
+		return iconContent;
+	}
+	return defaultAppIcon;
 }
 
 function decodeBase64Content(str) {
@@ -783,62 +789,62 @@ function genUID() {
 	return randomString;
 }
 async function createFolder(folderNames, folderData) {
-    try {
-        await updateMemoryData();
+	try {
+		await updateMemoryData();
 
-        if (typeof folderNames === 'string') {
-            folderNames = [folderNames];
-        } else if (!(folderNames instanceof Set || Array.isArray(folderNames))) {
-            throw new Error('folderNames should be a Set or a string');
-        }
+		if (typeof folderNames === 'string') {
+			folderNames = [folderNames];
+		} else if (!(folderNames instanceof Set || Array.isArray(folderNames))) {
+			throw new Error('folderNames should be a Set or a string');
+		}
 
-        folderNames = Array.from(folderNames); // Ensure folderNames is an array
+		folderNames = Array.from(folderNames); // Ensure folderNames is an array
 
-        for (const folderName of folderNames) {
-            const parts = folderName.replace(/\/$/, '').split('/'); // Remove trailing slash for folder name
-            let current = memory.root;
+		for (const folderName of folderNames) {
+			const parts = folderName.replace(/\/$/, '').split('/'); // Remove trailing slash for folder name
+			let current = memory.root;
 
-            for (const part of parts) {
-                const folderKey = part + '/';
-                current[folderKey] = current[folderKey] || {};
-                current = current[folderKey];
-            }
-        }
+			for (const part of parts) {
+				const folderKey = part + '/';
+				current[folderKey] = current[folderKey] || {};
+				current = current[folderKey];
+			}
+		}
 
-        // Insert data into the folder structure
-        const insertData = (target, data) => {
-            for (const key in data) {
-                if (typeof data[key] === 'object' && data[key] !== null) {
-                    target[key] = target[key] || {}; // Ensure target exists
-                    insertData(target[key], data[key]); // Recursive insertion for nested objects
-                } else {
-                    target[key] = data[key]; // Directly assign data
-                }
-            }
-        };
+		// Insert data into the folder structure
+		const insertData = (target, data) => {
+			for (const key in data) {
+				if (typeof data[key] === 'object' && data[key] !== null) {
+					target[key] = target[key] || {}; // Ensure target exists
+					insertData(target[key], data[key]); // Recursive insertion for nested objects
+				} else {
+					target[key] = data[key]; // Directly assign data
+				}
+			}
+		};
 
-        insertData(memory.root, folderData); // Insert data into the tree
+		insertData(memory.root, folderData); // Insert data into the tree
 
-        await setdb(); // Save changes to the database
-        console.log('Folders created successfully.');
-    } catch (error) {
-        console.error("Error creating folders and data:", error);
-    }
+		await setdb(); // Save changes to the database
+		console.log('Folders created successfully.');
+	} catch (error) {
+		console.error("Error creating folders and data:", error);
+	}
 }
 
 function folderExists(folderName) {
-    const parts = folderName.replace(/\/$/, '').split('/');
-    let current = memory.root; // Update to point to memory.root
+	const parts = folderName.replace(/\/$/, '').split('/');
+	let current = memory.root; // Update to point to memory.root
 
-    for (let part of parts) {
-        part += '/';
-        if (!current[part]) {
-            return false; // Folder does not exist
-        }
-        current = current[part];
-    }
+	for (let part of parts) {
+		part += '/';
+		if (!current[part]) {
+			return false; // Folder does not exist
+		}
+		current = current[part];
+	}
 
-    return true; // Folder exists
+	return true; // Folder exists
 }
 
 function isBase64(str) {
@@ -1073,12 +1079,16 @@ function unshrinkbsf(compressedStr) {
 }
 
 async function makewall(deid) {
-	console.log("Wallpaper: " + deid)
-	let x = await getFileById(deid);
-	x = x.content
-	x = unshrinkbsf(x)
+	let unshrinkbsfX;
+	console.log("Setting custom wallpaper", deid)
+	try {
+		new URL(str);
+		unshrinkbsfX = deid;
+	} catch (_) {
+		unshrinkbsfX = await getFileById(deid).content;
+	}
+	document.getElementById('bgimage').src = unshrinkbsfX;
 	setSetting("wall", deid);
-	document.getElementById('bgimage').style.backgroundImage = `url("` + x + `")`;
 }
 
 async function initialiseOS() {
@@ -1104,12 +1114,12 @@ async function initialiseOS() {
 			"Apps/": {}
 		}
 	};
-	
+
 	contentpool = {
 		'1283jh': 'Welcome to Nova OS! kindly reach us https://adthoughtsglobal.github.io and connect via the available options, we will respond you back! Enjoy!',
 		'sibq81': 'This is a file inside a subfolder.'
 	};
-	
+
 	// Pass both memory and contentpool to setdb
 	setdb().then(async function () {
 		await saveMagicStringInLocalStorage(password);
@@ -1327,7 +1337,7 @@ async function strtappse(event) {
 	}
 
 	if (elements == 0) {
-		gid("strtappsugs").innerHTML =`<p style="margin:1rem; opacity: 0.5;">No results</p>`
+		gid("strtappsugs").innerHTML = `<p style="margin:1rem; opacity: 0.5;">No results</p>`
 	}
 }
 function calculateSimilarity(string1, string2) {
@@ -1456,26 +1466,26 @@ function playBeeps() {
 		[1.2, 1.4, 1.6, 1.8],
 		[2.4, 2.6, 2.8, 3.0]
 	];
-	
+
 	const getOffsetTime = (index, time) => now + time + index * (4 * (duration + gap));
-	
+
 	rhythm.forEach((set, index) => {
 		set.forEach(time => {
 			const offsetTime = getOffsetTime(index, time);
-			
+
 			const oscillator = context.createOscillator();
 			const gainNode = context.createGain();
-	
+
 			oscillator.type = 'triangle';
 			oscillator.frequency.setValueAtTime(pitch, offsetTime);
-			
+
 			gainNode.gain.setValueAtTime(0, offsetTime);
 			gainNode.gain.linearRampToValueAtTime(1, offsetTime + fadeDuration); // Fade in
 			gainNode.gain.linearRampToValueAtTime(0, offsetTime + duration - fadeDuration); // Fade out
-			
+
 			oscillator.connect(gainNode);
 			gainNode.connect(context.destination);
-	
+
 			oscillator.start(offsetTime);
 			oscillator.stop(offsetTime + duration);
 		});
@@ -1653,16 +1663,16 @@ async function genTaskBar() {
 		let x = await getFileNamesByFolder("Dock");
 		if (Array.isArray(x) && x.length === 0) {
 			const y = await getFileNamesByFolder("Apps");
-			
+
 			x = (await Promise.all(
-				y.filter(item => 
-					item.name === "Files.app" || 
-					item.name === "Settings.app" || 
+				y.filter(item =>
+					item.name === "Files.app" ||
+					item.name === "Settings.app" ||
 					item.name === "Store.app"
 				)
 			)).filter(Boolean);
 		}
-		
+
 		x.forEach(async function (app, index) {
 			index++
 			var islnk = false;

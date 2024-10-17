@@ -106,6 +106,7 @@
 			min-width: 300px;
 			padding-bottom: 30vh;
 			background-color: inherit;
+			animation: drop .2s ease-out;
 			border-left: none;
 			border-radius: var(--sizing-border-radius);
 			height: calc(100% - 5px);
@@ -553,7 +554,6 @@
 			display: block;
 			border: 1px solid var(--colors-BG-sub);
 			box-shadow: 0 3px 5px #0000007e;
-			animation: drop .2s ease-out;
 			max-width: 500px;
 		}
 
@@ -1024,7 +1024,7 @@
 						if (matchingKey !== undefined) {
 							document.getElementById("UISIZErangeslid").value = matchingKey;
 						} else {
-							console.error("No matching key found for stored UISizing value:", storedUISizing);
+							console.log("No UISizing set ", storedUISizing);
 						}
 
 						document.getElementById("UISIZErangeslid").addEventListener("input", async function () {
@@ -1032,6 +1032,15 @@
 							await window.parent.setSetting("UISizing", newValue);
 							window.parent.checkdmode();
 						});
+
+
+						let storedwall = await window.parent.getSetting("wall");
+
+						if (storedwall) {
+							document.getElementById("wallpaperurl").value = storedwall;
+						} else {
+							console.log("No wallpaper set ", storedwall);
+						}
 					}
 
 					async function defs5() {
@@ -2148,7 +2157,7 @@ await setSetting('fileTypeAssociations', fileAssociations);
 					<span>Wallpaper</span>
 					<div class="inputwithbtn">
 						<input placeholder="Paste a URL here..." id="wallpaperurl">
-						<button>Save</button>
+						<button onclick="savewallpap()">Save</button>
 					</div>
 				</div>
 			</segr>
@@ -2164,6 +2173,8 @@ await setSetting('fileTypeAssociations', fileAssociations);
 					background-color: var(--colors-BG-normal);
 					color: var(--colors-text-normal);
 					flex: 1;
+					border:none;
+					border-radius: var(--sizing-border-radius);
 				}
 
 				#UISIZErangeslid {
@@ -2191,6 +2202,11 @@ await setSetting('fileTypeAssociations', fileAssociations);
 			</style>
 			</segr>
 			<script defer>
+				async function savewallpap() {
+					var newurl = document.getElementById("wallpaperurl");
+					await window.parent.setSetting("wall", newurl.value);
+					window.parent.dod();
+				}
 				function openCity(evt, cityName) {
 					currentpage = cityName;
 					var i, tabcontent, tablinks;

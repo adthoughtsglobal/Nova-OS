@@ -1447,6 +1447,13 @@
 
 				const actions = [
 					{
+						id: "search",
+						title: "Search files",
+						onclick: window.parent.opensearchpanel,
+						innerHTML: `<span class="material-symbols-rounded">search</span> Search`,
+						disabled: folderName === "System/" || folderName === ""
+					},
+					{
 						id: "deleteFolder",
 						title: "Delete folder",
 						onclick: folderName === "System/" || folderName === "" ? (e) => e.preventDefault() : remfold,
@@ -1476,8 +1483,8 @@
 						onclick: () => {
 							flmode = flmode === 'grid' ? 'list' : 'grid';
 							changeview(flmode);
-							toggleViewButton.title = flmode === 'grid' ? 'List view' : 'Grid view';
-							toggleViewButton.innerHTML = flmode === 'grid' ?
+							this.title = flmode === 'grid' ? 'List view' : 'Grid view';
+							this.innerHTML = flmode === 'grid' ?
 								`<span class="material-symbols-rounded">view_list</span> List View` :
 								`<span class="material-symbols-rounded">grid_view</span> Grid View`;
 						},

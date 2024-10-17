@@ -251,7 +251,7 @@ async function getdb() {
                     } catch (error) {
                         console.error("Decryption error:", error);
                         if (!lethalpasswordtimes) {
-                            location.reload();
+                            crashScreen(error.text)
                         }
                         reject(3);
                     }
@@ -491,7 +491,7 @@ async function getSetting(key) {
         if (!content) return;
 
         const base64Content = contentpool[content.id];
-        const preferences = JSON.parse(atob(base64Content.split(",")[1]));
+        const preferences = JSON.parse(decodeBase64Content(base64Content));
         settingsCache[key] = { v: preferences[key], t: Date.now() };
         return preferences[key];
     } catch (error) {
@@ -509,11 +509,8 @@ async function setSetting(key, value) {
 
         if (content) {
             const existingContent = contentpool[content.id];
-            const base64Content = existingContent.startsWith("data:application/json;base64,")
-                ? existingContent.split(",")[1]
-                : existingContent;
-
-            preferences = JSON.parse(atob(base64Content));
+            const decodedContent = decodeBase64Content(existingContent);
+            preferences = JSON.parse(decodedContent);
         }
 
         preferences[key] = value;
@@ -533,7 +530,10 @@ async function resetSettings(defaultPreferences) {
 
         await ensurePreferencesFileExists();
         const content = memory.root["System/"]["preferences.json"];
-        contentpool[content.id] = btoa(JSON.stringify(defaultPreferences));
+        
+        const newContent = `data:application/json;base64,${btoa(JSON.stringify(defaultPreferences))}`;
+        contentpool[content.id] = newContent;
+        
         await setdb();
     } catch (error) {
         console.log("Error resetting settings", error);
@@ -545,10 +545,13 @@ async function remSetting(key) {
     try {
         if (memory.root["System/"] && memory.root["System/"]["preferences.json"]) {
             const content = memory.root["System/"]["preferences.json"];
-            let preferences = JSON.parse(atob(contentpool[content.id]));
+            let preferences = JSON.parse(decodeBase64Content(contentpool[content.id]));
             if (preferences[key]) {
                 delete preferences[key];
-                contentpool[content.id] = btoa(JSON.stringify(preferences));
+                
+                const newContent = `data:application/json;base64,${btoa(JSON.stringify(preferences))}`;
+                contentpool[content.id] = newContent;
+                
                 await setdb();
             }
         }
@@ -1018,4 +1021,14 @@ async function createFile(folderName, fileName, type, content, metadata = {}) {
 
 function dragfl(ev, obj) {
     ev.dataTransfer.setData("Text", obj.getAttribute('unid'));
+}
+
+async function crashScreen(err) { 
+    closeallwindows();
+    await say(`
+        <h1>Your System is curropt.</h1>
+        <p>Reload your OS to continue.<p>
+        <code>${err}</code>
+        `, "failed")
+    location.reload()
 }
