@@ -315,25 +315,29 @@
     obj.innerHTML = "...";
     
     let timerValue = parseInt(document.getElementById('timer-select').value);
-    timerelem.textContent = timerValue+1;
-    timerelem.style.display = 'grid';
+timerelem.style.display = 'grid';
+
+if (isNaN(timerValue) || timerValue <= 0) {
+    timerelem.textContent = "";
+	video.style.display = "none";
+    startCaptureProcess();
+} else {
+    timerelem.textContent = timerValue + 1;
 
     let countdown = setInterval(() => {
         timerelem.textContent = timerValue;
-        
         timerelem.classList.remove('timer-animate');
         void timerelem.offsetWidth;
         timerelem.classList.add('timer-animate');
 
-        timerValue--;
-
-        if (timerValue < 0) {
+        if (--timerValue < 0) {
             clearInterval(countdown);
-			video.style.display = "none";
+            video.style.display = "none";
             timerelem.textContent = "";
             startCaptureProcess();
         }
     }, 1000);
+}
 
     async function startCaptureProcess() {
         try {

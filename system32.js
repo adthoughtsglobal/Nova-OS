@@ -98,6 +98,10 @@ async function encryptData(key, data) {
 }
 
 async function decryptData(key, encryptedData) {
+    if (!navigator.serviceWorker.controller) {
+        await registerDecryptWorker();
+    }
+
     return new Promise((resolve, reject) => {
         if (navigator.serviceWorker.controller) {
             navigator.serviceWorker.controller.postMessage({
@@ -106,7 +110,7 @@ async function decryptData(key, encryptedData) {
                 encryptedData
             });
 
-            navigator.serviceWorker.addEventListener('message', function handler(event) {
+            function handler(event) {
                 if (event.data.type === 'decrypted') {
                     resolve(event.data.result);
                     navigator.serviceWorker.removeEventListener('message', handler);
@@ -114,23 +118,16 @@ async function decryptData(key, encryptedData) {
                     reject(event.data.error);
                     navigator.serviceWorker.removeEventListener('message', handler);
                 }
-            });
+            }
+
+            navigator.serviceWorker.addEventListener('message', handler);
         } else {
             reject(new Error('Service Worker not available.'));
-            const params = new URLSearchParams(window.location.search);
-            params.set('rel', 'initrel');
-
-            const newUrl = `${window.location.pathname}?${params.toString()}`;
-            window.history.pushState({}, '', newUrl);
-            location.reload()
         }
     });
 }
 
-let batchQueue = [];
-let batchTimeout = null;
-const batchInterval = 500;
-async function flushBatch() {
+async function flushDB(value) {
     const databaseName = 'trojencat';
     const key = 'dataStore';
 
@@ -143,83 +140,51 @@ async function flushBatch() {
             }
         });
 
-        const processedBatch = await Promise.all(batchQueue.map(async ({ value }) => {
-            try {
-                const cryptoKey = await getKey(password);
-                const encryptedContentPool = {};
+        try {
+            const cryptoKey = await getKey(password);
+            const encryptedContentPool = {};
 
-                for (let id in value.contentpool) {
-                    const compressedContent = compressString(value.contentpool[id]);
-                    encryptedContentPool[id] = await encryptData(cryptoKey, compressedContent);
-                }
-
-                return { memory: value.memory, encryptedContentPool };
-            } catch (error) {
-                console.error("Error processing batch item:", error);
-                return null;
+            for (let id in value.contentpool) {
+                const compressedContent = compressString(value.contentpool[id]);
+                encryptedContentPool[id] = await encryptData(cryptoKey, compressedContent);
             }
-        }));
 
-        const transaction = db.transaction(key, 'readwrite');
-        const store = transaction.objectStore(key);
+            const memoryValue = {
+                key: value.memory.CurrentUsername || 'user1',
+                memory: value.memory,
+                contentpool: encryptedContentPool
+            };
 
-        for (let index = 0; index < processedBatch.length; index++) {
-            const batchItem = processedBatch[index];
-            if (batchItem && batchItem.memory && batchItem.encryptedContentPool) {
-                const memoryValue = {
-                    key: batchItem.memory.CurrentUsername || 'user1',
-                    memory: batchItem.memory,
-                    contentpool: batchItem.encryptedContentPool
-                };
+            const transaction = db.transaction(key, 'readwrite');
+            const store = transaction.objectStore(key);
 
-                await store.put(memoryValue);
-                batchQueue[index].resolve();
-            } else {
-                batchQueue[index].reject(new Error("Failed to process batch item: " + (batchItem.memory || 'unknown')));
-            }
+            await store.put(memoryValue);
+
+            await new Promise((resolve, reject) => {
+                transaction.oncomplete = () => resolve();
+                transaction.onerror = () => reject(transaction.error);
+            });
+        } catch (error) {
+            console.error("Error processing data:", error);
+            throw error;
         }
 
-        await new Promise((resolve, reject) => {
-            transaction.oncomplete = () => resolve();
-            transaction.onerror = () => reject(transaction.error);
-        });
-
-        console.log(`Batch of ${processedBatch.length} saved to ${CurrentUsername}`);
-        batchQueue = [];
     } catch (error) {
-        console.error("Error in flushBatch function:", error);
-    } finally {
-        batchTimeout = null;
+        console.error("Error in flushDB function:", error);
+        throw error;
     }
 }
 
-const maxBatchSize = 10;
+function setdb(log) {
+    console.log("SetDB:", log)
+    const value = { memory, contentpool };
 
-function setdb() {
-    var value = { memory, contentpool };
-    return new Promise((resolve, reject) => {
-        batchQueue.push({ value, resolve, reject });
-
-        if (batchQueue.length >= maxBatchSize) {
-            if (batchTimeout) {
-                clearTimeout(batchTimeout);
-            }
-
-            batchTimeout = setTimeout(async () => {
-                try {
-                    await flushBatch();
-                } catch (error) {
-                    reject(error);
-                }
-            }, batchInterval);
-        } else if (!batchTimeout) {
-            batchTimeout = setTimeout(async () => {
-                try {
-                    await flushBatch();
-                } catch (error) {
-                    reject(error);
-                }
-            }, batchInterval);
+    return new Promise(async (resolve, reject) => {
+        try {
+            await flushDB(value);
+            resolve();
+        } catch (error) {
+            reject(error);
         }
     });
 }
@@ -238,20 +203,19 @@ async function getdb() {
                         const cryptoKey = await getKey(password);
                         const decryptedContentPool = {};
 
-                        // Decrypt and decompress only the contentpool
                         for (let id in request.result.contentpool) {
                             const decryptedContent = await decryptData(cryptoKey, request.result.contentpool[id]);
                             decryptedContentPool[id] = decompressString(decryptedContent);
                         }
 
-                        memory = request.result.memory
-                        contentpool = decryptedContentPool
+                        memory = request.result.memory;
+                        contentpool = decryptedContentPool;
                         resolve(memory)
 
                     } catch (error) {
                         console.error("Decryption error:", error);
                         if (!lethalpasswordtimes) {
-                            crashScreen(error.text)
+                            crashScreen(error.text);
                         }
                         reject(3);
                     }
@@ -518,7 +482,7 @@ async function setSetting(key, value) {
         const newContent = `data:application/json;base64,${btoa(JSON.stringify(preferences))}`;
         contentpool[content.id] = newContent;
 
-        await setdb();
+        await setdb("set setting " + key);
     } catch (error) {
         console.log("Error setting settings", error, key);
     }
@@ -534,7 +498,7 @@ async function resetSettings(defaultPreferences) {
         const newContent = `data:application/json;base64,${btoa(JSON.stringify(defaultPreferences))}`;
         contentpool[content.id] = newContent;
         
-        await setdb();
+        await setdb("reset settings");
     } catch (error) {
         console.log("Error resetting settings", error);
     }
@@ -552,7 +516,7 @@ async function remSetting(key) {
                 const newContent = `data:application/json;base64,${btoa(JSON.stringify(preferences))}`;
                 contentpool[content.id] = newContent;
                 
-                await setdb();
+                await setdb("remove setting");
             }
         }
     } catch (error) {
@@ -597,7 +561,7 @@ async function changePassword(oldPassword, newPassword) {
     try {
         memory = await getdb();
         password = newPassword;
-        await setdb();
+        await setdb("change password");
 
         await saveMagicStringInLocalStorage(newPassword);
 
@@ -841,7 +805,7 @@ async function remfile(ID) {
         if (!fileRemoved) {
             console.error(`File with ID "${ID}" not found.`);
         } else {
-            await setdb();
+            await setdb("remove file");
         }
     } catch (error) {
         console.error("Error fetching or updating data:", error);
@@ -876,7 +840,7 @@ async function remfolder(folderPath) {
             return;
         }
 
-        await setdb();
+        await setdb("remove folder");
     } catch (error) {
         console.error("Error removing folder:", error);
     }
@@ -928,7 +892,7 @@ async function updateFile(folderName, fileId, newData) {
                 contentpool[fileId] = newData.content;
             }
 
-            await setdb();
+            await setdb("modify file");
             console.log(`Modified: "${fileToUpdate.fileName}"`);
         } else {
             console.log(`Creating New: "${fileId}"`);
@@ -940,7 +904,7 @@ async function updateFile(folderName, fileId, newData) {
 
             contentpool[fileId] = newData.content || '';
 
-            await setdb();
+            await setdb("create new file");
         }
     } catch (error) {
         console.error("Error updating file:", error);
@@ -1008,12 +972,12 @@ async function createFile(folderName, fileName, type, content, metadata = {}) {
             return existingFile.id;
         } else {
             const uid = genUID();
+            memory.root[folderName] = folder;
             metadata.datetime = getfourthdimension();
             folder[fileNameWithExtension] = { id: uid, type, metadata };
             if (fileNameWithExtension.endsWith(".app")) extractAndRegisterCapabilities(uid, base64data);
-            memory.root[folderName] = folder;
             contentpool[uid] = base64data;
-            await setdb();
+            await setdb("handling file: " + fileNameWithExtension);
             return uid;
         }
     }

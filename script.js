@@ -240,14 +240,18 @@ async function startup() {
 
 }
 
-document.addEventListener("DOMContentLoaded", async function () {
-	console.log("DOMCL");
-
+async function registerDecryptWorker() {
 	if ('serviceWorker' in navigator) {
 		await navigator.serviceWorker.register('novaCrypt.js')
 			.then(reg => console.log('Service Worker registered:', reg))
 			.catch(err => console.error('Service Worker registration failed:', err));
 	}
+}
+
+document.addEventListener("DOMContentLoaded", async function () {
+	console.log("DOMCL");
+
+	await registerDecryptWorker();
 
 	const params = new URLSearchParams(window.location.search);
 	const value = params.get('rel');
@@ -798,10 +802,10 @@ async function createFolder(folderNames, folderData) {
 			throw new Error('folderNames should be a Set or a string');
 		}
 
-		folderNames = Array.from(folderNames); // Ensure folderNames is an array
+		folderNames = Array.from(folderNames);
 
 		for (const folderName of folderNames) {
-			const parts = folderName.replace(/\/$/, '').split('/'); // Remove trailing slash for folder name
+			const parts = folderName.replace(/\/$/, '').split('/');
 			let current = memory.root;
 
 			for (const part of parts) {
@@ -811,22 +815,21 @@ async function createFolder(folderNames, folderData) {
 			}
 		}
 
-		// Insert data into the folder structure
 		const insertData = (target, data) => {
 			for (const key in data) {
 				if (typeof data[key] === 'object' && data[key] !== null) {
-					target[key] = target[key] || {}; // Ensure target exists
-					insertData(target[key], data[key]); // Recursive insertion for nested objects
+					target[key] = target[key] || {};
+					insertData(target[key], data[key]);
 				} else {
-					target[key] = data[key]; // Directly assign data
+					target[key] = data[key];
 				}
 			}
 		};
 
-		insertData(memory.root, folderData); // Insert data into the tree
+		insertData(memory.root, folderData);
 
-		await setdb(); // Save changes to the database
-		console.log('Folders created successfully.');
+		await setdb("making folders");
+		console.log('set db: Folders created successfully.');
 	} catch (error) {
 		console.error("Error creating folders and data:", error);
 	}
@@ -1120,7 +1123,6 @@ async function initialiseOS() {
 		'sibq81': 'This is a file inside a subfolder.'
 	};
 
-	// Pass both memory and contentpool to setdb
 	setdb().then(async function () {
 		await saveMagicStringInLocalStorage(password);
 		await ensurePreferencesFileExists()
