@@ -97,126 +97,119 @@ async function encryptData(key, data) {
     };
 }
 
+let decryptWorkerRegistered = false;
+
 async function decryptData(key, encryptedData) {
-    if (!navigator.serviceWorker.controller) {
+    if (!navigator.serviceWorker.controller && !decryptWorkerRegistered) {
         await registerDecryptWorker();
+        decryptWorkerRegistered = true;
     }
 
     return new Promise((resolve, reject) => {
         if (navigator.serviceWorker.controller) {
+            const handler = (event) => {
+                if (event.data.type === 'decrypted') {
+                    resolve(event.data.result);
+                } else if (event.data.type === 'error') {
+                    reject(event.data.error);
+                }
+                navigator.serviceWorker.removeEventListener('message', handler);
+            };
+
+            navigator.serviceWorker.addEventListener('message', handler);
             navigator.serviceWorker.controller.postMessage({
                 type: 'decrypt',
                 key,
                 encryptedData
             });
-
-            function handler(event) {
-                if (event.data.type === 'decrypted') {
-                    resolve(event.data.result);
-                    navigator.serviceWorker.removeEventListener('message', handler);
-                } else if (event.data.type === 'error') {
-                    reject(event.data.error);
-                    navigator.serviceWorker.removeEventListener('message', handler);
-                }
-            }
-
-            navigator.serviceWorker.addEventListener('message', handler);
         } else {
             reject(new Error('Service Worker not available.'));
         }
     });
 }
 
-async function flushDB(value) {
-    const databaseName = 'trojencat';
-    const key = 'dataStore';
+let dbCache = null;
+let cryptoKeyCache = null;
+const key = 'dataStore';
 
-    try {
-        const db = await openDB(databaseName, 1, {
+async function flushDB(value) {
+    if (!dbCache) {
+        dbCache = await openDB(databaseName, 1, {
             upgrade(db) {
                 if (!db.objectStoreNames.contains(key)) {
                     db.createObjectStore(key, { keyPath: 'CurrentUsername' });
                 }
             }
         });
-
-        try {
-            const cryptoKey = await getKey(password);
-            const encryptedContentPool = {};
-
-            for (let id in value.contentpool) {
-                const compressedContent = compressString(value.contentpool[id]);
-                encryptedContentPool[id] = await encryptData(cryptoKey, compressedContent);
-            }
-
-            const memoryValue = {
-                key: value.memory.CurrentUsername || 'user1',
-                memory: value.memory,
-                contentpool: encryptedContentPool
-            };
-
-            const transaction = db.transaction(key, 'readwrite');
-            const store = transaction.objectStore(key);
-
-            await store.put(memoryValue);
-
-            await new Promise((resolve, reject) => {
-                transaction.oncomplete = () => resolve();
-                transaction.onerror = () => reject(transaction.error);
-            });
-        } catch (error) {
-            console.error("Error processing data:", error);
-            throw error;
-        }
-
-    } catch (error) {
-        console.error("Error in flushDB function:", error);
-        throw error;
     }
-}
 
-function setdb(log) {
-    console.log("SetDB:", log)
-    const value = { memory, contentpool };
+    if (!cryptoKeyCache) {
+        cryptoKeyCache = await getKey(password);
+    }
 
-    return new Promise(async (resolve, reject) => {
-        try {
-            await flushDB(value);
-            resolve();
-        } catch (error) {
-            reject(error);
-        }
+    const encryptedContentPool = {};
+    for (const id in value.contentpool) {
+        const compressedContent = compressString(value.contentpool[id]);
+        encryptedContentPool[id] = await encryptData(cryptoKeyCache, compressedContent);
+    }
+
+    const memoryValue = {
+        key: CurrentUsername || 'user1',
+        memory: value.memory,
+        contentpool: encryptedContentPool
+    };
+
+    const transaction = dbCache.transaction(key, 'readwrite');
+    const store = transaction.objectStore(key);
+
+    await store.put(memoryValue);
+
+    return new Promise((resolve, reject) => {
+        transaction.oncomplete = resolve;
+        transaction.onerror = () => reject(transaction.error);
     });
 }
 
+function setdb(log) {
+    const value = { memory: { ...memory }, contentpool: { ...contentpool } };
+
+    return flushDB(value)
+        .catch(error => console.error("Error during setdb execution:", error));
+}
 async function getdb() {
+    if (!dbCache) {
+        dbCache = await openDB(databaseName, 1);
+    }
+
+    if (!cryptoKeyCache) {
+        cryptoKeyCache = await getKey(password);
+    }
+
     try {
-        const db = await openDB(databaseName, 1);
-        const transaction = db.transaction('dataStore', 'readonly');
+        const transaction = dbCache.transaction('dataStore', 'readonly');
         const store = transaction.objectStore('dataStore');
         const request = store.get(CurrentUsername);
 
         return new Promise((resolve, reject) => {
             request.onsuccess = async () => {
-                if (request.result) {
+                const result = request.result;
+
+                if (result) {
                     try {
-                        const cryptoKey = await getKey(password);
                         const decryptedContentPool = {};
 
-                        for (let id in request.result.contentpool) {
-                            const decryptedContent = await decryptData(cryptoKey, request.result.contentpool[id]);
+                        memory = result.memory;
+                        for (const id in result.contentpool) {
+                            const decryptedContent = await decryptData(cryptoKeyCache, result.contentpool[id]);
                             decryptedContentPool[id] = decompressString(decryptedContent);
                         }
 
-                        memory = request.result.memory;
                         contentpool = decryptedContentPool;
-                        resolve(memory)
+                        resolve(memory);
 
                     } catch (error) {
                         console.error("Decryption error:", error);
-                        if (!lethalpasswordtimes) {
-                            crashScreen(error.text);
-                        }
+                        if (!lethalpasswordtimes) crashScreen(error.text);
                         reject(3);
                     }
                 } else {
@@ -378,7 +371,6 @@ async function updateMemoryData() {
             }
         }
     }
-    memory = cachedData;
     return cachedData;
 }
 
@@ -553,6 +545,7 @@ async function removeInvalidMagicStrings() {
 async function changePassword(oldPassword, newPassword) {
     lethalpasswordtimes = true;
 
+
     if (!await checkPassword(oldPassword)) {
         lethalpasswordtimes = false;
         return false;
@@ -561,6 +554,9 @@ async function changePassword(oldPassword, newPassword) {
     try {
         memory = await getdb();
         password = newPassword;
+        
+        dbCache = null;
+        cryptoKeyCache = null;
         await setdb("change password");
 
         await saveMagicStringInLocalStorage(newPassword);

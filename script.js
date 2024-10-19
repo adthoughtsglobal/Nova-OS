@@ -152,6 +152,7 @@ function setsrtpprgbr(val) {
 
 async function startup() {
 	gid("edison").showModal();
+	console.clear();
 	rllog(
 		'You are using \n\n%cNovaOS%c\nNovaOS is the free, source-available, powerful and the cutest Web Operating system on the internet.',
 		'color: white; background-color: #101010; font-size: 2rem; padding: 0.7rem 1rem; border-radius: 1rem;',
@@ -1960,14 +1961,9 @@ function markdownToHTML(markdown) {
 }
 
 async function logoutofnova() {
-	memory = null;
-	contentpool = null;
-	password = 'nova';
-	closeallwindows();
+	await cleanupram();
 	await showloginmod();
-	lethalpasswordtimes = true;
 	loginscreenbackbtn();
-	console.clear();
 	console.log("logged out of " + CurrentUsername);
 	CurrentUsername = null;
 }
@@ -1979,8 +1975,11 @@ async function cleanupram() {
 	contentpool = null;
 	CurrentUsername = null;
 	password = 'nova';
+	console.clear();
 	MemoryTimeCache = null;
 	lethalpasswordtimes = true;
+	dbCache = null;
+	cryptoKeyCache = null;
 }
 async function setandinitnewuser() {
 	gid("edison").showModal()
