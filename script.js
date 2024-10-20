@@ -152,7 +152,7 @@ function setsrtpprgbr(val) {
 
 async function startup() {
 	gid("edison").showModal();
-	console.clear();
+	//console.clear();
 	rllog(
 		'You are using \n\n%cNovaOS%c\nNovaOS is the free, source-available, powerful and the cutest Web Operating system on the internet.',
 		'color: white; background-color: #101010; font-size: 2rem; padding: 0.7rem 1rem; border-radius: 1rem;',
@@ -244,7 +244,7 @@ async function startup() {
 async function registerDecryptWorker() {
 	if ('serviceWorker' in navigator) {
 		await navigator.serviceWorker.register('novaCrypt.js')
-			.then(reg => console.log('Service Worker registered:', reg))
+			.then(reg => decryptWorkerRegistered = true)
 			.catch(err => console.error('Service Worker registration failed:', err));
 	}
 }
@@ -253,18 +253,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 	console.log("DOMCL");
 
 	await registerDecryptWorker();
-
-	const params = new URLSearchParams(window.location.search);
-	const value = params.get('rel');
-	if (value == "initrel") {
-
-		params.set('rel', '');
-
-		const newUrl = `${window.location.pathname}?${params.toString()}`;
-		window.history.pushState({}, '', newUrl);
-		initialiseOS();
-		return;
-	}
 
 	async function waitForNonNull() {
 		const startTime = Date.now();
@@ -292,7 +280,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 			if (result || result == 3) {
 				await showloginmod();
 			} else {
-				initialiseOS();
+				await cleanupram();
+				CurrentUsername = 'user1';
+				await initialiseOS();
 			}
 		} catch (error) {
 			console.error('Error in database operations:', error);
@@ -622,18 +612,17 @@ async function dod() {
 		x = await getSetting("wall");
 	} catch (error) {
 		console.error(error)
-		remSetting("wall");
 	}
 
 	if (x != undefined) {
 		let unshrinkbsfX;
-		console.log("Setting custom wallpaper", x)
-		try {
-			new URL(str);
+		if (x.startsWith("http")) {
 			unshrinkbsfX = x;
-		} catch (_) {
-			unshrinkbsfX = await getFileById(x).content;
+		} else {
+			unshrinkbsfX = await getFileById(x);
+			unshrinkbsfX = unshrinkbsfX.content;
 		}
+		console.log(unshrinkbsfX)
 		document.getElementById('bgimage').src = unshrinkbsfX;
 	}
 	document.getElementById("bgimage").onerror = async function (event) {
@@ -1083,19 +1072,26 @@ function unshrinkbsf(compressedStr) {
 }
 
 async function makewall(deid) {
-	let unshrinkbsfX;
+	let x = deid;
 	console.log("Setting custom wallpaper", deid)
-	try {
-		new URL(str);
-		unshrinkbsfX = deid;
-	} catch (_) {
-		unshrinkbsfX = await getFileById(deid).content;
+	if (x != undefined) {
+		console.log(x)
+		let unshrinkbsfX;
+		if (x.startsWith("http")) {
+			unshrinkbsfX = x;
+		} else {
+			unshrinkbsfX = await getFileById(x);
+			unshrinkbsfX = unshrinkbsfX.content;
+		}
+		console.log(unshrinkbsfX)
+		document.getElementById('bgimage').src = unshrinkbsfX;
 	}
-	document.getElementById('bgimage').src = unshrinkbsfX;
 	setSetting("wall", deid);
 }
 
 async function initialiseOS() {
+	dbCache = null;
+	cryptoKeyCache = null;
 	await say(`
 		<h2>Terms of service and License</h2>
 		<p>By using Nova OS, you agree to the <a href="https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use">Adthoughtsglobal Nova Terms of Use</a>. 
@@ -1975,7 +1971,7 @@ async function cleanupram() {
 	contentpool = null;
 	CurrentUsername = null;
 	password = 'nova';
-	console.clear();
+	//console.clear();
 	MemoryTimeCache = null;
 	lethalpasswordtimes = true;
 	dbCache = null;

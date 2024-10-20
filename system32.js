@@ -102,7 +102,6 @@ let decryptWorkerRegistered = false;
 async function decryptData(key, encryptedData) {
     if (!navigator.serviceWorker.controller && !decryptWorkerRegistered) {
         await registerDecryptWorker();
-        decryptWorkerRegistered = true;
     }
 
     return new Promise((resolve, reject) => {
@@ -361,7 +360,7 @@ async function fetchmmData() {
 }
 
 async function updateMemoryData() {
-    if (MemoryTimeCache === null || (getTime() - MemoryTimeCache) >= 5000) {
+    if (MemoryTimeCache === null || (getTime() - MemoryTimeCache) >= 1000) {
         if (!isFetchingMemory) {
             isFetchingMemory = true;
             return fetchmmData();

@@ -11,7 +11,7 @@ const cantusetext = `<h1>Nova won't work here.</h1>
 
 if (typeof HTMLDialogElement == 'undefined') {
 	issues = `<li><b>HTMLDialogElement Not supported: </b> We have taken some efforts to fix this for you.</li>`
-	say(cantusetext + issues + caniuse2, "failed");
+	 say(cantusetext + issues + caniuse2, "failed");
 	(function() {
 		if ('HTMLDialogElement' in window) return;
 		class CustomDialog extends HTMLElement {
@@ -78,6 +78,16 @@ if (typeof HTMLDialogElement == 'undefined') {
 	
 		customElements.define('dialog', CustomDialog);
 	})();
+}
+
+if (typeof localStorage == 'undefined') {
+	issues = `<li><b>LocalStorage Not supported: </b> NovaOS cannot function without it.</li>`
+	 say(cantusetext + issues + caniuse2, "failed");
+}
+
+if (!navigator.serviceWorker.controller) {
+	issues = `<li><b>Service Workers Not supported: </b> NovaOS cannot function without it for now.</li>`
+	 say(cantusetext + issues + caniuse2, "failed");
 }
 
 function detectIE() {

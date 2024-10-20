@@ -2082,7 +2082,8 @@ await setSetting('fileTypeAssociations', fileAssociations);
 				window.addEventListener('load', initColorPickers);
 				document.querySelector("#save-btn").addEventListener('click', saveColors);
 
-				function applyColorsFromImageURL(imageURL = prompt("Enter image URL")) {
+				async function applyColorsFromImageURL() {
+					let imageURL = await window.parent.ask("Enter image URL");
             const canvas = document.getElementById('canvas');
             const ctx = canvas.getContext('2d');
             const image = new Image();
@@ -2175,6 +2176,7 @@ await setSetting('fileTypeAssociations', fileAssociations);
 					flex: 1;
 					border:none;
 					border-radius: var(--sizing-border-radius);
+					padding: var(--sizing-nano);
 				}
 
 				#UISIZErangeslid {
