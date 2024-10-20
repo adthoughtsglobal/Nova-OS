@@ -281,7 +281,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 				await showloginmod();
 			} else {
 				await cleanupram();
-				CurrentUsername = 'user1';
+				CurrentUsername = 'Admin';
 				await initialiseOS();
 			}
 		} catch (error) {
@@ -622,7 +622,6 @@ async function dod() {
 			unshrinkbsfX = await getFileById(x);
 			unshrinkbsfX = unshrinkbsfX.content;
 		}
-		console.log(unshrinkbsfX)
 		document.getElementById('bgimage').src = unshrinkbsfX;
 	}
 	document.getElementById("bgimage").onerror = async function (event) {

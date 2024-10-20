@@ -155,6 +155,12 @@
 							restart_alt
 						</span>
 					</button>
+					<button class="tooltip" onclick="document.getElementById('appdmod').close(); opensearchpanel();">
+						<span class="tooltiptext">Search files</span>
+						<span class="material-symbols-rounded">
+							search
+						</span>
+					</button>
 					<button class="tooltip" onclick="document.getElementById('sleepwindow').showModal()">
 						<span class="tooltiptext">Sleep</span>
 						<span class="material-symbols-rounded">
@@ -191,6 +197,12 @@
 				</div>
 			</div>
 		</div>
+	</dialog>
+	<dialog id="miscapplistmod" class="scalableui onramcloseable navWindows">
+			<h1 id="miscapptitle"></h1>
+
+			<div id="miscappslist">
+			</div>
 	</dialog>
 	<dialog id="bios" class="scalableui onramcloseable">
 		<h1>Nova Setup</h1>

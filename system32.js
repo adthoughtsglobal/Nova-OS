@@ -1,5 +1,5 @@
 var databaseName = 'trojencat';
-var CurrentUsername = 'user1';
+var CurrentUsername = 'Admin';
 var password = "nova";
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
@@ -153,7 +153,7 @@ async function flushDB(value) {
     }
 
     const memoryValue = {
-        key: CurrentUsername || 'user1',
+        key: CurrentUsername || 'Admin',
         memory: value.memory,
         contentpool: encryptedContentPool
     };

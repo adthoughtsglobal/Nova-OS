@@ -183,10 +183,9 @@
             async function savetx(x) {
                 sbtn.innerHTML = '* Saving';
 
-                // Get the content and encode it in Base64
                 const content = document.getElementById("thedisplay").value;
-                const encodedContent = btoa(content); // Encode content to Base64
-                const dataUri = `data:${currentfile.type};base64,${encodedContent}`; // Create a data URI with the MIME type
+                const encodedContent = btoa(content);
+                const dataUri = `data:${currentfile.type};base64,${encodedContent}`;
 
                 if (mode === "edit") {
                     await window.parent.updateFile(currentfile.path, currentfile.id, {
@@ -326,7 +325,7 @@
                 file.content = atob(file.content);
             }
             console.log("reading: ", file);
-            if (file.content == undefined || file.content == '') {
+            if (file.content == undefined) {
                 window.parent.say("Currupted file", "Your file is having no reader data.")
 
                 myWindow.titleElement.innerText = file.fileName;
