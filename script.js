@@ -215,7 +215,18 @@ async function startup() {
 			await genTaskBar();
 			await dod();
 			removeInvalidMagicStrings();
-			setInterval(updateTime, 1000);
+
+			function startUpdateTime() {
+				let now = new Date();
+				let delay = (60 - now.getSeconds()) * 1000;
+			
+				setTimeout(function () {
+					updateTime();
+					setInterval(updateTime, 60000);
+				}, delay);
+			}
+			
+			startUpdateTime();
 
 			async function loadFileTypeAssociations() {
 				const associations = await getSetting('fileTypeAssociations');
@@ -310,12 +321,10 @@ function updateTime() {
 		// 12-hour format
 		const ampm = hours >= 12 ? 'PM' : 'AM';
 		hours = (hours % 12) || 12;
-		timeFormat = `${hours}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')} ${ampm}`;
-		gid('time-display').style.fontSize = "11px";
+		timeFormat = `${hours}:${now.getMinutes().toString().padStart(2, '0')} ${ampm}`;
 	} else {
 		// 24-hour format
-		timeFormat = `${hours.toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
-		gid('time-display').style.fontSize = "var(--font-size-small)";
+		timeFormat = `${hours.toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
 	}
 
 	const date = `${now.getDate().toString().padStart(2, '0')}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getFullYear()}`;

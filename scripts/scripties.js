@@ -162,7 +162,6 @@ window.fetch = async function (...args) {
 function scaleUIElements(scaleFactor) {
 	var elements = document.querySelectorAll('.scalableui');
 
-	// Loop through each element and apply the scale transform
 	elements.forEach(function (element) {
 		element.style.zoom = scaleFactor;
 	});
@@ -198,6 +197,7 @@ const hardcodedMimeTypes = {
     'json': 'application/json',
     'jpg': 'image/jpeg',
     'jpeg': 'image/jpeg',
+	'webp': 'image/webp',
     'png': 'image/png',
     'gif': 'image/gif',
     'txt': 'text/plain',
@@ -247,3 +247,5 @@ const draggableTimeDiv = document.getElementById('draggable-time');
 draggableTimeDiv.addEventListener('dragstart', (e) => {
 	e.dataTransfer.setData('text/plain', getReadableTimestamp());
 });
+
+const roturExtension = new RoturExtension();
