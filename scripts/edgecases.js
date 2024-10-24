@@ -1,3 +1,4 @@
+function edgecases() {
 var issues = ``
 const cantusetext = `<h1>Nova won't work here.</h1>
 		<p>And that's nothing to worry about!<br>Update your browser, or just move to a better browser. </p>
@@ -83,27 +84,27 @@ if (typeof HTMLDialogElement == 'undefined') {
 if (typeof localStorage == 'undefined') {
 	issues = `<li><b>LocalStorage Not supported: </b> NovaOS cannot function without it.</li>`
 	 say(cantusetext + issues + caniuse2, "failed");
+	 badlaunch = true;
 }
 
 if (!navigator.serviceWorker.controller) {
 	issues = `<li><b>Service Workers Not supported: </b> NovaOS cannot function without it for now.</li>`
 	 say(cantusetext + issues + caniuse2, "failed");
+	 badlaunch = true;
+}
+
 }
 
 function detectIE() {
 	var ua = window.navigator.userAgent;
 
-	// IE 10 and IE 11
 	var msie = ua.indexOf('MSIE ');
 
-	// Other IE browsers
 	var trident = ua.indexOf('Trident/');
 
 	if (msie > 0 || trident > 0) {
-		// IE detected
 		return true;
 	} else {
-		// Not IE
 		return false;
 	}
 }
@@ -115,15 +116,18 @@ const exit = function () {
 }
 
 document.addEventListener("DOMContentLoaded", async function () {
-onstartup.push(async () => {
+	onstartup.push(async () => {
 		if (location.origin == 'http://127.0.0.1:3000' || location.origin != 'https://adthoughtsglobal.github.io') {
-	// say("You are on an <b style='color:red;'>unsafe</b> copy of NovaOS. Do not use this.", "failed");
-}
+			// say("You are on an <b style='color:red;'>unsafe</b> copy of NovaOS. Do not use this.", "failed");
+		}
 
-if (detectIE()) {
-	issues = `<li><b>HTMLDialogElement Not supported: </b> We have taken some efforts to fix this for you.</li>
-	<li><b>Internet explorer detected: </b> i dunno what to say ;-;</li>`
-	say(cantusetext + issues + caniuse2+ `<b>Anyway, it is so interesting why you still use explorer.</b>`, "failed")
-} 
-	});
+		if (detectIE()) {
+			issues = `<li><b>HTMLDialogElement Not supported: </b> We have taken some efforts to fix this for you.</li>
+			<li><b>Internet explorer detected: </b> i dunno what to say ;-;</li>`;
+			say(cantusetext + issues + caniuse2+ `<b>Anyway, it is so interesting why you still use explorer.</b>`, "failed");
+			badlaunch = true;
+		} 
+
+		edgecases();
+		});
 });

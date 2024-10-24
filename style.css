@@ -116,7 +116,7 @@ nav [navobj] div {
 	padding: 0px;
 	overflow: hidden;
 	box-shadow: 0px 5px 1rem 1px #000000b0;
-	animation: appshow 0.5s 1;
+	animation: appshow 0.5s 1 cubic-bezier(0.075, 0.82, 0.165, 1);
 	resize: both;
 	display: flex;
 	flex-direction: column;
@@ -219,7 +219,7 @@ nav [navobj] div {
 	margin: 5px;
 	cursor: pointer;
 	width: 70px;
-	animation: pop .2s;
+	animation: pop .2s cubic-bezier(0.075, 0.82, 0.165, 1);
 	display: inline-block;
 	border: 1px solid transparent;
 	transition: .2s;
@@ -255,6 +255,7 @@ nav [navobj] div {
     height: 31px;
     padding: 5px;
     border-radius: 15% / 40%;
+    animation: pop .5s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 @keyframes appop {
@@ -329,14 +330,14 @@ nav [navobj] div {
 #appdmod {
 	padding: 5px;
     margin-bottom: 60px;
-	animation: dmodthingy 0.2s;
+	animation: dmodthingy 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
 	padding-bottom: 1.2rem;
 }
 
 #searchwindow {
 	padding: 0.7rem;
 	margin-bottom: 60px;
-	animation: dmodthingy 0.2s;
+	animation: dmodthingy 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
 	padding-bottom: 9px;
 }
 
@@ -402,7 +403,7 @@ nav [navobj] div {
 	width: 80%;
 	max-width: 280px;
 	box-shadow: 0 0 10px black;
-	animation: pop .2s;
+	animation: pop .2s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 .modal::backdrop {
@@ -493,7 +494,7 @@ nav [navobj] div {
 	background-size: 24px 24px;
 	background-repeat: no-repeat;
 	margin-bottom: 20px;
-	animation: s7 1s infinite, s3 .5s;
+	animation: s7 1s infinite cubic-bezier(0.075, 0.82, 0.165, 1), s3 .5s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 @keyframes s7 {
@@ -523,7 +524,7 @@ nav [navobj] div {
 	border-radius: 7px;
 	width: calc(100% - 5px);
 	color: inherit;
-	animation: pop .2s;
+	animation: pop .2s cubic-bezier(0.075, 0.82, 0.165, 1);
 	overflow-y: auto;
 	overflow-x: hidden;
 	max-height: 30vh;
@@ -684,7 +685,7 @@ nav [navobj] div {
 	height: calc(100vh - 90px);
 	transition: .3s;
 	color: white;
-	animation: pop .2s;
+	animation: pop .2s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 .dashhmm {
@@ -999,7 +1000,7 @@ nav [navobj] div {
 	padding: 0.3rem 0.9rem;
 	padding-left: 5px;
 	border: 1px solid #414141;
-	animation: appshow 0.5s 1;
+	animation: appshow 0.5s 1 cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 .logincard button material-icons {
@@ -1086,7 +1087,7 @@ nav [navobj] div {
 	padding: 20px;
 	background: radial-gradient(black, #000000c7);
 	backdrop-filter: blur(10px);
-	animation: sleepwin .2s;
+	animation: sleepwin .2s cubic-bezier(0.075, 0.82, 0.165, 1);
 	color: wheat;
 }
 
@@ -1115,7 +1116,7 @@ nav [navobj] div {
 	background-clip: text;
 	-webkit-text-fill-color: transparent;
 	margin: 0;
-	animation: pop .2s;
+	animation: pop .2s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 #sleepwindow button {
@@ -1126,7 +1127,7 @@ nav [navobj] div {
 	color: white;
 	cursor: pointer;
 	transition: 0.3s;
-	animation: pop .2s;
+	animation: pop .2s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 #sleepwindow button:hover {
@@ -1199,7 +1200,7 @@ nav [navobj] div {
 }
 
 .snapping {
-	transition: 0.5s cubic-bezier(1, 0.56, 0.31, 1.09);
+	transition: 0.3s cubic-bezier(0.01, 0.55, 0.53, 0.8);
 }
 
 .windowheader svg {

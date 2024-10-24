@@ -988,6 +988,7 @@ async function crashScreen(err) {
         <h1>Your System is curropt.</h1>
         <p>Reload your OS to continue.<p>
         <code>${err}</code>
-        `, "failed")
+        `, "failed");
+    if (badlaunch) {return}
     location.reload()
 }

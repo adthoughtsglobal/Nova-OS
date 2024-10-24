@@ -1,4 +1,4 @@
-var batteryLevel, winds = {}, rp, flwint = true, contentpool = {}, memory = {}, _nowapp, fulsapp = false, nowappdo, appsHistory = [], nowwindow, appicns = {}, dev = true, appfound = 'files', fileslist = [], qsetscache = {};
+var batteryLevel, winds = {}, rp, flwint = true, contentpool = {}, memory = {}, _nowapp, fulsapp = false, nowappdo, appsHistory = [], nowwindow, appicns = {}, dev = true, appfound = 'files', fileslist = [], qsetscache = {}, badlaunch = false;
 var really = false, initmenuload = true, fileTypeAssociations = {}, Gtodo, notifLog = {}, initialization = false, onstartup = [];
 var novaFeaturedImage = `Dev.png`;
 
@@ -55,6 +55,7 @@ function loginscreenbackbtn() {
 }
 
 async function showloginmod() {
+	if (badlaunch) {return}
 	closeElementedis();
 	document.getElementsByClassName("backbtnscont")[0].style.display = "none";
 
@@ -152,7 +153,7 @@ function setsrtpprgbr(val) {
 
 async function startup() {
 	gid("edison").showModal();
-	//console.clear();
+	if (badlaunch) {return}
 	rllog(
 		'You are using \n\n%cNovaOS%c\nNovaOS is the free, source-available, powerful and the cutest Web Operating system on the internet.',
 		'color: white; background-color: #101010; font-size: 2rem; padding: 0.7rem 1rem; border-radius: 1rem;',
@@ -309,6 +310,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 		nowapp = '';
 		dewallblur();
 	});
+
+	
+
 });
 
 let timeFormat;
@@ -332,6 +336,7 @@ function updateTime() {
 	gid('time-display').innerText = timeFormat;
 	gid('date-display').innerText = date;
 }
+
 const jsonToDataURI = json => `data:application/json,${encodeURIComponent(JSON.stringify(json))}`;
 
 async function openn() {
@@ -962,6 +967,7 @@ function makedialogclosable(ok) {
 makedialogclosable('appdmod');
 
 function openModal(type, { title = '', message, options = null, status = null, preset = '' } = {}) {
+	if (badlaunch) {return}
 	return new Promise((resolve) => {
 		const modal = document.querySelector("#NaviconfDia");
 		const h1 = modal.querySelector('h1');
@@ -1098,8 +1104,10 @@ async function makewall(deid) {
 }
 
 async function initialiseOS() {
+	if (badlaunch) {return}
 	dbCache = null;
 	cryptoKeyCache = null;
+
 	await say(`
 		<h2>Terms of service and License</h2>
 		<p>By using Nova OS, you agree to the <a href="https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use">Adthoughtsglobal Nova Terms of Use</a>. 
@@ -1328,6 +1336,8 @@ async function strtappse(event) {
 		});
 	});
 
+	
+	gid("strtappsugs").style.display = "block";
 	if (mostRelevantItem) {
 		gid("partrecentapps").style.display = "none";
 		document.getElementsByClassName("previewsside")[0].style.display = "flex";

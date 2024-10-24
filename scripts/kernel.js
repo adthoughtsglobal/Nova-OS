@@ -203,15 +203,18 @@ async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
         }
     }
     windowHeader.setAttribute("title", title + winuid);
+    console.log('mouseup added', windowHeader)
     windowHeader.addEventListener("mouseup", function (event) {
+        console.log('mouseup');
         let target = event.target;
         while (target) {
             if (target.classList && target.classList.contains('wincl')) {
+                console.log('wincl');
                 return;
             }
             target = target.parentElement;
         }
-        checksnapping(windowDiv, event);
+        checksnapping(gid('window' + winuid), event);
     });
 
     windowDiv.addEventListener("mousedown", function () {
@@ -389,26 +392,24 @@ async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
     loadtaskspanel();
 }
 async function checksnapping(x, event) {
-    if (await getSetting("wsnapping") !== true) {
-        return;
-    }
+    const logData = {
+        x: x,
+        eventType: event.type,
+        cursorX: event.clientX,
+        cursorY: event.clientY,
+        viewportWidth: window.innerWidth,
+        viewportHeight: window.innerHeight,
+        wsnappingSetting: await getSetting("wsnapping"),
+        isFullScreen: fulsapp,
+    };
 
-    const cursorX = event.clientX;
-    const cursorY = event.clientY;
-    const viewportWidthInPixels = window.innerWidth;
-    const viewportHeightInPixels = window.innerHeight;
+    if (!logData.wsnappingSetting) return;
 
-    const VWInPixels = (3 * viewportWidthInPixels) / 100;
-    const VHInPixels = (3 * viewportHeightInPixels) / 100;
-
+    const VWInPixels = (3 * logData.viewportWidth) / 100;
+    const VHInPixels = (3 * logData.viewportHeight) / 100;
     const aspectRatioValue = 9 / 6;
-
-    const maxVW = 100;
-    const maxVH = 100;
-
-    const maxWidthPx = (viewportWidthInPixels * maxVW) / 100;
-    const maxHeightPx = (viewportHeightInPixels * maxVH) / 100;
-
+    const maxWidthPx = (logData.viewportWidth * 100) / 100;
+    const maxHeightPx = (logData.viewportHeight * 100) / 100;
     let heightPx = (maxHeightPx / 100) * 70;
     let widthPx = heightPx * aspectRatioValue;
 
@@ -417,8 +418,15 @@ async function checksnapping(x, event) {
         heightPx = widthPx / aspectRatioValue;
     }
 
-    const widthVW = (widthPx / viewportWidthInPixels) * 100;
-    const heightVH = (heightPx / viewportHeightInPixels) * 100;
+    const widthVW = (widthPx / logData.viewportWidth) * 100;
+    const heightVH = (heightPx / logData.viewportHeight) * 100;
+
+    logData.VWInPixels = VWInPixels;
+    logData.VHInPixels = VHInPixels;
+    logData.widthPx = widthPx;
+    logData.heightPx = heightPx;
+    logData.widthVW = widthVW;
+    logData.heightVH = heightVH;
 
     const resetWindow = () => {
         x.classList.add("snapping");
@@ -436,7 +444,6 @@ async function checksnapping(x, event) {
         x.style.height = "calc(100% - 60px)";
         x.style.top = "0";
         x.style.left = "0";
-        x.style.right = "0";
         fulsapp = true;
         x.getElementsByClassName("flbtn")[0].innerHTML = "close_fullscreen";
         setTimeout(() => {
@@ -444,13 +451,11 @@ async function checksnapping(x, event) {
         }, 1000);
     };
 
-    if (fulsapp) {
-        resetWindow();
-    }
+    if (fulsapp) resetWindow();
 
-    if (cursorY < VHInPixels || (viewportHeightInPixels - cursorY) < VHInPixels) {
+    if (logData.cursorY < VHInPixels || (logData.viewportHeight - logData.cursorY) < VHInPixels) {
         maximizeWindow();
-    } else if (cursorX < VWInPixels) {
+    } else if (logData.cursorX < VWInPixels) {
         x.classList.add("snapping");
         x.style = `left: 0; top: 0; width: calc(50% - 0px); height: calc(100% - 50px);`;
         fulsapp = true;
@@ -458,7 +463,7 @@ async function checksnapping(x, event) {
         setTimeout(() => {
             x.classList.remove("snapping");
         }, 1000);
-    } else if ((viewportWidthInPixels - cursorX) < VWInPixels) {
+    } else if ((logData.viewportWidth - logData.cursorX) < VWInPixels) {
         x.classList.add("snapping");
         x.style = `right: 0; top: 0; width: calc(50% - 0px); height: calc(100% - 50px);`;
         fulsapp = true;
@@ -467,6 +472,7 @@ async function checksnapping(x, event) {
             x.classList.remove("snapping");
         }, 1000);
     }
+
 }
 function dragElement(elmnt) {
     var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
@@ -535,14 +541,20 @@ function dragElement(elmnt) {
         elmnt.style.left = newLeft + "px";
     }
 
-    function closeDragElement() {
+    function closeDragElement(event) {
         document.onmouseup = null;
         document.onmousemove = null;
-
+    
         if (iframeOverlay) {
             document.body.removeChild(iframeOverlay);
             iframeOverlay = null;
         }
+    
+        const mouseUpEvent = new MouseEvent('mouseup', {
+            clientX: event.clientX,
+            clientY: event.clientY,
+        });
+        gid(elmnt.id + "header").dispatchEvent(mouseUpEvent);
     }
 
     function isInsideIbtnsSide(target) {
