@@ -921,9 +921,11 @@ function createFolderStructure(folderName) {
 
 async function createFile(folderName, fileName, type, content, metadata = {}) {
     folderName = folderName.endsWith('/') ? folderName : folderName + '/';
-    const fileNameWithExtension = type ? `${fileName}.${type}` : fileName;
+    const fileNameWithExtension = fileName.includes('.') ? fileName : `${fileName}.${type || ''}`.trim();
 
     if (!fileNameWithExtension) return null;
+
+    type = type || fileNameWithExtension.split('.').pop();
 
     await updateMemoryData();
 
@@ -952,6 +954,9 @@ async function createFile(folderName, fileName, type, content, metadata = {}) {
     }
 
     async function handleFile(folder, folderName, fileNameWithExtension, base64data, type, metadata) {
+        if (base64data == "" || !base64data) {
+            base64data = `data:${await getMimeType(type)};base64,`
+        }
         if (type === "app" && fileNameWithExtension.endsWith(".app")) {
             const appData = await getFileByPath(`Apps/${fileNameWithExtension}`);
             if (appData) {

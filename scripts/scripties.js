@@ -212,7 +212,6 @@ async function getMimeType(extension) {
             if (!responseformimedb.ok) throw new Error('Network response was not ok');
             globalmimeDb = await responseformimedb.json();
         } catch (error) {
-            // Use the hardcoded dictionary in case of network issues
             return hardcodedMimeTypes[extension] || 'application/octet-stream';
         }
     }

@@ -341,11 +341,10 @@
                 }
             }
 
-            if (file && file.content) {
+            if (file) {
                 myWindow.titleElement.innerText = file.fileName;
                 document.getElementById("thedisplay").value = file.content;
                 console.log("Content displayed successfully");
-                localStorage.setItem("todo", "");
             } else {
                 console.error("Error displaying content");
             }
