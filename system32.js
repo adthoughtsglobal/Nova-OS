@@ -14,7 +14,6 @@ async function openDB(databaseName, version) {
 
             if (!db.objectStoreNames.contains("dataStore")) {
                 db.createObjectStore("dataStore", { keyPath: 'key' });
-                console.log(`Object store created.`);
                 await saveMagicStringInLocalStorage(password);
             }
         };
@@ -169,7 +168,7 @@ async function flushDB(value) {
     });
 }
 
-function setdb(log) {
+function setdb() {
     const value = { memory: { ...memory }, contentpool: { ...contentpool } };
 
     return flushDB(value)
@@ -411,18 +410,20 @@ async function getdbWithDefault(databaseName, storeName, key, defaultValue) {
         return defaultValue;
     }
 }
+const defaultPreferences = {
+    "defFileLayout": "List",
+    "wsnapping": true,
+    "smartsearch": true,
+    "CamImgFormat": "WEBP",
+    "defSearchEngine": "Bing"
+};
+
 async function ensurePreferencesFileExists() {
     await updateMemoryData();
     try {
         memory.root["System/"] = memory.root["System/"] || {};
         if (!memory.root["System/"]["preferences.json"]) {
-            const defaultPreferences = {
-                "defFileLayout": "List",
-                "wsnapping": true,
-                "smartsearch": true,
-                "CamImgFormat": "WEBP",
-                "defSearchEngine": "Bing"
-            };
+            
             const dataUri = `data:application/json;base64,${btoa(JSON.stringify(defaultPreferences))}`;
             await createFile("System/", "preferences.json", false, dataUri);
         }
@@ -479,7 +480,7 @@ async function setSetting(key, value) {
     }
 }
 
-async function resetSettings(defaultPreferences) {
+async function resetSettings() {
     try {
         if (!memory) return;
 
@@ -961,7 +962,7 @@ async function createFile(folderName, fileName, type, content, metadata = {}) {
             const appData = await getFileByPath(`Apps/${fileNameWithExtension}`);
             if (appData) {
                 await updateFile("Apps/", appData.id, { metadata, content: base64data, fileName: fileNameWithExtension, type });
-                extractAndRegisterCapabilities(appData.id, base64data);
+                await extractAndRegisterCapabilities(appData.id, base64data);
                 return appData.id || null;
             }
         }

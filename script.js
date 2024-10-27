@@ -4,18 +4,18 @@ var novaFeaturedImage = `Dev.png`;
 
 document.getElementById("bgimage").src = novaFeaturedImage;
 var defAppsList = [
+	"store",
+	"files",
+	"settings",
+	"calculator",
+	"text",
+	"musicplr",
 	"camera",
 	"clock",
 	"media",
 	"gallery",
 	"browser",
-	"studio",
-	"calculator",
-	"text",
-	"store",
-	"files",
-	"settings",
-	"musicplr"
+	"studio"
 ];
 
 gid("nowrunninapps").style.display = "none";
@@ -88,13 +88,12 @@ async function showloginmod() {
 					}
 
 					if (isdefaultpass) {
-						console.log("Password check: good: ", password, isdefaultpass);
 						gid('loginmod').close();
 						gid('edison').showModal();
 
 						startup();
 					} else {
-						console.log("Password check: bad: ", password, isdefaultpass);
+						console.log("Password check failed: ", isdefaultpass);
 						document.getElementsByClassName("backbtnscont")[0].style.display = "flex";
 						document.getElementsByClassName("userselect")[0].style.flex = "0";
 						document.getElementsByClassName("logincard")[0].style.flex = "1";
@@ -154,11 +153,6 @@ function setsrtpprgbr(val) {
 async function startup() {
 	gid("edison").showModal();
 	if (badlaunch) {return}
-	rllog(
-		'You are using \n\n%cNovaOS%c\nNovaOS is the free, source-available, powerful and the cutest Web Operating system on the internet.',
-		'color: white; background-color: #101010; font-size: 2rem; padding: 0.7rem 1rem; border-radius: 1rem;',
-		'color: lightgrey; padding:0.5rem;'
-	);
 
 	lethalpasswordtimes = false;
 
@@ -247,7 +241,11 @@ async function startup() {
 			} catch (e) { }
 
 			const end = performance.now();
-			console.log(`Startup took ${(end - start).toFixed(2)}ms`);
+			rllog(
+				`You are using \n\n%cNovaOS%c\nNovaOS is the free, source-available, powerful and the cutest Web Operating system on the internet.\n\nStartup took ${(end - start).toFixed(2)}ms`,
+				'color: white; background-color: #101010; font-size: 2rem; padding: 0.7rem 1rem; border-radius: 1rem;',
+				'color: lightgrey; padding:0.5rem;'
+			);
 		} catch (err) { console.error("startup error:", err); }
 	})
 
@@ -276,7 +274,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 			if (result !== null) {
 				return result;
 			}
-			console.log("No data: retrying")
 			await new Promise(resolve => setTimeout(resolve, 100));
 		}
 
@@ -284,7 +281,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 	}
 
 	waitForNonNull().then(async (result) => {
-		console.log("Saved:", result);
 		checkAndRunFromURL();
 		gid('startupterms').innerHTML = "<span>Checking database...</span>";
 
@@ -340,7 +336,6 @@ function updateTime() {
 const jsonToDataURI = json => `data:application/json,${encodeURIComponent(JSON.stringify(json))}`;
 
 async function openn() {
-	const start = performance.now();
 	gid("appsindeck").innerHTML = ``
 	gid("strtsear").value = ""
 	gid("strtappsugs").style.display = "none";
@@ -388,9 +383,6 @@ async function openn() {
 
 		gid("appsindeck").appendChild(appShortcutDiv);
 	})).then(() => {
-		const end = performance.now();
-
-		console.log(`App Menu took ${(end - start).toFixed(2)}ms`);
 	}).catch((error) => {
 		console.error('An error occurred:', error);
 	});
@@ -515,7 +507,6 @@ function makedefic(str) {
 function updateBattery() {
 	var batteryPromise;
 
-	// Check if the battery API is supported
 	if ('getBattery' in navigator) {
 		batteryPromise = navigator.getBattery();
 	} else if ('battery' in navigator) {
@@ -527,18 +518,15 @@ function updateBattery() {
 	}
 
 	batteryPromise.then(function (battery) {
-		// Get the battery level
 		var batteryLevel = Math.floor(battery.level * 100);
 		var isCharging = battery.charging;
 
-		// Display or hide the battery info based on timetypeconditions
 		if ((batteryLevel === 100 && isCharging) || (batteryLevel === 0 && isCharging)) {
 			document.getElementById("batterydisdiv").style.display = "none";
 		} else {
 			document.getElementById("batterydisdiv").style.display = "block";
 		}
 
-		// Determine the appropriate icon based on battery level
 		let iconClass;
 		if (batteryLevel >= 75) {
 			iconClass = 'battery_full';
@@ -550,12 +538,10 @@ function updateBattery() {
 			iconClass = 'battery_alert';
 		}
 
-		// Check if the value has changed
 		var batteryDisplayElement = document.getElementById('battery-display');
 		var batteryPDisplayElement = document.getElementById('battery-p-display');
 		if (batteryDisplayElement && batteryPDisplayElement) {
 			if (iconClass !== batteryDisplayElement.innerText) {
-				// Update the display only if the value changes
 				batteryDisplayElement.innerHTML = iconClass;
 				batteryPDisplayElement.innerHTML = batteryLevel + "%";
 			}
@@ -696,11 +682,12 @@ function getMetaTagContent(unshrunkContent, metaName, decode = false) {
 }
 
 function getAppTheme(unshrunkContent) {
-	return getMetaTagContent(unshrunkContent, 'theme-color');
+	return getMetaTagContent(unshrunkContent, 'theme-color', true);
 }
 
 function getAppAspectRatio(unshrunkContent) {
-	return unshrunkContent.includes("aspect-ratio") ? getMetaTagContent(unshrunkContent, 'aspect-ratio') : null;
+	const content = decodeBase64Content(unshrunkContent);
+	return content.includes("aspect-ratio") ? getMetaTagContent(content, 'aspect-ratio', false) : null;
 }
 
 async function getAppIcon(content, id, lazy = 0) {
@@ -832,7 +819,6 @@ async function createFolder(folderNames, folderData) {
 		insertData(memory.root, folderData);
 
 		await setdb("making folders");
-		console.log('set db: Folders created successfully.');
 	} catch (error) {
 		console.error("Error creating folders and data:", error);
 	}
@@ -914,7 +900,6 @@ async function extractAndRegisterCapabilities(appId, content) {
 		if (metaTag) {
 			let capabilities = metaTag.getAttribute("content").split(',');
 			await registerApp(appId, capabilities);
-			console.log(`Registered capabilities: ${appId}`);
 		} else {
 			console.log(`No capabilities: ${appId}`);
 		}
@@ -946,7 +931,6 @@ async function cleanupInvalidAssociations() {
 	}
 
 	await setSetting('fileTypeAssociations', fileTypeAssociations);
-	console.log('AFA cleanup completed');
 }
 
 async function getAllValidAppIds() {
@@ -1089,7 +1073,6 @@ async function makewall(deid) {
 	let x = deid;
 	console.log("Setting custom wallpaper", deid)
 	if (x != undefined) {
-		console.log(x)
 		let unshrinkbsfX;
 		if (x.startsWith("http")) {
 			unshrinkbsfX = x;
@@ -1097,7 +1080,6 @@ async function makewall(deid) {
 			unshrinkbsfX = await getFileById(x);
 			unshrinkbsfX = unshrinkbsfX.content;
 		}
-		console.log(unshrinkbsfX)
 		document.getElementById('bgimage').src = unshrinkbsfX;
 	}
 	setSetting("wall", deid);
@@ -1121,19 +1103,23 @@ async function initialiseOS() {
 				"Welcome.txt": {
 					"id": "sibq81"
 				},
-				"Subfolder/": {
-					"Subfile.txt": {
+				"Help/": {
+					"Resources.txt": {
 						"id": "1283jh"
 					}
 				}
 			},
-			"Apps/": {}
+			"Apps/": {},
+			"Desktop/":{},
+			"Favorites/":{},
+			"Dock/":{},
+			"Media/":{}
 		}
 	};
 
 	contentpool = {
-		'1283jh': 'Welcome to Nova OS! kindly reach us https://adthoughtsglobal.github.io and connect via the available options, we will respond you back! Enjoy!',
-		'sibq81': 'This is a file inside a subfolder.'
+		'1283jh': 'TGVhcm4gaG93IHRvIGRvIHRoaW5ncyBpbiB0aGUgTm92YU9TIHdpa2kgcGFnZXMsIGh0dHBzOi8vZ2l0aHViLmNvbS9hZHRob3VnaHRzZ2xvYmFsL05vdmEtT1Mvd2lraS4gQW5kIG91ciB5b3V0dWJlIHBsYXlsaXN0IGhhcyBhbGwgdGhlIE5vdmFPUyB0aGluZ3MgeW91IG5lZWQgdG8ga25vdywgaHR0cHM6Ly93d3cueW91dHViZS5jb20vcGxheWxpc3Q/bGlzdD1QTFZZN3JhRjQ4S2o2Z1R2LXl4WGZqdVRxd2xPRl9sVmoyLg==',
+		'sibq81': 'V2VsY29tZSB0byBOb3ZhIE9TISBJZiB5b3UgYXJlIGhhdmluZyB0cm91YmxlLCBraW5kbHkgcmVhY2ggdXMgYXQgaHR0cHM6Ly9hZHRob3VnaHRzZ2xvYmFsLmdpdGh1Yi5pbyBhbmQgY29ubmVjdCB2aWEgdGhlIGF2YWlsYWJsZSBvcHRpb25zLCB3ZSB3aWxsIHJlc3BvbmQgeW91IGJhY2shIEVuam95IQ=='
 	};
 
 	setdb().then(async function () {
@@ -1175,7 +1161,7 @@ async function installdefaultapps() {
 			}
 			const fileContent = await response.text();
 
-			createFile("Apps/", toTitleCase(appName), "app", fileContent);
+			await createFile("Apps/", toTitleCase(appName), "app", fileContent);
 		} catch (error) {
 			console.error("Error updating " + appName + ":", error.message);
 			if (attempt < maxRetries) {

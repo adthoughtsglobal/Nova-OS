@@ -70,49 +70,48 @@ async function openfile(x) {
         say("<h1>Unable to open file</h1>File Error: " + error, "failed")
     }
 }
-
-
 function flwin(x) {
     const winElement = x.parentElement.parentElement.parentElement;
     winElement.classList.add("transp2");
 
     const isFullScreen = x.innerHTML === "open_in_full";
     const aspectRatio = winElement.getAttribute("data-aspectratio") || "9/6";
-    const [widthFactor, heightFactor] = aspectRatio.split('/').map(Number);
-    const aspectRatioValue = widthFactor / heightFactor;
-    const maxVW = 100, maxVH = 100;
+    const sizeStyles = isFullScreen ? 
+        { width: 'calc(100% - 0px)', height: 'calc(100% - 57px)', left: '0', top: '0' } : 
+        calculateWindowSize(aspectRatio);
 
-    if (isFullScreen) {
-        winElement.style.width = `calc(${maxVW}% - 0px)`;
-        winElement.style.height = `calc(${maxVH}% - 57px)`;
-        winElement.style.left = "0";
-        winElement.style.top = "0";
-        x.innerHTML = "close_fullscreen";
-    } else {
-        const maxWidthPx = (window.innerWidth * maxVW) / 100;
-        const maxHeightPx = (window.innerHeight * maxVH) / 100;
-
-        let heightPx = (maxHeightPx / 100) * 70;
-        let widthPx = heightPx * aspectRatioValue;
-
-        if (widthPx > maxWidthPx) {
-            widthPx = maxWidthPx;
-            heightPx = widthPx / aspectRatioValue;
-        }
-
-        const widthVW = (widthPx / window.innerWidth) * 100;
-        const heightVH = (heightPx / window.innerHeight) * 100;
-
-        winElement.style.width = `${widthVW}vw`;
-        winElement.style.height = `${heightVH}vh`;
-        winElement.style.left = `calc(50vw - ${widthVW / 2}vw)`;
-        winElement.style.top = `calc(50vh - ${heightVH / 2}vh)`;
-        x.innerHTML = "open_in_full";
-    }
+    Object.assign(winElement.style, sizeStyles);
+    x.innerHTML = isFullScreen ? "close_fullscreen" : "open_in_full";
 
     setTimeout(() => {
         winElement.classList.remove("transp2");
     }, 1000);
+}
+
+function calculateWindowSize(aspectratio) {
+    if (!aspectratio) aspectratio = "9/6";
+    const [widthFactor, heightFactor] = aspectratio.split('/').map(Number);
+    const aspectRatioValue = widthFactor / heightFactor;
+    const maxVW = 90, maxVH = 90;
+
+    const maxWidthPx = (window.innerWidth * maxVW) / 100;
+    const maxHeightPx = (window.innerHeight * maxVH) / 100;
+    let heightPx = (maxHeightPx / 100) * 70;
+    let widthPx = heightPx * aspectRatioValue;
+
+    if (widthPx > maxWidthPx) {
+        widthPx = maxWidthPx;
+        heightPx = widthPx / aspectRatioValue;
+    }
+
+    const widthVW = (widthPx / window.innerWidth) * 100;
+    const heightVH = (heightPx / window.innerHeight) * 100;
+
+    const offset = 5 * Object.keys(winds).length;
+    const left = `calc(50vw - ${widthVW / 2}vw + ${offset}px)`;
+    const top = `calc(50vh - ${heightVH / 2}vh + ${offset}px)`;
+
+    return { left, top, width: `${widthVW}vw`, height: `${heightVH}vh`, zIndex: '0' };
 }
 
 async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
@@ -136,46 +135,10 @@ async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
     dewallblur();
     windowDiv.classList += "window";
 
-    let isitmob = window.innerWidth <= 500;
-
-    if (!isitmob) {
-        if (aspectratio == null) {
-            aspectratio = "9/6";
-        }
-
-        let [widthFactor, heightFactor] = aspectratio.split('/').map(Number);
-        let aspectRatioValue = widthFactor / heightFactor;
-
-        const maxVW = 90;
-        const maxVH = 90;
-
-        const maxWidthPx = (window.innerWidth * maxVW) / 100;
-        const maxHeightPx = (window.innerHeight * maxVH) / 100;
-
-        let heightPx = (maxHeightPx / 100) * 70;
-        let widthPx = heightPx * aspectRatioValue;
-
-        if (widthPx > maxWidthPx) {
-            widthPx = maxWidthPx;
-            heightPx = widthPx / aspectRatioValue;
-        }
-
-        const widthVW = (widthPx / window.innerWidth) * 100;
-        const heightVH = (heightPx / window.innerHeight) * 100;
-        windowDiv.style = `left: calc(50vw - ${widthVW / 2}vw); top: calc(50vh - ${heightVH / 2}vh); width: ${widthVW}vw; height: ${heightVH}vh; z-index: 0;`;
-
-        let offset = 5 * Object.keys(winds).length;
-        let newLeft = `calc(50vw - ${widthVW / 2}vw + ${offset}px)`;
-        let newTop = `calc(50vh - ${heightVH / 2}vh + ${offset}px)`;
-
-        windowDiv.style.left = newLeft;
-        windowDiv.style.top = newTop;
-    } else {
-        windowDiv.style.left = 0;
-        windowDiv.style.top = 0;
-        windowDiv.style.width = 'calc(100% - 0px)';
-        windowDiv.style.height = 'calc(100% - 58px)';
-    }
+    const isitmob = window.innerWidth <= 500;
+    const sizeStyles = !isitmob ? calculateWindowSize(aspectratio) : { left: '0', top: '0', width: 'calc(100% - 0px)', height: 'calc(100% - 58px)' };
+    
+    Object.assign(windowDiv.style, sizeStyles);
 
     (async function () {
         let x = await getSetting("WindowBgColor");
@@ -193,6 +156,8 @@ async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
     windowtitlespan.innerHTML += toTitleCase(basename(title));
     windowdataspan.appendChild(windowtitlespan);
     windowHeader.appendChild(windowdataspan);
+    
+    console.log(theme, "theme")
     if (theme != null) {
         windowHeader.style.backgroundColor = theme;
         windowDiv.style.border = `1px solid ` + theme;
@@ -203,9 +168,7 @@ async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
         }
     }
     windowHeader.setAttribute("title", title + winuid);
-    console.log('mouseup added', windowHeader)
     windowHeader.addEventListener("mouseup", function (event) {
-        console.log('mouseup');
         let target = event.target;
         while (target) {
             if (target.classList && target.classList.contains('wincl')) {
@@ -430,9 +393,14 @@ async function checksnapping(x, event) {
 
     const resetWindow = () => {
         x.classList.add("snapping");
-        x.style = `left: calc(50vw - ${widthVW / 2}vw); top: calc(50vh - ${heightVH / 2}vh); width: ${widthVW}vw; height: ${heightVH}vh; z-index: 0;`;
+        
+        const aspectRatio = x.getAttribute("data-aspectratio") || "9/6";
+        const sizeStyles = calculateWindowSize(aspectRatio);
+    
+        Object.assign(x.style, sizeStyles);
         x.getElementsByClassName("flbtn")[0].innerHTML = "open_in_full";
         fulsapp = false;
+    
         setTimeout(() => {
             x.classList.remove("snapping");
         }, 1000);

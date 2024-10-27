@@ -600,26 +600,6 @@
 			font-size: 13px;
 		}
 
-		.newfilebtn {
-			position: absolute;
-			bottom: 2rem;
-			right: 1rem;
-			padding: 0.5em;
-			border-radius: 7.5px;
-			height: 37px;
-			background-color: var(--colors-BG-highlighted);
-			box-shadow: 0 3px 1rem rgba(0, 0, 0, 0.685);
-			opacity: 0.8;
-			transition: .2s;
-			transform: translateY(3px);
-		}
-
-		.newfilebtn:hover {
-			opacity: 1;
-			background-color: var(--colors-BG-sub);
-			box-shadow: 0 3px 1.5rem black;
-		}
-
 		.newfoldbtn {
 			float: right;
 			margin: 0px;
@@ -999,12 +979,6 @@
 					</div>
 					<div flap-fl-bottomnav id="fileinfobn">Click on a file to select it.
 					</div>
-					<button class="newfilebtn"
-						onclick="document.getElementById('makefiledia').showModal(); document.getElementById('makflatw').value = currentPath">
-						<span class="material-symbols-rounded">
-							add
-						</span>
-					</button>
 					<div id="choosefile">
 						<input placeholder="Double click to choose File" id="choosefileinp" disabled>
 						<button onclick="choosefile()">Open</button>
@@ -1465,6 +1439,15 @@
 						title: "Create folder",
 						onclick: makefolderhuh,
 						innerHTML: `<span class="material-symbols-rounded">add</span> Folder`
+					},
+					{
+						id: "createFile",
+						title: "Create File",
+						onclick: () => {
+							document.getElementById('makefiledia').showModal(); 
+							document.getElementById('makflatw').value = currentPath;
+						},
+						innerHTML: `<span class="material-symbols-rounded">add</span> New File`
 					},
 					{
 						id: "parentFolder",

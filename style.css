@@ -246,15 +246,13 @@ nav [navobj] div {
     overflow: hidden;
     padding: 0;
     display: flex;
-    border-radius: 10px;
+    border-radius: 0.5rem;
     justify-content: center;
 }
 
 .app-shortcut span svg {
-	width: 31px;
-    height: 31px;
-    padding: 5px;
-    border-radius: 15% / 40%;
+    width: 2rem;
+    height: 2rem;
     animation: pop .5s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
@@ -372,7 +370,7 @@ nav [navobj] div {
 }
 
 .transp2 {
-	transition: .5s cubic-bezier(0.6, 0.05, 0.41, 0.78);
+	transition:.5s cubic-bezier(0, 0.66, 0.41, 0.78);
 }
 
 .transp3 {
@@ -1418,7 +1416,7 @@ codeblock {
 }
 
 .adock {
-	padding: 0;
+    padding: 5px;
     margin: 2.5px 1px;
 	width: fit-content;
 	width: -moz-fit-content;
