@@ -4,6 +4,7 @@ var novaFeaturedImage = `Dev.png`;
 
 document.getElementById("bgimage").src = novaFeaturedImage;
 var defAppsList = [
+	"nova cli",
 	"store",
 	"files",
 	"settings",
@@ -691,9 +692,10 @@ function getAppAspectRatio(unshrunkContent) {
 }
 
 async function getAppIcon(content, id, lazy = 0) {
+	try {
 	if (!content) {
 		const file = await getFileById(id);
-		return getAppIcon(file.content, id);
+		return await getAppIcon(file.content, id);
 	}
 	if (lazy) return appicns[id] || defaultAppIcon;
 	if (appicns[id]) return appicns[id];
@@ -702,7 +704,11 @@ async function getAppIcon(content, id, lazy = 0) {
 		appicns[id] = iconContent;
 		return iconContent;
 	}
-	return defaultAppIcon;
+} catch (err) {
+	console.error(err);
+
+}
+	return `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="115.24806" height="130.92446" viewBox="0,0,115.24806,130.92446"><g transform="translate(-182.39149,-114.49081)"><g stroke="none" stroke-miterlimit="10"><path d="M182.39149,245.41527v-130.83054h70.53005l44.68697,44.95618v85.87436z" fill="#989898" stroke-width="none"/><path d="M252.60365,158.84688v-44.35607l45.03589,44.35607z" fill="#dadada" stroke-width="0"/><text transform="translate(189.75509,229.89311) scale(0.96113,0.96113)" font-size="40" xml:space="preserve" fill="#dadada" stroke-width="1" font-family="Sans Serif" font-weight="normal" text-anchor="start"><tspan x="0" dy="0">${id}</tspan></text></g></g></svg>`;
 }
 
 function decodeBase64Content(str) {

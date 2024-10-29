@@ -1306,78 +1306,87 @@
 
 			</div>
 			<script>
-				var currentreqID, replaceableapp;
-				async function rldfltyptable() {
-					const fileAssociations = window.parent.fileTypeAssociations;
+			var currentreqID, replaceableapp, clickedRowId;
 
-					async function createTable(fileAssociations) {
-						const table = document.createElement('div');
-						table.className = 'table';
+async function rldfltyptable() {
+	const fileAssociations = window.parent.fileTypeAssociations;
 
-						const headerRow = document.createElement('div');
-						headerRow.className = 'header-row';
+	async function createTable(fileAssociations) {
+		const table = document.createElement('div');
+		table.className = 'table';
 
-						const fileTypeHeader = document.createElement('div');
-						fileTypeHeader.className = 'header-cell file-type-header';
-						fileTypeHeader.textContent = 'File Extension';
+		const headerRow = document.createElement('div');
+		headerRow.className = 'header-row';
 
-						const defaultAppHeader = document.createElement('div');
-						defaultAppHeader.className = 'header-cell default-app-header';
-						defaultAppHeader.textContent = 'Apps';
+		const fileTypeHeader = document.createElement('div');
+		fileTypeHeader.className = 'header-cell file-type-header';
+		fileTypeHeader.textContent = 'File Extension';
 
-						headerRow.appendChild(fileTypeHeader);
-						headerRow.appendChild(defaultAppHeader);
-						table.appendChild(headerRow);
+		const defaultAppHeader = document.createElement('div');
+		defaultAppHeader.className = 'header-cell default-app-header';
+		defaultAppHeader.textContent = 'Apps';
 
-						for (const [extension, apps] of Object.entries(fileAssociations)) {
-							const row = document.createElement('div');
-							row.className = 'row';
+		headerRow.appendChild(fileTypeHeader);
+		headerRow.appendChild(defaultAppHeader);
+		table.appendChild(headerRow);
 
-							const fileTypeCell = document.createElement('div');
-							fileTypeCell.className = 'cell file-type-cell';
-							fileTypeCell.textContent = extension;
+		for (const [extension, apps] of Object.entries(fileAssociations)) {
+			const row = document.createElement('div');
+			row.className = 'row';
+			row.id = `row-${extension}`; // Unique ID based on the file extension
 
-							const defaultAppCell = document.createElement('div');
-							defaultAppCell.className = 'cell default-app-cell';
-							defaultAppCell.innerHTML = await window.parent.getAppIcon(0, apps[0], true)
-							defaultAppCell.onclick = () => {
-								replaceableapp = apps[0];
-								currentreqID = window.parent.genUID();
+			const fileTypeCell = document.createElement('div');
+			fileTypeCell.className = 'cell file-type-cell';
+			fileTypeCell.textContent = extension;
+
+			const defaultAppCell = document.createElement('div');
+			defaultAppCell.className = 'cell default-app-cell';
+			defaultAppCell.innerHTML = await window.parent.getAppIcon(0, apps[0], true);
+			defaultAppCell.onclick = () => {
+				replaceableapp = apps[0];
+				currentreqID = window.parent.genUID();
+				clickedRowId = row.id; // Store the clicked row's ID
 				let appIdToOpen = window.parent.fileTypeAssociations['file'][0] || null;
-				window.parent.openlaunchprotocol(appIdToOpen, {"opener":"app", "dir":"Apps/"}, currentreqID, myWindow.windowID);
-							}
+				window.parent.openlaunchprotocol(appIdToOpen, { "opener": "app", "dir": "Apps/" }, currentreqID, myWindow.windowID);
+			};
 
-							row.appendChild(fileTypeCell);
-							row.appendChild(defaultAppCell);
-							table.appendChild(row);
-						}
+			row.appendChild(fileTypeCell);
+			row.appendChild(defaultAppCell);
+			table.appendChild(row);
+		}
 
-						return table;
-					}
-					const table = await createTable(fileAssociations);
-					document.getElementById('appfileassos').innerHTML = ''
-					document.getElementById('appfileassos').appendChild(table);
-				}
-
-				rldfltyptable();
-
-				window.addEventListener('message', async (event) => {
-					
-					const fileAssociations = window.parent.fileTypeAssociations;
-                if (event.data.action === 'loadlocalfile') {
-                    if (event.data.id === myWindow.windowID) {
-					  let targetAppId = replaceableapp;
-let newAppId = event.data.returned;
-
-for (let key in fileAssociations) {
-    if (fileAssociations.hasOwnProperty(key)) {
-        fileAssociations[key] = fileAssociations[key].map(appId => appId === targetAppId ? newAppId : appId);
-    }
+		return table;
+	}
+	const table = await createTable(fileAssociations);
+	document.getElementById('appfileassos').innerHTML = '';
+	document.getElementById('appfileassos').appendChild(table);
 }
-await setSetting('fileTypeAssociations', fileAssociations);
-                    }
-                }
-            });
+
+rldfltyptable();
+
+window.addEventListener('message', async (event) => {
+	const fileAssociations = window.parent.fileTypeAssociations;
+	if (event.data.action === 'loadlocalfile') {
+		if (event.data.id === myWindow.windowID) {
+			let targetAppId = replaceableapp;
+			let newAppId = event.data.returned;
+
+			for (let key in fileAssociations) {
+				if (fileAssociations.hasOwnProperty(key)) {
+					fileAssociations[key] = fileAssociations[key].map(appId => appId === targetAppId ? newAppId : appId);
+				}
+			}
+			await window.parent.setSetting('fileTypeAssociations', fileAssociations);
+
+			// Update the icon in only the clicked row
+			const row = document.getElementById(clickedRowId);
+			if (row) {
+				const defaultAppCell = row.querySelector('.default-app-cell');
+				defaultAppCell.innerHTML = await window.parent.getAppIcon(0, newAppId, true);
+			}
+		}
+	}
+});
 			</script>
 		</div>
 
