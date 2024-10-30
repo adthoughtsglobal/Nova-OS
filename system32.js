@@ -733,21 +733,25 @@ async function getFileById(id) {
 }
 
 async function getFileNameByID(id) {
-    if (!id) return;
-    
+    if (!id) return undefined;
     await updateMemoryData();
-    return findFileDetails(id, memory.root);
 
-    function findFileDetails(id, folder, path = '') {
+    function findFileName(id, folder, currentPath = '') {
         for (let key in folder) {
-            const item = folder[key], newPath = path + key;
-            if (item?.id === id) return ;
-            if (key.endsWith('/')) {
-                const result = findFileDetails(id, item, newPath);
-                if (result) return result;
+            const item = folder[key];
+            if (item && typeof item === 'object') {
+                if (item.id === id) {
+                    return key;
+                } else if (key.endsWith('/')) {
+                    const result = findFileName(id, item, currentPath + key);
+                    if (result) return result;
+                }
             }
         }
+        return null;
     }
+
+    return findFileName(id, memory.root);
 }
 
 async function getFolderNames() {

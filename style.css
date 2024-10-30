@@ -2075,12 +2075,19 @@ dialog#terminal {
 	background: rgb(255, 129, 129);
 }
 
+  @keyframes l1 {
+	0% {background-position: right}
+  }
+
 .progress-container {
 	width: 0;
-	max-width: 150px;
-	background-color: #141414;
-	border-radius: var(--sizing-border-radius-full);
-	margin-bottom: var(--sizing-huge);
+    max-width: 150px;
+    background-color: #141414;
+    border-radius: var(--sizing-border-radius-full);
+    margin-bottom: var(--sizing-huge);
+    background: linear-gradient(90deg, #0001 33%, #494949 50%, #0001 66%) #232323;
+    background-size: 300% 100%;
+    animation: l1 1s infinite cubic-bezier(0.08, 0.82, 0.95, 0.52);
 }
 
 .progress-bar {

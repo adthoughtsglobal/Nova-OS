@@ -4,7 +4,6 @@ var novaFeaturedImage = `Dev.png`;
 
 document.getElementById("bgimage").src = novaFeaturedImage;
 var defAppsList = [
-	"nova cli",
 	"store",
 	"files",
 	"settings",
@@ -56,7 +55,7 @@ function loginscreenbackbtn() {
 }
 
 async function showloginmod() {
-	if (badlaunch) {return}
+	if (badlaunch) { return }
 	closeElementedis();
 	document.getElementsByClassName("backbtnscont")[0].style.display = "none";
 
@@ -153,7 +152,7 @@ function setsrtpprgbr(val) {
 
 async function startup() {
 	gid("edison").showModal();
-	if (badlaunch) {return}
+	if (badlaunch) { return }
 
 	lethalpasswordtimes = false;
 
@@ -215,13 +214,13 @@ async function startup() {
 			function startUpdateTime() {
 				let now = new Date();
 				let delay = (60 - now.getSeconds()) * 1000;
-			
+
 				setTimeout(function () {
 					updateTime();
 					setInterval(updateTime, 60000);
 				}, delay);
 			}
-			
+
 			startUpdateTime();
 
 			async function loadFileTypeAssociations() {
@@ -308,7 +307,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		dewallblur();
 	});
 
-	
+
 
 });
 
@@ -482,29 +481,25 @@ function focusFirstElement() {
 }
 
 function makedefic(str) {
-	const vowelPattern = /[aeiouAEIOU\s]+/g;
-	const consonantPattern = /[^aeiouAEIOU\s]+/g;
+	const words = str.split(/\s+/);
+	const result = words.map(word => {
+		const consonantPattern = /[^aeiouAEIOU\s]+/g;
+		const consonantMatches = word.match(consonantPattern);
 
-	const vowelMatches = str.match(vowelPattern);
-	const consonantMatches = str.match(consonantPattern);
-
-	if (consonantMatches && consonantMatches.length >= 2) {
-		const firstTwoConsonants = consonantMatches.slice(0, 2);
-		const capitalized = firstTwoConsonants.map((letter, index) => index === 0 ? letter.toUpperCase() : letter.toLowerCase());
-		const result = capitalized.join('');
-		return result.length > 2 ? result.slice(0, 2) : result;
-	} else {
-		const firstLetter = str.charAt(0).toUpperCase();
-		const firstConsonantIndex = str.search(consonantPattern);
-		if (firstConsonantIndex !== -1) {
-			const firstConsonant = str.charAt(firstConsonantIndex).toLowerCase();
-			const result = firstLetter + firstConsonant;
-			return result.length > 2 ? result.slice(0, 2) : result;
+		if (consonantMatches && consonantMatches.length >= 2) {
+			return consonantMatches.slice(0, 2).map((letter, index) => index === 0 ? letter : letter.toLowerCase()).join('');
 		} else {
+			const firstLetter = word.charAt(0);
+			const firstConsonantIndex = word.search(consonantPattern);
+			if (firstConsonantIndex !== -1) {
+				return firstLetter + word.charAt(firstConsonantIndex).toLowerCase();
+			}
 			return firstLetter;
 		}
-	}
+	});
+	return result.join('').slice(0, 3);
 }
+
 function updateBattery() {
 	var batteryPromise;
 
@@ -693,22 +688,22 @@ function getAppAspectRatio(unshrunkContent) {
 
 async function getAppIcon(content, id, lazy = 0) {
 	try {
-	if (!content) {
-		const file = await getFileById(id);
-		return await getAppIcon(file.content, id);
-	}
-	if (lazy) return appicns[id] || defaultAppIcon;
-	if (appicns[id]) return appicns[id];
-	const iconContent = getMetaTagContent(content, 'nova-icon', true);
-	if (iconContent && containsSmallSVGElement(iconContent)) {
-		appicns[id] = iconContent;
-		return iconContent;
-	}
-} catch (err) {
-	console.error(err);
+		if (!content) {
+			const file = await getFileById(id);
+			return await getAppIcon(file.content, id);
+		}
+		if (lazy) return appicns[id] || defaultAppIcon;
+		if (appicns[id]) return appicns[id];
+		const iconContent = getMetaTagContent(content, 'nova-icon', true);
+		if (iconContent && containsSmallSVGElement(iconContent)) {
+			appicns[id] = iconContent;
+			return iconContent;
+		}
+	} catch (err) {
+		console.error(err);
 
-}
-	return `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="115.24806" height="130.92446" viewBox="0,0,115.24806,130.92446"><g transform="translate(-182.39149,-114.49081)"><g stroke="none" stroke-miterlimit="10"><path d="M182.39149,245.41527v-130.83054h70.53005l44.68697,44.95618v85.87436z" fill="#989898" stroke-width="none"/><path d="M252.60365,158.84688v-44.35607l45.03589,44.35607z" fill="#dadada" stroke-width="0"/><text transform="translate(189.75509,229.89311) scale(0.96113,0.96113)" font-size="40" xml:space="preserve" fill="#dadada" stroke-width="1" font-family="Sans Serif" font-weight="normal" text-anchor="start"><tspan x="0" dy="0">${id}</tspan></text></g></g></svg>`;
+	}
+	return `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="115.24806" height="130.92446" viewBox="0,0,115.24806,130.92446"><g transform="translate(-182.39149,-114.49081)"><g stroke="none" stroke-miterlimit="10"><path d="M182.39149,245.41527v-130.83054h70.53005l44.68697,44.95618v85.87436z" fill="#989898" stroke-width="none"/><path d="M252.60365,158.84688v-44.35607l45.03589,44.35607z" fill="#dadada" stroke-width="0"/><text transform="translate(189,229) scale(0.9,0.9)" font-size="3rem" xml:space="preserve" fill="#dadada" stroke-width="1" font-family="monospace" font-weight="normal" text-anchor="start"><tspan x="0" dy="0">${makedefic(await getFileNameByID(id))}</tspan></text></g></g></svg>`;
 }
 
 function decodeBase64Content(str) {
@@ -957,7 +952,7 @@ function makedialogclosable(ok) {
 makedialogclosable('appdmod');
 
 function openModal(type, { title = '', message, options = null, status = null, preset = '' } = {}) {
-	if (badlaunch) {return}
+	if (badlaunch) { return }
 	return new Promise((resolve) => {
 		const modal = document.querySelector("#NaviconfDia");
 		const h1 = modal.querySelector('h1');
@@ -1092,7 +1087,7 @@ async function makewall(deid) {
 }
 
 async function initialiseOS() {
-	if (badlaunch) {return}
+	if (badlaunch) { return }
 	dbCache = null;
 	cryptoKeyCache = null;
 
@@ -1116,10 +1111,10 @@ async function initialiseOS() {
 				}
 			},
 			"Apps/": {},
-			"Desktop/":{},
-			"Favorites/":{},
-			"Dock/":{},
-			"Media/":{}
+			"Desktop/": {},
+			"Favorites/": {},
+			"Dock/": {},
+			"Media/": {}
 		}
 	};
 
@@ -1328,7 +1323,7 @@ async function strtappse(event) {
 		});
 	});
 
-	
+
 	gid("strtappsugs").style.display = "block";
 	if (mostRelevantItem) {
 		gid("partrecentapps").style.display = "none";
