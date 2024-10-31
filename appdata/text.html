@@ -181,6 +181,8 @@
             });
 
             async function savetx(x) {
+                window.parent.say("Saving in text app is not available at the moment. <br><br>We are working on this.");
+                return;
                 sbtn.innerHTML = '* Saving';
 
                 const content = document.getElementById("thedisplay").value;
@@ -191,12 +193,11 @@
                     await window.parent.updateFile(currentfile.path, currentfile.id, {
                         metadata: currentfile.metadata,
                         content: dataUri,
-                        fileName: currentfile.fileName,
-                        type: currentfile.type
+                        fileName: currentfile.fileName
                     });
                 } else {
                     if (x == 1) {
-                        window.parent.createFile("Documents", "Untitled", "txt", dataUri);
+                        window.parent.createFile("Documents", "Untitled.txt", dataUri);
                     } else if (x != "custom") {
                         window.parent.createFile("Documents", "Untitled", x, dataUri);
                     } else {

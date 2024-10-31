@@ -193,16 +193,6 @@
 		<button onclick="window.top.openwindow('App Preview',disp.value)">Run</button>
 		<button onclick="window.parent.openapp('studio',1)">New</button>
 		<button onclick="disp.value = formatHTML(disp.value)">Format</button>
-		<button onclick="savetx(1)" id="sbtn">Save Studio</button>
-		<div class="dropup">
-			<button class="dropbtn">Save As</button>
-			<div class="dropup-content">
-
-				<a onclick="savetx('app')">App</a>
-				<a onclick="savetx('wasm')">Assembly</a>
-				<a onclick="savetx('osl')">OSL</a>
-			</div>
-		</div>
 		<script>
 			function savetx(x) {
 				sbtn.innerHTML = '* Saving';
