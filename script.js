@@ -71,11 +71,16 @@ async function showloginmod() {
 			const selectUser = async function () {
 
 				try {
-					navigator.registerProtocolHandler(
-						'web+nova',
-						`${location.origin}/?path=%s`,
-						'NovaOS'
-					);
+					
+					try {
+						navigator.registerProtocolHandler(
+							'web+nova',
+							`${location.origin}/?path=%s`,
+							'NovaOS'
+						);
+					} catch (err) {
+						console.error("Protocol handler failed: ", err);
+					}
 
 					await cleanupram();
 					CurrentUsername = cacusername;
@@ -177,6 +182,11 @@ async function startup() {
 			closeElementedis();
 			async function fetchDataAndUpdate() {
 				let localupdatedataver = localStorage.getItem("updver");
+				if (localupdatedataver == "1.57") {
+					console.log("Preparing NovaOS2 switch.");
+					gid("versionswitcher").showModal();
+					return;
+				}
 				let fetchupdatedata = await fetch("versions.json");
 
 				if (fetchupdatedata.ok) {
@@ -254,13 +264,22 @@ async function startup() {
 async function registerDecryptWorker() {
 	if ('serviceWorker' in navigator) {
 		await navigator.serviceWorker.register('novaCrypt.js')
-			.then(reg => decryptWorkerRegistered = true)
+			.then(decryptWorkerRegistered = true)
 			.catch(err => console.error('Service Worker registration failed:', err));
 	}
 }
 
 document.addEventListener("DOMContentLoaded", async function () {
 	console.log("DOMCL");
+
+	let localupdatedataver = localStorage.getItem("updver");
+	if (localupdatedataver == "1.57") {
+		console.log("Preparing NovaOS2 switch.");
+		gid("versionswitcher").showModal();
+		return;
+	}
+
+	gid("versionswitcher").remove();
 
 	await registerDecryptWorker();
 

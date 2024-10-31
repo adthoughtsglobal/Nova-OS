@@ -2303,3 +2303,46 @@ margin-bottom: 0.3rem;
 .erase-everything:hover {
 	opacity: 1;
 }
+
+#versionswitcher {
+    display: block;
+    text-align: center;
+    padding: 4rem;
+    border: none;
+    font-size: 1.2rem;
+    border-radius: 2rem;
+    background: linear-gradient(0deg, #0e0e0e, #18181885);
+    color: white;
+    backdrop-filter: blur(2rem);
+    box-shadow: 0 1rem 1rem #0000008f;
+}
+
+#versionswitcher::backdrop {
+	background-image: url("Dev.png");
+	background-size: cover;
+}
+
+#versionswitcher h1 {
+    font-size: 3rem;
+    background: linear-gradient(45deg, #ff67d7, #4fbeff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+#versionswitcher small {
+    opacity: 0.7;
+}
+
+.upgradeversionbtn {
+	border: none;
+    border-radius: 0.5rem;
+    padding: 0.7rem 2rem;
+    display: block;
+    margin: 1rem auto;
+    background: #7d7aff;
+    color: white;
+    letter-spacing: 1px;
+    cursor: pointer;
+    box-shadow: -5px -5px 0rem #625eff;
+    translate: 3px 3px;
+}

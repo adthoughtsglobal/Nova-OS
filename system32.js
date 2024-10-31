@@ -571,7 +571,7 @@ async function changePassword(oldPassword, newPassword) {
 }
 
 async function erdbsfull() {
-    if (await justConfirm("Are you really sure?", "Removing all the users data seems a bit overkill? Click cancel to remove your account instead.")) {
+    if (await justConfirm("Are you really sure?", "Removing all the users data includes your settings, files, and other data. Click cancel keep it.")) {
         localStorage.removeItem('todo');
         localStorage.removeItem('magicString');
         localStorage.removeItem('updver');
@@ -580,13 +580,10 @@ async function erdbsfull() {
         let indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
         let dbName = 'trojencat';
 
-        try {
-            let deleteRequest = indexedDB.deleteDatabase(dbName);
+        let deleteRequest = indexedDB.deleteDatabase(dbName);
+deleteRequest.onsuccess = () => location.reload();
+deleteRequest.onerror = deleteRequest.onblocked = () => location.reload();
 
-            deleteRequest.onsuccess = function () {
-                location.reload();
-            };
-        } catch (err) { }
     };
 }
 
