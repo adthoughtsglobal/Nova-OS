@@ -219,7 +219,7 @@ async function getdb() {
 
                     } catch (error) {
                         console.error("Decryption error:", error);
-                        if (!lethalpasswordtimes) crashScreen(error.text);
+                        if (!lethalpasswordtimes) crashScreen(error.message);
                         reject(3);
                     }
                 } else {
@@ -230,8 +230,8 @@ async function getdb() {
             request.onerror = () => reject(request.error);
         });
     } catch (error) {
-        console.error("Error in getdb function:", error);
-        if (error.text.includes("NotFoundError")) {
+        console.error("Error in getdb function:", error, error.text);
+        if (error.message.includes("NotFoundError")) {
 			gid("versionswitcher").showModal();
         }
         throw error;
