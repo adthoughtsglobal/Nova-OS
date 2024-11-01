@@ -230,10 +230,8 @@ async function getdb() {
             request.onerror = () => reject(request.error);
         });
     } catch (error) {
-        console.error("Error in getdb function:", error, error.text);
-        if (error.name === "NotFoundError") {
-            gid("versionswitcher").showModal();
-        }        
+        gid("versionswitcher").showModal();
+        console.error("Error in getdb function:", error);
         throw error;
     }
 }
