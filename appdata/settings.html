@@ -866,25 +866,25 @@
 				</div>
 			</segr>
 			<segr>
+				<script>
+					async function updefapps() {
+						document.getElementById("updefapplog").innerHTML = "Installing...";
+						try {
+							await window.parent.installdefaultapps();
+							document.getElementById("updefapplog").innerHTML = "All Default apps updated. <b>Re-open Settings to reflect changes.</b>";
+						} catch (error) {
+							console.error("Error updating default apps:", error);
+						}
+					}
+
+				</script>
 				<div setting>
 					<b>Update Default Apps</b>
-					<button style="margin-top: 5px;float: right;" onclick="updefapps();">Update</button>
+					<button style="margin-top: 5px;float: right;" onclick="updefapps()">Update</button>
 					<p>Update or reinstall deleted or corrupted versions of default apps.</p>
 
 					<small id="updefapplog" style="margin-top: 5px;">Updating default apps frequently can assure newer
 						features and bug fixes.</small>
-					<script>
-						async function updefapps() {
-							document.getElementById("updefapplog").innerHTML = "Installing...";
-							try {
-								await window.parent.installdefaultapps();
-								document.getElementById("updefapplog").innerHTML = "All Default apps updated. <b>Re-open Settings to reflect changes.</b>";
-							} catch (error) {
-								console.error("Error updating default apps:", error);
-							}
-						}
-
-					</script>
 				</div>
 			</segr>
 		</div>

@@ -500,6 +500,9 @@ function focusFirstElement() {
 }
 
 function makedefic(str) {
+	if (!str) {
+		return 'app';
+	}
 	const words = str.split(/\s+/);
 	const result = words.map(word => {
 		const consonantPattern = /[^aeiouAEIOU\s]+/g;
@@ -725,7 +728,8 @@ async function getAppIcon(content, id, lazy = 0) {
 	} catch (err) {
 		console.error(err);
 	}
-	return `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="115.24806" height="130.92446" viewBox="0,0,115.24806,130.92446"><g transform="translate(-182.39149,-114.49081)"><g stroke="none" stroke-miterlimit="10"><path d="M182.39149,245.41527v-130.83054h70.53005l44.68697,44.95618v85.87436z" fill="#989898" stroke-width="none"/><path d="M252.60365,158.84688v-44.35607l45.03589,44.35607z" fill="#dadada" stroke-width="0"/><text transform="translate(189,229) scale(0.9,0.9)" font-size="3rem" xml:space="preserve" fill="#dadada" stroke-width="1" font-family="monospace" font-weight="normal" text-anchor="start"><tspan x="0" dy="0">${makedefic(await getFileNameByID(id))}</tspan></text></g></g></svg>`;
+	let icondatatodo = await getFileNameByID(id) || id;
+	return `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="115.24806" height="130.92446" viewBox="0,0,115.24806,130.92446"><g transform="translate(-182.39149,-114.49081)"><g stroke="none" stroke-miterlimit="10"><path d="M182.39149,245.41527v-130.83054h70.53005l44.68697,44.95618v85.87436z" fill="#989898" stroke-width="none"/><path d="M252.60365,158.84688v-44.35607l45.03589,44.35607z" fill="#dadada" stroke-width="0"/><text transform="translate(189,229) scale(0.9,0.9)" font-size="3rem" xml:space="preserve" fill="#dadada" stroke-width="1" font-family="monospace" font-weight="normal" text-anchor="start"><tspan x="0" dy="0">${makedefic(icondatatodo)}</tspan></text></g></g></svg>`;
 }
 
 function decodeBase64Content(str) {
