@@ -31,8 +31,8 @@
         }
 
         body.dark-mode {
-            background: #222;
-            color: #fff;
+            background-color: #141414;
+            color: #ffe4bb;
         }
 
         textarea {
@@ -51,8 +51,10 @@
         }
 
         textarea.dark-mode {
-            background: #111;
-            color: #fff;
+            background: transparent;
+            color: inherit;
+            font-family: serif !important;
+            font-size: var(--font-size-subheading);
         }
 
         nav {
@@ -156,7 +158,7 @@
                 <a onclick="savetx('custom')">Custom</a>
             </div>
         </div>
-        <button onclick="toggleDarkMode()" class="navbutton">Dark Mode</button>
+        <button onclick="toggleDarkMode()" class="navbutton">Reading Mode</button>
         <script>
             var mode = "new";
             var currentfile = {};

@@ -99,18 +99,15 @@ async function encryptData(key, data) {
 let decryptWorkerRegistered = false;
 
 async function decryptData(key, encryptedData) {
-    if (!navigator.serviceWorker.controller && !decryptWorkerRegistered) {
+    if ('serviceWorker' in navigator && !navigator.serviceWorker.controller && !decryptWorkerRegistered) {
         await registerDecryptWorker();
     }
 
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         if (navigator.serviceWorker.controller) {
             const handler = (event) => {
-                if (event.data.type === 'decrypted') {
-                    resolve(event.data.result);
-                } else if (event.data.type === 'error') {
-                    reject(event.data.error);
-                }
+                if (event.data.type === 'decrypted') resolve(event.data.result);
+                else if (event.data.type === 'error') reject(event.data.error);
                 navigator.serviceWorker.removeEventListener('message', handler);
             };
 
@@ -121,9 +118,24 @@ async function decryptData(key, encryptedData) {
                 encryptedData
             });
         } else {
-            reject(new Error('Service Worker not available.'));
+            try {
+                const iv = new Uint8Array(encryptedData.iv);
+                const data = new Uint8Array(encryptedData.data);
+                const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, data);
+                resolve(new TextDecoder().decode(decrypted));
+            } catch (error) {
+                reject('Incorrect password or corrupted data');
+            }
         }
     });
+}
+
+async function registerDecryptWorker() {
+    if ('serviceWorker' in navigator) {
+        await navigator.serviceWorker.register('novaCrypt.js')
+            .then(() => decryptWorkerRegistered = true)
+            .catch(err => console.error('Service Worker registration failed:', err));
+    }
 }
 
 let dbCache = null;

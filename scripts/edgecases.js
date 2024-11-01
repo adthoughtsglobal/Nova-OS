@@ -1,6 +1,6 @@
 function edgecases() {
-var issues = ``
-const cantusetext = `<h1>Nova won't work here.</h1>
+	var issues = ``
+	const cantusetext = `<h1>Nova won't work here.</h1>
 		<p>And that's nothing to worry about!<br>Update your browser, or just move to a better browser. </p>
 		<p>Try these options:</p>
 		<ul>
@@ -10,88 +10,86 @@ const cantusetext = `<h1>Nova won't work here.</h1>
 	const caniuse2 = `</ol>
 	<p>But still, if you wish to continue, press 'OK'. But we are sure this won't give you the best results.</p>`
 
-if (typeof HTMLDialogElement == 'undefined') {
-	issues = `<li><b>HTMLDialogElement Not supported: </b> We have taken some efforts to fix this for you.</li>`
-	 say(cantusetext + issues + caniuse2, "failed");
-	(function() {
-		if ('HTMLDialogElement' in window) return;
-		class CustomDialog extends HTMLElement {
-			constructor() {
-				super();
-				this._open = false;
-				this._returnValue = '';
-				this._handleClick = this._handleClick.bind(this);
-			}
-	
-			static get observedAttributes() {
-				return ['open'];
-			}
-	
-			connectedCallback() {
-				this.style.display = 'none';
-				this.addEventListener('click', this._handleClick);
-			}
-	
-			disconnectedCallback() {
-				this.removeEventListener('click', this._handleClick);
-			}
-	
-			attributeChangedCallback(name, oldValue, newValue) {
-				if (name === 'open') {
-					this._open = newValue !== null;
-					this.style.display = this._open ? 'block' : 'none';
+	if (typeof HTMLDialogElement == 'undefined') {
+		issues = `<li><b>HTMLDialogElement Not supported: </b> We have taken some efforts to fix this for you.</li>`
+		say(cantusetext + issues + caniuse2, "failed");
+		(function () {
+			if ('HTMLDialogElement' in window) return;
+			class CustomDialog extends HTMLElement {
+				constructor() {
+					super();
+					this._open = false;
+					this._returnValue = '';
+					this._handleClick = this._handleClick.bind(this);
+				}
+
+				static get observedAttributes() {
+					return ['open'];
+				}
+
+				connectedCallback() {
+					this.style.display = 'none';
+					this.addEventListener('click', this._handleClick);
+				}
+
+				disconnectedCallback() {
+					this.removeEventListener('click', this._handleClick);
+				}
+
+				attributeChangedCallback(name, oldValue, newValue) {
+					if (name === 'open') {
+						this._open = newValue !== null;
+						this.style.display = this._open ? 'block' : 'none';
+					}
+				}
+
+				get open() {
+					return this._open;
+				}
+
+				set open(value) {
+					this.setAttribute('open', value ? '' : null);
+				}
+
+				get returnValue() {
+					return this._returnValue;
+				}
+
+				close(returnValue = '') {
+					this._returnValue = returnValue;
+					this.open = false;
+					this.dispatchEvent(new Event('close'));
+				}
+
+				show() {
+					this.open = true;
+					this.dispatchEvent(new Event('show'));
+				}
+
+				showModal() {
+					this.show();
+				}
+
+				_handleClick(event) {
+					if (event.target === this) {
+						this.close();
+					}
 				}
 			}
-	
-			get open() {
-				return this._open;
-			}
-	
-			set open(value) {
-				this.setAttribute('open', value ? '' : null);
-			}
-	
-			get returnValue() {
-				return this._returnValue;
-			}
-	
-			close(returnValue = '') {
-				this._returnValue = returnValue;
-				this.open = false;
-				this.dispatchEvent(new Event('close'));
-			}
-	
-			show() {
-				this.open = true;
-				this.dispatchEvent(new Event('show'));
-			}
-	
-			showModal() {
-				this.show();
-			}
-	
-			_handleClick(event) {
-				if (event.target === this) {
-					this.close();
-				}
-			}
-		}
-	
-		customElements.define('dialog', CustomDialog);
-	})();
-}
 
-if (typeof localStorage == 'undefined') {
-	issues = `<li><b>LocalStorage Not supported: </b> NovaOS cannot function without it.</li>`
-	 say(cantusetext + issues + caniuse2, "failed");
-	 badlaunch = true;
-}
+			customElements.define('dialog', CustomDialog);
+		})();
+	}
 
-if (!navigator.serviceWorker.controller) {
-	issues = `<li><b>Service Workers Not supported: </b> NovaOS cannot function without it for now.</li>`
-	 say(cantusetext + issues + caniuse2, "failed");
-	 badlaunch = true;
-}
+	if (typeof localStorage == 'undefined') {
+		issues = `<li><b>LocalStorage Not supported: </b> NovaOS cannot function without it.</li>`
+		say(cantusetext + issues + caniuse2, "failed");
+		badlaunch = true;
+	}
+
+	if (!navigator.serviceWorker.controller) {
+		console.log("Reduced functions: No SW Access.")
+	}
 
 }
 
@@ -124,10 +122,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 		if (detectIE()) {
 			issues = `<li><b>HTMLDialogElement Not supported: </b> We have taken some efforts to fix this for you.</li>
 			<li><b>Internet explorer detected: </b> i dunno what to say ;-;</li>`;
-			say(cantusetext + issues + caniuse2+ `<b>Anyway, it is so interesting why you still use explorer.</b>`, "failed");
+			say(cantusetext + issues + caniuse2 + `<b>Anyway, it is so interesting why you still use explorer.</b>`, "failed");
 			badlaunch = true;
-		} 
+		}
 
 		edgecases();
-		});
+	});
 });

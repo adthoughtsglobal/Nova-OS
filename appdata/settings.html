@@ -868,8 +868,8 @@
 			<segr>
 				<script>
 					async function updefapps() {
-						document.getElementById("updefapplog").innerHTML = "Installing...";
 						try {
+							document.getElementById("updefapplog").innerHTML = "Installing...";
 							await window.parent.installdefaultapps();
 							document.getElementById("updefapplog").innerHTML = "All Default apps updated. <b>Re-open Settings to reflect changes.</b>";
 						} catch (error) {
@@ -1205,10 +1205,10 @@
 			<segr>
 				<div setting>
 					<b>Reset Settings</b>
-					<button style="margin-top: 5px;float: right;" onclick="updefapps();" danger>Reset</button>
+					<button style="margin-top: 5px;float: right;" onclick="restsettings();" danger>Reset</button>
 					<p>Reset to default settings.</p>
 					<script>
-						async function updefapps() {
+						async function restsettings() {
 							try {
 								await window.parent.resetSettings();
 							} catch (error) {
