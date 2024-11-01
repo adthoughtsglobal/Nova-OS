@@ -176,9 +176,6 @@ async function startup() {
 			await checkdmode();
 			setsrtpprgbr(100)
 			gid('startupterms').innerHTML = "Startup completed";
-
-
-
 			closeElementedis();
 			async function fetchDataAndUpdate() {
 				let localupdatedataver = localStorage.getItem("updver");
@@ -275,11 +272,18 @@ document.addEventListener("DOMContentLoaded", async function () {
 	let localupdatedataver = localStorage.getItem("updver");
 	if (localupdatedataver == "1.57") {
 		console.log("Preparing NovaOS2 switch.");
-		gid("versionswitcher").showModal();
+
+		// Retry to show modal with a slight delay to ensure availability
+		const versionSwitcher = await waitForDialog("versionswitcher");
+		if (versionSwitcher) {
+			versionSwitcher.showModal();
+		} else {
+			console.error("versionswitcher dialog not found.");
+		}
 		return;
 	}
 
-	gid("versionswitcher").remove();
+	gid("versionswitcher")?.remove();
 
 	await registerDecryptWorker();
 
@@ -314,12 +318,18 @@ document.addEventListener("DOMContentLoaded", async function () {
 		} catch (error) {
 			console.error('Error in database operations:', error);
 		}
-	})
-		.catch(async (error) => {
-			console.error('Error retrieving data from the database:', error);
-			await showloginmod();
-		});
+	});
 
+	// Helper function to wait for the dialog's availability
+	async function waitForDialog(id, maxRetries = 5, interval = 200) {
+		for (let i = 0; i < maxRetries; i++) {
+			const element = gid(id);
+			if (element) return element;
+			await new Promise(resolve => setTimeout(resolve, interval));
+		}
+		return null;
+	}
+	
 	var bgImage = document.getElementById("bgimage");
 
 	bgImage.addEventListener("click", function () {
