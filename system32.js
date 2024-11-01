@@ -231,9 +231,9 @@ async function getdb() {
         });
     } catch (error) {
         console.error("Error in getdb function:", error, error.text);
-        if (error.message.includes("NotFoundError")) {
-			gid("versionswitcher").showModal();
-        }
+        if (error.name === "NotFoundError") {
+            gid("versionswitcher").showModal();
+        }        
         throw error;
     }
 }
