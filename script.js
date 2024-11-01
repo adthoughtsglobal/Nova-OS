@@ -71,7 +71,7 @@ async function showloginmod() {
 			const selectUser = async function () {
 
 				try {
-					
+
 					try {
 						navigator.registerProtocolHandler(
 							'web+nova',
@@ -317,16 +317,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 	})
 		.catch(async (error) => {
 			console.error('Error retrieving data from the database:', error);
-			await showloginmod(); // Await in case `showloginmod` is async
+			await showloginmod();
 		});
+
 	var bgImage = document.getElementById("bgimage");
 
 	bgImage.addEventListener("click", function () {
 		nowapp = '';
 		dewallblur();
 	});
-
-
 
 });
 
@@ -710,7 +709,7 @@ function getAppAspectRatio(unshrunkContent) {
 
 async function getAppIcon(content, id, lazy = 0) {
 	try {
-		const withTimeout = (promise) => 
+		const withTimeout = (promise) =>
 			Promise.race([promise, new Promise((_, reject) => setTimeout(() => reject(), 3000))]);
 
 		if (!content) {
@@ -1212,12 +1211,26 @@ async function installdefaultapps() {
 		return result;
 	}
 
-	await waitForNonNull().then(async (memory) => {
+	await waitForNonNull().then(async () => {
 		// Update each app sequentially
+		const hangMessages = ["Hang in tight...", "Almost there...", "Just a moment more...", "Patience, young grasshopper..."];
+
 		for (let i = 0; i < defAppsList.length; i++) {
-			await updateApp(defAppsList[i]);
+			const appUpdatePromise = updateApp(defAppsList[i]);
+			let delay = 0;
+
+			const interval = setInterval(() => {
+				if (delay >= 3000) {
+					gid('startupterms').innerText = hangMessages[(delay / 2000) % hangMessages.length];
+				}
+				delay += 2000;
+			}, 2000);
+
+			await Promise.race([appUpdatePromise, new Promise(res => setTimeout(res, 3000))]);
+			clearInterval(interval);
+
 			if (gid('startupterms')) {
-				gid('startupterms').innerText = "Installing Apps"
+				gid('startupterms').innerText = "Installing Apps";
 			}
 			setsrtpprgbr(Math.round((i + 1) / defAppsList.length * 100));
 		}
