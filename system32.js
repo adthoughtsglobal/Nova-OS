@@ -488,6 +488,11 @@ async function setSetting(key, value) {
         contentpool[content.id] = newContent;
 
         await setdb("set setting " + key);
+        systemUpdatesChannel.postMessage({
+			"type":"settings",
+			"event":"set",
+            "key":key
+		});
     } catch (error) {
         console.log("Error setting settings", error, key);
     }
@@ -504,6 +509,10 @@ async function resetSettings() {
         contentpool[content.id] = newContent;
         
         await setdb("reset settings");
+        systemUpdatesChannel.postMessage({
+			"type":"settings",
+			"event":"reset"
+		});
     } catch (error) {
         console.log("Error resetting settings", error);
     }
@@ -522,6 +531,11 @@ async function remSetting(key) {
                 contentpool[content.id] = newContent;
                 
                 await setdb("remove setting");
+                systemUpdatesChannel.postMessage({
+                    "type":"settings",
+                    "event":"remove",
+                    "key":key
+                });
             }
         }
     } catch (error) {
@@ -571,6 +585,11 @@ async function changePassword(oldPassword, newPassword) {
         dbCache = null;
         cryptoKeyCache = null;
         await setdb("change password");
+        systemUpdatesChannel.postMessage({
+			"type":"memory",
+			"event":"update",
+			"id":"passwordChange"
+		});
 
         await saveMagicStringInLocalStorage(newPassword);
 
@@ -816,6 +835,11 @@ async function remfile(ID) {
             console.error(`File with ID "${ID}" not found.`);
         } else {
             await setdb("remove file");
+            systemUpdatesChannel.postMessage({
+                "type":"memory",
+                "event":"update",
+                "id":"removeFile"
+            });
         }
     } catch (error) {
         console.error("Error fetching or updating data:", error);
@@ -851,6 +875,11 @@ async function remfolder(folderPath) {
         }
 
         await setdb("remove folder");
+        systemUpdatesChannel.postMessage({
+			"type":"memory",
+			"event":"update",
+			"id":"removeFolder"
+		});
     } catch (error) {
         console.error("Error removing folder:", error);
     }
@@ -903,6 +932,11 @@ async function updateFile(folderName, fileId, newData) {
             }
 
             await setdb("modify file");
+            systemUpdatesChannel.postMessage({
+                "type":"memory",
+                "event":"update",
+                "id":"updateFile"
+            });
             console.log(`Modified: "${fileToUpdate.fileName}"`);
         } else {
             console.log(`Creating New: "${fileId}"`);
@@ -915,6 +949,11 @@ async function updateFile(folderName, fileId, newData) {
             contentpool[fileId] = newData.content || '';
 
             await setdb("create new file");
+            systemUpdatesChannel.postMessage({
+                "type":"memory",
+                "event":"update",
+                "id":"createFile"
+            });
         }
     } catch (error) {
         console.error("Error updating file:", error);
@@ -993,6 +1032,11 @@ async function createFile(folderName, fileName, type, content, metadata = {}) {
             if (fileNameWithExtension.endsWith(".app")) extractAndRegisterCapabilities(uid, base64data);
             contentpool[uid] = base64data;
             await setdb("handling file: " + fileNameWithExtension);
+            systemUpdatesChannel.postMessage({
+                "type":"memory",
+                "event":"update",
+                "id":"updateFile"
+            });
             return uid;
         }
     }

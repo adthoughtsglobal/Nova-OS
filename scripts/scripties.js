@@ -248,3 +248,15 @@ draggableTimeDiv.addEventListener('dragstart', (e) => {
 });
 
 const roturExtension = new RoturExtension();
+
+document.querySelectorAll('.tooltip').forEach(tooltip => {
+    tooltip.addEventListener('mousemove', (e) => {
+        const tooltipText = tooltip.querySelector('.tooltiptext');
+        const moveX = e.offsetX * 0.3;
+        const moveY = e.offsetY * 0.3;
+        tooltipText.style.transform = `translate(${moveX}px, ${moveY}px)`;
+    });
+    tooltip.addEventListener('mouseleave', () => {
+        tooltip.querySelector('.tooltiptext').style.transform = 'translate(0, 0)';
+    });
+});

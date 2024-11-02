@@ -283,6 +283,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 		return;
 	}
 
+	const systemUpdatesChannel = new BroadcastChannel("filesystem");
+
 	gid("versionswitcher")?.remove();
 
 	await registerDecryptWorker();
@@ -855,6 +857,11 @@ async function createFolder(folderNames, folderData) {
 		insertData(memory.root, folderData);
 
 		await setdb("making folders");
+		systemUpdatesChannel.postMessage({
+			"type":"memory",
+			"event":"update",
+			"id":"createFolder"
+		});
 	} catch (error) {
 		console.error("Error creating folders and data:", error);
 	}
@@ -2037,4 +2044,12 @@ async function setandinitnewuser() {
 	CurrentUsername = await ask("Enter a username:", "");
 	await initialiseOS();
 	gid('loginmod').close();
+}
+
+async function novarefresh() {
+	dod();
+	genTaskBar(); 
+	cleanupInvalidAssociations(); 
+	checkdmode();
+	loadrecentapps();
 }

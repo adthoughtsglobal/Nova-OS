@@ -370,7 +370,7 @@ nav [navobj] div {
 }
 
 .transp2 {
-	transition:.5s cubic-bezier(0, 0.66, 0.41, 0.78);
+	transition:.5s cubic-bezier(0, 0.66, 0.57, 1.02);
 }
 
 .transp3 {
@@ -809,7 +809,7 @@ nav [navobj] div {
     margin-left: -39px;
     font-size: var(--font-size-normal);
     opacity: 0;
-    transition: opacity 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+    transition: opacity 0.3s ease-out;
     box-shadow: 0 3px 1rem var(--colors-BG-normal) 9e;
 }
 
