@@ -252,6 +252,7 @@ async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
             iframeReferences[winuid] = iframe.contentWindow;
             iframe.contentWindow.myWindow = {
                 element: windowDiv,
+                eventBusWorker: eventBusWorker,
                 close: () => {
                     clwin("window" + winuid);
                     delete winds[title + winuid];

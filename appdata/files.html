@@ -1444,7 +1444,7 @@
 						id: "createFile",
 						title: "Create File",
 						onclick: () => {
-							document.getElementById('makefiledia').showModal(); 
+							document.getElementById('makefiledia').showModal();
 							document.getElementById('makflatw').value = currentPath;
 						},
 						innerHTML: `<span class="material-symbols-rounded">add</span> New File`
@@ -1750,7 +1750,6 @@
 				document.getElementById("fileinfobn").innerHTML = "Deleting file...";
 				await window.parent.updateMemoryData().then(() => {
 					document.getElementById("fileinfobn").innerHTML = "File Deleted";
-					refresh();
 				});
 				document.querySelector(`[unid="${ID}"]`).style.opacity = 0.2;
 			} catch (error) {
@@ -1824,16 +1823,16 @@
 
 			if (selectedFolder !== null) {
 
-					const openable = {
-						"open": flid
-					};
-					const dataUri = `data:application/json;base64,${btoa(JSON.stringify(openable))}`;
-					let x = await window.parent.ask("Enter a shortcut file name: (without extension)", "MyFile");
-					await window.parent.createFile(selectedFolder, x + ".lnk", false, dataUri);
+				const openable = {
+					"open": flid
+				};
+				const dataUri = `data:application/json;base64,${btoa(JSON.stringify(openable))}`;
+				let x = await window.parent.ask("Enter a shortcut file name: (without extension)", "MyFile");
+				await window.parent.createFile(selectedFolder, x + ".lnk", false, dataUri);
 
-					await liststuff();
-					listFiles(selectedFolder)
-					document.getElementById("fileinfobn").innerHTML = "File was moved to " + selectedFolder;
+				await liststuff();
+				listFiles(selectedFolder)
+				document.getElementById("fileinfobn").innerHTML = "File was moved to " + selectedFolder;
 			}
 		}
 
@@ -1847,7 +1846,6 @@
 
 			document.getElementById("fileinfobn").style.opacity = 1;
 			document.getElementById("fileinfobn").innerHTML = "File was moved to " + dest;
-			refresh()
 		}
 
 
@@ -1985,10 +1983,6 @@
 			document.getElementById("upmod").showModal();
 		}
 
-		document.addEventListener('dbchange', async () => {
-			refresh();
-		});
-
 		function changeview(how) {
 			flmode = how;
 			listFiles(currentPath)
@@ -2055,6 +2049,16 @@
 				document.getElementById("choosefile").style.display = "none";
 				initializeFilesApp(false);
 			}
+
+			myWindow.eventBusWorker.listen("memory", (event) => {
+    console.log(event);
+    const message = event;
+
+				if (message.type === "memory") {
+					refresh();
+				}
+			});
+
 		}
 	</script>
 </body>

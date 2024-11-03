@@ -5,6 +5,37 @@ const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 var lethalpasswordtimes = true;
 
+const eventBusBlob = new Blob([`
+    const eventBus = new EventTarget();
+    self.addEventListener('message', (e) => {
+        const { type, event: evt, key, id } = e.data;
+        eventBus.dispatchEvent(new CustomEvent(type, { detail: { event: evt, key, id } }));
+    });
+    
+    self.deliver = (message) => self.postMessage(message);
+    self.listen = (type, handler) => {
+        eventBus.addEventListener(type, (e) => handler(e.detail));
+    };
+`], { type: 'application/javascript' });
+
+const eventBusURL = URL.createObjectURL(eventBusBlob);
+const eventBusWorkerE = new Worker(eventBusURL);
+
+const eventBusWorker = {
+    deliver: (message) => eventBusWorkerE.postMessage(message),
+    listen: (type, handler) => {
+        eventBusWorkerE.addEventListener('message', (event) => {
+            if (event.data.type === type) {
+                handler(event.data.detail);
+            }
+        });
+    }
+};
+
+eventBusWorker.listen("memory", (event) => {
+    console.log("Received memory event:", event);
+});
+
 async function openDB(databaseName, version) {
     return new Promise((resolve, reject) => {
         const request = indexedDB.open(databaseName, version);
@@ -488,7 +519,7 @@ async function setSetting(key, value) {
         contentpool[content.id] = newContent;
 
         await setdb("set setting " + key);
-        systemUpdatesChannel.postMessage({
+        eventBusWorker.deliver({
 			"type":"settings",
 			"event":"set",
             "key":key
@@ -509,7 +540,7 @@ async function resetSettings() {
         contentpool[content.id] = newContent;
         
         await setdb("reset settings");
-        systemUpdatesChannel.postMessage({
+        eventBusWorker.deliver({
 			"type":"settings",
 			"event":"reset"
 		});
@@ -531,7 +562,7 @@ async function remSetting(key) {
                 contentpool[content.id] = newContent;
                 
                 await setdb("remove setting");
-                systemUpdatesChannel.postMessage({
+                eventBusWorker.deliver({
                     "type":"settings",
                     "event":"remove",
                     "key":key
@@ -585,7 +616,7 @@ async function changePassword(oldPassword, newPassword) {
         dbCache = null;
         cryptoKeyCache = null;
         await setdb("change password");
-        systemUpdatesChannel.postMessage({
+        eventBusWorker.deliver({
 			"type":"memory",
 			"event":"update",
 			"id":"passwordChange"
@@ -835,7 +866,7 @@ async function remfile(ID) {
             console.error(`File with ID "${ID}" not found.`);
         } else {
             await setdb("remove file");
-            systemUpdatesChannel.postMessage({
+            eventBusWorker.deliver({
                 "type":"memory",
                 "event":"update",
                 "id":"removeFile"
@@ -875,7 +906,7 @@ async function remfolder(folderPath) {
         }
 
         await setdb("remove folder");
-        systemUpdatesChannel.postMessage({
+        eventBusWorker.deliver({
 			"type":"memory",
 			"event":"update",
 			"id":"removeFolder"
@@ -932,7 +963,7 @@ async function updateFile(folderName, fileId, newData) {
             }
 
             await setdb("modify file");
-            systemUpdatesChannel.postMessage({
+            eventBusWorker.deliver({
                 "type":"memory",
                 "event":"update",
                 "id":"updateFile"
@@ -949,7 +980,7 @@ async function updateFile(folderName, fileId, newData) {
             contentpool[fileId] = newData.content || '';
 
             await setdb("create new file");
-            systemUpdatesChannel.postMessage({
+            eventBusWorker.deliver({
                 "type":"memory",
                 "event":"update",
                 "id":"createFile"
@@ -1032,7 +1063,7 @@ async function createFile(folderName, fileName, type, content, metadata = {}) {
             if (fileNameWithExtension.endsWith(".app")) extractAndRegisterCapabilities(uid, base64data);
             contentpool[uid] = base64data;
             await setdb("handling file: " + fileNameWithExtension);
-            systemUpdatesChannel.postMessage({
+            eventBusWorker.deliver({
                 "type":"memory",
                 "event":"update",
                 "id":"updateFile"

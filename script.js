@@ -283,8 +283,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 		return;
 	}
 
-	const systemUpdatesChannel = new BroadcastChannel("filesystem");
-
 	gid("versionswitcher")?.remove();
 
 	await registerDecryptWorker();
@@ -857,7 +855,7 @@ async function createFolder(folderNames, folderData) {
 		insertData(memory.root, folderData);
 
 		await setdb("making folders");
-		systemUpdatesChannel.postMessage({
+		eventBusWorker.deliver({
 			"type":"memory",
 			"event":"update",
 			"id":"createFolder"
@@ -1233,7 +1231,7 @@ async function installdefaultapps() {
 		const hangMessages = ["Hang in tight...", "Almost there...", "Just a moment more...", "Patience, young grasshopper..."];
 
 		for (let i = 0; i < defAppsList.length; i++) {
-			const appUpdatePromise = updateApp(defAppsList[i]);
+			const appUpdatePromise = await updateApp(defAppsList[i]);
 			let delay = 0;
 
 			const interval = setInterval(() => {
@@ -1241,7 +1239,7 @@ async function installdefaultapps() {
 					gid('startupterms').innerText = hangMessages[(delay / 2000) % hangMessages.length];
 				}
 				delay += 2000;
-			}, 2000);
+			}, 200);
 
 			await Promise.race([appUpdatePromise, new Promise(res => setTimeout(res, 3000))]);
 			clearInterval(interval);
