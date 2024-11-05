@@ -1188,7 +1188,10 @@ async function initialiseOS() {
 }
 
 async function installdefaultapps() {
-	gid("edison").showModal()
+	gid("edison").showModal();
+	if (gid('startupterms')) {
+		gid('startupterms').innerText = "Just a moment...";
+	}
 
 	const maxRetries = 2;
 
@@ -2050,4 +2053,9 @@ async function novarefresh() {
 	cleanupInvalidAssociations(); 
 	checkdmode();
 	loadrecentapps();
+}
+
+function launchbios() {
+	document.getElementById('novasetupusernamedisplay').innerText = CurrentUsername;
+	document.getElementById('bios').showModal();
 }

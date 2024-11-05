@@ -6,9 +6,9 @@
 	<meta name="viewport" content="width=device-width">
 	<title>Nova OS</title>
 	<script src="system32.js" defer></script>
+	<link rel="stylesheet" href="nova.css">
 	<link rel="stylesheet" href="style.css">
 	<link rel="icon" type="image/webp" href="n.png">
-	<link rel="stylesheet" href="nova.css">
 	</script>
 	<!--Jquery-->
 	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -176,7 +176,7 @@
 							bedtime
 						</span>
 					</button>
-					<button class="tooltip" onclick="document.getElementById('bios').showModal()">
+					<button class="tooltip" onclick="launchbios()">
 						<span class="tooltiptext">Nova Setup</span>
 						<span class="material-symbols-rounded">
 							power
@@ -214,13 +214,38 @@
 			</div>
 	</dialog>
 	<dialog id="bios" class="scalableui onramcloseable">
-		<h1>Nova Setup</h1>
-		<p>Welcome to Nova Setup. This page deals with critical choices that may affect your data and the os itself.
-			remember, clicking on any buttons here might cause damage to your data.</p>
-		<button class="gudbtn" onclick="gid('bios').close()">Exit Setup</button>
-		<button onclick="gid('terminal').showModal()">Terminal</button>
-		<button onclick="location.reload()">Hard Refresh (ReBoot)</button>
-		<button onclick="window.location.href = 'platiniumloader.html'">Switch to other versions of Nova OS</button>
+		<span class="material-icons closebtn" onclick="gid('bios').close()">
+			close
+		</span>
+		<small>Welcome to NovaOS Setup,</small>
+		<h1 id="novasetupusernamedisplay"></h1>
+		<div class="buttongroup-grid">
+			<button onclick="gid('terminal').showModal();gid('bios').close();">
+				<span class="material-symbols-rounded">
+					developer_mode
+				</span>
+				Terminal
+			</button>
+			<button onclick="location.reload();gid('bios').close();">
+				<span class="material-symbols-rounded">
+					power_settings_new
+				</span>
+				Restart
+			</button>
+			<button onclick="installdefaultapps();gid('bios').close();">
+				<span class="material-symbols-rounded">
+					auto_fix_high
+				</span>
+				Fix default apps
+			</button>
+			<button onclick="logoutofnova()">
+				<span class="material-symbols-rounded">
+					logout
+				</span>
+				Sign out
+			</button>
+	</div>
+	
 
 	</dialog>
 	<dialog id="startup" class="scalableui">
@@ -238,7 +263,7 @@
 						refresh
 					</span>
 					Refresh</a></li>
-			<li><a onclick="document.getElementById('bios').showModal()">
+			<li><a onclick="launchbios()">
 					<span ic="" class="material-icons">
 						account_circle
 					</span>

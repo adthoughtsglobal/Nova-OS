@@ -22,10 +22,18 @@
 	--sizing-huge: 1rem;
     --sizing-normal: 0.5rem;
 	--sizing-nano: 0.3rem;
+
+	--time-action: .2s;
 	
 	--vw: 1vw;
 	--vh: 1vh;
 	--font-size-default: calc((var(--vw) + var(--vh)) / 2);
+}
+
+@media (max-width: 768px) {
+    :root {
+        --time-action: .5s;
+    }
 }
 
 ::-webkit-scrollbar {
