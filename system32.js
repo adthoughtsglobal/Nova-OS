@@ -753,43 +753,33 @@ async function getFileByPath(path) {
     return null;
 }
 
-var idMap = {};
-
 async function getFileById(id) {
     if (!id) return undefined;
     await updateMemoryData();
 
-    if (idMap[id]) {
-        return {
-            path: idMap[id],
-            ...findFileDetails(id, memory.root)
-        };
-    }
+    return findFileDetails(id, memory.root);
+}
 
-    function findFileDetails(id, folder, currentPath = '') {
-        for (let key in folder) {
-            const item = folder[key];
-            if (item && typeof item === 'object') {
-                if (item.id === id) {
-                    idMap[id] = currentPath;
-                    const content = contentpool[id];
-                    return {
-                        fileName: key,
-                        id: item.id,
-                        content: content,
-                        metadata: item.metadata,
-                        path: currentPath
-                    };
-                } else if (key.endsWith('/')) {
-                    const result = findFileDetails(id, item, currentPath + key);
-                    if (result) return result;
-                }
+function findFileDetails(id, folder, currentPath = '') {
+    for (let key in folder) {
+        const item = folder[key];
+        if (item && typeof item === 'object') {
+            if (item.id === id) {
+                const content = contentpool[id];
+                return {
+                    fileName: key,
+                    id: item.id,
+                    content: content,
+                    metadata: item.metadata,
+                    path: currentPath
+                };
+            } else if (key.endsWith('/')) {
+                const result = findFileDetails(id, item, currentPath + key);
+                if (result) return result;
             }
         }
-        return null;
     }
-
-    return findFileDetails(id, memory.root);
+    return null;
 }
 
 async function getFileNameByID(id) {

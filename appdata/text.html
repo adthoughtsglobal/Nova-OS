@@ -154,15 +154,18 @@
         <div class="dropup">
             <button class="dropbtn navbutton">Save As</button>
             <div class="dropup-content">
-                <a onclick="savetx('app')">App</a>
-                <a onclick="savetx('custom')">Custom</a>
+                sorry.
             </div>
         </div>
         <button onclick="toggleDarkMode()" class="navbutton">Reading Mode</button>
+    </nav>
+    <textarea id="thedisplay" spellcheck="false" onkeyup="sbtn.innerHTML = '*Save'"
+        placeholder="Click Open to open a file from your files app."></textarea>
+
         <script>
             var mode = "new";
             var currentfile = {};
-            currentfile.type = "text/plain";
+            var currentMime = 'text/plain';
             var currentreqID = null;
 
             function openfromfiles() {
@@ -183,29 +186,22 @@
             });
 
             async function savetx(x) {
-                window.parent.say("Saving in text app is not available at the moment. <br><br>We are working on this.");
-                return;
                 sbtn.innerHTML = '* Saving';
 
                 const content = document.getElementById("thedisplay").value;
                 const encodedContent = btoa(content);
-                const dataUri = `data:${currentfile.type};base64,${encodedContent}`;
 
                 if (mode === "edit") {
+                const dataUri = `data:${currentMime};base64,${encodedContent}`;
                     await window.parent.updateFile(currentfile.path, currentfile.id, {
                         metadata: currentfile.metadata,
                         content: dataUri,
                         fileName: currentfile.fileName
                     });
                 } else {
-                    if (x == 1) {
-                        window.parent.createFile("Documents", "Untitled.txt", dataUri);
-                    } else if (x != "custom") {
-                        window.parent.createFile("Documents", "Untitled", x, dataUri);
-                    } else {
-                        let y = await window.parent.ask("Enter a file name:", "untitled.txt");
-                        window.parent.createFile("Documents", y, false, dataUri);
-                    }
+                    const dataUri = `data:text/plain;base64,${encodedContent}`;
+                    let y = await window.parent.ask("Enter a file name:", "untitled.txt");
+                    window.parent.createFile("Documents", y, false, dataUri);
                 }
 
                 sbtn.innerHTML = 'Save';
@@ -216,35 +212,18 @@
                 document.body.classList.toggle('dark-mode');
                 document.querySelector('textarea').classList.toggle('dark-mode');
             }
-        </script>
-    </nav>
-    <textarea id="thedisplay" spellcheck="false" onkeyup="sbtn.innerHTML = '*Save'"
-        placeholder="Click Open to open a file from your files app."></textarea>
-
-    <script>
 
         function jsonFromDataURI(dataURI) {
-            // Split the Data URI into the MIME type and the data
             const splitDataURI = dataURI.split(',');
-
-            // Ensure that the Data URI contains JSON data
             if (splitDataURI.length !== 2 || splitDataURI[0].indexOf('application/json') === -1) {
                 throw new Error('Invalid Data URI. Expected a Data URI containing JSON data.');
             }
-
-            // Extract the JSON data
             let jsonData = splitDataURI[1];
-
             if (isBase64(jsonData)) {
                 jsonData = window.atob(jsonData)
             }
-
-            // Decode the JSON data
             const decodedData = decodeURIComponent(jsonData);
-
-            // Parse the decoded JSON data into a JavaScript object
             const jsonObject = JSON.parse(decodedData);
-
             return jsonObject;
         }
 
@@ -259,18 +238,15 @@
         function formatJS(code) {
             let formattedCode = '';
 
-            // Add indentation and line breaks
             let level = 0;
             for (let i = 0; i < code.length; i++) {
                 const char = code[i];
                 if (char === '{' || char === '[') {
                     level++;
-                    formattedCode += char + '\n' + ' '.repeat(level * 4);
+                    formattedCode += char + ' '.repeat(level * 4);
                 } else if (char === '}' || char === ']') {
                     level--;
                     formattedCode = formattedCode.trimEnd() + '\n' + ' '.repeat(level * 4) + char;
-                } else if (char === ',') {
-                    formattedCode += char + '\n' + ' '.repeat(level * 4);
                 } else {
                     formattedCode += char;
                 }
@@ -311,7 +287,8 @@
             const mimePrefix = file.content.match(/^data:([^;]+);base64,/i);
 
             if (mimePrefix) {
-                file.type = mimePrefix[0];
+                file.type = mimePrefix[1];
+                currentMime = mimePrefix[1];
                 file.content = file.content.replace(/^data:([^;]+);base64,/i, '');
                 processFileContent(file);
             } else {
@@ -324,10 +301,8 @@
         }
 
         function processFileContent(file) {
-            if (isBase64(file.content)) {
-                file.content = atob(file.content);
-            }
-            console.log("reading: ", file);
+            file.content = window.parent.decodeBase64Content(file.content);
+
             if (file.content == undefined) {
                 window.parent.say("Currupted file", "Your file is having no reader data.")
 
@@ -336,9 +311,9 @@
                 return;
             }
 
-            if (file.type === "application/json" || file.type === "json") {
+            if (file.type === "application/json") {
                 try {
-                    file.content = JSON.stringify(JSON.parse(file.content), null, 2);
+                    file.content = formatJS(JSON.stringify(JSON.parse(file.content), null, 2));
                 } catch (e) {
                     console.error("Error parsing JSON content", e);
                 }
