@@ -9,10 +9,15 @@ const eventBusBlob = new Blob([`
     const eventBus = new EventTarget();
     self.addEventListener('message', (e) => {
         const { type, event: evt, key, id } = e.data;
+        
+        // Dispatch a custom event within the worker
         eventBus.dispatchEvent(new CustomEvent(type, { detail: { event: evt, key, id } }));
+        
+        // Post a message back to the main thread
+        self.postMessage({ type, detail: { event: evt, key, id } });
     });
     
-    self.deliver = (message) => self.postMessage(message);
+    // Listen method within the worker script
     self.listen = (type, handler) => {
         eventBus.addEventListener(type, (e) => handler(e.detail));
     };
@@ -21,6 +26,7 @@ const eventBusBlob = new Blob([`
 const eventBusURL = URL.createObjectURL(eventBusBlob);
 const eventBusWorkerE = new Worker(eventBusURL);
 
+// Main script
 const eventBusWorker = {
     deliver: (message) => eventBusWorkerE.postMessage(message),
     listen: (type, handler) => {
@@ -32,8 +38,9 @@ const eventBusWorker = {
     }
 };
 
-eventBusWorker.listen("memory", (event) => {
-    console.log("Received memory event:", event);
+// Usage example
+eventBusWorker.listen("settings", (event) => {
+    console.log("Received settings event:", event);
 });
 
 async function openDB(databaseName, version) {

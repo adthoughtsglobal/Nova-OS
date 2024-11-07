@@ -46,6 +46,18 @@ nav {
     justify-content: center;
     align-items: center;
     height: fit-content;
+	animation: navIn 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+@keyframes navIn {
+	from {
+		opacity: 0;
+		transform: translateY(1rem);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
 }
 
 nav .flodiv {

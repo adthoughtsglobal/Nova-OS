@@ -38,15 +38,15 @@
 
 		.calculator-screen {
 			width: calc(100% - 3rem);
-    flex: 1;
-    border: none;
-    font-size: 2em;
-    text-align: right;
-    max-height: 100px;
-    background-color: #1d1d1d;
-    color: #fff;
-    margin-bottom: 20px;
-    margin-left: 1rem;
+			flex: 1;
+			border: none;
+			font-size: 2em;
+			text-align: right;
+			max-height: 100px;
+			background-color: #1d1d1d;
+			color: #fff;
+			margin-bottom: 20px;
+			margin-left: 1rem;
 		}
 
 		.prev-screen {
@@ -114,8 +114,9 @@
 			<tr>
 				<td><button onclick="clearDisplay()">C</button></td>
 				<td><button onclick="appendToDisplay('00')">00</button></td>
-				<td><button onclick="appendToDisplay('3.14159')">pi</button></td>
-				<td><button onclick="appendToDisplay('2.71828')">e</button></td>
+				<td><button onclick="appendToDisplay(String.fromCharCode(40))">(</button></td>
+				<td><button onclick="appendToDisplay(String.fromCharCode(41))">)</button></td>
+				
 			</tr>
 			<tr>
 				<td><button onclick="appendToDisplay('7')">7</button></td>
@@ -145,33 +146,33 @@
 	</div>
 
 	<script>
-	const display = document.getElementById('display');
-const prev = document.getElementById('prev');
+		const display = document.getElementById('display');
+		const prev = document.getElementById('prev');
 
-function appendToDisplay(value) {
-	if (value === '.' && display.value.includes('.')) return;
-	if (display.value === 'Error') display.value = '';
-	display.value += value;
-}
+		function appendToDisplay(value) {
+			if (value === '.' && display.value.includes('.')) return;
+			if (display.value === 'Error') display.value = '';
+			display.value += value;
+		}
 
-function clearDisplay() {
-	prev.value = display.value;
-	display.value = '';
-}
+		function clearDisplay() {
+			prev.value = display.value;
+			display.value = '';
+		}
 
-function calculateResult() {
-	try {
-		const expression = display.value;
-		let result = Function(`return ${expression}`)();
+		function calculateResult() {
+			try {
+				const expression = display.value;
+				let result = Function(`return ${expression}`)();
 
-		result = isFinite(result) ? parseFloat(result.toFixed(6)) : 'Infinity';
+				result = isFinite(result) ? parseFloat(result.toFixed(6)) : 'Infinity';
 
-		prev.value = `${expression} =`;
-		display.value = result;
-	} catch {
-		display.value = 'Error';
-	}
-}
+				prev.value = `${expression} =`;
+				display.value = result;
+			} catch {
+				display.value = 'Error';
+			}
+		}
 	</script>
 </body>
 

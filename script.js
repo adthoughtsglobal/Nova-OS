@@ -215,7 +215,7 @@ async function startup() {
 
 			fetchDataAndUpdate();
 			await genTaskBar();
-			await dod();
+			dod();
 			removeInvalidMagicStrings();
 
 			function startUpdateTime() {
@@ -286,6 +286,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	gid("versionswitcher")?.remove();
 
 	await registerDecryptWorker();
+	gid("novanav").style.display = "none";
 
 	async function waitForNonNull() {
 		const startTime = Date.now();
@@ -1701,9 +1702,11 @@ document.addEventListener('keydown', function (event) {
 	}
 });
 async function genTaskBar() {
+	gid("novanav").style.display = "none";
 	var appbarelement = document.getElementById("dock")
 	appbarelement.innerHTML = "<span class='taskbarloader' id='taskbarloaderprime'></span>";
 	if (appbarelement) {
+		try {
 		let dropZone = appbarelement;
 		dropZone.addEventListener('dragover', (event) => {
 			event.preventDefault();
@@ -1763,7 +1766,9 @@ async function genTaskBar() {
 			appShortcutDiv.appendChild(tooltisp);
 
 			appbarelement.appendChild(appShortcutDiv);
-		})
+		});
+	 } catch (err) {}
+		gid("novanav").style.display = "grid";
 		document.querySelector('#taskbarloaderprime').remove();
 	}
 }

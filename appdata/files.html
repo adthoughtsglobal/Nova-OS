@@ -2051,14 +2051,8 @@
 			}
 
 			myWindow.eventBusWorker.listen("memory", (event) => {
-    console.log(event);
-    const message = event;
-
-				if (message.type === "memory") {
-					refresh();
-				}
+				refresh();
 			});
-
 		}
 	</script>
 </body>
