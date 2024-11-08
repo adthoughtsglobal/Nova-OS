@@ -2,7 +2,17 @@ var batteryLevel, winds = {}, rp, flwint = true, contentpool = {}, memory = {}, 
 var really = false, initmenuload = true, fileTypeAssociations = {}, Gtodo, notifLog = {}, initialization = false, onstartup = [];
 var novaFeaturedImage = `Dev.png`;
 
-document.getElementById("bgimage").src = novaFeaturedImage;
+function setbgimagetourl(x) {
+	const bgImage = document.getElementById('bgimage');
+	bgImage.style.opacity = 0;
+	setTimeout(() => {
+		bgImage.src = x;
+		bgImage.onload = () => bgImage.style.opacity = 1;
+	}, parseFloat(getComputedStyle(bgImage).transitionDuration) * 1000);
+};
+
+setbgimagetourl(novaFeaturedImage);
+
 var defAppsList = [
 	"store",
 	"files",
@@ -650,11 +660,11 @@ async function dod() {
 			unshrinkbsfX = await getFileById(x);
 			unshrinkbsfX = unshrinkbsfX.content;
 		}
-		document.getElementById('bgimage').src = unshrinkbsfX;
+		setbgimagetourl(unshrinkbsfX);
 	}
 	document.getElementById("bgimage").onerror = async function (event) {
 		console.log("wallpaper error", event)
-		document.getElementById("bgimage").src = novaFeaturedImage;
+		setbgimagetourl(novaFeaturedImage);
 		if (await getSetting("wall")) {
 			remSetting("wall");
 		}
@@ -1122,7 +1132,7 @@ async function makewall(deid) {
 			unshrinkbsfX = await getFileById(x);
 			unshrinkbsfX = unshrinkbsfX.content;
 		}
-		document.getElementById('bgimage').src = unshrinkbsfX;
+		setbgimagetourl(unshrinkbsfX);
 	}
 	setSetting("wall", deid);
 }

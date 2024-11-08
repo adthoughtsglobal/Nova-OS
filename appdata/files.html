@@ -910,18 +910,6 @@
 				};
 			}
 
-			function getBase64(file) {
-				var reader = new FileReader();
-				reader.readAsDataURL(file);
-				reader.onload = function () {
-					out = reader.result;
-					document.getElementById("fupibu").innerHTML = "Saving..."
-				};
-				reader.onerror = function (error) {
-					console.log('Error: ', error);
-				};
-			}
-
 			function b64EncodeUnicode(str) {
 				return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) => String.fromCharCode('0x' + p1)));
 			}
@@ -1186,28 +1174,34 @@
 		});
 
 		dropZone.addEventListener('drop', (event) => {
-			event.preventDefault();
+	event.preventDefault();
 
-			const files = event.dataTransfer.files;
+	const files = event.dataTransfer.files;
 
-			for (let i = 0; i < files.length; i++) {
-				const file = files[i];
-				const reader = new FileReader();
+	for (let i = 0; i < files.length; i++) {
+		const file = files[i];
+		const reader = new FileReader();
 
-				reader.onload = (e) => {
-					const fileContent = e.target.result;
-					folderName = 'downloads';
-					let md = {
-						"via": "imported"
-					}
-					window.parent.createFile(folderName, file.name, file.type, out, md).then(() => {
-						listFiles(folderName, true)
-					});
-				};
+		let readerMethod = 'readAsText';
 
-				reader.readAsText(file);
-			}
-		});
+		if (file.type.startsWith('image/') || file.type === 'application/pdf' || file.type === 'application/octet-stream') {
+			readerMethod = 'readAsDataURL';
+		} else if (file.type === 'application/octet-stream') {
+			readerMethod = 'readAsArrayBuffer';
+		}
+
+		reader.onload = (e) => {
+			const fileContent = e.target.result;
+			const folderName = 'downloads';
+			const md = { "via": "imported" };
+			window.parent.createFile(folderName, file.name, file.type, fileContent, md).then(() => {
+				listFiles(folderName, true);
+			});
+		};
+
+		reader[readerMethod](file);
+	}
+});
 
 
 		dropZone.addEventListener('dragend', (event) => {

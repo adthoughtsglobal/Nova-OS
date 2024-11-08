@@ -1019,7 +1019,7 @@ async function createFile(folderName, fileName, type, content, metadata = {}) {
         let base64data = isBase64(content) ? content : '';
 
         if (!base64data) {
-            const mimeType = type ? `application/${type}` : 'application/octet-stream';
+            const mimeType = type ? `${type}` : 'application/octet-stream';
             const blob = new Blob([content], { type: mimeType });
             const reader = new FileReader();
             reader.readAsDataURL(blob);

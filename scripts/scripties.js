@@ -45,62 +45,41 @@ const styles = {
 };
 
 async function checkdmode() {
-		// scalable UI
-		if (await getSetting("UISizing") && await getSetting("UISizing") == 1) {
-			scaleUIElements(await getSetting("UISizing"))
-		}
+	const [uiSizing, darkMode, simpleMode] = await Promise.all([
+		getSetting("UISizing"),
+		getSetting("darkMode"),
+		getSetting("simpleMode")
+	]);
 
-		if (await getSetting("darkMode")) {
-			if (await getSetting("simpleMode")) {
-				switchtheme("dark", "simple");
-			} else {
-				switchtheme("dark");
-			}
-		} else {
-			if (await getSetting("simpleMode")) {
-				switchtheme("bright", "simple");
-			} else {
-				switchtheme("bright");
-			}
-		}
+	if (uiSizing === 1) scaleUIElements(uiSizing);
+
+	const theme = darkMode ? "dark" : "bright";
+	const simplicity = simpleMode ? "simple" : "nonSimple";
+	switchtheme(theme, simplicity);
 }
 
-// Common style settings for elementhahas
 const setStyle = (element, styles) => {
 	if (element) {
-		for (const property in styles) {
-			element.style[property] = styles[property];
-		}
+		Object.assign(element.style, styles);
 	}
 };
 
-const applyStyles = (elementhahas, styles) => {
-	elementhahas.forEach(elementhaha => setStyle(elementhaha, styles));
+const applyStyles = (elements, styles) => {
+	elements.forEach(element => setStyle(element, styles));
 };
 
-function switchtheme(x, y) {
-	// elementhahas that need styling
-	const flodivelementhahas = document.querySelectorAll('[navobj]');
-	const appdmodelementhaha = document.querySelector('#appdmod');
-	const searhwielementhaha = document.querySelector('#searchwindow');
-	const searchinpe = document.querySelector('.searchinputcont');
-	const searchnbtn = document.querySelector('#strtsearcontbtn');
-	const bob = document.querySelector('#bobthedropdown');
-	const novaicelementhaha = document.querySelector('#novaic');
+function switchtheme(theme, simplicity) {
+	const currentStyles = styles[theme][simplicity];
 
-	// Determine which styles to apply
-	const mode = x === "dark" ? "dark" : "bright";
-	const simplicity = y === "simple" ? "simple" : "nonSimple";
+	applyStyles(document.querySelectorAll('[navobj]'), currentStyles.flodiv);
+	setStyle(document.querySelector('#appdmod'), currentStyles.appdmod);
+	setStyle(document.querySelector('#searchwindow'), currentStyles.appdmod);
+	setStyle(document.querySelector('.searchinputcont'), currentStyles.searchinpe);
+	setStyle(document.querySelector('#strtsearcontbtn'), currentStyles.searchnbtn);
+	setStyle(document.querySelector('#bobthedropdown'), currentStyles.bob);
 
-	// Apply styles
-	const currentStyles = styles[mode][simplicity];
-	applyStyles(flodivelementhahas, currentStyles.flodiv);
-	setStyle(appdmodelementhaha, currentStyles.appdmod);
-	setStyle(searhwielementhaha, currentStyles.appdmod); // Apply the same styles as appdmodelementhaha
-	setStyle(searchinpe, currentStyles.searchinpe);
-	setStyle(searchnbtn, currentStyles.searchnbtn);
-	setStyle(bob, currentStyles.bob);
-	novaicelementhaha.setAttribute('fill', currentStyles.novaic.fill);
+	const novaic = document.querySelector('#novaic');
+	if (novaic) novaic.style.fill = currentStyles.novaic.fill;
 }
 
 // more stuff
@@ -198,10 +177,11 @@ const hardcodedMimeTypes = {
     'jpg': 'image/jpeg',
     'jpeg': 'image/jpeg',
 	'webp': 'image/webp',
+	'webm': 'image/webm',
     'png': 'image/png',
     'gif': 'image/gif',
     'txt': 'text/plain',
-    'pdf': 'application/pdf',
+    'pdf': 'application/pdf'
 };
 
 async function getMimeType(extension) {
