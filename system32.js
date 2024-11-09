@@ -731,14 +731,22 @@ async function getFileNamesByFolder(folderPath) {
             currentFolder = currentFolder[name + '/'];
         }
 
-        return Object.entries(currentFolder).map(([fileName, file]) =>
-            fileName.endsWith('/') ? { name: fileName } : { id: file.id, name: fileName }
-        );
+        return Object.entries(currentFolder).map(([fileName, file]) => {
+            const fileData = { name: fileName };
+            if (file.id) {
+                fileData.id = file.id;
+            }
+            if (file.metadata) {
+                fileData.metadata = file.metadata;
+            }
+            return fileData;
+        });
     } catch (error) {
         console.error("Error fetching data:", error);
         return null;
     }
 }
+
 async function getFileByPath(path) {
     await updateMemoryData();
     const segments = path.split('/').filter(segment => segment);
@@ -835,8 +843,9 @@ async function moveFileToFolder(flid, dest) {
     let fileToMove = await getFileById(flid);
     if (!fileToMove) return; // Ensure the file exists
 
+    let removeoutput = await remfile(flid);
+    console.log(removeoutput, fileToMove)
     await createFile(dest, fileToMove.fileName, fileToMove.type, fileToMove.content, fileToMove.metadata);
-    await remfile(flid);
 }
 
 async function remfile(ID) {
@@ -1039,7 +1048,8 @@ async function createFile(folderName, fileName, type, content, metadata = {}) {
         if (base64data == "" || !base64data) {
             base64data = `data:${await getMimeType(type)};base64,`
         }
-        if (type === "app" && fileNameWithExtension.endsWith(".app")) {
+        metadata.datetime = getfourthdimension();
+        if (type === "app" || fileNameWithExtension.endsWith(".app")) {
             const appData = await getFileByPath(`Apps/${fileNameWithExtension}`);
             if (appData) {
                 await updateFile("Apps/", appData.id, { metadata, content: base64data, fileName: fileNameWithExtension, type });
@@ -1055,7 +1065,6 @@ async function createFile(folderName, fileName, type, content, metadata = {}) {
         } else {
             const uid = genUID();
             memory.root[folderName] = folder;
-            metadata.datetime = getfourthdimension();
             folder[fileNameWithExtension] = { id: uid, type, metadata };
             if (fileNameWithExtension.endsWith(".app")) extractAndRegisterCapabilities(uid, base64data);
             contentpool[uid] = base64data;

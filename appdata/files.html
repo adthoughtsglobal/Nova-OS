@@ -1508,7 +1508,39 @@
 								}
 								let icon = geticon(ptypext(item.name), item.id);
 
-								fileElement.innerHTML = `<span class="fileicons">${icon}</span><span flname><span class='flfrname'> ${item.name}</span> <small>${item.id || '>'}</small></span>`;
+								const iconSpan = document.createElement('span');
+								iconSpan.className = 'fileicons';
+								iconSpan.innerHTML = icon;
+
+								const flnameSpan = document.createElement('span');
+								flnameSpan.setAttribute('flname', '');
+
+								const filenameSpan = document.createElement('span');
+								filenameSpan.className = 'flfrname';
+								filenameSpan.textContent = item.name;
+
+								const timeSmall = document.createElement('small');
+								console.log(item)
+								const dateTime = item?.metadata?.datetime;
+								if (item.name.endsWith('/')) {
+									timeSmall.textContent = '>';
+									timeSmall.title = "Open folder";
+								} else {
+									let timeagocache = window.parent.timeAgo(dateTime)
+									if (timeagocache) {
+										timeSmall.textContent = timeagocache;
+										timeSmall.title = "Last modified";
+									} else {
+										timeSmall.textContent = item.id;
+										timeSmall.title = "File ID";
+									}
+								}
+
+								flnameSpan.appendChild(filenameSpan);
+								flnameSpan.appendChild(timeSmall);
+
+								fileElement.appendChild(iconSpan);
+								fileElement.appendChild(flnameSpan);
 								fileElement.setAttribute("title", `${item.name}\nID: ${item.id}` || 'Folder');
 								fllist.appendChild(fileElement);
 							} catch (error) {
@@ -1702,6 +1734,14 @@
 						renameOption.innerHTML = `<span class="material-symbols-rounded">save_as</span> Rename`;
 						dropupContentDiv.appendChild(renameOption);
 
+						// Add "copy file id" option
+						const copyid = document.createElement("a");
+						copyid.classList.add("dropdownerthebob");
+						copyid.title = "Copy file ID";
+						copyid.onclick = () => navigator.clipboard.writeText(x.getAttribute("unid"));
+						copyid.innerHTML = `<span class="material-symbols-rounded">content_copy</span> Copy ID`;
+						dropupContentDiv.appendChild(copyid);
+
 						// Add "Move" option
 						const moveOption = document.createElement("a");
 						moveOption.classList.add("dropdownerthebob");
@@ -1756,7 +1796,6 @@
 				choosefile()
 				return;
 			}
-
 
 			if (all == 'any') {
 				currentreqID = window.parent.genUID();
@@ -1831,12 +1870,7 @@
 		}
 
 		async function moveFileToFolder(flid, dest) {
-
-			let fileToMove = await window.parent.getFileById(flid);
-
-			await window.parent.createFile(dest, fileToMove.fileName, fileToMove.type, fileToMove.content, fileToMove.metadata);
-
-			await remfile(flid);
+			await window.parent.moveFileToFolder(flid, dest);
 
 			document.getElementById("fileinfobn").style.opacity = 1;
 			document.getElementById("fileinfobn").innerHTML = "File was moved to " + dest;

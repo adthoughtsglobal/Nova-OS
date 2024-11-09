@@ -820,10 +820,31 @@ function getMaxZIndex() {
 	});
 }
 
+function timeAgo(ms) {
+	if (!ms) {
+		return false;
+	}
+	let sec = Math.floor((Date.now() - ms) / 1000),
+		min = Math.floor(sec / 60),
+		hr = Math.floor(min / 60),
+		day = Math.floor(hr / 24),
+		mo = Math.floor(day / 30),
+		yr = Math.floor(day / 365);
+		console.log(ms, sec, min, hr, day, mo, yr)
+	
+	return sec < 60 ? `${sec} seconds ago` :
+	       min < 60 ? `${min} minutes ago` :
+	       hr < 24 ? `${hr} hours ago` :
+	       day < 30 ? `${day} days ago` :
+	       mo < 12 ? `${mo} months ago` :
+	       yr === 1 ? `a year ago` :
+	       `${yr} years ago`;
+}
+
 function genUID() {
-	const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+	const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_=+].,><;|?}{!@#$%^&*()';
 	let randomString = '';
-	for (let i = 0; i < 6; i++) {
+	for (let i = 0; i < 12; i++) {
 		const randomIndex = Math.floor(Math.random() * characters.length);
 		randomString += characters.charAt(randomIndex);
 	}
@@ -1163,7 +1184,6 @@ async function initialiseOS() {
 			},
 			"Apps/": {},
 			"Desktop/": {},
-			"Favorites/": {},
 			"Dock/": {},
 			"Media/": {}
 		}
@@ -1203,6 +1223,7 @@ async function installdefaultapps() {
 	if (gid('startupterms')) {
 		gid('startupterms').innerText = "Just a moment...";
 	}
+	gid("appdmod").close();
 
 	const maxRetries = 2;
 
