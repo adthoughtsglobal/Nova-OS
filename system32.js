@@ -4,7 +4,6 @@ var password = "nova";
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 var lethalpasswordtimes = true;
-
 const eventBusBlob = new Blob([`
     const eventBus = new EventTarget();
     self.addEventListener('message', (e) => {
@@ -21,11 +20,10 @@ const eventBusBlob = new Blob([`
     self.listen = (type, handler) => {
         eventBus.addEventListener(type, (e) => handler(e.detail));
     };
-`], { type: 'application/javascript' });
 
+`], { type: 'application/javascript' });
 const eventBusURL = URL.createObjectURL(eventBusBlob);
 const eventBusWorkerE = new Worker(eventBusURL);
-
 // Main script
 const eventBusWorker = {
     deliver: (message) => eventBusWorkerE.postMessage(message),
@@ -38,18 +36,12 @@ const eventBusWorker = {
     }
 };
 
-// Usage example
-eventBusWorker.listen("settings", (event) => {
-    console.log("Received settings event:", event);
-});
 
 async function openDB(databaseName, version) {
     return new Promise((resolve, reject) => {
         const request = indexedDB.open(databaseName, version);
-
         request.onupgradeneeded = async (event) => {
             const db = event.target.result;
-
             if (!db.objectStoreNames.contains("dataStore")) {
                 db.createObjectStore("dataStore", { keyPath: 'key' });
                 await saveMagicStringInLocalStorage(password);
@@ -58,15 +50,12 @@ async function openDB(databaseName, version) {
 
         request.onsuccess = async (event) => {
             const db = event.target.result;
-
             if (db.version > 1) {
                 const dataToPreserve = await readAllData(db, 'dataStore');
                 db.close();
-
                 const deleteRequest = indexedDB.deleteDatabase(databaseName);
                 deleteRequest.onsuccess = () => {
                     const resetRequest = indexedDB.open(databaseName, 1);
-
                     resetRequest.onupgradeneeded = (resetEvent) => {
                         const newDb = resetEvent.target.result;
                         const objectStore = newDb.createObjectStore('dataStore', { keyPath: CurrentUsername });
@@ -76,6 +65,7 @@ async function openDB(databaseName, version) {
                     resetRequest.onsuccess = (resetEvent) => resolve(resetEvent.target.result);
                     resetRequest.onerror = (resetEvent) => reject(resetEvent.target.error);
                 };
+
                 deleteRequest.onerror = (deleteEvent) => reject(deleteEvent.target.error);
             } else {
                 resolve(db);
@@ -85,18 +75,15 @@ async function openDB(databaseName, version) {
         request.onerror = (event) => reject(event.target.error);
     });
 }
-
 async function readAllData(db, storeName) {
     return new Promise((resolve, reject) => {
         const transaction = db.transaction(storeName, 'readonly');
         const objectStore = transaction.objectStore(storeName);
         const request = objectStore.getAll();
-
         request.onsuccess = (event) => resolve(event.target.result);
         request.onerror = (event) => reject(event.target.error);
     });
 }
-
 async function getKey(password) {
     const keyMaterial = await window.crypto.subtle.importKey(
         "raw",
@@ -105,7 +92,6 @@ async function getKey(password) {
         false,
         ["deriveKey"]
     );
-
     return window.crypto.subtle.deriveKey(
         {
             name: "PBKDF2",
@@ -119,7 +105,6 @@ async function getKey(password) {
         ["encrypt", "decrypt"]
     );
 }
-
 async function encryptData(key, data) {
     const iv = window.crypto.getRandomValues(new Uint8Array(12));
     const encrypted = await window.crypto.subtle.encrypt(
@@ -127,20 +112,17 @@ async function encryptData(key, data) {
         key,
         encoder.encode(data)
     );
-
     return {
         iv: Array.from(iv),
         data: Array.from(new Uint8Array(encrypted))
     };
+
 }
-
 let decryptWorkerRegistered = false;
-
 async function decryptData(key, encryptedData) {
     if ('serviceWorker' in navigator && !navigator.serviceWorker.controller && !decryptWorkerRegistered) {
         await registerDecryptWorker();
     }
-
     return new Promise(async (resolve, reject) => {
         if (navigator.serviceWorker.controller) {
             const handler = (event) => {
@@ -167,7 +149,6 @@ async function decryptData(key, encryptedData) {
         }
     });
 }
-
 async function registerDecryptWorker() {
     if ('serviceWorker' in navigator) {
         await navigator.serviceWorker.register('novaCrypt.js')
@@ -175,11 +156,9 @@ async function registerDecryptWorker() {
             .catch(err => console.error('Service Worker registration failed:', err));
     }
 }
-
 let dbCache = null;
 let cryptoKeyCache = null;
 const key = 'dataStore';
-
 async function flushDB(value) {
     if (!dbCache) {
         dbCache = await openDB(databaseName, 1, {
@@ -190,17 +169,15 @@ async function flushDB(value) {
             }
         });
     }
-
     if (!cryptoKeyCache) {
         cryptoKeyCache = await getKey(password);
     }
-
     const encryptedContentPool = {};
+
     for (const id in value.contentpool) {
         const compressedContent = compressString(value.contentpool[id]);
         encryptedContentPool[id] = await encryptData(cryptoKeyCache, compressedContent);
     }
-
     const memoryValue = {
         key: CurrentUsername || 'Admin',
         memory: value.memory,
@@ -209,9 +186,7 @@ async function flushDB(value) {
 
     const transaction = dbCache.transaction(key, 'readwrite');
     const store = transaction.objectStore(key);
-
     await store.put(memoryValue);
-
     return new Promise((resolve, reject) => {
         transaction.oncomplete = resolve;
         transaction.onerror = () => reject(transaction.error);
@@ -228,20 +203,16 @@ async function getdb() {
     if (!dbCache) {
         dbCache = await openDB(databaseName, 1);
     }
-
     if (!cryptoKeyCache) {
         cryptoKeyCache = await getKey(password);
     }
-
     try {
         const transaction = dbCache.transaction('dataStore', 'readonly');
         const store = transaction.objectStore('dataStore');
         const request = store.get(CurrentUsername);
-
         return new Promise((resolve, reject) => {
             request.onsuccess = async () => {
                 const result = request.result;
-
                 if (result) {
                     try {
                         const decryptedContentPool = {};
@@ -251,10 +222,8 @@ async function getdb() {
                             const decryptedContent = await decryptData(cryptoKeyCache, result.contentpool[id]);
                             decryptedContentPool[id] = decompressString(decryptedContent);
                         }
-
                         contentpool = decryptedContentPool;
                         resolve(memory);
-
                     } catch (error) {
                         console.error("Decryption error:", error);
                         if (!lethalpasswordtimes) crashScreen(error.message);
@@ -283,7 +252,6 @@ function arrayBufferToBase64(buffer) {
     return btoa(binary);
 }
 
-
 function base64ToArrayBuffer(base64) {
     const binaryString = atob(base64);
     const len = binaryString.length;
@@ -294,15 +262,10 @@ function base64ToArrayBuffer(base64) {
     return bytes;
 }
 
-
 function compressString(input) {
     try {
         const inputUint8Array = new TextEncoder().encode(JSON.stringify(input));
-
-
         const compressed = fflate.gzipSync(inputUint8Array);
-
-
         return arrayBufferToBase64(compressed);
     } catch (error) {
         console.error("Compression Error:", error);
@@ -310,15 +273,10 @@ function compressString(input) {
     }
 }
 
-
 function decompressString(compressedBase64) {
     try {
         const compressedData = base64ToArrayBuffer(compressedBase64);
-
-
         const decompressed = fflate.gunzipSync(compressedData);
-
-
         return JSON.parse(new TextDecoder().decode(decompressed));
     } catch (error) {
         console.error("Decompression Error:", error);
@@ -328,28 +286,22 @@ function decompressString(compressedBase64) {
 async function removeInvalidMagicStrings() {
     const validUsernames = new Set(await getAllUsers());
     const magicStrings = JSON.parse(localStorage.getItem('magicStrings'));
-
     if (!magicStrings) return;
-
     for (const username in magicStrings) {
         if (!validUsernames.has(username)) {
             delete magicStrings[username];
         }
     }
-
     localStorage.setItem('magicStrings', JSON.stringify(magicStrings));
 }
-
-
 async function checkPassword(password) {
     const magicStrings = JSON.parse(localStorage.getItem('magicStrings')) || {};
-    const encryptedMagicString = magicStrings[CurrentUsername];
 
+    const encryptedMagicString = magicStrings[CurrentUsername];
     if (!encryptedMagicString) {
         console.error(`Magic string not found for user: ${CurrentUsername}`);
         return false;
     }
-
     const cryptoKey = await getKey(password);
     try {
         const decryptedMagicString = await decryptData(cryptoKey, encryptedMagicString);
@@ -362,39 +314,33 @@ async function checkPassword(password) {
         return false;
     }
 }
-
 async function getallusers() {
     try {
         const db = await openDB(databaseName, 1);
         const transaction = db.transaction('dataStore', 'readonly');
         const store = transaction.objectStore('dataStore');
         const request = store.getAllKeys();
-
         return new Promise((resolve, reject) => {
             request.onsuccess = async (event) => {
                 const result = await event.target.result;
-
                 resolve(result);
             };
-            request.onerror = () => {
 
+            request.onerror = () => {
                 reject(request.error);
             };
+
         });
     } catch (error) {
         console.error("Error in getAllKeysFromStore function:", error);
     }
 }
-
-
 let MemoryTimeCache = null;
 let isFetchingMemory = false;
 let cachedData = null;
-
 function getTime() {
     return Date.now();
 }
-
 async function fetchmmData() {
     try {
         const data = await getdb();
@@ -408,7 +354,6 @@ async function fetchmmData() {
         isFetchingMemory = false;
     }
 }
-
 async function updateMemoryData() {
     if (MemoryTimeCache === null || (getTime() - MemoryTimeCache) >= 1000) {
         if (!isFetchingMemory) {
@@ -427,29 +372,24 @@ function parseEscapedJsonString(escapedString) {
     if (escapedString.startsWith('"') && escapedString.endsWith('"')) {
         escapedString = escapedString.slice(1, -1);
     }
-
     try {
         return JSON.parse(escapedString);
     } catch {
         return null;
     }
 }
-
 async function getdbWithDefault(databaseName, storeName, key, defaultValue) {
     try {
         const db = await ensureObjectStore(databaseName, storeName);
         const transaction = db.transaction([storeName], 'readonly');
         const store = transaction.objectStore(storeName);
-
         return new Promise((resolve, reject) => {
             const request = store.get(key);
-
             request.onsuccess = () => {
                 const result = request.result;
                 if (result) {
                     resolve(result.value);
                 } else {
-
                     resolve(defaultValue);
                 }
             };
@@ -457,7 +397,6 @@ async function getdbWithDefault(databaseName, storeName, key, defaultValue) {
             request.onerror = () => reject(request.error);
         });
     } catch (error) {
-
         return defaultValue;
     }
 }
@@ -473,6 +412,7 @@ async function ensurePreferencesFileExists() {
     await updateMemoryData();
     try {
         memory.root["System/"] = memory.root["System/"] || {};
+
         if (!memory.root["System/"]["preferences.json"]) {
             
             const dataUri = `data:application/json;base64,${btoa(JSON.stringify(defaultPreferences))}`;
@@ -482,34 +422,29 @@ async function ensurePreferencesFileExists() {
         console.log("Error ensuring preferences file exists", err);
     }
 }
-
 let settingsCache = {};
-const settingscacheDuration = 10;
 
+const settingscacheDuration = 10;
 async function getSetting(key) {
     try {
         if (!memory) return;
-
         const cached = settingsCache[key];
         if (cached && (Date.now() - cached.t < settingscacheDuration)) return cached.v;
-
         await ensurePreferencesFileExists();
         const content = memory.root["System/"]["preferences.json"];
         if (!content) return;
-
         const base64Content = contentpool[content.id];
         const preferences = JSON.parse(decodeBase64Content(base64Content));
         settingsCache[key] = { v: preferences[key], t: Date.now() };
+
         return preferences[key];
     } catch (error) {
         console.log("Error getting settings", error);
     }
 }
-
 async function setSetting(key, value) {
     try {
         if (!memory) return null;
-
         await ensurePreferencesFileExists();
         const content = memory.root["System/"]["preferences.json"];
         let preferences = {};
@@ -519,12 +454,9 @@ async function setSetting(key, value) {
             const decodedContent = decodeBase64Content(existingContent);
             preferences = JSON.parse(decodedContent);
         }
-
         preferences[key] = value;
-
         const newContent = `data:application/json;base64,${btoa(JSON.stringify(preferences))}`;
         contentpool[content.id] = newContent;
-
         await setdb("set setting " + key);
         eventBusWorker.deliver({
 			"type":"settings",
@@ -535,11 +467,9 @@ async function setSetting(key, value) {
         console.log("Error setting settings", error, key);
     }
 }
-
 async function resetSettings() {
     try {
         if (!memory) return;
-
         await ensurePreferencesFileExists();
         const content = memory.root["System/"]["preferences.json"];
         
@@ -555,7 +485,6 @@ async function resetSettings() {
         console.log("Error resetting settings", error);
     }
 }
-
 async function remSetting(key) {
     await updateMemoryData();
     try {
@@ -580,42 +509,31 @@ async function remSetting(key) {
         console.log("Error removing settings", error);
     }
 }
-
 async function saveMagicStringInLocalStorage(password) {
     const cryptoKey = await getKey(password);
     const encryptedMagicString = await encryptData(cryptoKey, "magicString");
-
     const magicStrings = JSON.parse(localStorage.getItem('magicStrings')) || {};
-    magicStrings[CurrentUsername] = encryptedMagicString;
 
+    magicStrings[CurrentUsername] = encryptedMagicString;
     localStorage.setItem('magicStrings', JSON.stringify(magicStrings));
 }
-
 async function removeInvalidMagicStrings() {
     const validUsernames = new Set(await getallusers());
     const magicStrings = JSON.parse(localStorage.getItem('magicStrings'));
-
     if (!magicStrings) return;
-
     for (const username in magicStrings) {
         if (!validUsernames.has(username)) {
             delete magicStrings[username];
         }
     }
-
     localStorage.setItem('magicStrings', JSON.stringify(magicStrings));
 }
-
-
 async function changePassword(oldPassword, newPassword) {
     lethalpasswordtimes = true;
-
-
     if (!await checkPassword(oldPassword)) {
         lethalpasswordtimes = false;
         return false;
     }
-
     try {
         memory = await getdb();
         password = newPassword;
@@ -628,38 +546,30 @@ async function changePassword(oldPassword, newPassword) {
 			"event":"update",
 			"id":"passwordChange"
 		});
-
         await saveMagicStringInLocalStorage(newPassword);
-
     } catch (error) {
         lethalpasswordtimes = false;
         return false;
     }
-
     lethalpasswordtimes = false;
     return true;
 }
-
 async function erdbsfull() {
     if (await justConfirm("Are you really sure?", "Removing all the users data includes your settings, files, and other data. Click cancel keep it.")) {
         localStorage.removeItem('todo');
         localStorage.removeItem('magicString');
         localStorage.removeItem('updver');
         localStorage.removeItem('qsets');
-
         let indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
         let dbName = 'trojencat';
-
         let deleteRequest = indexedDB.deleteDatabase(dbName);
 deleteRequest.onsuccess = () => location.reload();
 deleteRequest.onerror = deleteRequest.onblocked = () => location.reload();
-
     };
-}
 
+}
 async function removeUser(username = CurrentUsername) {
     const key = 'dataStore';
-
     try {
         const db = await openDB(databaseName, 1, {
             upgrade(db) {
@@ -668,13 +578,11 @@ async function removeUser(username = CurrentUsername) {
                 }
             }
         });
-
         const transaction = db.transaction(key, 'readwrite');
         const store = transaction.objectStore(key);
-
         const existingUser = await store.get(username);
-
         const magicStrings = JSON.parse(localStorage.getItem('magicStrings')) || {};
+
         delete magicStrings[CurrentUsername];
         localStorage.setItem('magicStrings', JSON.stringify(magicStrings));
         if (existingUser) {
@@ -683,7 +591,6 @@ async function removeUser(username = CurrentUsername) {
         } else {
             console.warn(`User ${username} does not exist.`);
         }
-
         await transaction.complete;
         logoutofnova()
     } catch (error) {
@@ -693,11 +600,8 @@ async function removeUser(username = CurrentUsername) {
 
 function removeSWs() {
     if ('serviceWorker' in navigator) {
-
-
         navigator.serviceWorker.getRegistrations()
             .then(registrations => {
-
                 const promises = registrations.map(registration =>
                     caches.keys()
                         .then(cacheNames => Promise.all(cacheNames.map(cacheName => caches.delete(cacheName))))
@@ -715,7 +619,6 @@ function removeSWs() {
         console.log('Service workers not supported.');
     }
 }
-
 // memory management
 async function getFileNamesByFolder(folderPath) {
     folderPath = folderPath.endsWith('/') ? folderPath : folderPath + '/';
@@ -723,16 +626,15 @@ async function getFileNamesByFolder(folderPath) {
         const root = memory["root"];
         const folderNames = folderPath.split('/').filter(Boolean);
         let currentFolder = root;
-
         for (const name of folderNames) {
             if (!currentFolder[name + '/']) {
                 return [];
             }
             currentFolder = currentFolder[name + '/'];
         }
-
         return Object.entries(currentFolder).map(([fileName, file]) => {
             const fileData = { name: fileName };
+
             if (file.id) {
                 fileData.id = file.id;
             }
@@ -746,16 +648,13 @@ async function getFileNamesByFolder(folderPath) {
         return null;
     }
 }
-
 async function getFileByPath(path) {
     await updateMemoryData();
     const segments = path.split('/').filter(segment => segment);
     let current = memory.root;
-
     for (let i = 0; i < segments.length; i++) {
         const segment = segments[i];
         const isLastSegment = i === segments.length - 1;
-
         if (current[segment + '/'] && !isLastSegment) {
             current = current[segment + '/'];
         } else if (current[segment] && isLastSegment) {
@@ -764,43 +663,46 @@ async function getFileByPath(path) {
             return null;
         }
     }
-
     return null;
 }
-
-async function getFileById(id) {
+async function getFileById(id, dataType) {
     if (!id) return undefined;
     await updateMemoryData();
+    const fileDetails = await findFileDetails(id, memory.root, dataType);
+    if (!fileDetails) return null;
+    return {
+        fileName: fileDetails.fileName,
+        id: fileDetails.id,
+        content: fileDetails.content,
+        metadata: fileDetails.metadata,
+        path: fileDetails.path
+    };
 
-    return findFileDetails(id, memory.root);
 }
-
-function findFileDetails(id, folder, currentPath = '') {
+async function findFileDetails(id, folder, dataType, currentPath = '') {
     for (let key in folder) {
         const item = folder[key];
         if (item && typeof item === 'object') {
             if (item.id === id) {
-                const content = contentpool[id];
                 return {
                     fileName: key,
                     id: item.id,
-                    content: content,
+                    content: !dataType || dataType === 'content' ? contentpool[id] : undefined,
                     metadata: item.metadata,
-                    path: currentPath
+                    path: currentPath + key
                 };
+
             } else if (key.endsWith('/')) {
-                const result = findFileDetails(id, item, currentPath + key);
+                const result = await findFileDetails(id, item, dataType, currentPath + key);
                 if (result) return result;
             }
         }
     }
     return null;
 }
-
 async function getFileNameByID(id) {
     if (!id) return undefined;
     await updateMemoryData();
-
     function findFileName(id, folder, currentPath = '') {
         for (let key in folder) {
             const item = folder[key];
@@ -815,49 +717,42 @@ async function getFileNameByID(id) {
         }
         return null;
     }
-
     return findFileName(id, memory.root);
 }
-
 async function getFolderNames() {
     try {
         await updateMemoryData();
         const folderNames = [];
-
         for (const key in memory.root) {
             if (key.endsWith('/')) {
                 folderNames.push(key);
             }
         }
-
         return folderNames;
     } catch (error) {
         console.error("Error fetching data:", error);
         return null;
     }
 }
-
 async function moveFileToFolder(flid, dest) {
     console.log("Moving file: " + flid + " to: " + dest);
-
     let fileToMove = await getFileById(flid);
     if (!fileToMove) return; // Ensure the file exists
-
     let removeoutput = await remfile(flid);
     console.log(removeoutput, fileToMove)
     await createFile(dest, fileToMove.fileName, fileToMove.type, fileToMove.content, fileToMove.metadata);
 }
-
 async function remfile(ID) {
     try {
         await updateMemoryData();
-
+        let fileParent = null;
         function removeFileFromFolder(folder) {
             for (const [name, content] of Object.entries(folder)) {
                 if (name.endsWith('/')) {
                     if (removeFileFromFolder(content)) return true;
                 } else if (content.id === ID) {
                     delete folder[name];
+                    fileParent = folder;
                     delete contentpool[ID]; // Remove content from contentpool
                     console.log("File eliminated.");
                     return true;
@@ -865,9 +760,7 @@ async function remfile(ID) {
             }
             return false;
         }
-
         let fileRemoved = removeFileFromFolder(memory.root);
-
         if (!fileRemoved) {
             console.error(`File with ID "${ID}" not found.`);
         } else {
@@ -875,23 +768,21 @@ async function remfile(ID) {
             eventBusWorker.deliver({
                 "type":"memory",
                 "event":"update",
-                "id":"removeFile"
+                "id":"removeFile",
+                "key":fileParent
             });
         }
     } catch (error) {
         console.error("Error fetching or updating data:", error);
     }
 }
-
 async function remfolder(folderPath) {
     try {
         await updateMemoryData();
-
         let parts = folderPath.split('/').filter(part => part);
         let current = memory.root;
         let parent = null;
         let key = null;
-
         for (let i = 0; i < parts.length; i++) {
             let part = parts[i] + '/';
             if (current.hasOwnProperty(part)) {
@@ -910,24 +801,24 @@ async function remfolder(folderPath) {
             console.error(`Unable to delete folder "${folderPath}".`);
             return;
         }
-
         await setdb("remove folder");
         eventBusWorker.deliver({
 			"type":"memory",
 			"event":"update",
-			"id":"removeFolder"
+			"id":"removeFolder",
+            "key":folderPath
 		});
     } catch (error) {
         console.error("Error removing folder:", error);
     }
 }
-
 async function updateFile(folderName, fileId, newData) {
     function findFile(folder, fileId) {
         for (let key in folder) {
             if (typeof folder[key] === 'object' && folder[key] !== null) {
                 if (folder[key].id === fileId) {
                     return { parent: folder, key: key };
+
                 } else if (key.endsWith('/') && typeof folder[key] === 'object') {
                     let result = findFile(folder[key], fileId);
                     if (result) {
@@ -938,7 +829,6 @@ async function updateFile(folderName, fileId, newData) {
         }
         return null;
     }
-
     try {
         let targetFolder = memory.root;
         let folderNames = folderName.split('/');
@@ -950,24 +840,19 @@ async function updateFile(folderName, fileId, newData) {
                 }
             }
         }
-
         let fileLocation = findFile(targetFolder, fileId);
-
         if (fileLocation) {
             let fileToUpdate = fileLocation.parent[fileLocation.key];
             fileToUpdate.metadata = newData.metadata !== undefined ? JSON.stringify(newData.metadata) : fileToUpdate.metadata;
             fileToUpdate.fileName = newData.fileName !== undefined ? newData.fileName : fileLocation.key;
             fileToUpdate.type = newData.type !== undefined ? newData.type : fileToUpdate.type;
-
             if (newData.fileName !== undefined && newData.fileName !== fileLocation.key) {
                 fileLocation.parent[newData.fileName] = fileToUpdate;
                 delete fileLocation.parent[fileLocation.key];
             }
-
             if (newData.content !== undefined) {
                 contentpool[fileId] = newData.content;
             }
-
             await setdb("modify file");
             eventBusWorker.deliver({
                 "type":"memory",
@@ -984,7 +869,6 @@ async function updateFile(folderName, fileId, newData) {
             };
 
             contentpool[fileId] = newData.content || '';
-
             await setdb("create new file");
             eventBusWorker.deliver({
                 "type":"memory",
@@ -1004,29 +888,23 @@ function createFolderStructure(folderName) {
         part += '/';
         if (!current[part]) {
             current[part] = {};
+
         }
         current = current[part];
     }
     return current;
 }
-
 async function createFile(folderName, fileName, type, content, metadata = {}) {
     folderName = folderName.endsWith('/') ? folderName : folderName + '/';
     const fileNameWithExtension = fileName.includes('.') ? fileName : `${fileName}.${type || ''}`.trim();
-
     if (!fileNameWithExtension) return null;
-
     type = type || fileNameWithExtension.split('.').pop();
-
     await updateMemoryData();
-
     if (!folderExists(folderName)) await createFolder(folderName);
-
     const folder = memory.root[folderName] || {};
 
     try {
         let base64data = isBase64(content) ? content : '';
-
         if (!base64data) {
             const mimeType = type ? `${type}` : 'application/octet-stream';
             const blob = new Blob([content], { type: mimeType });
@@ -1036,6 +914,7 @@ async function createFile(folderName, fileName, type, content, metadata = {}) {
                 base64data = reader.result;
                 await handleFile(folder, folderName, fileNameWithExtension, base64data, type, metadata);
             };
+
         } else {
             await handleFile(folder, folderName, fileNameWithExtension, base64data, type, metadata);
         }
@@ -1043,7 +922,6 @@ async function createFile(folderName, fileName, type, content, metadata = {}) {
         console.error("Error in createFile:", error);
         return null;
     }
-
     async function handleFile(folder, folderName, fileNameWithExtension, base64data, type, metadata) {
         if (base64data == "" || !base64data) {
             base64data = `data:${await getMimeType(type)};base64,`
@@ -1057,7 +935,6 @@ async function createFile(folderName, fileName, type, content, metadata = {}) {
                 return appData.id || null;
             }
         }
-
         const existingFile = Object.values(folder).find(file => file.fileName === fileNameWithExtension);
         if (existingFile) {
             await updateFile(folderName, existingFile.id, { metadata, content: base64data, fileName: fileNameWithExtension, type });
@@ -1066,23 +943,67 @@ async function createFile(folderName, fileName, type, content, metadata = {}) {
             const uid = genUID();
             memory.root[folderName] = folder;
             folder[fileNameWithExtension] = { id: uid, type, metadata };
+
             if (fileNameWithExtension.endsWith(".app")) extractAndRegisterCapabilities(uid, base64data);
             contentpool[uid] = base64data;
             await setdb("handling file: " + fileNameWithExtension);
             eventBusWorker.deliver({
                 "type":"memory",
                 "event":"update",
-                "id":"updateFile"
+                "id":"updateFile",
+                "key":folderName
             });
             return uid;
         }
     }
 }
+async function createFolder(folderNames, folderData) {
+	try {
+		await updateMemoryData();
+		if (typeof folderNames === 'string') {
+			folderNames = [folderNames];
+		} else if (!(folderNames instanceof Set || Array.isArray(folderNames))) {
+			throw new Error('folderNames should be a Set or a string');
+		}
+		folderNames = Array.from(folderNames);
+		for (const folderName of folderNames) {
+			const parts = folderName.replace(/\/$/, '').split('/');
+			let current = memory.root;
+			for (const part of parts) {
+				const folderKey = part + '/';
+				current[folderKey] = current[folderKey] || {};
+
+				current = current[folderKey];
+			}
+		}
+		const insertData = (target, data) => {
+			for (const key in data) {
+				if (typeof data[key] === 'object' && data[key] !== null) {
+					target[key] = target[key] || {};
+
+					insertData(target[key], data[key]);
+				} else {
+					target[key] = data[key];
+				}
+			}
+		};
+
+		insertData(memory.root, folderData);
+		await setdb("making folders");
+		eventBusWorker.deliver({
+			"type":"memory",
+			"event":"update",
+			"id":"createFolder",
+            "key":folderNames
+		});
+	} catch (error) {
+		console.error("Error creating folders and data:", error);
+	}
+}
 
 function dragfl(ev, obj) {
     ev.dataTransfer.setData("Text", obj.getAttribute('unid'));
 }
-
 async function crashScreen(err) { 
     closeallwindows();
     await say(`

@@ -171,6 +171,7 @@ async function checkAndRunFromURL() {
 }
 const hardcodedMimeTypes = {
     'html': 'text/html',
+    'app': 'text/html',
     'js': 'application/javascript',
     'css': 'text/css',
     'json': 'application/json',

@@ -1151,6 +1151,11 @@
 	</dialog>
 
 	<script>
+		function getLastSegment(path) {
+			const segments = path.replace(/\/$/, '').split('/');
+			return segments[segments.length - 1];
+		}
+
 		async function createit() {
 			let fname = document.getElementById("makflname").value;
 
@@ -1520,7 +1525,6 @@
 								filenameSpan.textContent = item.name;
 
 								const timeSmall = document.createElement('small');
-								console.log(item)
 								const dateTime = item?.metadata?.datetime;
 								if (item.name.endsWith('/')) {
 									timeSmall.textContent = '>';
@@ -2051,10 +2055,8 @@
 		var currentreqID;
 
 		window.addEventListener('message', async (event) => {
-			console.log(event, currentreqID)
 			if (event.data.action === 'loadlocalfile') {
 				if (event.data.id === myWindow.windowID) {
-
 					window.parent.openlaunchprotocol(event.data.returned, nowfile.getAttribute("unid"));
 				}
 			}
@@ -2079,7 +2081,9 @@
 			}
 
 			myWindow.eventBusWorker.listen("memory", (event) => {
-				refresh();
+				if (event?.key.includes(getLastSegment(currentPath))) {
+					refresh();
+				}
 			});
 		}
 	</script>
