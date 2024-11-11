@@ -332,7 +332,7 @@ async function openn() {
 	Promise.all(x.map(async (app) => {
 		var appShortcutDiv = document.createElement("div");
 		appShortcutDiv.className = "app-shortcut tooltip sizableuielement";
-		appShortcutDiv.setAttribute("onclick", () => openfile(app.id));
+		appShortcutDiv.addEventListener("click", () => openfile(app.id));
 		var iconSpan = document.createElement("span");
 		iconSpan.innerHTML = "<span class='taskbarloader'></span>"
 		getAppIcon(false, app.id).then(appIcon => {
@@ -384,7 +384,7 @@ async function loadrecentapps() {
 		}
 		var appShortcutDiv = document.createElement("div");
 		appShortcutDiv.className = "app-shortcut tooltip sizableuielement";
-		appShortcutDiv.setAttribute("onclick", () => openapp(app.name,app.id));
+		appShortcutDiv.addEventListener("click",() => openapp(app.name,app.id));
 		var iconSpan = document.createElement("span");
 		if (!appicns[app.id]) {
 			const content = await getFileById(app.id);
@@ -532,7 +532,7 @@ async function dod() {
 			}
 			appShortcutDiv.setAttribute("draggable", true);
 			appShortcutDiv.setAttribute("ondragstart", "dragfl(event, this)");
-			appShortcutDiv.setAttribute("onclick",() => openfile(app.id));
+			appShortcutDiv.addEventListener("click",() => openfile(app.id));
 			appShortcutDiv.setAttribute("unid", app.id);
 			var iconSpan = document.createElement("span");
 			getAppIcon(app.content, app.id).then((icon) => {
@@ -1425,7 +1425,7 @@ async function genTaskBar() {
 				}
 				islnk = true;
 			}
-			appShortcutDiv.setAttribute("onclick", () => openfile(app.id));
+			appShortcutDiv.addEventListener("click", () => openfile(app.id));
 
 			var iconSpan = document.createElement("span");
 			iconSpan.innerHTML = await getAppIcon(0, app.id, 0);

@@ -30,19 +30,6 @@ var novaos = {
   genUID: function () {
     return genUID();
   },
-  roturConnect: function () {
-    var ws = new WebSocket("https://rotur.mistium.com/");
-    ws.onopen = function () {
-      ws.send("NovaOS connected to Rotur");
-    };
-    ws.onmessage = function (evt) {
-      console.log("Rotur: recived: " + evt.data);
-    };
-    ws.onclose = function () {
-      console.log("Connection closed");
-    };
-
-  },
   createFile: function(...args) {
     return window.parent.createFile(args);
   },
