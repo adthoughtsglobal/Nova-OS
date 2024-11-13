@@ -1633,9 +1633,9 @@ window.addEventListener('message', async (event) => {
 					tasksList.innerHTML = "";
 
 					Object.keys(winds).forEach(key => {
-						const taskId = key.slice(-12); // Extract the last 6 characters as the task ID
+						const taskId = key.slice(-12);
 
-						const taskName = key.slice(0, -12); // Remove the last 6 characters from the key
+						const taskName = key.slice(0, -12);
 
 						const taskDiv = document.createElement("div");
 						taskDiv.classList.add("task");
@@ -1665,7 +1665,7 @@ window.addEventListener('message', async (event) => {
 					});
 
 					// Call taskmg again after 3 seconds
-					setTimeout(taskmg, 3000);
+					setTimeout(taskmg, 5000);
 				}
 
 			</script>

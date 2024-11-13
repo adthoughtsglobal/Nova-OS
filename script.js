@@ -593,6 +593,7 @@ function clwin(x) {
 		document.getElementById(x).classList.remove("transp3")
 		document.getElementById(x).remove();
 		nowapp = '';
+		loadtaskspanel();
 	}, 700);
 }
 function getMetaTagContent(unshrunkContent, metaName, decode = false) {
@@ -1606,6 +1607,7 @@ async function novarefresh() {
 	genTaskBar(); 
 	cleanupInvalidAssociations(); 
 	checkdmode();
+	loadtaskspanel()
 	loadrecentapps();
 }
 function launchbios() {

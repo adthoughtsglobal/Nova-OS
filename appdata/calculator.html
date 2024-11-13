@@ -75,6 +75,7 @@
 			border: none;
 			background-color: transparent;
 			font-size: 1.5em;
+			font-family: monospace;
 			color: #fff;
 			border-radius: 10px;
 			padding: 10px;
@@ -102,6 +103,10 @@
 		.editkeys {
 			color: #9fd4ff !important;
 		}
+
+		.smaller {
+			font-size: 1rem !important;
+		}
 	</style>
 
 </head>
@@ -112,10 +117,10 @@
 		<input type="text" id="display" class="calculator-screen" readonly>
 		<table class="calculator-keys">
 			<tr>
-				<td><button onclick="clearDisplay()">C</button></td>
-				<td><button onclick="appendToDisplay('00')">00</button></td>
-				<td><button onclick="appendToDisplay(String.fromCharCode(40))">(</button></td>
-				<td><button onclick="appendToDisplay(String.fromCharCode(41))">)</button></td>
+				<td><button onclick="clearDisplay()" class="smaller">CLR</button></td>
+				<td><button onclick="backspace()" class="smaller">DEL</button></td>
+				<td><button onclick="appendToDisplay(String.fromCharCode(40))">(..</button></td>
+				<td><button onclick="appendToDisplay(String.fromCharCode(41))">..)</button></td>
 				
 			</tr>
 			<tr>
@@ -150,10 +155,16 @@
 		const prev = document.getElementById('prev');
 
 		function appendToDisplay(value) {
-			if (value === '.' && display.value.includes('.')) return;
+			if (value === '.' && display.value.split(/[\+\-\*\/\(\)]/).pop().includes('.')) return;
 			if (display.value === 'Error') display.value = '';
 			display.value += value;
 		}
+
+		function backspace() {
+			if (display.value === 'Error') display.value = '';
+			else display.value = display.value.slice(0, -1);
+		}
+
 
 		function clearDisplay() {
 			prev.value = display.value;
