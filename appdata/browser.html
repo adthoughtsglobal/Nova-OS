@@ -17,19 +17,17 @@
 
 		body {
 			height: 100%;
-			margin: 0px;
+    margin: 0px;
+    display: flex;
+    flex-direction: column;
 		}
 
 		nav {
 			user-select: none;
 		}
 
-		span.material-icons {
-			transform: translateY(2px);
-		}
-
 		iframe {
-			height: calc(100vh - 98px);
+			flex: 1;
 			width: calc(100vw - 6px);
 			margin: 3px;
 			border-radius: 5px;
@@ -37,10 +35,14 @@
 			color: #1f1f1f;
 		}
 
+		.urlnav span {
+			transform: translateY(3px) !important;
+		}
+
 		nav .tab {
-			display: inline-block;
+			display: inline-flex;
 			width: 200px;
-			padding: 5px 7px;
+			padding: 3px 6px;
 			background: transparent;
 			margin: 3px;
 			margin-bottom: 2px;
@@ -49,13 +51,20 @@
 			border-radius: 5px;
 		}
 
+		#tabconts {
+			display: flex;
+    flex-direction: column;
+    flex: 1;
+		}
+
 		nav .active {
-			padding: 5px 7px;
-			background: #1f1f1f;
-			margin: 3px;
-			margin-bottom: 2px;
-			border: none;
-			border-radius: 5px;
+    background: #1f1f1f;
+    margin: 3px;
+    margin-bottom: 2px;
+    border: none;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
 		}
 
 		.urlnav {
@@ -118,17 +127,19 @@
 		}
 
 		.tabs {
-			max-width: calc(100vw - 50px);
-			display: inline-block;
+			display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    overflow-x: auto;
 		}
 
 		.newtbtn {
 			font-size: 15px !important;
 			padding: 5px;
 			background: transparent;
-			border-radius: 50%;
-			transform: translate(-0px, 2px) !important;
+			border-radius: 10px;
 			cursor: pointer;
+			background: #1f1f1f;
 		}
 
 		.newtbtn:hover {
@@ -152,13 +163,17 @@
 
 		.tab b {
 			font-weight: normal;
-			display: inline-block;
-			width: calc(100% - 25px);
-			overflow: hidden;
-			text-overflow: ellipsis;
-			transform: translateY(2px);
-			white-space: nowrap;
+    display: inline-block;
+    overflow: hidden;
+    flex: 1;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 		}
+
+		.tabcontent {
+    flex: 1;
+    display: flex;
+}
 
 		#History {
 			width: 50vw;
@@ -195,6 +210,13 @@
 		.historyitem:hover {
 			background: #616161;
 		}
+
+		.tabsnav {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-right: 5px;
+}
 
 		.historyitem span {
 			flex: 1;
@@ -398,7 +420,7 @@
 				document.getElementById("deinput").value = "#cors-enabled"
 			}
 
-			document.getElementById(cityName).style.display = "block";
+			document.getElementById(cityName).style.display = "flex";
 			document.getElementById(evt).className += " active";
 		}
 
@@ -465,7 +487,7 @@
 			d.id = 'tabn' + olo
 
 			var b = document.createElement("b");
-			b.textContent = 'Explore';
+			b.textContent = nowid;
 			b.setAttribute("onclick", "openCity('" + d.id + "','wincs" + nowid + "')");
 			d.appendChild(b);
 			var s = document.createElement("span");
@@ -592,8 +614,8 @@
 
 		function greenflag() {
 
-			tabsnow = ["newTab"];
-			nowtab = "newTab";
+			tabsnow = ["tabnnewTab"];
+			nowtab = "tabnnewTab";
 			deftab = "appdata/oops.html";
 			tabhistory.push(document.getElementById("ifrnewTab").src)
 			document.getElementById("tabnnewTab").click();

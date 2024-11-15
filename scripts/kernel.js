@@ -236,23 +236,26 @@ async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
 
     async function loadIframeContent(windowLoader, windowContent, iframe) {
         const content2 = cont;
-
-        var contentString = isBase64(content2) ? decodeBase64Content(content2) : content2;
-
-        if (content2 == undefined) {
-            content2 = "<center><h1>Unavailable</h1>App Data cannot be read.</center>";
+        let contentString = isBase64(content2) ? decodeBase64Content(content2) : content2;
+    
+        if (content2 === undefined) {
+            contentString = "<center><h1>Unavailable</h1>App Data cannot be read.</center>";
         }
-
-        windowLoader.innerHTML = await getAppIcon(contentString, appid);
-        windowLoader.appendChild(loaderdiv);
-        var iframe = document.createElement("iframe");
-        var blobURL = URL.createObjectURL(new Blob([contentString], { type: 'text/html' }));
-
-        iframe.onload = async function () {
+    
+        if (windowLoader) {
+            windowLoader.innerHTML = await getAppIcon(contentString, appid);
+            windowLoader.appendChild(loaderdiv);
+        }
+    
+        iframe = document.createElement("iframe");
+        const blobURL = URL.createObjectURL(new Blob([contentString], { type: 'text/html' }));
+    
+        iframe.onload = async () => {
             iframeReferences[winuid] = iframe.contentWindow;
+            
             iframe.contentWindow.myWindow = {
                 element: windowDiv,
-                eventBusWorker: eventBusWorker,
+                eventBusWorker,
                 close: () => {
                     clwin("window" + winuid);
                     delete winds[title + winuid];
@@ -307,40 +310,41 @@ async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
                 }
             }
 
-            const script = document.createElement('script');
-            script.innerHTML = `
-                document.addEventListener('mousedown', function(event) {
-                    window.parent.postMessage({ type: 'iframeClick', iframeId: '${winuid}' }, '*');
-                });
-            `;
-            iframe.contentDocument.body.appendChild(script);
+        const script = document.createElement('script');
+        script.innerHTML = `
+            document.addEventListener('mousedown', function(event) {
+                window.parent.postMessage({ type: 'iframeClick', iframeId: '${winuid}' }, '*');
+            });
+        `;
+        iframe.contentDocument.body.appendChild(script);
 
-            try {
-                await iframe.contentWindow.greenflag();
-            } catch (e) {
-                if (!e.message.includes("greenflag")) {
-                    console.warn(e);
-                }
+        let greenflagResult;
+        try {
+            greenflagResult = iframe.contentWindow.greenflag();
+        } catch (e) {
+            if (!e.message.includes("greenflag")) {
+                console.warn(e);
             }
+        }
 
-            windowLoader.classList.add("transp5")
-
+        if (windowLoader) {
+            windowLoader.classList.add("transp5");
             setTimeout(() => {
                 windowLoader.remove();
             }, 700);
+        }
+    };
 
-        };
+    iframe.src = blobURL;
+    windowContent.appendChild(iframe);
 
-        iframe.src = blobURL;
-
-        windowContent.appendChild(iframe);
-        window.addEventListener('message', function (event) {
-            if (event.data.type === 'iframeClick' && event.data.iframeId === winuid) {
-                putwinontop('window' + winuid);
-                winds[title + winuid] = windowDiv.style.zIndex;
-            }
-        });
-    }
+    window.addEventListener('message', function (event) {
+        if (event.data.type === 'iframeClick' && event.data.iframeId === winuid) {
+            putwinontop('window' + winuid);
+            winds[title + winuid] = windowDiv.style.zIndex;
+        }
+    });
+}
 
     nowwindow = 'window' + winuid;
     windowDiv.appendChild(windowHeader);
