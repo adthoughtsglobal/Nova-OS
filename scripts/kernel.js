@@ -1,4 +1,4 @@
-var dragging = false;
+var dragging = false, windowData = {};
 
 var novadotcsscache;
 
@@ -111,7 +111,7 @@ function calculateWindowSize(aspectratio) {
     const left = `calc(50vw - ${widthVW / 2}vw + ${offset}px)`;
     const top = `calc(50vh - ${heightVH / 2}vh + ${offset}px)`;
 
-    return { left, top, width: `${widthVW}vw`, height: `${heightVH}vh`, zIndex: '0' };
+    return { left, top, width: `${widthVW}vw`, height: `${heightVH}vh`};
 }
 
 async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
@@ -125,7 +125,7 @@ async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
 
     var windowDiv = document.createElement("div");
     windowDiv.id = "window" + winuid;
-    windowDiv.setAttribute("data-winds", title + winuid);
+    windowDiv.setAttribute("data-winuid", winuid);
     windowDiv.onclick = function () {
         nowapp = title;
         dewallblur();
@@ -336,6 +336,8 @@ async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
     };
 
     iframe.src = blobURL;
+    if (!windowData[winuid]) windowData[winuid] = {};
+    windowData[winuid]["src"] = blobURL;
     windowContent.appendChild(iframe);
 
     window.addEventListener('message', function (event) {

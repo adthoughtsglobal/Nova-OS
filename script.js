@@ -344,12 +344,8 @@ async function openn() {
 		var nameSpan = document.createElement("span");
 		nameSpan.className = "appname";
 		nameSpan.textContent = getapnme(app.name);
-		var tooltisp = document.createElement("span");
-		tooltisp.className = "tooltiptext";
-		tooltisp.textContent = getapnme(app.name);
 		appShortcutDiv.appendChild(iconSpan);
 		appShortcutDiv.appendChild(nameSpan);
-		appShortcutDiv.appendChild(tooltisp);
 		gid("appsindeck").appendChild(appShortcutDiv);
 	})).then(() => {
 	}).catch((error) => {
@@ -583,19 +579,27 @@ function closeElementedis() {
 	}, 500);
 }
 function clwin(x) {
-	if (isElement(x)) {
-		delete winds[x.getAttribute("data-winds")];
-		x.remove();
-		return;
+	const el = isElement(x) ? x : document.getElementById(x);
+	if (!el) return;
+
+	const windKey = el.getAttribute("data-winuid");
+	if (windKey) {
+		console.log("data winds: removing", windKey)
+		delete winds[windKey];
+		delete windowData[windKey];
 	}
-	document.getElementById(x).classList.add("transp3")
+
+	el.classList.add("transp3");
 	setTimeout(() => {
-		document.getElementById(x).classList.remove("transp3")
-		document.getElementById(x).remove();
-		nowapp = '';
-		loadtaskspanel();
+		el.classList.remove("transp3");
+		el.remove();
+		if (!isElement(x)) {
+			nowapp = '';
+			loadtaskspanel();
+		}
 	}, 700);
 }
+
 function getMetaTagContent(unshrunkContent, metaName, decode = false) {
 	const content = decode ? decodeBase64Content(unshrunkContent) : unshrunkContent;
 	const tempElement = document.createElement('div');
@@ -1590,6 +1594,8 @@ async function cleanupram() {
 	CurrentUsername = null;
 	password = 'nova';
 	console.clear();
+	winds = [];
+	windowData = {};
 	MemoryTimeCache = null;
 	lethalpasswordtimes = true;
 	dbCache = null;

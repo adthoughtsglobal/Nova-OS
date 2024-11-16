@@ -32,7 +32,7 @@
 			flex-grow: 2;
 			height: calc(100% - 10px);
 			overflow-y: auto;
-			max-width: 150px;
+			max-width: 25vw;
 			min-width: 100px;
 			padding-bottom: 25vh;
 		}
@@ -71,8 +71,8 @@
 			display: block;
 			border: 2px solid transparent;
 			background-color: transparent;
-			padding: 7px 7px;
-			width: calc(100% - 5px);
+			padding: 4px 7px;
+			width: calc(100% - 10px);
 			margin: 2px;
 			border-radius: var(--sizing-border-radius);
 			outline: none;
@@ -166,7 +166,6 @@
     background: radial-gradient(circle at 0% 0%, #3d8bff99, #ff57f763);
     display: block;
     padding: var(--sizing-huge);
-    max-width: 500px;
     margin-bottom: 0.5rem;
 		}
 
@@ -306,7 +305,6 @@
 			background: var(--colors-BG-section);
 			padding: var(--sizing-normal);
 			margin: 0;
-			border-bottom: 1px solid var(--colors-BG-sub);
 		}
 
 		[setting] {
@@ -554,7 +552,6 @@
 			display: block;
 			border: 1px solid var(--colors-BG-sub);
 			box-shadow: 0 3px 5px #0000007e;
-			max-width: 500px;
 		}
 
 		buttongrp {
@@ -702,7 +699,7 @@
 			<style>
 				#fpsCanvas {
 					width: 100%;
-					aspect-ratio: 2 / 1;
+					max-height: 100px;
 					background: #141414;
 					border-radius: var(--sizing-normal);
 				}
@@ -735,9 +732,6 @@
 				<p>Frames Per Second (FPS) is a measure of how many times your device updates the display per second.
 					This value is closely tied to both the processing power of the system and the demands of the
 					software running on it.</p>
-				<h3>How to increase FPS?</h3>
-				<p>To boost your FPS, consider closing resource-heavy apps and avoid using your device while it's
-					charging, as this can impact performance.</p>
 			</small>
 
 			<script>

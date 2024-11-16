@@ -46,7 +46,7 @@
 }
 
 ::-webkit-scrollbar-thumb {
-	background: var(--colors-BG-highlighted);
+	background: var(--colors-BG-sub);
 	border-radius: var(--sizing-border-radius);
 }
 

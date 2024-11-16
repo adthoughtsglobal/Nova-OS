@@ -174,7 +174,7 @@
 			background: var(--colors-BG-section);
 			user-select: none;
 			border-radius: 7px;
-			transition: .3s;
+			transition: .2s ease-out;
 			animation: poprs .2s ease-out;
 		}
 
@@ -233,6 +233,10 @@
 
 		.file:hover {
 			background: var(--colors-BG-highlighted);
+		}
+
+		.file:active {
+			transform: scale(0.98);
 		}
 
 		.file small {
@@ -333,7 +337,6 @@
 
 		#slfile {
 			background: var(--colors-BG-sub);
-			transform: scale(1.01);
 			cursor: pointer;
 		}
 
