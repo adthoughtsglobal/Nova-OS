@@ -147,6 +147,13 @@ async function startup() {
 	lethalpasswordtimes = false;
 	setsrtpprgbr(50);
 	const start = performance.now();
+	let localupdatedataver = localStorage.getItem("updver");
+	if (localupdatedataver == "1.57") {
+		console.log("Preparing NovaOS2 switch.");
+		gid("versionswitcher").showModal();
+		return;
+	}
+
 	await updateMemoryData().then(async () => {
 		try {
 			setsrtpprgbr(70);
@@ -162,12 +169,6 @@ async function startup() {
 			gid('startupterms').innerHTML = "Startup completed";
 			closeElementedis();
 			async function fetchDataAndUpdate() {
-				let localupdatedataver = localStorage.getItem("updver");
-				if (localupdatedataver == "1.57") {
-					console.log("Preparing NovaOS2 switch.");
-					gid("versionswitcher").showModal();
-					return;
-				}
 				let fetchupdatedata = await fetch("versions.json");
 				if (fetchupdatedata.ok) {
 					let fetchupdatedataver = (await fetchupdatedata.json()).osver;
@@ -287,7 +288,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 		return null;
 	}
-	
+
 	var bgImage = document.getElementById("bgimage");
 	bgImage.addEventListener("click", function () {
 		nowapp = '';
@@ -380,7 +381,7 @@ async function loadrecentapps() {
 		}
 		var appShortcutDiv = document.createElement("div");
 		appShortcutDiv.className = "app-shortcut tooltip sizableuielement";
-		appShortcutDiv.addEventListener("click",() => openapp(app.name,app.id));
+		appShortcutDiv.addEventListener("click", () => openapp(app.name, app.id));
 		var iconSpan = document.createElement("span");
 		if (!appicns[app.id]) {
 			const content = await getFileById(app.id);
@@ -528,7 +529,7 @@ async function dod() {
 			}
 			appShortcutDiv.setAttribute("draggable", true);
 			appShortcutDiv.setAttribute("ondragstart", "dragfl(event, this)");
-			appShortcutDiv.addEventListener("click",() => openfile(app.id));
+			appShortcutDiv.addEventListener("click", () => openfile(app.id));
 			appShortcutDiv.setAttribute("unid", app.id);
 			var iconSpan = document.createElement("span");
 			getAppIcon(app.content, app.id).then((icon) => {
@@ -636,7 +637,7 @@ async function getAppIcon(content, id, lazy = 0) {
 		console.error(err);
 	}
 	let icondatatodo = await getFileNameByID(id) || id;
-	return `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="115.24806" height="130.92446" viewBox="0,0,115.24806,130.92446"><g transform="translate(-182.39149,-114.49081)"><g stroke="none" stroke-miterlimit="10"><path d="M182.39149,245.41527v-130.83054h70.53005l44.68697,44.95618v85.87436z" fill="`+ stringToPastelColor(icondatatodo) +`" stroke-width="none"/><path d="M252.60365,158.84688v-44.35607l45.03589,44.35607z" style="opacity: 0.7" fill="#dadada" stroke-width="0"/><text transform="translate(189,229) scale(0.9,0.9)" font-size="3rem" xml:space="preserve" fill="#dadada" style="opacity: 0.7" stroke-width="1" font-family="monospace" font-weight="normal" text-anchor="start"><tspan x="0" dy="0" fill="black">${makedefic(icondatatodo)}</tspan></text></g></g></svg>`;
+	return `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="115.24806" height="130.92446" viewBox="0,0,115.24806,130.92446"><g transform="translate(-182.39149,-114.49081)"><g stroke="none" stroke-miterlimit="10"><path d="M182.39149,245.41527v-130.83054h70.53005l44.68697,44.95618v85.87436z" fill="` + stringToPastelColor(icondatatodo) + `" stroke-width="none"/><path d="M252.60365,158.84688v-44.35607l45.03589,44.35607z" style="opacity: 0.7" fill="#dadada" stroke-width="0"/><text transform="translate(189,229) scale(0.9,0.9)" font-size="3rem" xml:space="preserve" fill="#dadada" style="opacity: 0.7" stroke-width="1" font-family="monospace" font-weight="normal" text-anchor="start"><tspan x="0" dy="0" fill="black">${makedefic(icondatatodo)}</tspan></text></g></g></svg>`;
 }
 async function fetchData(url) {
 	try {
@@ -1383,65 +1384,65 @@ async function genTaskBar() {
 	appbarelement.innerHTML = "<span class='taskbarloader' id='taskbarloaderprime'></span>";
 	if (appbarelement) {
 		try {
-		let dropZone = appbarelement;
-		dropZone.addEventListener('dragover', (event) => {
-			event.preventDefault();
-		});
-		dropZone.addEventListener('drop', async (event) => {
-			event.preventDefault();
-			const unid = event.dataTransfer.getData("Text");
-			await moveFileToFolder(unid, "Dock/");
-			genTaskBar();
-		});
-		dropZone.addEventListener('dragend', (event) => {
-			event.preventDefault();
-		});
-		let x = await getFileNamesByFolder("Dock");
-		if (Array.isArray(x) && x.length === 0) {
-			const y = await getFileNamesByFolder("Apps");
-			x = (await Promise.all(
-				y.filter(item =>
-					item.name === "Files.app" ||
-					item.name === "Settings.app" ||
-					item.name === "Store.app"
-				)
-			)).filter(Boolean);
-		}
-		x.forEach(async function (app, index) {
-			index++
-			var islnk = false;
-			var appShortcutDiv = document.createElement("biv");
-			appShortcutDiv.setAttribute("draggable", true);
-			appShortcutDiv.setAttribute("ondragstart", "dragfl(event, this)");
-			appShortcutDiv.setAttribute("unid", app.id || '');
-			appShortcutDiv.className = "app-shortcut tooltip adock sizableuielement";
-			
-			let lnkappidcatched = app.id;
-			app = await getFileById(app.id)
-			if (mtpetxt(app.fileName) == "lnk") {
-				// LNK file usage
-				let z = JSON.parse(decodeBase64Content(app.content));
-				app = await getFileById(z.open);
-				if (!app) {
-					await remfile(lnkappidcatched);
-					say("LNK file removed as real file was deleted.");
-					genTaskBar();
-					return;
-				}
-				islnk = true;
+			let dropZone = appbarelement;
+			dropZone.addEventListener('dragover', (event) => {
+				event.preventDefault();
+			});
+			dropZone.addEventListener('drop', async (event) => {
+				event.preventDefault();
+				const unid = event.dataTransfer.getData("Text");
+				await moveFileToFolder(unid, "Dock/");
+				genTaskBar();
+			});
+			dropZone.addEventListener('dragend', (event) => {
+				event.preventDefault();
+			});
+			let x = await getFileNamesByFolder("Dock");
+			if (Array.isArray(x) && x.length === 0) {
+				const y = await getFileNamesByFolder("Apps");
+				x = (await Promise.all(
+					y.filter(item =>
+						item.name === "Files.app" ||
+						item.name === "Settings.app" ||
+						item.name === "Store.app"
+					)
+				)).filter(Boolean);
 			}
-			appShortcutDiv.addEventListener("click", () => openfile(app.id));
+			x.forEach(async function (app, index) {
+				index++
+				var islnk = false;
+				var appShortcutDiv = document.createElement("biv");
+				appShortcutDiv.setAttribute("draggable", true);
+				appShortcutDiv.setAttribute("ondragstart", "dragfl(event, this)");
+				appShortcutDiv.setAttribute("unid", app.id || '');
+				appShortcutDiv.className = "app-shortcut tooltip adock sizableuielement";
 
-			var iconSpan = document.createElement("span");
-			iconSpan.innerHTML = await getAppIcon(0, app.id, 0);
-			var tooltisp = document.createElement("span");
-			tooltisp.className = "tooltiptext";
-			tooltisp.innerHTML = islnk ? basename(app.fileName) + `*` : basename(app.fileName);
-			appShortcutDiv.appendChild(iconSpan);
-			appShortcutDiv.appendChild(tooltisp);
-			appbarelement.appendChild(appShortcutDiv);
-		});
-	 } catch (err) {}
+				let lnkappidcatched = app.id;
+				app = await getFileById(app.id)
+				if (mtpetxt(app.fileName) == "lnk") {
+					// LNK file usage
+					let z = JSON.parse(decodeBase64Content(app.content));
+					app = await getFileById(z.open);
+					if (!app) {
+						await remfile(lnkappidcatched);
+						say("LNK file removed as real file was deleted.");
+						genTaskBar();
+						return;
+					}
+					islnk = true;
+				}
+				appShortcutDiv.addEventListener("click", () => openfile(app.id));
+
+				var iconSpan = document.createElement("span");
+				iconSpan.innerHTML = await getAppIcon(0, app.id, 0);
+				var tooltisp = document.createElement("span");
+				tooltisp.className = "tooltiptext";
+				tooltisp.innerHTML = islnk ? basename(app.fileName) + `*` : basename(app.fileName);
+				appShortcutDiv.appendChild(iconSpan);
+				appShortcutDiv.appendChild(tooltisp);
+				appbarelement.appendChild(appShortcutDiv);
+			});
+		} catch (err) { }
 		gid("novanav").style.display = "grid";
 		document.querySelector('#taskbarloaderprime').remove();
 	}
@@ -1610,8 +1611,8 @@ async function setandinitnewuser() {
 }
 async function novarefresh() {
 	dod();
-	genTaskBar(); 
-	cleanupInvalidAssociations(); 
+	genTaskBar();
+	cleanupInvalidAssociations();
 	checkdmode();
 	loadtaskspanel()
 	loadrecentapps();
