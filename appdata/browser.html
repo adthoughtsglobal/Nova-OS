@@ -6,20 +6,19 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Browser</title>
 	<meta name="nova-include" content="nova.css">
-    <meta name="capabilities" content=".html">
+	<meta name="capabilities" content=".html">
 	<meta name="nova-icon"
 		content="<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='120.36668' height='120.7679' viewBox='0,0,120.36668,120.7679'><defs><radialGradient cx='241.80522' cy='209.08933' r='60.18334' gradientUnits='userSpaceOnUse' id='color-1'><stop offset='0' stop-color='#4a58b2'/><stop offset='1' stop-color='#1d77b7'/></radialGradient></defs><g transform='translate(-179.81666,-119.81666)'><g data-paper-data='{&quot;isPaintingLayer&quot;:true}' fill-rule='nonzero' stroke='none' stroke-width='0' stroke-linecap='butt' stroke-linejoin='miter' stroke-miterlimit='10' stroke-dasharray='' stroke-dashoffset='0' style='mix-blend-mode: normal'><path d='M179.81666,240.18334v-120.36668h120.36668v120.36668z' fill='url(#1f1f1f)'/><path d='M179.81666,240.58456v-46.14056c0,0 21.78095,-5.93635 48.74822,-6.41956c32.79542,-0.58763 71.61845,6.41956 71.61845,6.41956v46.14056z' fill='#ffffff'/><path d='M209.30621,198.85816v-60.21904h5.61712v60.21904z' fill='#e06600'/><path d='M213.71966,163.34999v-23.67211c0,0 7.03785,2.40733 11.63545,2.40733c2.00514,0 7.44587,-2.66172 10.6271,-3.0051c6.60505,-0.71295 11.44012,2.60388 11.44012,2.60388v25.277c0,0 -6.91141,-3.64209 -11.07509,-2.8124c-4.84508,0.96548 -7.2481,2.8124 -10.59092,2.8124c-4.27781,0 -12.03667,-3.611 -12.03667,-3.611z' fill='#ffffff'/><path d='M233.78077,211.09544c0,3.9886 -7.90387,7.222 -17.65378,7.222c-9.74991,0 -17.65378,-3.2334 -17.65378,-7.222c0,-3.9886 7.90387,-7.222 17.65378,-7.222c9.74991,0 17.65378,3.2334 17.65378,7.222z' fill='#a2a2a2'/><path d='M274.30422,198.85816c0,1.44033 -4.58065,2.60794 -10.23117,2.60794c-5.65052,0 -10.23117,-1.16762 -10.23117,-2.60794c0,-1.44033 4.58065,-2.60794 10.23117,-2.60794c5.65052,0 10.23117,1.16762 10.23117,2.60794z' fill='#a2a2a2'/><path d='M283.53234,231.959c0,3.32383 -7.99368,6.01833 -17.85439,6.01833c-9.86071,0 -17.85439,-2.6945 -17.85439,-6.01833c0,-3.32383 7.99368,-6.01833 17.85439,-6.01833c9.86071,0 17.85439,2.6945 17.85439,6.01833z' fill='#a2a2a2'/><path d='M197.26955,229.35105c0,1.88351 -2.60468,3.41039 -5.81772,3.41039c-3.21304,0 -5.81772,-1.52688 -5.81772,-3.41039c0,-1.88351 2.60468,-3.41039 5.81772,-3.41039c3.21304,0 5.81772,1.52688 5.81772,3.41039z' fill='#a2a2a2'/></g></g></svg>">
 	<style>
-
 		* {
 			box-sizing: border-box;
 		}
 
 		body {
 			height: 100%;
-    margin: 0px;
-    display: flex;
-    flex-direction: column;
+			margin: 0px;
+			display: flex;
+			flex-direction: column;
 		}
 
 		nav {
@@ -53,18 +52,18 @@
 
 		#tabconts {
 			display: flex;
-    flex-direction: column;
-    flex: 1;
+			flex-direction: column;
+			flex: 1;
 		}
 
 		nav .active {
-    background: #1f1f1f;
-    margin: 3px;
-    margin-bottom: 2px;
-    border: none;
-    display: flex;
-    align-items: center;
-    flex-direction: row;
+			background: #1f1f1f;
+			margin: 3px;
+			margin-bottom: 2px;
+			border: none;
+			display: flex;
+			align-items: center;
+			flex-direction: row;
 		}
 
 		.urlnav {
@@ -128,9 +127,9 @@
 
 		.tabs {
 			display: flex;
-    flex-wrap: nowrap;
-    flex-direction: row;
-    overflow-x: auto;
+			flex-wrap: nowrap;
+			flex-direction: row;
+			overflow-x: auto;
 		}
 
 		.newtbtn {
@@ -163,17 +162,17 @@
 
 		.tab b {
 			font-weight: normal;
-    display: inline-block;
-    overflow: hidden;
-    flex: 1;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+			display: inline-block;
+			overflow: hidden;
+			flex: 1;
+			text-overflow: ellipsis;
+			white-space: nowrap;
 		}
 
 		.tabcontent {
-    flex: 1;
-    display: flex;
-}
+			flex: 1;
+			display: flex;
+		}
 
 		#History {
 			width: 50vw;
@@ -212,11 +211,11 @@
 		}
 
 		.tabsnav {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin-right: 5px;
-}
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			margin-right: 5px;
+		}
 
 		.historyitem span {
 			flex: 1;
@@ -317,8 +316,8 @@
 		</div>
 	</dialog>
 	<div id="tabconts">
-		<div class="tabcontent" id="wincnewTab">
-			<iframe src="appdata/oops.html" frameborder="0" id="ifrnewTab"></iframe>
+		<div class="tabcontent" id="wincstabnnewTab">
+			<iframe src="appdata/oops.html" frameborder="0" id="ifrtabnnewTab"></iframe>
 
 		</div>
 	</div>
@@ -326,8 +325,8 @@
 	<script>
 		var tabhistory = [];
 		var tabsnow = [];
-		var lasttab = 'newTab';
-		var nowtab = 'newTab';
+		var lasttab = 'tabnnewTab';
+		var nowtab = 'tabnnewTab';
 		var deftab, proxy = false;
 		var proxyurl = "";
 
@@ -509,42 +508,52 @@
 			return result;
 		}
 
-		function isitago(eve) {
-    if (eve.key === "Enter") {
-        eve.preventDefault();
-        let input = document.getElementById("deinput").value;
-        const [isValid, validatedUrl] = isValidURL(input);
-        let finalUrl = isValid ? validatedUrl : "https://adthoughtsglobal.github.io/Search?q=" + encodeURIComponent(input);
+		async function isitago(eve) {
+			if (eve.key === "Enter") {
+				eve.preventDefault();
+				const input = document.getElementById("deinput").value;
+const [isValid, validatedUrl] = isValidURL(input);
+let finalUrl = isValid ? validatedUrl : `https://adthoughtsglobal.github.io/Search?q=${encodeURIComponent(input)}`;
 
-        try {
-            let qsets = localStorage.getItem("qsets");
-            if (qsets && !isValid) {
-                let qsetsObj = JSON.parse(qsets);
-                if (qsetsObj.defSearchEngine === "Bing") {
-                    finalUrl = "https://www.bing.com/search?q=" + encodeURIComponent(input);
-                }
-            }
-        } catch (error) {
-            console.log(`safe error: ${error.message.includes("cross-origin ") ? "CORS error" : error}`);
+try {
+    const qsets = await window.parent.getSetting("defSearchEngine");
+    if (qsets && !isValid) {
+        if (qsets === "Bing") {
+            finalUrl = `https://www.bing.com/search?q=${encodeURIComponent(input)}`;
         }
-
-        if (proxy) {
-            const proxyUrl = proxyurl + (isValid ? validatedUrl : encodeURIComponent(finalUrl)); // No need to double encode valid URLs
-            fetch(proxyUrl)
-                .then(response => response.json())
-                .then(data => {
-                    const blob = new Blob([data.contents], { type: 'text/html' });
-                    const url = URL.createObjectURL(blob);
-                    document.getElementById("ifr" + nowtab).src = url;
-                })
-                .catch(error => console.error('Error fetching the resource:', error));
-        } else {
-            document.getElementById("ifr" + nowtab).src = finalUrl;
-        }
-
-        tabhistory.push(finalUrl);
     }
+} catch (error) {
+    console.log(`safe error: ${error.message.includes("cross-origin") ? "CORS error" : error}`);
 }
+
+console.log(input, finalUrl, isValid, nowtab);
+
+if (typeof proxy !== "undefined" && proxy) {
+    const proxyUrl = `${proxyurl}${encodeURIComponent(finalUrl)}`;
+    fetch(proxyUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.contents) {
+                const blob = new Blob([data.contents], { type: "text/html" });
+                const url = URL.createObjectURL(blob);
+                document.getElementById("ifr" + nowtab).src = url;
+            } else {
+                throw new Error("Invalid contents received from proxy.");
+            }
+        })
+        .catch(error => console.error(`Error fetching the resource (Proxy URL: ${proxyUrl}):`, error));
+} else {
+    document.getElementById("ifr" + nowtab).src = finalUrl;
+}
+
+				tabhistory.push(finalUrl);
+			}
+		}
 
 		function truncateMiddle(str, frontChars, backChars, maxLength) {
 			if (str.length <= maxLength) {
@@ -617,7 +626,8 @@
 			tabsnow = ["tabnnewTab"];
 			nowtab = "tabnnewTab";
 			deftab = "appdata/oops.html";
-			tabhistory.push(document.getElementById("ifrnewTab").src)
+			document.getElementById("ifrtabnnewTab").src = deftab;
+			tabhistory.push(document.getElementById("ifrtabnnewTab").src)
 			document.getElementById("tabnnewTab").click();
 
 			const dropArea = document.getElementById('tabs');

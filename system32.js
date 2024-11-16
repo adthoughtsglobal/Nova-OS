@@ -689,7 +689,7 @@ async function findFileDetails(id, folder, dataType, currentPath = '') {
                     id: item.id,
                     content: !dataType || dataType === 'content' ? contentpool[id] : undefined,
                     metadata: item.metadata,
-                    path: currentPath + key
+                    path: currentPath
                 };
 
             } else if (key.endsWith('/')) {
