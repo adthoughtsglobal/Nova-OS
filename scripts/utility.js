@@ -8,7 +8,6 @@ function timeAgo(ms) {
 		day = Math.floor(hr / 24),
 		mo = Math.floor(day / 30),
 		yr = Math.floor(day / 365);
-		console.log(ms, sec, min, hr, day, mo, yr)
 	
 	return sec < 60 ? `${sec} seconds ago` :
 	       min < 60 ? `${min} minutes ago` :

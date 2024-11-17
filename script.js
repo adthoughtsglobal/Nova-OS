@@ -147,8 +147,8 @@ async function startup() {
 	lethalpasswordtimes = false;
 	setsrtpprgbr(50);
 	const start = performance.now();
-	let localupdatedataver = localStorage.getItem("updver");
-	if (localupdatedataver == "1.57") {
+	let localupdatedataver = parseFloat(localStorage.getItem("updver"));
+	if (localupdatedataver <= 1.7 || !localupdatedataver) {
 		console.log("Preparing NovaOS2 switch.");
 		gid("versionswitcher").showModal();
 		return;
@@ -587,6 +587,7 @@ function clwin(x) {
 	if (windKey) {
 		console.log("data winds: removing", windKey)
 		delete winds[windKey];
+		URL.revokeObjectURL(windowData[windKey].src); 
 		delete windowData[windKey];
 	}
 
