@@ -239,7 +239,7 @@ async function registerDecryptWorker() {
 document.addEventListener("DOMContentLoaded", async function () {
 	console.log("DOMCL");
 	let localupdatedataver = parseFloat(localStorage.getItem("updver"));
-	if (localupdatedataver <= 1.7 || !localupdatedataver) {
+	if (localupdatedataver <= 1.7) {
 		console.log("Preparing NovaOS2 switch.");
 		gid("versionswitcher").showModal();
 		return;
