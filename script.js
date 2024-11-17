@@ -238,16 +238,10 @@ async function registerDecryptWorker() {
 }
 document.addEventListener("DOMContentLoaded", async function () {
 	console.log("DOMCL");
-	let localupdatedataver = localStorage.getItem("updver");
-	if (localupdatedataver == "1.57") {
+	let localupdatedataver = parseFloat(localStorage.getItem("updver"));
+	if (localupdatedataver <= 1.7 || !localupdatedataver) {
 		console.log("Preparing NovaOS2 switch.");
-		// Retry to show modal with a slight delay to ensure availability
-		const versionSwitcher = await waitForDialog("versionswitcher");
-		if (versionSwitcher) {
-			versionSwitcher.showModal();
-		} else {
-			console.error("versionswitcher dialog not found.");
-		}
+		gid("versionswitcher").showModal();
 		return;
 	}
 	gid("versionswitcher")?.remove();
