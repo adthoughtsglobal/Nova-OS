@@ -147,8 +147,10 @@ async function startup() {
 	lethalpasswordtimes = false;
 	setsrtpprgbr(50);
 	const start = performance.now();
-	let localupdatedataver = parseFloat(localStorage.getItem("updver"));
-	if (localupdatedataver <= 1.7 || !localupdatedataver) {
+	
+	let localupdatedataver = localStorage.getItem("updver");
+	let localupdatedataverstring = parseFloat(localStorage.getItem("updver"));
+	if (localupdatedataverstring <= 1.7 || !localupdatedataverstring) {
 		console.log("Preparing NovaOS2 switch.");
 		gid("versionswitcher").showModal();
 		return;
@@ -274,14 +276,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 			console.error('Error in database operations:', error);
 		}
 	});
-	async function waitForDialog(id, maxRetries = 5, interval = 200) {
-		for (let i = 0; i < maxRetries; i++) {
-			const element = gid(id);
-			if (element) return element;
-			await new Promise(resolve => setTimeout(resolve, interval));
-		}
-		return null;
-	}
 
 	var bgImage = document.getElementById("bgimage");
 	bgImage.addEventListener("click", function () {

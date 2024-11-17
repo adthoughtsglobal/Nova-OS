@@ -191,15 +191,7 @@
 
 	<nav>
 		<button onclick="window.top.openwindow('App Preview',disp.value)">Run</button>
-		<button onclick="window.parent.openapp('studio',1)">New</button>
-		<button onclick="disp.value = formatHTML(disp.value)">Format</button>
-		<script>
-			function savetx(x) {
-				sbtn.innerHTML = '* Saving';
-				window.parent.createFile("Documents", "Untitled", x, document.getElementById("thedisplay").value)
-				sbtn.innerHTML = 'Save';
-			}
-		</script>
+		<small>This app is deprecated.</small>
 	</nav>
 
 	<textarea id="thedisplay" spellcheck="false" autocapitalize="false" autocomplete="off">&lt;!DOCTYPE html&gt;
@@ -215,7 +207,10 @@
 			&lt;/style&gt;
 		&lt;/head&gt;
 		&lt;body&gt;
-			&lt;p id="p"&gt;Hello world&lt;/p&gt;
+			&lt;p id="p"&gt;
+			Please consider using Apps in the store like WCanvas for a better experience&lt;br&gt;
+			Use Text app to save files. This app is being updated.
+			&lt;/p&gt;
 
 			&lt;script&gt;
 			function greenflag() {
