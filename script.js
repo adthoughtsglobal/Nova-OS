@@ -147,7 +147,7 @@ async function startup() {
 	lethalpasswordtimes = false;
 	setsrtpprgbr(50);
 	const start = performance.now();
-	
+
 	let localupdatedataver = localStorage.getItem("updver");
 	let localupdatedataverstring = parseFloat(localStorage.getItem("updver"));
 	if (localupdatedataverstring <= 1.7 || !localupdatedataverstring) {
@@ -170,10 +170,11 @@ async function startup() {
 			setsrtpprgbr(100)
 			gid('startupterms').innerHTML = "Startup completed";
 			closeElementedis();
+			let fetchupdatedataver;
 			async function fetchDataAndUpdate() {
 				let fetchupdatedata = await fetch("versions.json");
 				if (fetchupdatedata.ok) {
-					let fetchupdatedataver = (await fetchupdatedata.json()).osver;
+					fetchupdatedataver = (await fetchupdatedata.json()).osver;
 					if (localupdatedataver !== fetchupdatedataver) {
 						if (await justConfirm("Update default apps?", "Your default apps are old. Update them to access new features and fixes.")) {
 							await installdefaultapps();
@@ -182,13 +183,6 @@ async function startup() {
 							say("You can always update app on settings app/Preferances")
 						}
 					}
-					const data = {
-						Username: CurrentUsername,
-						LocalVersion: localupdatedataver,
-						TimeFrmt12: timetypecondition,
-						OSVersion: fetchupdatedataver
-					}
-					rllog(data);
 				} else {
 					console.error("Failed to fetch data from the server.");
 				}
@@ -224,9 +218,11 @@ async function startup() {
 			} catch (e) { }
 			const end = performance.now();
 			rllog(
-				`You are using \n\n%cNovaOS%c\nNovaOS is the free, source-available, powerful and the cutest Web Operating system on the internet.\n\nStartup took ${(end - start).toFixed(2)}ms`,
+				`You are using \n\n%cNovaOS%c\n%cNovaOS is the free, source-available,powerful and the cutest Web Operating system on the internet.%c\n\nStartup: ${(end - start).toFixed(2)}ms\nUsername: ${CurrentUsername}\nCurrent: ${localupdatedataver}\n12hr Time format: ${timetypecondition}\nNewest: ${fetchupdatedataver}`,
 				'color: white; background-color: #101010; font-size: 2rem; padding: 0.7rem 1rem; border-radius: 1rem;',
-				'color: lightgrey; padding:0.5rem;'
+				'',
+				'padding:5px 0; padding-top:1rem;',
+				'color: lightgreen; font-size:70%;'
 			);
 		} catch (err) { console.error("startup error:", err); }
 	})
@@ -575,7 +571,7 @@ function clwin(x) {
 	if (windKey) {
 		console.log("data winds: removing", windKey)
 		delete winds[windKey];
-		URL.revokeObjectURL(windowData[windKey].src); 
+		URL.revokeObjectURL(windowData[windKey].src);
 		delete windowData[windKey];
 	}
 

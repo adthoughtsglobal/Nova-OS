@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>Nova OS</title>
+	<script src="system32.js" defer></script>
+	<link rel="icon" type="image/webp" href="n.png">
+	</script>
+	<script src="scripts/utility.js" defer></script>
+
+	<script src="scripts/fflate.js" defer></script>
+	<script src="scripts/kernel.js" defer></script>
+
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Sono:wght@200..800&display=swap" rel="stylesheet">
+
+	<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+
+	<style>
+		html {
+			height: 100%;
+			width: 100%;
+		}
+
+		body {
+			display: flex;
+			height: 100%;
+			width: 100%;
+			margin: 0;
+			font-size: 1rem;
+			font-family: "Sono", serif;
+			background-color: #101010;
+			color: white;
+		}
+
+		.containerterm {
+			display: flex;
+			flex-direction: column;
+			width: 100%;
+			margin: 1rem;
+		}
+
+		textarea,
+		input,
+		button {
+			font-family: inherit;
+			font-size: inherit;
+			outline: none;
+			background-color: transparent;
+			border: none;
+			color: inherit;
+		}
+
+		#termoutput {
+			flex: 1;
+			overflow-y: auto;
+		}
+
+		.btnc {
+			display: flex;
+			background: #1f1f1f;
+			padding: 0.3rem;
+			border-radius: 1rem;
+		}
+
+		.btnc input,
+		.btnc button {
+			padding: 0.3rem 0.5rem;
+			font-size: 120%;
+		}
+
+		.btnc button {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background-color: #2f2f2f;
+			border-radius: 1rem;
+		}
+
+		.btnc button ion-icon {
+			font-size: 1.5rem;
+		}
+
+		input#terminput {
+			flex: 1;
+		}
+
+		.btnc button {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background-color: #2f2f2f;
+			border-radius: 1rem;
+			padding: 0.5rem;
+		}
+
+		.outputitem {
+			padding: 1rem;
+			background: #151515;
+			border-radius: 1rem;
+			margin-bottom: 1rem;
+			word-wrap: break-word;
+		}
+
+		.outputitemquery {
+			display: flex;
+			width: fit-content;
+			background: #1f1f1f;
+			padding: 0.5rem;
+			border-radius: 1rem;
+			gap: 0.5rem;
+			align-items: center;
+		}
+
+		.outputitem .ion-icon {
+			display: flex;
+			width: fit-content;
+			gap: 0.5rem;
+			padding: 0.5rem;
+			background: #1f1f1f;
+			border-radius: 1rem;
+		}
+	</style>
+
+</head>
+
+<body>
+
+	<noscript>
+		<h1>I can't even know what time is it now.<br>Blame your browser for it.</h1>
+		<p>Well your browser seems to be messing around saying you turned off something called JS. Javascript is
+			required for the functioning of the modern web. </p>
+		<b>If you have set JS to be disabled:</b>
+		<p>Nova OS requires JS to run.
+			<li>You can always <b><a href="https://www.larimer.gov/it/enable-javascript" style="color:white;"> turn JS
+						back on</a>.</b>
+			</li>
+		</p>
+	</noscript>
+	<div class="containerterm">
+		<div id="termoutput" spellcheck="false">
+			<div class="outputitem info">
+				<div class="outputitemquery">
+					<ion-icon name="person-circle-outline"></ion-icon>
+					<span>quote()</span>
+				</div>
+				<p>
+					well, the world is so cool isnt, Nova is here to keep the cool and make it much crazier, hope you
+					would like this tiny tool that would help you create a better tomorrow. Good luck!</p>
+			</div>
+		</div>
+		<script>
+			function gid(x) {
+				return document.getElementById(x);
+			}
+			async function termrun() {
+				const inputValue = document.getElementById("terminput").value;
+				let result = '';
+
+				async function disp(x) {
+					
+
+					if (x instanceof Error) {
+						result += (`Error: ${x.message}\nStack: ${x.stack}`);
+                        } else if (typeof x === 'function') {
+                            result += (`Function: ${x.name || 'anonymous'}\n${result.toString()}`);
+                        } else if (x instanceof Element) {
+                            result += (`DOM Element: <${x.tagName.toLowerCase()} id="${result.id}" class="${x.className}">`);
+                        } else if (typeof x === 'object' && x !== null) {
+                            result += `<pre>${JSON.stringify(x, null, 2)}</pre>`
+                        } else {
+                            result += x;
+                        }
+				}
+
+				async function executeCode() {
+					try {
+						const asyncFunction = new Function('return async () => { ' + inputValue + ' }')();
+						const output = await asyncFunction();
+						await disp(output);
+					} catch (error) {
+						result = error.message;
+						console.log(result);
+					}
+				}
+
+				await executeCode();
+
+				const outputElement = document.getElementById("termoutput");
+				if (typeof result === "object") {
+					outputElement.innerHTML += `<div class="outputitem info">
+				<div class="outputitemquery">
+					<ion-icon name="rocket-outline"></ion-icon>
+					<span>${inputValue}</span>
+				</div>
+				<code>${JSON.stringify(result)}</code>
+			</div>`;
+				} else {
+					outputElement.innerHTML += `<div class="outputitem info">
+				<div class="outputitemquery">
+					<ion-icon name="rocket-outline"></ion-icon>
+					<span>${inputValue}</span>
+				</div>
+				<p>${result}</p>
+			</div>`;
+				}
+			}
+		</script>
+		<div class="btnc">
+			<input placeholder=">>>" id="terminput">
+			<button onclick="termrun()">
+				<ion-icon name="play-outline"></ion-icon>
+			</button>
+		</div>
+	</div>
+
+</body>
+
+</html>

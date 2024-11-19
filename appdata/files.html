@@ -658,6 +658,7 @@
 
 		.jstree-default .jstree-icon:empty {
 			color: #897b31;
+			margin-right: 5px;
 		}
 
 		.jstree-default .jstree-node {
@@ -1224,7 +1225,7 @@
 		var sessiontype = "normal", sessionreturnreqid = null;
 
 		function fitsizesidenav() {
-			document.getElementById("flap-sidenav").style.width = getComputedStyle(document.getElementById("jstree")).width
+			document.getElementById("flap-sidenav").style.width = `165px`
 		}
 		async function initializeFilesApp(defaultopenfold = false) {
 			if (defaultopenfold) {

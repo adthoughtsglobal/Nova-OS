@@ -1810,8 +1810,6 @@ window.addEventListener('message', async (event) => {
 
 		<div id="exp" class="tabcontent">
 			<h1>Display</h1>
-			<small>Some features in this page are experimental. Features in this page may be poorly implimented or is being fully developed. Use with caution.</small>
-			<br>
 			<segr>
 				<div setting>
 					<div class="checkbox-wrapper-51">
@@ -2170,9 +2168,10 @@ window.addEventListener('message', async (event) => {
 			<style>
 				.inputwithbtn {
 					width: 100%;
-					display: flex;
-					flex-direction: row;
-					gap: 0.5rem;
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
 				}
 
 				.inputwithbtn input {
@@ -2180,6 +2179,7 @@ window.addEventListener('message', async (event) => {
 					color: var(--colors-text-normal);
 					flex: 1;
 					border:none;
+					padding: var(--sizing-nano) var(--sizing-normal);
 					border-radius: var(--sizing-border-radius);
 					padding: var(--sizing-nano);
 				}
