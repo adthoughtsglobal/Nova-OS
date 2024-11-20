@@ -336,7 +336,7 @@
 		}
 
 		function homebtn() {
-			safeNavigateIframe(document.getElementById("ifr" + nowtab), location.origin + "/appdata/oops.html");
+			safeNavigateIframe(document.getElementById("ifr" + nowtab), "https://adthoughtsglobal.github.io/NovaOS/newtab.html");
 		}
 
 		var myDialog = document.getElementById('History');
@@ -483,7 +483,7 @@
 							safeNavigateIframe(bf, src)
 						}
 					} else {
-						safeNavigateIframe(bf, location.origin + "/appdata/oops.html");
+						safeNavigateIframe(bf, "https://adthoughtsglobal.github.io/NovaOS/newtab.html");
 					}
 					bf.onload = null;
 			};
@@ -642,7 +642,7 @@
 			tabsnow = [];
 			nowtab = "";
 			deftab = "";
-			newtab(location.origin + "/appdata/oops.html")
+			newtab("https://adthoughtsglobal.github.io/NovaOS/newtab.html")
 
 			const dropArea = document.getElementById('tabs');
 			dropArea.addEventListener('dragover', function (e) {
