@@ -6,33 +6,56 @@ const decoder = new TextDecoder();
 var lethalpasswordtimes = true;
 const eventBusBlob = new Blob([`
     const eventBus = new EventTarget();
-    self.addEventListener('message', (e) => {
-        const { type, event: evt, key, id } = e.data;
-        
-        // Dispatch a custom event within the worker
-        eventBus.dispatchEvent(new CustomEvent(type, { detail: { event: evt, key, id } }));
-        
-        // Post a message back to the main thread
-        self.postMessage({ type, detail: { event: evt, key, id } });
-    });
-    
-    // Listen method within the worker script
-    self.listen = (type, handler) => {
-        eventBus.addEventListener(type, (e) => handler(e.detail));
-    };
+    const listeners = new Map();
 
+    self.addEventListener('message', (e) => {
+        const { type, event: evt, key, id, action } = e.data;
+
+        if (action === 'addListener') {
+            const handler = (e) => {
+                self.postMessage({ type, detail: e.detail });
+            };
+            listeners.set(id, { type, handler });
+            eventBus.addEventListener(type, handler);
+        } else if (action === 'removeListener') {
+            const listener = listeners.get(id);
+            if (listener) {
+                eventBus.removeEventListener(listener.type, listener.handler);
+                listeners.delete(id);
+            }
+        } else {
+            eventBus.dispatchEvent(new CustomEvent(type, { detail: { event: evt, key, id } }));
+        }
+    });
 `], { type: 'application/javascript' });
+
 const eventBusURL = URL.createObjectURL(eventBusBlob);
 const eventBusWorkerE = new Worker(eventBusURL);
-// Main script
+
 const eventBusWorker = {
     deliver: (message) => eventBusWorkerE.postMessage(message),
-    listen: (type, handler) => {
+    listen: (type, handler, initiator) => {
+        const id = Math.random().toString(36).slice(2);
+        const cleanup = () => {
+            eventBusWorkerE.postMessage({ action: 'removeListener', id });
+        };
+
+        if (initiator instanceof Node) {
+            const observer = new MutationObserver(() => {
+                if (!document.body.contains(initiator)) {
+                    cleanup();
+                    observer.disconnect();
+                }
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+        }
+
         eventBusWorkerE.addEventListener('message', (event) => {
-            if (event.data.type === type) {
-                handler(event.data.detail);
+            if (event.data.type === type && event.data.detail.id === id) {
+                handler(event.data.detail.event);
             }
         });
+        eventBusWorkerE.postMessage({ action: 'addListener', type, id });
     }
 };
 

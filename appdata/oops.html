@@ -83,8 +83,8 @@
 			border-radius: 10px;
 			margin: 1rem 1rem;
 			height: 0;
-    flex-direction: column;
-    flex-wrap: nowrap;
+			flex-direction: column;
+			flex-wrap: nowrap;
 			flex: 0;
 			padding-right: 0.3rem;
 		}
@@ -180,6 +180,13 @@
 			justify-content: space-between;
 			cursor: pointer;
 		}
+
+		.newstitlsprt {
+			display: flex;
+			flex-direction: column;
+			flex: 1;
+			width: 0;
+		}
 	</style>
 </head>
 
@@ -196,7 +203,7 @@
 	</div>
 	<div id="newses">
 		<div class="newsnav" onclick="togglenews()">
-			<span>News <div id="slideshow-container"></div></span>
+			<span class="newstitlsprt">News <div id="slideshow-container"></div></span>
 			<span class="material-icons">expand_less</span>
 		</div>
 		<div id="news-section">
@@ -304,13 +311,13 @@
 				document.body.removeChild(script);
 			};
 
-			script.src = 'https://en.wikinews.org/w/api.php?action=query&list=recentchanges&rcnamespace=0&rclimit=20&rcprop=title|ids|timestamp|sizes|flags&format=json&callback=' + callbackName;
+			script.src = 'https://en.wikinews.org/w/api.php?action=query&list=search&srsearch=technology&srlimit=20&srprop=timestamp|snippet|titles&format=json&callback=' + callbackName;
 			document.body.appendChild(script);
 		}
 
 		async function news() {
 			fetchWikinews(function (data) {
-				newsItems = data.query.recentchanges.filter(item => item.type === 'new' || item.type === 'edit');
+				newsItems = data.query.search
 				console.log(newsItems); // Log the items to check the structure
 
 				newsItems.forEach(function (newsItem) {

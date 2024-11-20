@@ -933,7 +933,8 @@
 			primaryalert.close();
 			primaryalert.style.display = "none";
 			if (Object.keys(track_list).length == 0) {
-				window.parent.say("There aren't any readable audio files in your files. Try again.", "failed")
+				window.parent.say("There aren't any readable audio files in your files. Try again.", "failed");
+				myWindow.close();
 			}
 		}
 

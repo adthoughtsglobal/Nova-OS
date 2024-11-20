@@ -734,7 +734,7 @@ document.getElementById("nova-section").appendChild(appDiv);
 
 			const fileContent = await response.text();
 
-			await window.parent.createFile("Apps", appName, "app", fileContent);
+			await window.parent.createFile("Apps", window.parent.toTitleCase(appName), "app", fileContent);
 			console.log(appName + " updated successfully.");
 			div.style.backgroundColor = "#1f1f1f";
 			div.style.color = "#60ff2f";

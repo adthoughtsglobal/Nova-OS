@@ -2086,7 +2086,7 @@
 			}
 
 			myWindow.eventBusWorker.listen("memory", (event) => {
-				if (event.key?.includes(getLastSegment(currentPath))) {
+				if (event.key && event.key.includes(getLastSegment(currentPath))) {
 					refresh();
 				}
 			});
