@@ -260,7 +260,8 @@ async function getdb() {
             request.onerror = () => reject(request.error);
         });
     } catch (error) {
-        gid("versionswitcher").showModal();
+        await say("Sorry, but your actions caused severe issues to the long term storage of NovaOS, click OK to reload.");
+        location.reload();
         console.error("Error in getdb function:", error);
         throw error;
     }

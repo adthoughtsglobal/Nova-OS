@@ -1202,7 +1202,7 @@
 
 		reader.onload = (e) => {
 			const fileContent = e.target.result;
-			const folderName = 'downloads';
+			const folderName = 'Downloads';
 			const md = { "via": "imported" };
 			window.parent.createFile(folderName, file.name, file.type, fileContent, md).then(() => {
 				listFiles(folderName, true);
@@ -1632,6 +1632,7 @@
 				}
 
 				if (sessiontype == "opener") {
+					choosefile();
 					return;
 				}
 
