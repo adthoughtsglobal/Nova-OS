@@ -13,11 +13,11 @@ The fully local WebOS, Free, Made for you!
 NovaOS is a powerful web operating system built for everything. From daily tasks to endless fun, it has you covered. A customizable system designed for any device with a browser. It offers a fast, secure, and feature-rich experience for gaming and daily tasks, with dynamic personalization and seamless updates.
 
 # What makes it special?
-NovaOS is the completely free, mobile supported, PWA installable fully localy web desktop system. It has a fully self-created ecosystem of features and a very unique user experience. 
+- NovaOS is the **completely free**, **mobile supported**, **PWA installable**, **fully local** **web desktop** system. It has a fully self-created ecosystem of features and a very unique user experience. 
 
-NovaOS functions fully offline, meaning it operates with all its features without needing an internet connection. Think of it this way, NovaOS is a Web application, which is fully client side, that lets you make full web applications that can interact with a virtual filesystem, on the go, even offline. 
+- NovaOS can function **fully offline**, meaning it operates with all its features without needing an internet connection. Think of it this way, NovaOS is a Web application, which is fully client side, that lets you make full web applications that can interact with a **virtual filesystem**, on the go, even offline. 
 
-With a wide array of stunning features, NovaOS can serve as a valid Operating system. NovaOS can handle webapps in a breeze, SVG icons, settings and a wide array of default apps to ease your work.
+- With a wide array of stunning features, NovaOS can serve as a valid operating system. NovaOS can handle webapps in a breeze, SVG icons, settings and a wide array of default apps to ease your work.
 
 # How do i access?
 NovaOS is available for public at [https://adthoughtsglobal.github.io/Nova-OS/](https://adthoughtsglobal.github.io/Nova-OS).
