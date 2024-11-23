@@ -1,5 +1,8 @@
+![Untitled design](https://github.com/user-attachments/assets/e8932e65-05fd-40de-9745-98abf9201dad)
 # Welcome to NovaOS!
-[Homepage](https://adthoughtsglobal.github.io/NovaOS/) | [Docs](https://novaos.gitbook.io/novaos-docs) 
+The fully local WebOS, Free, Made for you!
+
+[Homepage](https://adthoughtsglobal.github.io/NovaOS/) | [Docs](https://novaos.gitbook.io/novaos-docs) | [Discord](https://discord.gg/atkqbwEQU8) | [Try it](https://github.com/adthoughtsglobal/Nova-OS?tab=readme-ov-file#how-do-i-access)
 
 <a href="https://discord.gg/atkqbwEQU8"><img src="https://discordapp.com/api/guilds/1236996989485449326/widget.png?style=shield" height="20"></a>
 
