@@ -29,10 +29,8 @@ To create a **secure**, **scalable**, and **accessible** operating system for us
 
 FlexOS is powered by **modern technologies** to ensure top-notch performance and reliability:
 
-- **Cloud Providers:** Built on scalable infrastructure from AWS, Azure, and Google Cloud.
-- **Containerization:** Leveraging Docker and Kubernetes for microservice efficiency.
-- **Security:** End-to-end encryption, zero-trust architecture, and biometric integrations.
-- **APIs:** Rich API support for developers to build their own integrations.
+- **GitHub** You can download on GitHub or try on GitHub.
+- **Localhost** On 127.0.0.1 you can try it but you need to put this project in htdocs.
 
 ```bash
 # Example of deploying a service on FlexOS
