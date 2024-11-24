@@ -29,5 +29,6 @@ To create a **secure**, **scalable**, and **accessible** operating system for us
 
 FlexOS is powered by **modern technologies** to ensure top-notch performance and reliability:
 
-- **GitHub** You can download on GitHub or try on GitHub.
+- **GitHub** You can download on GitHub.
+- **GitHub Pages** You can try it on GitHub Pages.
 - **Localhost** On 127.0.0.1 you can try it but you need to put this project in htdocs.
