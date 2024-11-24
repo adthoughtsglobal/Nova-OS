@@ -31,7 +31,3 @@ FlexOS is powered by **modern technologies** to ensure top-notch performance and
 
 - **GitHub** You can download on GitHub or try on GitHub.
 - **Localhost** On 127.0.0.1 you can try it but you need to put this project in htdocs.
-
-```bash
-# Example of deploying a service on FlexOS
-kubectl apply -f service.yaml
