@@ -1,6 +1,6 @@
 ![Untitled design](https://github.com/user-attachments/assets/e8932e65-05fd-40de-9745-98abf9201dad)
 # Welcome to NovaOS!
-The fully local, Free, Source available WebOS Made for you!
+The fully local, Free, Source available, pretty WebOS Made for you!
 
 [Homepage](https://adthoughtsglobal.github.io/NovaOS/) | [Docs](https://novaos.gitbook.io/novaos-docs) | [Discord](https://discord.gg/atkqbwEQU8) | [Try it](https://github.com/adthoughtsglobal/Nova-OS?tab=readme-ov-file#how-do-i-access)
 
