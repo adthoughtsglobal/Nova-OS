@@ -4,13 +4,12 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-    <meta name="nova-include" content="nova.css">
+	<meta name="nova-include" content="nova.css">
 	<meta name="nova-icon"
 		content="<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='31.91668' height='31.91668' viewBox='0,0,31.91668,31.91668'><g transform='translate(-224.04166,-164.04166)'><g data-paper-data='{&quot;isPaintingLayer&quot;:true}' fill-rule='nonzero' stroke='none' stroke-linecap='butt' stroke-linejoin='miter' stroke-miterlimit='10' stroke-dasharray='' stroke-dashoffset='0' style='mix-blend-mode: normal'><path d='M224.04166,192c0,-6.80976 0,-20.37172 0,-24.11111c0,-1.87183 2.04092,-3.84723 3.95834,-3.84723c3.74381,0 17.07715,0 23.88889,0c2.46001,0 4.06945,2.04092 4.06945,3.95834c0,3.80587 0,17.52187 0,24.22222c0,2.27105 -1.56108,3.73612 -3.95834,3.73612c-6.7768,0 -20.23574,0 -24,0c-1.91742,0 -3.95834,-1.56062 -3.95834,-3.95834z' fill='#ffffff' stroke-width='NaN'/><path d='M228.75317,177.39085l1.21587,-4.42302h20.06191l1.21587,4.42302z' fill='##1f1f1f' stroke-width='0'/><path d='M229.96905,173.11069v-1.36786h20.06191v1.36786z' fill='##1f1f1f' stroke-width='0'/><path d='M229.96905,188.40003v-10.38226h20.06191v10.38226c0,0 -8.25342,0 -13.6544,0c-0.23641,0 -0.03639,-6.41414 -0.26267,-6.41414c-1.16272,0 -2.18029,0 -2.93619,0c-0.30373,0 0.03929,6.41414 -0.17238,6.41414c-1.18213,0 -3.03627,0 -3.03627,0z' fill='##1f1f1f' stroke-width='0'/><path d='M239.26143,184.2452v-2.0726h7.59955v2.0726z' fill='#ffffff' stroke-width='0'/></g></g></svg>">
 	<title>store</title>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	<style>
-
 		html {
 			height: 100%;
 			width: 100%;
@@ -97,7 +96,7 @@
 		}
 
 		#topse button:hover {
-			background-color:#397939;
+			background-color: #397939;
 		}
 
 		small {
@@ -149,19 +148,6 @@
 			max-width: 81px;
 			overflow: hidden;
 			text-overflow: ellipsis;
-		}
-
-		@media only screen and (max-width: 400px) {
-			.featured img {
-				height: 155px;
-				object-position: center;
-				object-fit: cover;
-				display: block;
-				transform: translateY(0);
-				border-radius: 10px;
-				width: 100%;
-				margin: 10px 0;
-			}
 		}
 
 		.dostuffwithit {
@@ -316,63 +302,20 @@
 			text-align: center;
 		}
 
-		.featured {
-			padding: 1rem;
-			background: radial-gradient(circle at left top, #3a2557, #263f67);
+		#featured {
 			border-radius: 10px;
+			overflow: hidden;
 			margin: 10px;
 			box-shadow: 0 3px 10px 5px #121212;
-			border: 1px solid #304864;
 		}
 
-		.featured small {
-			margin: 0;
-			padding: 3px 8px;
-			background: #39393959;
-			background: linear-gradient(45deg, #4d4cc6, #4a90bd);
-			border-radius: 20px;
-		}
-
-		.featured small.by {
-			opacity: 0.7;
-			margin: 0;
-			padding: 0;
-			background: transparent;
-			border-radius: none;
-		}
-
-		.featured h1 {
-			margin: 10px 0;
-			background: linear-gradient(45deg, #ff2875, #fff19b);
-			-webkit-background-clip: text;
-			-webkit-text-fill-color: transparent;
-		}
-
-		.featured p {
-			width: 60%;
-		}
-
-		.featured img {
-			width: 27vw;
-			height: 117px;
+		#featured img {
 			object-position: center;
-			object-fit: cover;
-			position: absolute;
-			right: 2rem;
-			transform: translateY(-4rem);
-			border-radius: 10px;
+			object-fit: contain;
+			width: 100%;
 		}
 
-		.featured img::before {
-			width: 200px;
-			height: 100px;
-			background-color: grey;
-			transform: translate(-50px, -50px);
-			display: inline-block;
-			position: absolute;
-		}
-
-		.featured button {
+		#featured button {
 			background: #62778b;
 			border: none;
 			color: var(--colors-text-normal);
@@ -499,18 +442,21 @@
 			filter: brightness(110%);
 			transform: scale(1.05);
 		}
+
+		.fade {
+			transition: opacity 0.5s ease-in-out;
+			opacity: 1;
+		}
+
+		.fade.hidden {
+			opacity: 0;
+		}
 	</style>
 </head>
 
 <body>
-	<div class="featured">
-	  <small>New</small>
-	  <h1>WCanvas</h1>
-	  <img src="https://i.ibb.co/T0hvCVv/a60013d0-9d77-4c5c-8b2d-b2527f8deb1c.jpg">
-	  <small class="by">Nova MoonShot</small>
-
-	  <p>An HTML code editor with hotkeys, syntax highlighting, same screen previews, help and much more! Built officially for making Nova Apps!
-	  </p>
+	<div id="featured">
+		<img src="about:blank" id="featuredimg" class="fade">
 	</div>
 	<div class="mains">
 		<small>Install through app link</small>
@@ -521,7 +467,7 @@
 				Install
 				<div class="material-icons installbtnicn">download</div>
 			</button>
-			
+
 		</div>
 		<div>
 			<div id="sugapps">
@@ -539,7 +485,7 @@
 	</div>
 	<script src="https://cdn.jsdelivr.net/npm/tinycolor2"></script>
 
-	
+
 	<dialog id="installer">
 		<div class="containdiv">
 			<nav>
@@ -552,8 +498,8 @@
 			<div class="installerappbasedata">
 				<h1 id="installerappname">Loading...</h1>
 				<div class="dostuffwithit">
-				<button id="openbtn">Open</button>
-				<button id="installButton">...</button>
+					<button id="openbtn">Open</button>
+					<button id="installButton">...</button>
 				</div>
 			</div>
 			<b id="installerappby">...</b>
@@ -613,7 +559,7 @@
 								appDiv.style.borderTop = `2px solid ${shadowColor}`;
 								appDiv.style.borderLeft = `2px solid ${shadowColor}`;
 
-								
+
 							});
 
 							appDiv.addEventListener('mouseleave', () => {
@@ -626,6 +572,7 @@
 
 						const appfesDiv = document.createElement('div');
 						appfesDiv.className = 'appfes';
+						appfesDiv.id = "appfes-" + appName;
 						const appInfoDiv = document.createElement('div');
 
 						const h3 = document.createElement('h3');
@@ -653,49 +600,104 @@
 						appfesDiv.appendChild(cat);
 
 
-					const p = document.createElement('p');
-					const appDescItem = appDetails.find(item => item.desc);
+						const p = document.createElement('p');
+						const appDescItem = appDetails.find(item => item.desc);
 
-					if (appDescItem) {
-						p.textContent = appDescItem.desc;
-					} else {
-						p.textContent = 'Description not available.';
-					}
+						if (appDescItem) {
+							p.textContent = appDescItem.desc;
+						} else {
+							p.textContent = 'Description not available.';
+						}
 
-					appDiv.appendChild(p);
+						appDiv.appendChild(p);
 
-					if (featured.includes(appName)) {
-						document.getElementById("featured-section").appendChild(appDiv);
-					} else {
-						if (appDetails.find(item => item.by).by != "adthoughtsglobal") {
+						if (featured.includes(appName)) {
+							document.getElementById("featured-section").appendChild(appDiv);
+						} else {
+							if (appDetails.find(item => item.by).by != "adthoughtsglobal") {
 
-if (appDetails.find(item => item.cat).cat == "game") {
-document.getElementById("games-section").appendChild(appDiv);
-} else {
-document.getElementById("apps-section").appendChild(appDiv);
-}
-} else {
-document.getElementById("nova-section").appendChild(appDiv);
-}
-					}
-				});
-					
-		})
-				.catch (error => console.error('Error fetching JSON:', error));
+								if (appDetails.find(item => item.cat).cat == "game") {
+									document.getElementById("games-section").appendChild(appDiv);
+								} else {
+									document.getElementById("apps-section").appendChild(appDiv);
+								}
+							} else {
+								document.getElementById("nova-section").appendChild(appDiv);
+							}
+						}
+					});
+					fetch('https://adthoughtsglobal.github.io/featured%20sections/StoreFeatured.json')
+						.then(response => response.json())
+						.catch(error => {
+							console.error('Error fetching JSON:', error);
+							document.getElementById("sugapps").innerHTML = "Failed to fetch data. Please try again later.";
+						})
+						.then(data => {
+							try {
+								console.log(data);
 
-		console.log(window.parent.defAppsList)
-		let data = window.parent.defAppsList;
-		data.forEach(appName => {
-			// Create HTML elements
-			const appDiv = document.createElement('div');
-			appDiv.id = "appdiv" + window.parent.genUID();
-			appDiv.className = 'deapp';
-			appDiv.textContent = appName;
-			appDiv.setAttribute("onclick", `upddefap('${appName}', '` + appDiv.id + `')`);
+								if (data.featured && data.features && data.features.length > 0) {
+									let currentIndex = 0;
 
-			// Append the appDiv to the desired container
-			document.getElementById("defapppack").appendChild(appDiv);
-		});
+									const preloadedImages = data.features.map((feature) => {
+										const img = new Image();
+										img.src = feature.source;
+										img.name = feature.name; // Add the feature name to the image object
+										return img;
+									});
+
+									const updateFeatured = () => {
+										const feature = data.features[currentIndex];
+										const featuredImgElement = document.getElementById("featuredimg");
+
+										featuredImgElement.classList.add("hidden");
+
+										setTimeout(() => {
+											const currentImage = preloadedImages[currentIndex];
+											featuredImgElement.src = currentImage.src;
+
+											// Set up the onclick event using the image's `name` property
+											document.getElementById("featured").onclick = () => {
+												const appElement = document.getElementById("appfes-" + currentImage.name);
+												if (appElement) {
+													appElement.click();
+												} else {
+													console.warn("Element for feature not found: ", currentImage.name);
+												}
+											};
+
+											featuredImgElement.classList.remove("hidden");
+										}, 500);
+
+										currentIndex = (currentIndex + 1) % data.features.length;
+									};
+
+									updateFeatured();
+									setInterval(updateFeatured, 5000);
+
+								} else {
+									document.getElementById("featured").remove();
+								}
+							} catch (e) {
+								console.warn('Error processing JSON data:', e);
+							}
+						});
+				})
+				.catch(error => console.error('Error fetching JSON:', error));
+
+			console.log(window.parent.defAppsList)
+			let data = window.parent.defAppsList;
+			data.forEach(appName => {
+				// Create HTML elements
+				const appDiv = document.createElement('div');
+				appDiv.id = "appdiv" + window.parent.genUID();
+				appDiv.className = 'deapp';
+				appDiv.textContent = appName;
+				appDiv.setAttribute("onclick", `upddefap('${appName}', '` + appDiv.id + `')`);
+
+				// Append the appDiv to the desired container
+				document.getElementById("defapppack").appendChild(appDiv);
+			});
 
 		}
 
@@ -749,7 +751,7 @@ document.getElementById("nova-section").appendChild(appDiv);
 			document.body.removeChild(dummyElement);
 			return rotatedColor;
 		}
-		
+
 		function openappinstr(appName, appDetails) {
 			const installButton = document.getElementById("installButton");
 
@@ -782,11 +784,11 @@ document.getElementById("nova-section").appendChild(appDiv);
 						if (sourceurl.startsWith("/Nova-Store")) {
 							sourceurl = "Nova Store"
 						}
-						
+
 						p.innerHTML += `<br><a class="srca">Hosted on: ` + sourceurl + `</a>`;
 
 						p.innerHTML += `<br><button>#` + appcatitem + `</button>`
-						
+
 						document.getElementById('openbtn').style.display = "block"
 
 						function getapnme(x) {
@@ -794,7 +796,7 @@ document.getElementById("nova-section").appendChild(appDiv);
 						}
 
 						if (appald.some(app => getapnme(app.name) === appName)) {
-							const appflor = appald.find(app => getapnme(app.name)=== appName);
+							const appflor = appald.find(app => getapnme(app.name) === appName);
 							document.getElementById('openbtn').innerText = "Open";
 							document.getElementById('openbtn').onclick = async function () {
 								window.parent.openfile(appflor.id)
