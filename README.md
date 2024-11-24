@@ -1,46 +1,39 @@
-![Untitled design](https://github.com/user-attachments/assets/e8932e65-05fd-40de-9745-98abf9201dad)
-# Welcome to NovaOS!
-The fully local, Free, Source available, pretty WebOS Made for you!
+# ☁️ **FlexOS: The Future of Cloud Operating Systems** 🚀
 
-[Homepage](https://adthoughtsglobal.github.io/NovaOS/) | [Docs](https://novaos.gitbook.io/novaos-docs) | [Discord](https://discord.gg/atkqbwEQU8) | [Try it](https://github.com/adthoughtsglobal/Nova-OS?tab=readme-ov-file#how-do-i-access)
+> **FlexOS** is a cutting-edge, cloud-based operating system designed for seamless integration, user-friendly experiences, and unmatched flexibility. Built to power your digital workflows in the cloud era.
 
-<a href="https://discord.gg/atkqbwEQU8"><img src="https://discordapp.com/api/guilds/1236996989485449326/widget.png?style=shield" height=0"></a>
-<a href="https://discord.gg/8mnnkUP2G8"><img src="https://github.com/user-attachments/assets/0e25c5e3-e65a-4ceb-ae31-6f9fcf8fe8bd" height="20"></a>
+### 🏆 **Credits:**  
+We extend our deepest gratitude to the **NovaOS Solaris** team for their inspiration and innovation, which played a pivotal role in shaping FlexOS. 💡
 
+---
 
-# NovaOS is the superpower for any device.
+## 📋 **Table of Contents**
 
-![image](https://github.com/user-attachments/assets/79dc5d0b-b794-4d44-b5b4-11dfddafa81e)
+1. [What is FlexOS?](#what-is-flexos)
+2. [Technological Infrastructure](#technological-infrastructure)
+3. [How to Get Started](#how-to-get-started)
+4. [About the Team](#about-the-team)
 
-NovaOS is a powerful web operating system built for everything. From daily tasks to endless fun, it has you covered. A customizable system designed for any device with a browser. It offers a fast, secure, and feature-rich experience for gaming and daily tasks, with dynamic personalization and seamless updates.
+---
 
-# What makes it special?
-- NovaOS is the **completely free**, **mobile supported**, **PWA installable**, **fully local** **web desktop** system. It has a fully self-created ecosystem of features and a very unique user experience. 
+## 🌟 **What is FlexOS?**
 
-- NovaOS can function **fully offline**, meaning it operates with all its features without needing an internet connection. Think of it this way, NovaOS is a Web application, which is fully client side, that lets you make full web applications that can interact with a **virtual filesystem**, on the go, even offline. 
+FlexOS is a **cloud-native operating system** built to redefine the way users interact with technology. Whether you're managing workflows, deploying applications, or collaborating with teams, FlexOS provides the ultimate cloud-powered platform.
 
-- With a wide array of stunning features, NovaOS can serve as a valid operating system. NovaOS can handle webapps in a breeze, SVG icons, settings and a wide array of default apps to ease your work.
+### 🧠 **Mission:**
+To create a **secure**, **scalable**, and **accessible** operating system for users and businesses in the cloud-first era.
 
-# How do i access?
-NovaOS is available for public at [https://adthoughtsglobal.github.io/Nova-OS/](https://adthoughtsglobal.github.io/Nova-OS).
+---
 
-# Learn more
-- NovaOS top features list, [here](https://novaos.gitbook.io/novaos-docs/docs/features).
-- NovaOS help videos on our [Youtube Playlist](https://www.youtube.com/watch?v=o3Xr6DHxcFo&list=PLVY7raF48Kj5cBsNIvvta5dTCleSSgQa-).
-- Support NovaOS on our [Patreon page](https://patreon.com/adthoughtsglobal)
+## 🛠️ **Technological Infrastructure**
 
-# Quotes
+FlexOS is powered by **modern technologies** to ensure top-notch performance and reliability:
 
-| Author | Quote |
-| --- | --- |
-| Mistium | "Nova has potential to be very good, and is currently very cool" |
-| HolyMacaroni | "Nova has a pretty cool file system and uses html for apps to make it easier" |
-| JustNoone | "NovaOS is really nice, it has many functions that are very usefull. And as a web-os its compitable everywhere" |
-| Goviat3YT | "NovaOS is Never Gonna Give You Up. It will Never ever let you down. Its loading screen will never run around and desert you. It will never make you cry, It will never say goodbye without your consent" |
-| FunsparkTV | "Excited about the upcoming NovaOS 2, which will bring a local account system and enhanced filesystem, making it even easier for users to manage their files and data. Whether you're a developer or just someone who loves exploring new tech, NovaOS has something to offer." |
-| Felix | In my opinion it is one of the most powerful webOS i've ever seen |
+- **Cloud Providers:** Built on scalable infrastructure from AWS, Azure, and Google Cloud.
+- **Containerization:** Leveraging Docker and Kubernetes for microservice efficiency.
+- **Security:** End-to-end encryption, zero-trust architecture, and biometric integrations.
+- **APIs:** Rich API support for developers to build their own integrations.
 
-# Creators
-NovaOS app development is an amazing place to be, here are the basic NovaOS app dev resources:
-- [NovaOS Docs](https://novaos.gitbook.io/novaos-docs)
-- [Discord server](https://discord.gg/atkqbwEQU8)
+```bash
+# Example of deploying a service on FlexOS
+kubectl apply -f service.yaml
