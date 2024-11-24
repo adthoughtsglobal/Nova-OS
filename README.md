@@ -2,6 +2,9 @@
 
 > **FlexOS** is a cutting-edge, cloud-based operating system designed for seamless integration, user-friendly experiences, and unmatched flexibility. Built to power your digital workflows in the cloud era.
 
+## 💻 **Try FlexOS on:**
+Try, https://novaosholder.github.io/FlexOS/ yes try it there!
+
 ### 🏆 **Credits:**  
 We extend our deepest gratitude to the **NovaOS Solaris** team for their inspiration and innovation, which played a pivotal role in shaping FlexOS. 💡
 
