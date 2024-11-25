@@ -4,8 +4,8 @@ The fully local, Free, Source available WebOS Made for you!
 
 [Homepage](https://adthoughtsglobal.github.io/NovaOS/) | [Docs](https://novaos.gitbook.io/novaos-docs) | [Discord](https://discord.gg/atkqbwEQU8) | [Try it](https://github.com/adthoughtsglobal/Nova-OS?tab=readme-ov-file#how-do-i-access)
 
-<a href="https://discord.gg/atkqbwEQU8"><img src="https://discordapp.com/api/guilds/1236996989485449326/widget.png?style=shield" height=0"></a>
-<a href="https://discord.gg/8mnnkUP2G8"><img src="https://github.com/user-attachments/assets/0e25c5e3-e65a-4ceb-ae31-6f9fcf8fe8bd" height="20"></a>
+<a href="https://discord.gg/atkqbwEQU8"><img src="https://github.com/user-attachments/assets/40715546-d00a-47c1-8b82-5c19d6fc3b85" height="30"></a>
+<a href="https://discord.gg/8mnnkUP2G8"><img src="https://github.com/user-attachments/assets/0e25c5e3-e65a-4ceb-ae31-6f9fcf8fe8bd" height="30"></a>
 
 
 # NovaOS is the superpower for any device.
