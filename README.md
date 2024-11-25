@@ -17,19 +17,19 @@ Its
 # What makes it special?
 - NovaOS is the **completely free**, **mobile supported**, **PWA installable**, **fully local** **web desktop** system. It has a fully self-created ecosystem of features and a very unique user experience. 
 
-- NovaOS can function **fully offline**, meaning it operates with all its features without needing an internet connection. Think of it this way, NovaOS is a Web application, which is fully client side, that lets you make full web applications that can interact with a **virtual filesystem**, on the go, even offline. 
+- NovaOS can function **fully offline**[^3], meaning it operates with all its features without needing an internet connection. Think of it this way, NovaOS is a Web application, which is fully client side, that lets you make full web applications that can interact with a **virtual filesystem**, on the go, even offline. 
 
 - With a wide array of stunning features, NovaOS can serve as a valid operating system. NovaOS can handle webapps in a breeze, SVG icons, settings and a wide array of default apps to ease your work.
 
 # How do i access?
-NovaOS is available for public at [https://adthoughtsglobal.github.io/Nova-OS/](https://adthoughtsglobal.github.io/Nova-OS).
+NovaOS is available for public at [https://adthoughtsglobal.github.io/Nova-OS/](https://adthoughtsglobal.github.io/Nova-OS). [^1]
 
 # Learn more
 - NovaOS top features list, [here](https://novaos.gitbook.io/novaos-docs/docs/features).
 - NovaOS help videos on our [Youtube Playlist](https://www.youtube.com/watch?v=o3Xr6DHxcFo&list=PLVY7raF48Kj5cBsNIvvta5dTCleSSgQa-).
 - Support NovaOS on our [Patreon page](https://patreon.com/adthoughtsglobal)
 
-# Quotes
+# Quotes [^2]
 
 | Author | Quote |
 | --- | --- |
@@ -45,6 +45,8 @@ NovaOS app development is an amazing place to be, here are the basic NovaOS app 
 - [NovaOS Docs](https://novaos.gitbook.io/novaos-docs)
 - [Discord server](https://discord.gg/atkqbwEQU8)
 
-<p align="center">
+[^1]: The latest public version.
+[^2]: Quotes are personal perspectives of users.
+[^3]: It must be initially loaded with internet, and the offline setting must be turned on for this feature to work.
+
 <a href="https://www.patreon.com/adthoughtsglobal/membership"><img src="https://github.com/user-attachments/assets/813732cd-d0ca-445a-827c-2f4e59d87b04" height="135"></a>
-</p>
