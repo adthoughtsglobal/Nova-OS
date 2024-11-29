@@ -536,7 +536,9 @@ const defaultPreferences = {
     "wsnapping": true,
     "smartsearch": true,
     "CamImgFormat": "WEBP",
-    "defSearchEngine": "Bing"
+    "defSearchEngine": "Bing",
+    "darkMode":true,
+    "simpleMode":true
 };
 
 async function ensurePreferencesFileExists() {
