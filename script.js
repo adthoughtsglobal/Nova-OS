@@ -608,7 +608,7 @@ async function getAppIcon(content, id, lazy = 0) {
 			Promise.race([promise, new Promise((_, reject) => setTimeout(() => reject(), 3000))]);
 		if (!content) {
 			const file = await withTimeout(getFileById(id));
-			if (!file || !file.content) throw new Error("File content unavailable");
+			if (!file || !file.content) throw new Error("File content unavailable" + id);
 			return await withTimeout(getAppIcon(file.content, id));
 		}
 		if (lazy) return appicns[id] || defaultAppIcon;
