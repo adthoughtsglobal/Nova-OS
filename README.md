@@ -9,6 +9,7 @@ The fully local, Free, Source available WebOS Made for you! Often mistakenly ass
 
 <a href="https://www.dmca.com/compliance/adthoughtsglobal.github.io" title="DMCA Compliance information for adthoughtsglobal.github.io"><img height="15" src="https://www.dmca.com/img/dmca-compliant-grayscale.png" alt="DMCA compliant image" /></a>
 <img height="15" src="https://img.shields.io/github/languages/count/adthoughtsglobal/Nova-OS"/>
+<img height="15" src="https://img.shields.io/github/last-commit/adthoughtsglobal/Nova-OS"/>
 
 # NovaOS is the superpower for any device.
 
