@@ -185,3 +185,8 @@ function ptypext(str) {
 function toTitleCase(str) {
     return str.replace(/\w\S*/g, word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
 }
+
+function ercache() {
+	window.parent.appicns = {};
+	window.parent.memory = {};
+}

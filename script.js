@@ -242,6 +242,22 @@ document.addEventListener("DOMContentLoaded", async function () {
 		gid("versionswitcher").showModal();
 		return;
 	}
+	const searchInput5342 = document.querySelector('#novamenusearchinp');
+let keyHeld = false;
+
+searchInput5342.addEventListener('keydown', () => {
+    keyHeld = true; 
+});
+
+searchInput5342.addEventListener('keyup', (e) => {
+    if (keyHeld) {
+        keyHeld = false; // Reset key state
+        opensearchpanel(searchInput5342.value);
+        gid('appdmod').close();
+        searchInput5342.value = "";
+    }
+});
+
 	gid("versionswitcher")?.remove();
 	await registerDecryptWorker();
 	gid("novanav").style.display = "none";
@@ -406,17 +422,15 @@ async function loadrecentapps() {
 		appShortcutDiv.appendChild(tooltisp);
 		gid("serrecentapps").appendChild(appShortcutDiv);
 	})).then(async () => {
-		scaleUIElements(await getSetting("UISizing"))
+		scaleUIElements(await getSetting("UISizing"));
+
+		gid("novamenusearchinp").focus();
 	}).catch((error) => {
 		console.error('An error occurred:', error);
 	});
+
 }
-function focusFirstElement() {
-	var firstElement = document.querySelector('#appsindeck :first-child');
-	if (firstElement) {
-		firstElement.focus();
-	}
-}
+
 function makedefic(str) {
 	if (!str) {
 		return 'app';
@@ -1434,7 +1448,8 @@ async function genTaskBar() {
 }
 makedialogclosable('searchwindow');
 prepareArrayToSearch()
-async function opensearchpanel() {
+async function opensearchpanel(preset = "") {
+
 	gid("seapppreview").style.display = "none";
 	if (appsHistory.length > 0) {
 		gid("partrecentapps").style.display = "block";
@@ -1450,7 +1465,7 @@ async function opensearchpanel() {
 	if (window.innerWidth > 500) {
 		gid("strtsear").focus()
 	}
-	gid("strtsear").value = "";
+	gid("strtsear").value = preset;
 	loadrecentapps();
 	displayNotifications();
 	gid('searchwindow').showModal();

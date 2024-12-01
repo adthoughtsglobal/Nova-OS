@@ -159,18 +159,19 @@
 			</div>
 			<div class="strtsearcont">
 				<div class="neweles" id="bobthedropdown">
+					<div class="novamenusearchinpbtn" onclick="document.getElementById('appdmod').close(); opensearchpanel();">
+						<input id="novamenusearchinp" placeholder="Search"></span>
+						<span class="material-symbols-rounded">
+							search
+						</span>
+					</div>
 					<button class="tooltip" onclick="location.reload()">
 						<span class="tooltiptext">Restart</span>
 						<span class="material-symbols-rounded">
 							restart_alt
 						</span>
 					</button>
-					<button class="tooltip" onclick="document.getElementById('appdmod').close(); opensearchpanel();">
-						<span class="tooltiptext">Search files</span>
-						<span class="material-symbols-rounded">
-							search
-						</span>
-					</button>
+					
 					<button class="tooltip" onclick="document.getElementById('sleepwindow').showModal()">
 						<span class="tooltiptext">Sleep</span>
 						<span class="material-symbols-rounded">
@@ -245,13 +246,26 @@
 				</span>
 				Sign out
 			</button>
-			<button onclick="logoutofnova()">
+			<button onclick="ercache()">
 				<span class="material-symbols-rounded">
-					logout
+					delete_forever
 				</span>
 				Clear temporary
 			</button>
+			<button onclick="removeUser()">
+				<span class="material-symbols-rounded">
+					person_off
+				</span>
+				Remove user
+			</button>
+			<button onclick="erdbsfull()">
+				<span class="material-symbols-rounded">
+					restart_alt
+				</span>
+				Reset NovaOS
+			</button>
 	</div>
+	
 	
 
 	</dialog>

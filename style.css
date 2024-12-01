@@ -39,25 +39,25 @@ dialog {
 }
 
 nav {
-    background-color: transparent;
-    color: white;
-    z-index: 99;
-    display: grid;
-    user-select: none;
-    justify-content: center;
-    align-items: center;
-    height: fit-content;
+	background-color: transparent;
+	color: white;
+	z-index: 99;
+	display: grid;
+	user-select: none;
+	justify-content: center;
+	align-items: center;
+	height: fit-content;
 }
 
 nav .flodiv {
 	display: flex;
 	justify-content: center;
-    align-items: stretch;
+	align-items: stretch;
 	flex-direction: row;
 	border-radius: 7px;
 	background: transparent;
 	padding: 1px;
-    margin-bottom: 0.3rem;
+	margin-bottom: 0.3rem;
 }
 
 nav [navobj] {
@@ -103,8 +103,8 @@ nav [navobj] div {
 }
 
 .mmic {
-    width: 1.8rem;
-    height: 1.5rem;
+	width: 1.8rem;
+	height: 1.5rem;
 }
 
 .window {
@@ -124,7 +124,7 @@ nav [navobj] div {
 	gap: 0;
 	box-sizing: border-box;
 	transition: cubic-bezier(0.075, 0.82, 0.165, 1);
-    border: 1px solid var(--colors-BG-sub);
+	border: 1px solid var(--colors-BG-sub);
 }
 
 @media only screen and (max-width: 500px) {
@@ -226,7 +226,7 @@ nav [navobj] div {
 	transition: var(--time-action);
 	text-align: center;
 	align-self: flex-start;
-	
+
 }
 
 .app-shortcut.tooltip .tooltiptext {
@@ -244,17 +244,17 @@ nav [navobj] div {
 }
 
 .app-shortcut span {
-    overflow: hidden;
-    padding: 0;
-    display: flex;
-    border-radius: 0.5rem;
-    justify-content: center;
+	overflow: hidden;
+	padding: 0;
+	display: flex;
+	border-radius: 0.5rem;
+	justify-content: center;
 }
 
 .app-shortcut span svg {
-    width: 2rem;
-    height: 2rem;
-    animation: pop .5s cubic-bezier(0.075, 0.82, 0.165, 1);
+	width: 2rem;
+	height: 2rem;
+	animation: pop .5s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 @keyframes appop {
@@ -307,7 +307,7 @@ nav [navobj] div {
 	text-align: center;
 	padding: 0.1rem 0.5rem;
 	background: var(--colors-BG-normal)42;
-    max-width: 67px;
+	max-width: 67px;
 	text-transform: capitalize;
 }
 
@@ -328,7 +328,7 @@ nav [navobj] div {
 
 #appdmod {
 	padding: 5px;
-    margin-bottom: 60px;
+	margin-bottom: 60px;
 	animation: dmodthingy var(--time-action) cubic-bezier(0.075, 0.82, 0.165, 1);
 	padding-bottom: 1.2rem;
 }
@@ -371,7 +371,7 @@ nav [navobj] div {
 }
 
 .transp2 {
-	transition:.5s cubic-bezier(0, 0.66, 0.57, 1.02);
+	transition: .5s cubic-bezier(0, 0.66, 0.57, 1.02);
 }
 
 .transp3 {
@@ -385,6 +385,7 @@ nav [navobj] div {
 	opacity: 0;
 	transform: translate(1rem, 1rem) scale(0.9);
 }
+
 .transp5 {
 	transition: var(--time-action);
 	opacity: 0;
@@ -396,7 +397,7 @@ nav [navobj] div {
 	border: 0;
 	border-radius: 10px;
 	color: var(--colors-text-normal);
-    background: var(--colors-BG-section);
+	background: var(--colors-BG-section);
 	text-align: center;
 	max-height: 80%;
 	width: 80%;
@@ -431,13 +432,13 @@ nav [navobj] div {
 
 .modal select {
 	background: var(--colors-BG-highlighted);
-    color: var(--colors-text-normal);
-    border-radius: 5px;
-    padding: 0.5rem;
-    outline: none;
-    display: block;
-    width: 100%;
-    border: 1px solid var(--colors-BG-sub);
+	color: var(--colors-text-normal);
+	border-radius: 5px;
+	padding: 0.5rem;
+	outline: none;
+	display: block;
+	width: 100%;
+	border: 1px solid var(--colors-BG-sub);
 }
 
 .modal button {
@@ -543,12 +544,12 @@ nav [navobj] div {
 }
 
 .strtappsugs div span {
-    font-size: var(--font-size-normal);
-    background: #2f2f2f78;
-    cursor: pointer;
-    border-radius: 5px;
-    padding: 3px;
-    align-self: flex-end;
+	font-size: var(--font-size-normal);
+	background: #2f2f2f78;
+	cursor: pointer;
+	border-radius: 5px;
+	padding: 3px;
+	align-self: flex-end;
 }
 
 .strtappsugs div span:hover {
@@ -579,18 +580,18 @@ nav [navobj] div {
 
 #appsindeck {
 	overflow-x: hidden;
-    max-height: calc(50vh - 29px);
-    overflow-y: auto;
-    text-align: left;
-    display: grid;
-    flex: 1;
-    width: calc(100% - var(--sizing-huge));
-    margin: auto;
-    grid-template-columns: repeat(auto-fill, minmax(80px, 85px));
-    justify-items: center;
-    justify-content: space-around;
-    align-items: start;
-    padding: 0 0.5rem;
+	max-height: calc(50vh - 29px);
+	overflow-y: auto;
+	text-align: left;
+	display: grid;
+	flex: 1;
+	width: calc(100% - var(--sizing-huge));
+	margin: auto;
+	grid-template-columns: repeat(auto-fill, minmax(80px, 85px));
+	justify-items: center;
+	justify-content: space-around;
+	align-items: start;
+	padding: 0 0.5rem;
 }
 
 .context-menu {
@@ -795,23 +796,23 @@ nav [navobj] div {
 
 .tooltip .tooltiptext {
 	visibility: hidden;
-    width: 80px;
-    background-color: var(--colors-BG-highlighted);
-    color: var(--colors-text-normal);
-    word-break: normal;
-    backdrop-filter: blur(1rem);
-    text-align: center;
-    border-radius: 0.3rem;
-    padding: 2px;
-    position: absolute;
-    z-index: 1;
-    bottom: 110%;
-    left: 50%;
-    margin-left: -39px;
-    font-size: var(--font-size-normal);
-    opacity: 0;
-    transition: opacity 0.3s ease-out;
-    box-shadow: 0 3px 1rem var(--colors-BG-normal) 9e;
+	width: 80px;
+	background-color: var(--colors-BG-highlighted);
+	color: var(--colors-text-normal);
+	word-break: normal;
+	backdrop-filter: blur(1rem);
+	text-align: center;
+	border-radius: 0.3rem;
+	padding: 2px;
+	position: absolute;
+	z-index: 1;
+	bottom: 110%;
+	left: 50%;
+	margin-left: -39px;
+	font-size: var(--font-size-normal);
+	opacity: 0;
+	transition: opacity 0.3s ease-out;
+	box-shadow: 0 3px 1rem var(--colors-BG-normal) 9e;
 }
 
 .tooltip:hover .tooltiptext {
@@ -821,48 +822,48 @@ nav [navobj] div {
 
 #bios {
 	width: 80%;
-    max-width: 400px;
-    height: fit-content;
-    padding: var(--sizing-huge);
-    border: none;
-    background: var(--colors-BG-normal);
-    text-align: center;
-    color: var(--colors-text-normal);
-    border-radius: var(--sizing-border-radius);
-    box-shadow: 0 5px 1rem black;
-    padding-top: 2rem;
+	max-width: 400px;
+	height: fit-content;
+	padding: var(--sizing-huge);
+	border: none;
+	background: var(--colors-BG-normal);
+	text-align: center;
+	color: var(--colors-text-normal);
+	border-radius: var(--sizing-border-radius);
+	box-shadow: 0 5px 1rem black;
+	padding-top: 2rem;
 	animation: appshow .5s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 #bios::backdrop {
-    background: linear-gradient(0deg, #000000b0, transparent);
-    backdrop-filter: blur(3rem);
+	background: linear-gradient(0deg, #000000b0, transparent);
+	backdrop-filter: blur(3rem);
 	animation: appshow 2s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 #bios span.material-icons.closebtn {
-    position: absolute;
-    left: 1rem;
-    top: 1rem;
-    background-color: var(--colors-BG-sub);
-    border-radius: 50%;
-    padding: 0.3rem;
-    font-size: 0.8rem;
+	position: absolute;
+	left: 1rem;
+	top: 1rem;
+	background-color: var(--colors-BG-sub);
+	border-radius: 50%;
+	padding: 0.3rem;
+	font-size: 0.8rem;
 }
 
 #bios h1 {
 	margin: 0;
-    margin-bottom: 1rem;
+	margin-bottom: 1rem;
 }
 
 #bios .buttongroup-grid {
 	display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 5px;
-    justify-content: center;
-    justify-items: center;
-    margin: auto;
-}  
+	grid-template-columns: 1fr 1fr;
+	gap: 5px;
+	justify-content: center;
+	justify-items: center;
+	margin: auto;
+}
 
 #bios small {
 	opacity: 0.5;
@@ -886,9 +887,9 @@ nav [navobj] div {
 
 #bios button .material-symbols-rounded {
 	display: block;
-    margin: 7px;
-    font-size: 1.5rem;
-    opacity: 0.7;
+	margin: 7px;
+	font-size: 1.5rem;
+	opacity: 0.7;
 	transition: var(--time-action);
 }
 
@@ -922,7 +923,7 @@ nav [navobj] div {
 	border: 0px;
 	overflow: hidden;
 	text-align: center;
-    background: var(--colors-BG-normal);
+	background: var(--colors-BG-normal);
 	transition: 0.8s;
 }
 
@@ -966,10 +967,10 @@ nav [navobj] div {
 
 .layer44 {
 	position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100vh;
 }
 
 #loginmod {
@@ -1023,8 +1024,8 @@ nav [navobj] div {
 }
 
 .backbtnscont ion-icon {
-    font-size: 15px;
-    margin: 5px;
+	font-size: 15px;
+	margin: 5px;
 }
 
 #loginmod .backbtnuserspg {
@@ -1083,6 +1084,35 @@ nav [navobj] div {
 
 .strtsearcont button span {
 	font-size: 15px;
+}
+
+input#novamenusearchinp {
+	display: flex;
+	width: 60px;
+	font-size: inherit;
+	font-family: inherit;
+	border-radius: 8px;
+	border: none;
+	background: transparent;
+	color: inherit;
+}
+
+.novamenusearchinpbtn span {
+	font-size: 1rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0.5;
+}
+
+.novamenusearchinpbtn {
+	display: flex !important;
+	flex-direction: row;
+	background: #78787838 !important;
+	padding: 1px 7px !important;
+	height: 27px;
+	border-radius: 9px !important;
+	gap: 0.3rem;
 }
 
 #bobthedropdown {
@@ -1195,16 +1225,16 @@ nav [navobj] div {
 
 #notification {
 	position: absolute;
-    right: 10px;
-    width: 250px;
-    background: #40404080;
-    backdrop-filter: blur(10px) brightness(50%);
-    border-radius: 10px;
-    padding: 10px;
-    bottom: 61px;
-    box-shadow: 0 1rem 2rem rgb(0 0 0 / 77%);
-    display: none;
-    animation: notifpull var(--time-action) cubic-bezier(0.075, 0.82, 0.165, 1);
+	right: 10px;
+	width: 250px;
+	background: #40404080;
+	backdrop-filter: blur(10px) brightness(50%);
+	border-radius: 10px;
+	padding: 10px;
+	bottom: 61px;
+	box-shadow: 0 1rem 2rem rgb(0 0 0 / 77%);
+	display: none;
+	animation: notifpull var(--time-action) cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 @keyframes notifpull {
@@ -1225,15 +1255,15 @@ nav [navobj] div {
 }
 
 #notification h2 {
-    font-size: var(--font-size-subheading);
-    font-weight: normal;
-    margin: 0px 0;
+	font-size: var(--font-size-subheading);
+	font-weight: normal;
+	margin: 0px 0;
 }
 
 #notification p {
 	font-size: var(--font-size-small);
-    margin: 3px 0;
-    opacity: 0.7;
+	margin: 3px 0;
+	opacity: 0.7;
 }
 
 .snapping {
@@ -1241,27 +1271,27 @@ nav [navobj] div {
 }
 
 .windowheader svg {
-    width: var(--sizing-huge);
-    aspect-ratio: 1 / 1;
-    margin: 5px 2px;
-    display: flex;
-    height: auto;
-    margin-right: 0.3rem;
+	width: var(--sizing-huge);
+	aspect-ratio: 1 / 1;
+	margin: 5px 2px;
+	display: flex;
+	height: auto;
+	margin-right: 0.3rem;
 }
 
 .windowheader .windowdataspan {
 	display: flex;
 	align-items: center;
 	white-space: nowrap;
-    overflow: hidden;
+	overflow: hidden;
 	text-overflow: ellipsis;
 }
 
 .windowheader .windowdataspan .title {
 	width: fit-content;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    font-size: var(--font-size-normal);
+	text-overflow: ellipsis;
+	overflow: hidden;
+	font-size: var(--font-size-normal);
 }
 
 .rightsidesmadivs {
@@ -1284,11 +1314,11 @@ nav [navobj] div {
 }
 
 #time-display {
-    overflow: hidden;
-    display: block;
-    white-space: nowrap;
-    text-align: center;
-    font-size: 13px;
+	overflow: hidden;
+	display: block;
+	white-space: nowrap;
+	text-align: center;
+	font-size: 13px;
 }
 
 #nova-copilot-window {
@@ -1455,8 +1485,8 @@ codeblock {
 }
 
 .adock {
-    padding: 5px;
-    margin: 2.5px 1px;
+	padding: 5px;
+	margin: 2.5px 1px;
 	width: fit-content;
 	width: -moz-fit-content;
 }
@@ -1593,7 +1623,7 @@ dialog#terminal {
 	flex-wrap: nowrap;
 	width: 0;
 	transition: 0.3s;
-    gap: 0.5rem;
+	gap: 0.5rem;
 }
 
 .searchside .smalltitl {
@@ -1772,15 +1802,16 @@ dialog#terminal {
 
 @media only screen and (max-width: 500px) {
 
-	#appdmod, #searchwindow {
+	#appdmod,
+	#searchwindow {
 		width: 100%;
-        height: calc(100vh - 100px);
-        padding: 22px;
-        bottom: 10px;
-        box-shadow: none;
-        border-radius: 0;
-        max-height: none;
-    }
+		height: calc(100vh - 100px);
+		padding: 22px;
+		bottom: 10px;
+		box-shadow: none;
+		border-radius: 0;
+		max-height: none;
+	}
 
 	.window {
 		resize: none;
@@ -2115,19 +2146,21 @@ dialog#terminal {
 	background: rgb(255, 129, 129);
 }
 
-  @keyframes l1 {
-	0% {background-position: right}
-  }
+@keyframes l1 {
+	0% {
+		background-position: right
+	}
+}
 
 .progress-container {
 	width: 0;
-    max-width: 150px;
-    background-color: #141414;
-    border-radius: var(--sizing-border-radius-full);
-    margin-bottom: var(--sizing-huge);
-    background: linear-gradient(90deg, #0001 33%, #494949 50%, #0001 66%) #232323;
-    background-size: 300% 100%;
-    animation: l1 1s infinite cubic-bezier(0.08, 0.82, 0.95, 0.52);
+	max-width: 150px;
+	background-color: #141414;
+	border-radius: var(--sizing-border-radius-full);
+	margin-bottom: var(--sizing-huge);
+	background: linear-gradient(90deg, #0001 33%, #494949 50%, #0001 66%) #232323;
+	background-size: 300% 100%;
+	animation: l1 1s infinite cubic-bezier(0.08, 0.82, 0.95, 0.52);
 }
 
 .progress-bar {
@@ -2136,7 +2169,7 @@ dialog#terminal {
 	background-color: #76c7c0;
 	border-radius: 10px 0 0 10px;
 	transition: width 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
-    border-radius: var(--sizing-border-radius);
+	border-radius: var(--sizing-border-radius);
 }
 
 @keyframes progressanim {
@@ -2180,21 +2213,23 @@ dialog#terminal {
 		transition: var(--time-action) cubic-bezier(0.075, 0.82, 0.165, 1);
 	}
 }
+
 noscript {
 	position: absolute;
-    top: 0;
-    right: 0;
-    padding: 2rem;
-    background: #2b2b2b;
-    z-index: 100;
-    height: 100vh;
+	top: 0;
+	right: 0;
+	padding: 2rem;
+	background: #2b2b2b;
+	z-index: 100;
+	height: 100vh;
 }
+
 .userselect {
 	display: flex;
 	flex-direction: column;
-    align-items: center;
+	align-items: center;
 	overflow: visible;
-    justify-content: space-between;
+	justify-content: space-between;
 }
 
 
@@ -2222,13 +2257,13 @@ noscript {
 
 .userselect .user .icon svg {
 	height: 2rem;
-    object-fit: contain;
-    background: rgb(125 125 125 / 24%);
-    border-radius: 0.3rem;
-    padding: 0.3rem;
-    aspect-ratio: 1 / 1;
-    width: auto;
-margin-bottom: 0.3rem;
+	object-fit: contain;
+	background: rgb(125 125 125 / 24%);
+	border-radius: 0.3rem;
+	padding: 0.3rem;
+	aspect-ratio: 1 / 1;
+	width: auto;
+	margin-bottom: 0.3rem;
 }
 
 .userselect .user .name {
@@ -2247,14 +2282,14 @@ margin-bottom: 0.3rem;
 
 .userselect .newusbtn {
 	background: transparent;
-    color: white;
-    border-radius: var(--sizing-border-radius-full);
-    padding: 0.3rem 0.6rem;
-    padding-right: 0.5rem;
-    display: flex;
-    width: fit-content;
-    flex-direction: column;
-    margin-left: var(--sizing-huge);
+	color: white;
+	border-radius: var(--sizing-border-radius-full);
+	padding: 0.3rem 0.6rem;
+	padding-right: 0.5rem;
+	display: flex;
+	width: fit-content;
+	flex-direction: column;
+	margin-left: var(--sizing-huge);
 	transition: .3s;
 }
 
@@ -2266,11 +2301,11 @@ margin-bottom: 0.3rem;
 
 .userselect .newusbtn:hover {
 	background: #ffffff1a;
-    padding: 0.3rem 0.6rem;
-    display: flex;
-    width: fit-content;
-    flex-direction: column;
-    margin-left: var(--sizing-huge);
+	padding: 0.3rem 0.6rem;
+	display: flex;
+	width: fit-content;
+	flex-direction: column;
+	margin-left: var(--sizing-huge);
 }
 
 .userselect .newusbtn:hover .name {
@@ -2280,8 +2315,8 @@ margin-bottom: 0.3rem;
 .usersselector {
 	display: flex;
 	flex-direction: row;
-    align-items: center;
-	
+	align-items: center;
+
 }
 
 #userschooser {
@@ -2316,14 +2351,16 @@ margin-bottom: 0.3rem;
 	box-sizing: border-box;
 	animation: rotation 1s linear infinite;
 }
+
 @keyframes rotation {
 	0% {
-	  transform: rotate(0deg);
+		transform: rotate(0deg);
 	}
+
 	100% {
-	  transform: rotate(360deg);
+		transform: rotate(360deg);
 	}
-  } 
+}
 
 .winclosebtn:hover {
 	background-color: rgb(153, 41, 41);
@@ -2331,13 +2368,13 @@ margin-bottom: 0.3rem;
 
 .erase-everything {
 	color: #ff4242;
-    bottom: 2rem;
-    display: block;
-    opacity: 0.5;
-    position: absolute;
-    width: 100%;
-    margin: auto;
-    right: 0;
+	bottom: 2rem;
+	display: block;
+	opacity: 0.5;
+	position: absolute;
+	width: 100%;
+	margin: auto;
+	right: 0;
 }
 
 .erase-everything:hover {
@@ -2345,16 +2382,16 @@ margin-bottom: 0.3rem;
 }
 
 #versionswitcher {
-    display: block;
-    text-align: center;
-    padding: 4rem;
-    border: none;
-    font-size: 1.2rem;
-    border-radius: 2rem;
-    background: linear-gradient(0deg, #0e0e0e, #18181885);
-    color: white;
-    backdrop-filter: blur(2rem);
-    box-shadow: 0 1rem 1rem #0000008f;
+	display: block;
+	text-align: center;
+	padding: 4rem;
+	border: none;
+	font-size: 1.2rem;
+	border-radius: 2rem;
+	background: linear-gradient(0deg, #0e0e0e, #18181885);
+	color: white;
+	backdrop-filter: blur(2rem);
+	box-shadow: 0 1rem 1rem #0000008f;
 }
 
 #versionswitcher::backdrop {
@@ -2363,26 +2400,26 @@ margin-bottom: 0.3rem;
 }
 
 #versionswitcher h1 {
-    font-size: 3rem;
-    background: linear-gradient(45deg, #ff67d7, #4fbeff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+	font-size: 3rem;
+	background: linear-gradient(45deg, #ff67d7, #4fbeff);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
 }
 
 #versionswitcher small {
-    opacity: 0.7;
+	opacity: 0.7;
 }
 
 .upgradeversionbtn {
 	border: none;
-    border-radius: 0.5rem;
-    padding: 0.7rem 2rem;
-    display: block;
-    margin: 1rem auto;
-    background: #7d7aff;
-    color: white;
-    letter-spacing: 1px;
-    cursor: pointer;
-    box-shadow: -5px -5px 0rem #625eff;
-    translate: 3px 3px;
+	border-radius: 0.5rem;
+	padding: 0.7rem 2rem;
+	display: block;
+	margin: 1rem auto;
+	background: #7d7aff;
+	color: white;
+	letter-spacing: 1px;
+	cursor: pointer;
+	box-shadow: -5px -5px 0rem #625eff;
+	translate: 3px 3px;
 }

@@ -845,17 +845,13 @@
 							}
 							window.parent.removeUser();
 						}
-						function ercache() {
-							window.parent.appicns = {};
-							window.parent.memory = {};
-							window.parent.MemoryTimeCache = 4000;
-						}
+						
 					</script>
 					<buttongrp>
 
 						<button danger onclick="erdbsur()">Remove User</button>
 						<button danger onclick="erdbs()">Erase Device</button>
-						<button danger onclick="ercache()">Reset cached</button>
+						<button danger onclick="window.parent.ercache()">Reset cached</button>
 					</buttongrp>
 				</div>
 			</segr>
