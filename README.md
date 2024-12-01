@@ -6,7 +6,8 @@ The fully local, Free, Source available WebOS Made for you! Often mistakenly ass
 
 <a href="https://discord.gg/atkqbwEQU8"><img src="https://github.com/user-attachments/assets/40715546-d00a-47c1-8b82-5c19d6fc3b85" height="30"></a>
 <a href="https://discord.gg/8mnnkUP2G8"><img src="https://github.com/user-attachments/assets/0e25c5e3-e65a-4ceb-ae31-6f9fcf8fe8bd" height="30"></a>
-<a href="https://www.dmca.com/compliance/adthoughtsglobal.github.io" title="DMCA Compliance information for adthoughtsglobal.github.io"><img height="30" src="https://www.dmca.com/img/dmca-compliant-grayscale.png" alt="DMCA compliant image" /></a>
+
+<a href="https://www.dmca.com/compliance/adthoughtsglobal.github.io" title="DMCA Compliance information for adthoughtsglobal.github.io"><img height="15" src="https://www.dmca.com/img/dmca-compliant-grayscale.png" alt="DMCA compliant image" /></a>
 
 # NovaOS is the superpower for any device.
 
