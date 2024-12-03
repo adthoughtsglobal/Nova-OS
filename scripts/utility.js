@@ -190,3 +190,17 @@ function ercache() {
 	window.parent.appicns = {};
 	window.parent.memory = {};
 }
+
+function getRandomNothingQuote() {
+	const nothingquotes = [
+		"Seems like theres nothing in here...",
+		"Nothing, yea, nothing to see here...",
+		"Trust me, i looked, there's nothing here...",
+		"Nope, can't find anything here...",
+		"There's nothing in here, not even a UFO...",
+		"Nothing here, i saw someone take all of it...",
+		"Not anything in here..."
+	]
+
+	return nothingquotes[Math.floor(Math.random() * nothingquotes.length)]
+}

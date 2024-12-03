@@ -1184,34 +1184,34 @@
 		});
 
 		dropZone.addEventListener('drop', (event) => {
-	event.preventDefault();
+			event.preventDefault();
 
-	const files = event.dataTransfer.files;
+			const files = event.dataTransfer.files;
 
-	for (let i = 0; i < files.length; i++) {
-		const file = files[i];
-		const reader = new FileReader();
+			for (let i = 0; i < files.length; i++) {
+				const file = files[i];
+				const reader = new FileReader();
 
-		let readerMethod = 'readAsText';
+				let readerMethod = 'readAsText';
 
-		if (file.type.startsWith('image/') || file.type === 'application/pdf' || file.type === 'application/octet-stream') {
-			readerMethod = 'readAsDataURL';
-		} else if (file.type === 'application/octet-stream') {
-			readerMethod = 'readAsArrayBuffer';
-		}
+				if (file.type.startsWith('image/') || file.type === 'application/pdf' || file.type === 'application/octet-stream') {
+					readerMethod = 'readAsDataURL';
+				} else if (file.type === 'application/octet-stream') {
+					readerMethod = 'readAsArrayBuffer';
+				}
 
-		reader.onload = (e) => {
-			const fileContent = e.target.result;
-			const folderName = 'Downloads';
-			const md = { "via": "imported" };
-			window.parent.createFile(folderName, file.name, file.type, fileContent, md).then(() => {
-				listFiles(folderName, true);
-			});
-		};
+				reader.onload = (e) => {
+					const fileContent = e.target.result;
+					const folderName = 'Downloads';
+					const md = { "via": "imported" };
+					window.parent.createFile(folderName, file.name, file.type, fileContent, md).then(() => {
+						listFiles(folderName, true);
+					});
+				};
 
-		reader[readerMethod](file);
-	}
-});
+				reader[readerMethod](file);
+			}
+		});
 
 
 		dropZone.addEventListener('dragend', (event) => {
@@ -1292,6 +1292,7 @@
 						let currentPath = parentPath ? `${parentPath}${key}` : key;
 
 						let node = {
+							id: `Treeitem${key}`, // Setting node ID
 							text: key,
 							icon: getfolicon(key),
 							state: {
@@ -1687,8 +1688,7 @@
 						fileInfoContainer.innerHTML = fileSize + ' ' + units[unitIndex];
 
 						const dropupDiv = document.getElementById("filetools");
-						dropupDiv.innerHTML = ""
-						// Create the dropup content container
+						dropupDiv.innerHTML = "";
 						const dropupContentDiv = document.createElement("div");
 						dropupContentDiv.className = "dropup-content";
 
@@ -1779,7 +1779,17 @@
 					}
 
 				} else {
-
+					const dropupDiv = document.getElementById("filetools");
+					dropupDiv.innerHTML = "";
+					const dropupContentDiv = document.createElement("div");
+					dropupContentDiv.className = "dropup-content";
+					const wallpaperOption = document.createElement("a");
+					wallpaperOption.classList.add("dropdownerthebob");
+					wallpaperOption.title = "Info";
+					wallpaperOption.onclick = () => window.parent.say("The item selected is a folder. A folder can store multiple items.");
+					wallpaperOption.innerHTML = `<span class="material-symbols-rounded">info</span> Folder`;
+					dropupContentDiv.appendChild(wallpaperOption);
+					dropupDiv.appendChild(dropupContentDiv);
 					document.getElementById("fileinfobn").innerHTML = x.querySelector(".flfrname").innerText.trim();
 				}
 			}

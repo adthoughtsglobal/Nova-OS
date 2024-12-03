@@ -61,7 +61,7 @@ async function openfile(x) {
             if (appIdToOpen) {
                 openlaunchprotocol(appIdToOpen, unid);
             } else {
-
+                say("No apps installed can read this file. <br><br>Reinstall apps or 'open with' supporting applications.", "failed")
             }
 
         }
@@ -333,11 +333,13 @@ async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
                 windowLoader.remove();
             }, 700);
         }
+        URL.revokeObjectURL(blobURL);
     };
 
     iframe.src = blobURL;
     if (!windowData[winuid]) windowData[winuid] = {};
     windowData[winuid]["src"] = blobURL;
+    
     windowContent.appendChild(iframe);
 
     window.addEventListener('message', function (event) {

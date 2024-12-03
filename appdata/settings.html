@@ -163,15 +163,15 @@
 
 		supportb {
 			border-radius: var(--sizing-normal);
-    background: radial-gradient(circle at 0% 0%, #3d8bff99, #ff57f763);
-    display: block;
-    padding: var(--sizing-huge);
-    margin-bottom: 0.5rem;
+			background: radial-gradient(circle at 0% 0%, #3d8bff99, #ff57f763);
+			display: block;
+			padding: var(--sizing-huge);
+			margin-bottom: 0.5rem;
 		}
 
 		supportb b {
 			font-size: var(--font-size-subheading);
-			
+
 		}
 
 		supportb p {
@@ -493,6 +493,11 @@
 			color: inherit;
 			font-size: inherit;
 			cursor: pointer;
+			transition: .2s;
+		}
+
+		button:hover {
+			transform: scale(0.95);
 		}
 
 		[danger] {
@@ -574,20 +579,23 @@
 				Battery</button>
 			<button class="tablinks" onclick="openCity(event, 'devices')"><i class="material-icons">devices</i>
 				Devices</button>
+			<button class="tablinks" onclick="openCity(event, 'defaults'); defs5(); defs2(); defs3()"><i
+					class="material-icons">settings</i> Preferances</button>
 			<button class="tablinks" onclick="openCity(event, 'activity'); taskmg()"><i class="material-icons">poll</i>
 				Activity</button>
 			<button class="tablinks" onclick="openCity(event, 'perform'); updateFPS()"><i
 					class="material-icons">speed</i>
 				Performance</button>
-			<button class="tablinks" onclick="openCity(event, 'password')"><i class="material-icons">person</i>
-				User</button>
 			<button class="tablinks" onclick="openCity(event, 'exp'); defs();"><i class="material-icons">monitor</i>
 				Display</button>
+			<button class="tablinks" onclick="openCity(event, 'password')"><i class="material-icons">person</i>
+				User</button>
+			<button class="tablinks" onclick="openCity(event, 'network'); defs();"><i
+					class="material-icons">language</i>
+				Network</button>
 			<button class="tablinks" onclick="openCity(event, 'lclstgsc'); lclstgsc();"><i
 					class="material-icons">manage_search</i>
 				Data Manager</button>
-			<button class="tablinks" onclick="openCity(event, 'defaults'); defs5(); defs2(); defs3()"><i
-					class="material-icons">settings</i> Preferances</button>
 			<button class="tablinks" onclick="openCity(event, 'defaultappsforfiles'); defs2(); defs3()"><i
 					class="material-icons">open_in_browser</i> Defaults</button>
 			<button class="tablinks" onclick="openCity(event, 'about')"><i class="material-icons">info</i>
@@ -697,7 +705,7 @@
 
 		<div id="perform" class="tabcontent">
 			<style>
-				#fpsCanvas {
+				.graphcanvas {
 					width: 100%;
 					max-height: 100px;
 					background: #141414;
@@ -726,13 +734,14 @@
 			<h1>Performance</h1>
 			<h1 id="fpsprof" class="bigtext">0</h1>
 			<br>
-			<canvas id="fpsCanvas" width="400" height="200"></canvas>
+			<canvas class="graphcanvas" id="fpsCanvas" width="400" height="200"></canvas>
 			<small>
 				<h3>What is FPS?</h3>
 				<p>Frames Per Second (FPS) is a measure of how many times your device updates the display per second.
 					This value is closely tied to both the processing power of the system and the demands of the
 					software running on it.</p>
 			</small>
+			<canvas class="graphcanvas" id="HeapCanvas" width="400" height="200"></canvas>
 
 			<script>
 				var running, currentpage;
@@ -740,7 +749,6 @@
 				function updateFPS() {
 					var canvas = document.getElementById('fpsCanvas');
 					var ctx = canvas.getContext('2d');
-
 					var startTime = Date.now();
 					var frameCount = 0;
 					var fpsValues = [];
@@ -767,7 +775,7 @@
 						var initialY = canvas.height - fpsSubset[0] * stepY;
 						ctx.moveTo(initialX, initialY);
 
-						fpsSubset.push(fpsSubset[fpsSubset.length - 1])
+						fpsSubset.push(fpsSubset[fpsSubset.length - 1]);
 
 						fpsSubset.forEach(function (fps, index) {
 							var x = index * stepX;
@@ -800,16 +808,75 @@
 
 					render();
 
-					// Define a variable to hold the interval ID
 					let intervalId = setInterval(function () {
 						if (currentpage === 'perform') {
 							calculateFPS();
 						} else {
-							clearInterval(intervalId); // This stops the interval
+							clearInterval(intervalId);
 						}
 					}, 500);
-
 				}
+
+				// Function to render RAM usage
+				function updateRAMUsage() {
+					var canvas = document.getElementById('HeapCanvas');
+					var ctx = canvas.getContext('2d');
+					var heapValues = [];
+
+					function getMemoryUsage() {
+						if (performance.memory) {
+							var totalMemory = performance.memory.totalJSHeapSize / (1024 * 1024);
+							var usedMemory = performance.memory.usedJSHeapSize / (1024 * 1024);
+							var memoryUsage = (usedMemory / totalMemory) * 100;
+							heapValues.push(memoryUsage);
+						}
+
+						ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+						var numFrames = 30;
+						var heapSubset = heapValues.slice(-numFrames);
+
+						var stepX = canvas.width / heapSubset.length;
+						var maxY = Math.max(...heapSubset);
+						var stepY = canvas.height / (maxY + 10);
+
+						ctx.beginPath();
+						var initialX = 0;
+						var initialY = canvas.height - heapSubset[0] * stepY;
+						ctx.moveTo(initialX, initialY);
+
+						heapSubset.push(heapSubset[heapSubset.length - 1]);
+
+						heapSubset.forEach(function (usage, index) {
+							var x = index * stepX;
+							var y = canvas.height - usage * stepY;
+							ctx.lineTo(x, y);
+						});
+
+						ctx.lineTo(canvas.width, canvas.height);
+						ctx.lineTo(0, canvas.height);
+
+						ctx.fillStyle = '#263238';
+						ctx.fill();
+
+						ctx.strokeStyle = '#4CAF50';
+						ctx.lineWidth = 2;
+						ctx.stroke();
+						document.getElementById('ramprof').innerText = `RAM: ${heapSubset[heapSubset.length - 1].toFixed(2)}%`;
+
+					}
+
+					let ramIntervalId = setInterval(function () {
+						if (currentpage === 'perform') {
+							getMemoryUsage();
+						} else {
+							clearInterval(ramIntervalId);
+						}
+					}, 500);
+				}
+
+				updateFPS();
+				updateRAMUsage();
 			</script>
 		</div>
 
@@ -845,7 +912,7 @@
 							}
 							window.parent.removeUser();
 						}
-						
+
 					</script>
 					<buttongrp>
 
@@ -1085,7 +1152,7 @@
 							console.error(error)
 						}
 
-						
+
 						// nova copilot
 						document.getElementById("cbx-71").addEventListener("change", function () {
 							let newValue2 = document.getElementById("cbx-71").checked;
@@ -1296,87 +1363,95 @@
 
 			</div>
 			<script>
-			var currentreqID, replaceableapp, clickedRowId;
+				var currentreqID, replaceableapp, clickedRowId;
 
-async function rldfltyptable() {
-	const fileAssociations = window.parent.fileTypeAssociations;
+				async function rldfltyptable() {
+					const fileAssociations = window.parent.fileTypeAssociations;
 
-	async function createTable(fileAssociations) {
-		const table = document.createElement('div');
-		table.className = 'table';
+					async function createTable(fileAssociations) {
+						const table = document.createElement('div');
+						table.className = 'table';
 
-		const headerRow = document.createElement('div');
-		headerRow.className = 'header-row';
+						const headerRow = document.createElement('div');
+						headerRow.className = 'header-row';
 
-		const fileTypeHeader = document.createElement('div');
-		fileTypeHeader.className = 'header-cell file-type-header';
-		fileTypeHeader.textContent = 'File Extension';
+						const fileTypeHeader = document.createElement('div');
+						fileTypeHeader.className = 'header-cell file-type-header';
+						fileTypeHeader.textContent = 'File Extension';
 
-		const defaultAppHeader = document.createElement('div');
-		defaultAppHeader.className = 'header-cell default-app-header';
-		defaultAppHeader.textContent = 'Apps';
+						const defaultAppHeader = document.createElement('div');
+						defaultAppHeader.className = 'header-cell default-app-header';
+						defaultAppHeader.textContent = 'Apps';
 
-		headerRow.appendChild(fileTypeHeader);
-		headerRow.appendChild(defaultAppHeader);
-		table.appendChild(headerRow);
+						headerRow.appendChild(fileTypeHeader);
+						headerRow.appendChild(defaultAppHeader);
+						table.appendChild(headerRow);
 
-		for (const [extension, apps] of Object.entries(fileAssociations)) {
-			const row = document.createElement('div');
-			row.className = 'row';
-			row.id = `row-${extension}`; // Unique ID based on the file extension
+						for (const [extension, apps] of Object.entries(fileAssociations)) {
+							const row = document.createElement('div');
+							row.className = 'row';
+							row.id = `row-${extension}`; // Unique ID based on the file extension
 
-			const fileTypeCell = document.createElement('div');
-			fileTypeCell.className = 'cell file-type-cell';
-			fileTypeCell.textContent = extension;
+							const fileTypeCell = document.createElement('div');
+							fileTypeCell.className = 'cell file-type-cell';
+							fileTypeCell.textContent = extension;
 
-			const defaultAppCell = document.createElement('div');
-			defaultAppCell.className = 'cell default-app-cell';
-			defaultAppCell.innerHTML = await window.parent.getAppIcon(0, apps[0], true);
-			defaultAppCell.onclick = () => {
-				replaceableapp = apps[0];
-				currentreqID = window.parent.genUID();
-				clickedRowId = row.id; // Store the clicked row's ID
-				let appIdToOpen = window.parent.fileTypeAssociations['file'][0] || null;
-				window.parent.openlaunchprotocol(appIdToOpen, { "opener": "app", "dir": "Apps/" }, currentreqID, myWindow.windowID);
-			};
+							const defaultAppCell = document.createElement('div');
+							defaultAppCell.className = 'cell default-app-cell';
+							defaultAppCell.innerHTML = await window.parent.getAppIcon(0, apps[0], true);
+							defaultAppCell.onclick = () => {
+								replaceableapp = apps[0];
+								currentreqID = window.parent.genUID();
+								clickedRowId = row.id; // Store the clicked row's ID
+								let appIdToOpen = window.parent.fileTypeAssociations['file'][0] || null;
+								window.parent.openlaunchprotocol(appIdToOpen, { "opener": "app", "dir": "Apps/" }, currentreqID, myWindow.windowID);
+							};
 
-			row.appendChild(fileTypeCell);
-			row.appendChild(defaultAppCell);
-			table.appendChild(row);
-		}
+							row.appendChild(fileTypeCell);
+							row.appendChild(defaultAppCell);
+							table.appendChild(row);
+						}
 
-		return table;
-	}
-	const table = await createTable(fileAssociations);
-	document.getElementById('appfileassos').innerHTML = '';
-	document.getElementById('appfileassos').appendChild(table);
-}
+						if (!Object.entries(fileAssociations).length) {
+							table.innerHTML = '';
+							const idkspan = document.createElement("span");
+							idkspan.style.opacity = "0.5"
+							idkspan.innerText = window.parent.getRandomNothingQuote();
+							table.appendChild(idkspan);
+						}
 
-rldfltyptable();
-
-window.addEventListener('message', async (event) => {
-	const fileAssociations = window.parent.fileTypeAssociations;
-	if (event.data.action === 'loadlocalfile') {
-		if (event.data.id === myWindow.windowID) {
-			let targetAppId = replaceableapp;
-			let newAppId = event.data.returned;
-
-			for (let key in fileAssociations) {
-				if (fileAssociations.hasOwnProperty(key)) {
-					fileAssociations[key] = fileAssociations[key].map(appId => appId === targetAppId ? newAppId : appId);
+						return table;
+					}
+					const table = await createTable(fileAssociations);
+					document.getElementById('appfileassos').innerHTML = '';
+					document.getElementById('appfileassos').appendChild(table);
 				}
-			}
-			await window.parent.setSetting('fileTypeAssociations', fileAssociations);
 
-			// Update the icon in only the clicked row
-			const row = document.getElementById(clickedRowId);
-			if (row) {
-				const defaultAppCell = row.querySelector('.default-app-cell');
-				defaultAppCell.innerHTML = await window.parent.getAppIcon(0, newAppId, true);
-			}
-		}
-	}
-});
+				rldfltyptable();
+
+				window.addEventListener('message', async (event) => {
+					const fileAssociations = window.parent.fileTypeAssociations;
+					if (event.data.action === 'loadlocalfile') {
+						if (event.data.id === myWindow.windowID) {
+							let targetAppId = replaceableapp;
+							let newAppId = event.data.returned;
+
+							for (let key in fileAssociations) {
+								if (fileAssociations.hasOwnProperty(key)) {
+									fileAssociations[key] = fileAssociations[key].map(appId => appId === targetAppId ? newAppId : appId);
+								}
+							}
+							await window.parent.setSetting('fileTypeAssociations', fileAssociations);
+
+							// Update the icon in only the clicked row
+							const row = document.getElementById(clickedRowId);
+							if (row) {
+								const defaultAppCell = row.querySelector('.default-app-cell');
+								defaultAppCell.innerHTML = await window.parent.getAppIcon(0, newAppId, true);
+							}
+						}
+					}
+				});
 			</script>
 		</div>
 
@@ -1384,18 +1459,18 @@ window.addEventListener('message', async (event) => {
 			<h1>Password</h1>
 			<segr>
 				<style>
-					#password [setting] {
+					[setting].spread {
 						display: flex;
 						flex-direction: row;
 						align-items: center;
 						justify-content: space-between;
 					}
 				</style>
-				<div setting id="changpassthingy">
+				<div setting id="changpassthingy" class="spread">
 					<b id="passstat"></b>
 					<button onclick="chstpass()">Continue</button>
 				</div>
-				<div setting>
+				<div setting class="spread">
 					<b id="userstatsi">Signed in as Admin</b>
 					<button onclick="window.parent.logoutofnova()">Sign Out</button>
 				</div>
@@ -1503,16 +1578,17 @@ window.addEventListener('message', async (event) => {
 				<b>Support NovaOS?</b>
 				<p>Support us making NovaOS into a better and more powerful place for you. Starting from 1$.
 					<br>
-					<a onclick="window.open('https://www.patreon.com/adthoughtsglobal/shop')">Donate</a> 
+					<a onclick="window.open('https://www.patreon.com/adthoughtsglobal/shop')">Donate</a>
 					<a okay onclick="window.open('https://www.patreon.com/adthoughtsglobal/membership')">Memberships</a>
 				</p>
 			</supportb>
 			<segr>
-			<div setting>
-				<b>NovaOS Discord</b>
-				<button style="margin-top: 5px;float: right;" onclick="window.open('https://discord.gg/atkqbwEQU8')">Join</button>
-				<p>Join us for support, exclusive news and much more.</p>
-			</div>
+				<div setting>
+					<b>NovaOS Discord</b>
+					<button style="margin-top: 5px;float: right;"
+						onclick="window.open('https://discord.gg/atkqbwEQU8')">Join</button>
+					<p>Join us for support, exclusive news and much more.</p>
+				</div>
 			</segr>
 			<h3>Credits</h3>
 			<table>
@@ -1660,6 +1736,37 @@ window.addEventListener('message', async (event) => {
 
 			</script>
 		</div>
+		<div id="network" class="tabcontent">
+			<h1>RoturTW</h1>
+			<small style="margin-bottom: 0.5rem;">Rotur is a cloudlink based standard for packet based communications,
+				generally for Web OSs.</small>
+			<segr>
+				<div setting>
+					<div class="checkbox-wrapper-51">
+						<input type="checkbox" id="cbx-65" role="submit">
+						<label for="cbx-65" class="toggle">
+							<span>
+								<svg width="10px" height="10px" viewBox="0 0 10 10">
+									<path
+										d="M5,1 L5,1 C2.790861,1 1,2.790861 1,5 L1,5 C1,7.209139 2.790861,9 5,9 L5,9 C7.209139,9 9,7.209139 9,5 L9,5 C9,2.790861 7.209139,1 5,1 L5,9 L5,1 Z">
+									</path>
+								</svg>
+							</span>
+						</label>
+					</div>
+					<b>Enable RoturTW</b>
+					<p>Enable cross platform networking via RoturTW.
+					</p>
+				</div>
+			</segr>
+			<div id="rotursettings">
+				<h1>Account</h1>
+				<segr>
+
+				</segr>
+			</div>
+		</div>
+
 		<div id="devices" class="tabcontent">
 			<h1>Devices</h1>
 			<style>
@@ -1880,19 +1987,20 @@ window.addEventListener('message', async (event) => {
 					</div>
 				</div>
 			</segr>
-			<h1>Colors <label real>BETA</label></h1> 
+			<h1>Colors <label real>BETA</label></h1>
 			<button onclick="applyColorsFromImageURL()" style="margin-bottom: 1rem;">Adapt from image URL</button>
 
 			<canvas id="canvas" style="display:none;"></canvas>
 			<style>
 				label[real] {
 					font-size: var(--font-size-small);
-    background-color: rgb(139 62 62);
-    color: white;
-    border-radius: 5px;
-    padding: 3px 5px;
-    margin-left: 5px;
+					background-color: rgb(139 62 62);
+					color: white;
+					border-radius: 5px;
+					padding: 3px 5px;
+					margin-left: 5px;
 				}
+
 				.jscolor {
 					width: 35px;
 					height: 35px;
@@ -1974,7 +2082,7 @@ window.addEventListener('message', async (event) => {
 				</div>
 
 			</segr>
-				<button id="save-btn">Save</button>
+			<button id="save-btn">Save</button>
 			<script>
 				function updateColor(picker, variableName) {
 					const colorValue = picker.toHEXString();
@@ -2083,73 +2191,73 @@ window.addEventListener('message', async (event) => {
 
 				async function applyColorsFromImageURL() {
 					let imageURL = await window.parent.ask("Enter image URL");
-            const canvas = document.getElementById('canvas');
-            const ctx = canvas.getContext('2d');
-            const image = new Image();
-            
-            image.crossOrigin = 'Anonymous'; // This ensures the image can be processed if it's hosted on another domain
+					const canvas = document.getElementById('canvas');
+					const ctx = canvas.getContext('2d');
+					const image = new Image();
 
-            image.onload = () => {
-                canvas.width = image.width;
-                canvas.height = image.height;
-                ctx.drawImage(image, 0, 0, image.width, image.height);
-                const imgData = ctx.getImageData(0, 0, image.width, image.height);
+					image.crossOrigin = 'Anonymous'; // This ensures the image can be processed if it's hosted on another domain
 
-                const avgColor = getAverageColor(imgData);
-                const invertedColor = invertColor(avgColor);
+					image.onload = () => {
+						canvas.width = image.width;
+						canvas.height = image.height;
+						ctx.drawImage(image, 0, 0, image.width, image.height);
+						const imgData = ctx.getImageData(0, 0, image.width, image.height);
 
-                // Apply the colors to CSS variables
-                document.documentElement.style.setProperty('--colors-BG-normal', colorToString(avgColor));
-                document.documentElement.style.setProperty('--colors-text-normal', colorToString(invertedColor));
-                document.documentElement.style.setProperty('--colors-BG-sub', colorToString(adjustBrightness(avgColor, -0.2)));
-                document.documentElement.style.setProperty('--colors-BG-section', colorToString(adjustBrightness(avgColor, -0.1)));
-                document.documentElement.style.setProperty('--colors-BG-highlighted', colorToString(adjustBrightness(avgColor, 0.2)));
-                document.documentElement.style.setProperty('--colors-BG-accent', colorToString(adjustBrightness(avgColor, 0.3)));
-                
-                // Apply colors to jscolor inputs
-                document.querySelector("#normal-bg").jscolor.fromString(colorToString(avgColor));
-                document.querySelector("#text-normal").jscolor.fromString(colorToString(invertedColor));
-                document.querySelector("#section-bg").jscolor.fromString(colorToString(adjustBrightness(avgColor, -0.1)));
-                document.querySelector("#high-bg").jscolor.fromString(colorToString(adjustBrightness(avgColor, 0.2)));
-                document.querySelector("#sub-bg").jscolor.fromString(colorToString(adjustBrightness(avgColor, -0.2)));
-            };
+						const avgColor = getAverageColor(imgData);
+						const invertedColor = invertColor(avgColor);
 
-            image.src = imageURL;
-        }
+						// Apply the colors to CSS variables
+						document.documentElement.style.setProperty('--colors-BG-normal', colorToString(avgColor));
+						document.documentElement.style.setProperty('--colors-text-normal', colorToString(invertedColor));
+						document.documentElement.style.setProperty('--colors-BG-sub', colorToString(adjustBrightness(avgColor, -0.2)));
+						document.documentElement.style.setProperty('--colors-BG-section', colorToString(adjustBrightness(avgColor, -0.1)));
+						document.documentElement.style.setProperty('--colors-BG-highlighted', colorToString(adjustBrightness(avgColor, 0.2)));
+						document.documentElement.style.setProperty('--colors-BG-accent', colorToString(adjustBrightness(avgColor, 0.3)));
 
-        function getAverageColor(imgData) {
-            const data = imgData.data;
-            let r = 0, g = 0, b = 0;
-            const pixelCount = imgData.width * imgData.height;
+						// Apply colors to jscolor inputs
+						document.querySelector("#normal-bg").jscolor.fromString(colorToString(avgColor));
+						document.querySelector("#text-normal").jscolor.fromString(colorToString(invertedColor));
+						document.querySelector("#section-bg").jscolor.fromString(colorToString(adjustBrightness(avgColor, -0.1)));
+						document.querySelector("#high-bg").jscolor.fromString(colorToString(adjustBrightness(avgColor, 0.2)));
+						document.querySelector("#sub-bg").jscolor.fromString(colorToString(adjustBrightness(avgColor, -0.2)));
+					};
 
-            for (let i = 0; i < data.length; i += 4) {
-                r += data[i];
-                g += data[i + 1];
-                b += data[i + 2];
-            }
+					image.src = imageURL;
+				}
 
-            r = Math.floor(r / pixelCount);
-            g = Math.floor(g / pixelCount);
-            b = Math.floor(b / pixelCount);
+				function getAverageColor(imgData) {
+					const data = imgData.data;
+					let r = 0, g = 0, b = 0;
+					const pixelCount = imgData.width * imgData.height;
 
-            return { r, g, b };
-        }
+					for (let i = 0; i < data.length; i += 4) {
+						r += data[i];
+						g += data[i + 1];
+						b += data[i + 2];
+					}
 
-        function invertColor({ r, g, b }) {
-            return { r: 255 - r, g: 255 - g, b: 255 - b };
-        }
+					r = Math.floor(r / pixelCount);
+					g = Math.floor(g / pixelCount);
+					b = Math.floor(b / pixelCount);
 
-        function adjustBrightness({ r, g, b }, factor) {
-            return {
-                r: Math.min(255, Math.max(0, Math.floor(r * (1 + factor)))),
-                g: Math.min(255, Math.max(0, Math.floor(g * (1 + factor)))),
-                b: Math.min(255, Math.max(0, Math.floor(b * (1 + factor))))
-            };
-        }
+					return { r, g, b };
+				}
 
-        function colorToString({ r, g, b }) {
-            return `rgb(${r}, ${g}, ${b})`;
-        }
+				function invertColor({ r, g, b }) {
+					return { r: 255 - r, g: 255 - g, b: 255 - b };
+				}
+
+				function adjustBrightness({ r, g, b }, factor) {
+					return {
+						r: Math.min(255, Math.max(0, Math.floor(r * (1 + factor)))),
+						g: Math.min(255, Math.max(0, Math.floor(g * (1 + factor)))),
+						b: Math.min(255, Math.max(0, Math.floor(b * (1 + factor))))
+					};
+				}
+
+				function colorToString({ r, g, b }) {
+					return `rgb(${r}, ${g}, ${b})`;
+				}
 			</script>
 			<h1>Personalization</h1>
 			<segr>
@@ -2164,17 +2272,17 @@ window.addEventListener('message', async (event) => {
 			<style>
 				.inputwithbtn {
 					width: 100%;
-    display: flex;
-    flex-direction: row;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
+					display: flex;
+					flex-direction: row;
+					gap: 0.5rem;
+					margin-top: 0.5rem;
 				}
 
 				.inputwithbtn input {
 					background-color: var(--colors-BG-normal);
 					color: var(--colors-text-normal);
 					flex: 1;
-					border:none;
+					border: none;
 					padding: var(--sizing-nano) var(--sizing-normal);
 					border-radius: var(--sizing-border-radius);
 					padding: var(--sizing-nano);

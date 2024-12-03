@@ -376,8 +376,8 @@ nav [navobj] div {
 
 .transp3 {
 	transition: var(--time-action);
+	transform:scale(0.98);
 	opacity: 0;
-	transform: scale(0.98);
 }
 
 .transp4 {

@@ -1,4 +1,4 @@
-var batteryLevel, winds = {}, rp, flwint = true, contentpool = {}, memory = {}, _nowapp, fulsapp = false, nowappdo, appsHistory = [], nowwindow, appicns = {}, dev = true, appfound = 'files', fileslist = [], qsetscache = {}, badlaunch = false;
+var batteryLevel, winds = {}, rp, flwint = true, contentpool = {}, memory = {}, _nowapp, fulsapp = false, nowappdo, appsHistory = [], nowwindow, appicns = {}, dev = true, appfound = 'files', fileslist = [], sessionSettings = {}, badlaunch = false;
 var really = false, initmenuload = true, fileTypeAssociations = {}, Gtodo, notifLog = {}, initialization = false, onstartup = [];
 var novaFeaturedImage = `Dev.png`;
 function setbgimagetourl(x) {
@@ -748,6 +748,7 @@ async function extractAndRegisterCapabilities(appId, content) {
 	}
 }
 async function registerApp(appId, capabilities) {
+	notify(await getFileNameByID(appId) + " installed", "Registering complete.", "NovaOS System")
 	for (let fileType of capabilities) {
 		if (!fileTypeAssociations[fileType]) {
 			fileTypeAssociations[fileType] = [];
@@ -1249,12 +1250,14 @@ async function setMessage() {
 	const message = await ask('What should be the message?', 'Do not disturb...');
 	document.getElementById('sleepmessage').innerHTML = message;
 }
+
 function displayTimeLeft(seconds) {
 	const minutes = Math.floor(seconds / 60);
 	const remainderSeconds = seconds % 60;
 	const display = `${minutes}:${remainderSeconds < 10 ? '0' : ''}${remainderSeconds}`;
 	document.getElementById('sleeptimer').textContent = display;
 }
+
 function notify(title, description, appname) {
 	if (document.getElementById("notification").style.display == "block") {
 		document.getElementById("notification").style.display = "none";
