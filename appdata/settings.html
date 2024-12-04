@@ -721,32 +721,31 @@
 
 				#fpsprof::after {
 					content: 'FPS';
-					padding: 7px 10px;
-					font-size: var(--font-size-normal);
-					border-radius: var(--sizing-border-radius-full);
-					background-color: #384a57;
+					padding: 2px 8px;
+					font-size: 13px;
+					border-radius: 5px;
+					background-color: var(--colors-BG-section);
 					display: inline-block;
-					border: 1px solid #55879d;
+					border: 1px solid var(--colors-BG-sub);
 					margin-left: 10px;
-					transform: translate(5px, -24px);
+					transform: translate(5px, -10px);
 				}
 			</style>
 			<h1>Performance</h1>
 			<h1 id="fpsprof" class="bigtext">0</h1>
 			<br>
 			<canvas class="graphcanvas" id="fpsCanvas" width="400" height="200"></canvas>
-			<small>
-				<h3>What is FPS?</h3>
-				<p>Frames Per Second (FPS) is a measure of how many times your device updates the display per second.
-					This value is closely tied to both the processing power of the system and the demands of the
-					software running on it.</p>
-			</small>
+
+			<h1>Memory</h1>
+			<h1 id="ramprof" class="bigtext">0</h1>
+			<br>
 			<canvas class="graphcanvas" id="HeapCanvas" width="400" height="200"></canvas>
 
 			<script>
 				var running, currentpage;
 
 				function updateFPS() {
+					updateRAMUsage();
 					var canvas = document.getElementById('fpsCanvas');
 					var ctx = canvas.getContext('2d');
 					var startTime = Date.now();
@@ -817,7 +816,6 @@
 					}, 500);
 				}
 
-				// Function to render RAM usage
 				function updateRAMUsage() {
 					var canvas = document.getElementById('HeapCanvas');
 					var ctx = canvas.getContext('2d');
@@ -862,7 +860,7 @@
 						ctx.strokeStyle = '#4CAF50';
 						ctx.lineWidth = 2;
 						ctx.stroke();
-						document.getElementById('ramprof').innerText = `RAM: ${heapSubset[heapSubset.length - 1].toFixed(2)}%`;
+						document.getElementById('ramprof').innerText = `${heapSubset[heapSubset.length - 1].toFixed(0)}%`;
 
 					}
 
@@ -874,9 +872,6 @@
 						}
 					}, 500);
 				}
-
-				updateFPS();
-				updateRAMUsage();
 			</script>
 		</div>
 
