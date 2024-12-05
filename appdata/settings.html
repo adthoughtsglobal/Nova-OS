@@ -1460,6 +1460,13 @@
 						align-items: center;
 						justify-content: space-between;
 					}
+
+					[setting].formlike {
+						display: flex;
+						flex-direction: column;
+						justify-content: space-between;
+						gap: 0.3rem;
+					}
 				</style>
 				<div setting id="changpassthingy" class="spread">
 					<b id="passstat"></b>
@@ -1757,7 +1764,39 @@
 			<div id="rotursettings">
 				<h1>Account</h1>
 				<segr>
-
+					<div setting class="spread">
+						<b id="userstatsi">Signed in as Admin</b>
+						<button onclick="window.parent.logoutofnova()">Sign Out</button>
+					</div>
+				</segr>
+				<segr>
+					<div setting class="formlike">
+						<input id="roturaccsignname" placeholder="Enter username..." class="inputtype1" type="text">
+						<input id="roturaccsignpass" placeholder="Enter your password..." class="inputtype1" type="password">
+						<button>Sign in</button>
+					</div>
+				</segr>
+				<script>
+					async function chstpass() {
+						var setpass = '';
+						if (window.parent.password == 'nova') {
+							setpass = await window.parent.ask("Set a password: ", "")
+						} else {
+							setpass = await window.parent.ask("Choose an another password: ", window.parent.password);
+							if (setpass == window.parent.password) {
+								window.parent.say("That is your current password. Choose a different one.", "failed")
+								return;
+							}
+						}
+						if (await window.parent.justConfirm("Are you sure?", "All your data will be lost if you forget this password. Re-encrypt all your files with this one?")) {
+							await window.parent.changePassword(window.parent.password, setpass);
+							await window.parent.say("Click OK when you are ready to restart your OS.")
+							window.parent.location.reload()
+						} else {
+							return;
+						}
+					}
+				</script>
 				</segr>
 			</div>
 		</div>
@@ -2259,7 +2298,7 @@
 				<div class="inpbox">
 					<span>Wallpaper</span>
 					<div class="inputwithbtn">
-						<input placeholder="Paste a URL here..." id="wallpaperurl">
+						<input placeholder="Paste a URL here..." id="wallpaperurl" class="inputtype1">
 						<button onclick="savewallpap()">Save</button>
 					</div>
 				</div>
@@ -2273,14 +2312,13 @@
 					margin-top: 0.5rem;
 				}
 
-				.inputwithbtn input {
+				input.inputtype1 {
 					background-color: var(--colors-BG-normal);
 					color: var(--colors-text-normal);
 					flex: 1;
 					border: none;
 					padding: var(--sizing-nano) var(--sizing-normal);
 					border-radius: var(--sizing-border-radius);
-					padding: var(--sizing-nano);
 				}
 
 				#UISIZErangeslid {

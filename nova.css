@@ -80,3 +80,7 @@ body {
 	font-family: 'Poppins', sans-serif;
 	user-select: none;
 }
+
+body * {
+    transition-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+}

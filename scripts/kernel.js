@@ -80,13 +80,19 @@ function flwin(x) {
         { width: 'calc(100% - 0px)', height: 'calc(100% - 57px)', left: '0', top: '0' } : 
         calculateWindowSize(aspectRatio);
 
-    Object.assign(winElement.style, sizeStyles);
+    for (const [key, value] of Object.entries(sizeStyles)) {
+        if (winElement.style[key] !== value) {
+            winElement.style[key] = value;
+        }
+    }
+
     x.innerHTML = isFullScreen ? "close_fullscreen" : "open_in_full";
 
     setTimeout(() => {
         winElement.classList.remove("transp2");
     }, 1000);
 }
+
 
 function calculateWindowSize(aspectratio) {
     if (!aspectratio) aspectratio = "9/6";

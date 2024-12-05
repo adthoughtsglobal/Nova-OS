@@ -243,20 +243,20 @@ document.addEventListener("DOMContentLoaded", async function () {
 		return;
 	}
 	const searchInput5342 = document.querySelector('#novamenusearchinp');
-let keyHeld = false;
+	let keyHeld = false;
 
-searchInput5342.addEventListener('keydown', () => {
-    keyHeld = true; 
-});
+	searchInput5342.addEventListener('keydown', () => {
+		keyHeld = true;
+	});
 
-searchInput5342.addEventListener('keyup', (e) => {
-    if (keyHeld) {
-        keyHeld = false; // Reset key state
-        opensearchpanel(searchInput5342.value);
-        gid('appdmod').close();
-        searchInput5342.value = "";
-    }
-});
+	searchInput5342.addEventListener('keyup', (e) => {
+		if (keyHeld) {
+			keyHeld = false; // Reset key state
+			opensearchpanel(searchInput5342.value);
+			gid('appdmod').close();
+			searchInput5342.value = "";
+		}
+	});
 
 	gid("versionswitcher")?.remove();
 	await registerDecryptWorker();
@@ -315,54 +315,85 @@ function updateTime() {
 }
 const jsonToDataURI = json => `data:application/json,${encodeURIComponent(JSON.stringify(json))}`;
 async function openn() {
-	gid("appsindeck").innerHTML = ``
-	gid("strtsear").value = ""
+	gid("strtsear").value = "";
 	gid("strtappsugs").style.display = "none";
 	let x = await getFileNamesByFolder("Apps/");
 	x.sort((a, b) => a.name.localeCompare(b.name));
-	if (x.length == 0 && initmenuload) {
-		initmenuload = false
-		gid("appdmod").close()
-		let choicetoreinst = await justConfirm(`Re-initialize OS?`, `Did the OS initialization fail? if yes, we can re-initialize your OS and install all the default apps. \n\nNovaOS did not find any apps while initial load of Nova Menu. \n\nre-initializing your OS may delete your data.`)
+
+	if (x.length === 0 && initmenuload) {
+		initmenuload = false;
+		gid("appdmod").close();
+		let choicetoreinst = await justConfirm(
+			`Re-initialize OS?`,
+			`Did the OS initialization fail? If yes, we can re-initialize your OS and install all the default apps. \n\nNovaOS did not find any apps while the initial load of Nova Menu. \n\nRe-initializing your OS may delete your data.`
+		);
 		if (choicetoreinst) {
-			initialiseOS()
+			initialiseOS();
 		}
 		return;
 	}
+
 	initmenuload = false;
-	Promise.all(x.map(async (app) => {
+
+	let existingAppElements = [...gid("appsindeck").children];
+let existingAppIds = new Set(existingAppElements.map((child) => child.dataset.appId));
+let newAppIds = new Set(x.map((app) => app.id));
+
+// Remove apps that are no longer in the updated list.
+existingAppElements.forEach((element) => {
+	if (!newAppIds.has(element.dataset.appId)) {
+		element.remove();
+	}
+});
+
+// Add new apps that aren't already rendered.
+Promise.all(
+	x.map(async (app) => {
+		if (existingAppIds.has(app.id)) return;
+
 		var appShortcutDiv = document.createElement("div");
 		appShortcutDiv.className = "app-shortcut tooltip sizableuielement";
+		appShortcutDiv.dataset.appId = app.id;
 		appShortcutDiv.addEventListener("click", () => openfile(app.id));
+
 		var iconSpan = document.createElement("span");
-		iconSpan.innerHTML = "<span class='taskbarloader'></span>"
-		getAppIcon(false, app.id).then(appIcon => {
+		iconSpan.innerHTML = "<span class='taskbarloader'></span>";
+		getAppIcon(false, app.id).then((appIcon) => {
 			iconSpan.innerHTML = appIcon;
 		});
+
 		function getapnme(x) {
-			return x.split('.')[0];
+			return x.split(".")[0];
 		}
+
 		var nameSpan = document.createElement("span");
 		nameSpan.className = "appname";
 		nameSpan.textContent = getapnme(app.name);
+
 		appShortcutDiv.appendChild(iconSpan);
 		appShortcutDiv.appendChild(nameSpan);
+
 		gid("appsindeck").appendChild(appShortcutDiv);
-	})).then(() => {
-	}).catch((error) => {
-		console.error('An error occurred:', error);
+	})
+)
+	.then(() => {})
+	.catch((error) => {
+		console.error("An error occurred:", error);
 	});
+
 	if (gid("closeallwinsbtn").checked) {
 		gid("closeallwinsbtn").checked = false;
 	}
+
 	if (!Object.keys(winds).length) {
 		gid("closeallwinsbtn").checked = true;
-		gid("closeallwinsbtn").setAttribute("disabled", true)
+		gid("closeallwinsbtn").setAttribute("disabled", true);
 	} else {
-		gid("closeallwinsbtn").setAttribute("disabled", false)
+		gid("closeallwinsbtn").setAttribute("disabled", false);
 	}
-	gid('appdmod').showModal()
-	scaleUIElements(await getSetting("UISizing"))
+
+	gid("appdmod").showModal();
+	scaleUIElements(await getSetting("UISizing"));
 }
 async function loadrecentapps() {
 	gid("serrecentapps").innerHTML = ``
@@ -842,37 +873,46 @@ function ask(question, preset = '') {
 }
 async function loadtaskspanel() {
 	let appbarelement = gid("nowrunninapps");
-	appbarelement.innerHTML = "";
-	if (Object.keys(winds).length == 0) {
-		appbarelement.style.display = "none";
-		return;
-	}
+	let currentKeys = Array.from(appbarelement.querySelectorAll(".app-shortcut")).map(el => el.dataset.key);
 
 	let validKeys = Object.keys(winds).filter(key => gid("window" + key.slice(-12)) !== null);
-	let x = validKeys.map(key => key.slice(0, -12));
-	let wid = validKeys.map(key => key.slice(-12));
-	if (x.length === 0) {
-		appbarelement.style.display = "none";
-	} else {
-		appbarelement.style.display = "flex";
-	}
-	x.forEach(async (app, index) => {
+	let newKeys = validKeys.map(key => key.slice(0, -12) + key.slice(-12));
+
+	let keysToAdd = newKeys.filter(key => !currentKeys.includes(key));
+	let keysToRemove = currentKeys.filter(key => !newKeys.includes(key));
+
+	keysToRemove.forEach(key => {
+		let element = appbarelement.querySelector(`[data-key='${key}']`);
+		if (element) appbarelement.removeChild(element);
+	});
+
+	keysToAdd.forEach(async key => {
+		let app = key.slice(0, -12);
+		let wid = key.slice(-12);
+
 		let appShortcutDiv = document.createElement("biv");
 		appShortcutDiv.className = "app-shortcut tooltip adock sizableuielement";
+		appShortcutDiv.dataset.key = key;
+
 		appShortcutDiv.addEventListener("click", function () {
-			putwinontop('window' + wid[index]);
-			winds[app + wid[index]] = Number(gid("window" + wid[index]).style.zIndex);
-			gid('window' + wid[index]).style.display = "flex";
+			putwinontop('window' + wid);
+			winds[app + wid] = Number(gid("window" + wid).style.zIndex);
+			gid('window' + wid).style.display = "flex";
 		});
+
 		let iconSpan = document.createElement("span");
 		iconSpan.innerHTML = appicns[app] || defaultAppIcon;
+
 		let tooltisp = document.createElement("span");
 		tooltisp.className = "tooltiptext";
 		tooltisp.innerText = basename(app);
+
 		appShortcutDiv.appendChild(iconSpan);
 		appShortcutDiv.appendChild(tooltisp);
 		appbarelement.appendChild(appShortcutDiv);
 	});
+
+	appbarelement.style.display = validKeys.length > 0 ? "flex" : "none";
 }
 var dev;
 function shrinkbsf(str) {
