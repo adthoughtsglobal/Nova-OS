@@ -156,24 +156,30 @@
 			function gid(x) {
 				return document.getElementById(x);
 			}
+
+			document.getElementById("terminput").addEventListener("keypress", function (event) {
+				if (event.key == "Enter") {
+					termrun()
+				}
+			})
 			async function termrun() {
 				const inputValue = document.getElementById("terminput").value;
 				let result = '';
 
 				async function disp(x) {
-					
+
 
 					if (x instanceof Error) {
 						result += (`Error: ${x.message}\nStack: ${x.stack}`);
-                        } else if (typeof x === 'function') {
-                            result += (`Function: ${x.name || 'anonymous'}\n${result.toString()}`);
-                        } else if (x instanceof Element) {
-                            result += (`DOM Element: <${x.tagName.toLowerCase()} id="${result.id}" class="${x.className}">`);
-                        } else if (typeof x === 'object' && x !== null) {
-                            result += `<pre>${JSON.stringify(x, null, 2)}</pre>`
-                        } else {
-                            result += x;
-                        }
+					} else if (typeof x === 'function') {
+						result += (`Function: ${x.name || 'anonymous'}\n${result.toString()}`);
+					} else if (x instanceof Element) {
+						result += (`DOM Element: <${x.tagName.toLowerCase()} id="${result.id}" class="${x.className}">`);
+					} else if (typeof x === 'object' && x !== null) {
+						result += `<pre>${JSON.stringify(x, null, 2)}</pre>`
+					} else {
+						result += x;
+					}
 				}
 
 				async function executeCode() {

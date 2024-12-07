@@ -15,7 +15,6 @@ self.addEventListener('message', async (event) => {
             const decoder = new TextDecoder();
             const result = decoder.decode(decrypted);
 
-            // Send the decrypted result back to the main thread
             event.source.postMessage({
                 type: 'decrypted',
                 result
