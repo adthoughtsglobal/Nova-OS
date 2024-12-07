@@ -152,75 +152,80 @@
 					would like this tiny tool that would help you create a better tomorrow. Good luck!</p>
 			</div>
 		</div>
-		<script>
-			function gid(x) {
-				return document.getElementById(x);
-			}
 
-			document.getElementById("terminput").addEventListener("keypress", function (event) {
-				if (event.key == "Enter") {
-					termrun()
-				}
-			})
-			async function termrun() {
-				const inputValue = document.getElementById("terminput").value;
-				let result = '';
-
-				async function disp(x) {
-
-
-					if (x instanceof Error) {
-						result += (`Error: ${x.message}\nStack: ${x.stack}`);
-					} else if (typeof x === 'function') {
-						result += (`Function: ${x.name || 'anonymous'}\n${result.toString()}`);
-					} else if (x instanceof Element) {
-						result += (`DOM Element: <${x.tagName.toLowerCase()} id="${result.id}" class="${x.className}">`);
-					} else if (typeof x === 'object' && x !== null) {
-						result += `<pre>${JSON.stringify(x, null, 2)}</pre>`
-					} else {
-						result += x;
-					}
-				}
-
-				async function executeCode() {
-					try {
-						const asyncFunction = new Function('return async () => { ' + inputValue + ' }')();
-						const output = await asyncFunction();
-						await disp(output);
-					} catch (error) {
-						result = error.message;
-						console.log(result);
-					}
-				}
-
-				await executeCode();
-
-				const outputElement = document.getElementById("termoutput");
-				if (typeof result === "object") {
-					outputElement.innerHTML += `<div class="outputitem info">
-				<div class="outputitemquery">
-					<ion-icon name="rocket-outline"></ion-icon>
-					<span>${inputValue}</span>
-				</div>
-				<code>${JSON.stringify(result)}</code>
-			</div>`;
-				} else {
-					outputElement.innerHTML += `<div class="outputitem info">
-				<div class="outputitemquery">
-					<ion-icon name="rocket-outline"></ion-icon>
-					<span>${inputValue}</span>
-				</div>
-				<p>${result}</p>
-			</div>`;
-				}
-			}
-		</script>
 		<div class="btnc">
 			<input placeholder=">>>" id="terminput">
 			<button onclick="termrun()">
 				<ion-icon name="play-outline"></ion-icon>
 			</button>
 		</div>
+		<script defer>
+			
+  function gid(x) {
+    return document.getElementById(x);
+  }
+
+  document.getElementById("terminput").addEventListener("keypress", function (event) {
+    if (event.key == "Enter") {
+      termrun()
+    }
+  })
+
+  async function termrun() {
+  const inputValue = document.getElementById("terminput").value;
+  let result = '';
+
+  async function disp(x) {
+    if (x instanceof Error) {
+      result += (`Error: ${x.message}\nStack: ${x.stack}`);
+    } else if (typeof x === 'function') {
+      result += (`Function: ${x.name || 'anonymous'}\n${x.toString()}`);
+    } else if (x instanceof Element) {
+      result += (`DOM Element: <${x.tagName.toLowerCase()} id="${x.id}" class="${x.className}">`);
+    } else if (typeof x === 'object' && x !== null) {
+      result += `<pre>${JSON.stringify(x, null, 2)}</pre>`;
+    } else {
+      result += x;
+    }
+  }
+
+  async function executeCode() {
+    try {
+      // Directly execute the input code and resolve async parts correctly
+      const output = await new Function('return ' + inputValue)();
+      await disp(output);
+      return output;
+    } catch (error) {
+      result = error.message;
+      console.log(result);
+      return result;
+    }
+  }
+
+  const output = await executeCode();
+
+  const outputElement = document.getElementById("termoutput");
+  if (typeof output === "object") {
+    outputElement.innerHTML += `
+      <div class="outputitem info">
+        <div class="outputitemquery">
+          <ion-icon name="rocket-outline"></ion-icon>
+          <span>${inputValue}</span>
+        </div>
+        <code>${JSON.stringify(output)}</code>
+      </div>`;
+  } else {
+    outputElement.innerHTML += `
+      <div class="outputitem info">
+        <div class="outputitemquery">
+          <ion-icon name="rocket-outline"></ion-icon>
+          <span>${inputValue}</span>
+        </div>
+        <p>${output}</p>
+      </div>`;
+  }
+}
+		</script>
 	</div>
 
 </body>
