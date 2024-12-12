@@ -198,8 +198,10 @@ async function flushDB(value) {
     const encryptedContentPool = {};
 
     for (const id in value.contentpool) {
-        const compressedContent = compressString(value.contentpool[id]);
-        encryptedContentPool[id] = await encryptData(cryptoKeyCache, compressedContent);
+        encryptedContentPool[id] = await encryptData(
+            cryptoKeyCache, 
+            compressString(value.contentpool[id])
+        );
     }
     const memoryValue = {
         key: CurrentUsername || 'Admin',
@@ -269,23 +271,29 @@ async function getdb() {
 }
 
 function arrayBufferToBase64(buffer) {
-    let binary = '';
     const bytes = new Uint8Array(buffer);
-    for (let i = 0; i < bytes.byteLength; i++) {
-        binary += String.fromCharCode(bytes[i]);
+    if (bytes.length < 10000) {
+        return btoa(String.fromCharCode(...bytes));
+    }
+    let binary = '';
+    const chunkSize = 8192;
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+        binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
     }
     return btoa(binary);
 }
 
 function base64ToArrayBuffer(base64) {
     const binaryString = atob(base64);
-    const len = binaryString.length;
-    const bytes = new Uint8Array(len);
-    for (let i = 0; i < len; i++) {
+    const length = binaryString.length;
+    const buffer = new ArrayBuffer(length);
+    const bytes = new Uint8Array(buffer);
+    for (let i = 0; i < length; i++) {
         bytes[i] = binaryString.charCodeAt(i);
     }
     return bytes;
 }
+
 
 function compressString(input) {
     try {
