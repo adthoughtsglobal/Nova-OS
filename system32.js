@@ -4,6 +4,8 @@ var password = "nova";
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 var lethalpasswordtimes = true;
+
+// event bus
 const eventBusBlob = new Blob([`
     const eventBus = new EventTarget();
     const listeners = new Map();
@@ -59,45 +61,8 @@ const eventBusWorker = {
     }
 };
 
+// database functions
 
-async function openDB(databaseName, version) {
-    return new Promise((resolve, reject) => {
-        const request = indexedDB.open(databaseName, version);
-        request.onupgradeneeded = async (event) => {
-            const db = event.target.result;
-            if (!db.objectStoreNames.contains("dataStore")) {
-                db.createObjectStore("dataStore", { keyPath: 'key' });
-                await saveMagicStringInLocalStorage(password);
-            }
-        };
-
-        request.onsuccess = async (event) => {
-            const db = event.target.result;
-            if (db.version > 1) {
-                const dataToPreserve = await readAllData(db, 'dataStore');
-                db.close();
-                const deleteRequest = indexedDB.deleteDatabase(databaseName);
-                deleteRequest.onsuccess = () => {
-                    const resetRequest = indexedDB.open(databaseName, 1);
-                    resetRequest.onupgradeneeded = (resetEvent) => {
-                        const newDb = resetEvent.target.result;
-                        const objectStore = newDb.createObjectStore('dataStore', { keyPath: CurrentUsername });
-                        dataToPreserve.forEach(item => objectStore.add(item));
-                    };
-
-                    resetRequest.onsuccess = (resetEvent) => resolve(resetEvent.target.result);
-                    resetRequest.onerror = (resetEvent) => reject(resetEvent.target.error);
-                };
-
-                deleteRequest.onerror = (deleteEvent) => reject(deleteEvent.target.error);
-            } else {
-                resolve(db);
-            }
-        };
-
-        request.onerror = (event) => reject(event.target.error);
-    });
-}
 async function readAllData(db, storeName) {
     return new Promise((resolve, reject) => {
         const transaction = db.transaction(storeName, 'readonly');
@@ -141,6 +106,7 @@ async function encryptData(key, data) {
     };
 
 }
+
 let decryptWorkerRegistered = false;
 async function decryptData(key, encryptedData) {
     if ('serviceWorker' in navigator && !navigator.serviceWorker.controller && !decryptWorkerRegistered) {
@@ -172,6 +138,7 @@ async function decryptData(key, encryptedData) {
         }
     });
 }
+
 async function registerDecryptWorker() {
     if ('serviceWorker' in navigator) {
         await navigator.serviceWorker.register('novaCrypt.js')
@@ -179,96 +146,74 @@ async function registerDecryptWorker() {
             .catch(err => console.error('Service Worker registration failed:', err));
     }
 }
-let dbCache = null;
-let cryptoKeyCache = null;
-const key = 'dataStore';
-async function flushDB(value) {
-    if (!dbCache) {
-        dbCache = await openDB(databaseName, 1, {
+
+async function erdbsfull() {
+    if (await justConfirm("Are you really sure?", "Removing all the users data includes your settings, files, and other data. Click cancel keep it.")) {
+        localStorage.removeItem('todo');
+        localStorage.removeItem('magicString');
+        localStorage.removeItem('updver');
+        localStorage.removeItem('qsets');
+        let indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
+        let dbName = 'trojencat';
+        let deleteRequest = indexedDB.deleteDatabase(dbName);
+deleteRequest.onsuccess = () => location.reload();
+deleteRequest.onerror = deleteRequest.onblocked = () => location.reload();
+    };
+
+}
+async function removeUser(username = CurrentUsername) {
+    const key = 'dataStore';
+    try {
+        const db = await openDB(databaseName, 1, {
             upgrade(db) {
                 if (!db.objectStoreNames.contains(key)) {
                     db.createObjectStore(key, { keyPath: 'CurrentUsername' });
                 }
             }
         });
-    }
-    if (!cryptoKeyCache) {
-        cryptoKeyCache = await getKey(password);
-    }
-    const encryptedContentPool = {};
+        const transaction = db.transaction(key, 'readwrite');
+        const store = transaction.objectStore(key);
+        const existingUser = await store.get(username);
+        const magicStrings = JSON.parse(localStorage.getItem('magicStrings')) || {};
 
-    for (const id in value.contentpool) {
-        encryptedContentPool[id] = await encryptData(
-            cryptoKeyCache, 
-            compressString(value.contentpool[id])
-        );
-    }
-    const memoryValue = {
-        key: CurrentUsername || 'Admin',
-        memory: value.memory,
-        contentpool: encryptedContentPool
-    };
-
-    const transaction = dbCache.transaction(key, 'readwrite');
-    const store = transaction.objectStore(key);
-    await store.put(memoryValue);
-    return new Promise((resolve, reject) => {
-        transaction.oncomplete = resolve;
-        transaction.onerror = () => reject(transaction.error);
-    });
-}
-
-function setdb() {
-    const value = { memory: { ...memory }, contentpool: { ...contentpool } };
-
-    return flushDB(value)
-        .catch(error => console.error("Error during setdb execution:", error));
-}
-
-async function getdb() {
-    if (!dbCache) {
-        dbCache = await openDB(databaseName, 1);
-    }
-    if (!cryptoKeyCache) {
-        cryptoKeyCache = await getKey(password);
-    }
-    try {
-        const transaction = dbCache.transaction('dataStore', 'readonly');
-        const store = transaction.objectStore('dataStore');
-        const request = store.get(CurrentUsername);
-        return new Promise((resolve, reject) => {
-            request.onsuccess = async () => {
-                const result = request.result;
-                if (result) {
-                    try {
-                        const decryptedContentPool = {};
-
-                        memory = result.memory;
-                        for (const id in result.contentpool) {
-                            const decryptedContent = await decryptData(cryptoKeyCache, result.contentpool[id]);
-                            decryptedContentPool[id] = decompressString(decryptedContent);
-                        }
-                        contentpool = decryptedContentPool;
-                        resolve(memory);
-                    } catch (error) {
-                        console.error("Decryption error:", error);
-                        if (!lethalpasswordtimes) crashScreen(error.message);
-                        reject(3);
-                    }
-                } else {
-                    resolve(null);
-                }
-            };
-
-            request.onerror = () => reject(request.error);
-        });
+        delete magicStrings[CurrentUsername];
+        localStorage.setItem('magicStrings', JSON.stringify(magicStrings));
+        if (existingUser) {
+            await store.delete(username);
+            console.log(`User ${username} removed successfully.`);
+        } else {
+            console.warn(`User ${username} does not exist.`);
+        }
+        await transaction.complete;
+        logoutofnova()
     } catch (error) {
-        await say("Sorry, but your actions caused severe issues to the long term storage of NovaOS, click OK to reload.");
-        location.reload();
-        console.error("Error in getdb function:", error);
-        throw error;
+        console.error("Error in removeUser function:", error);
     }
 }
+
+function removeSWs() {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations()
+            .then(registrations => {
+                const promises = registrations.map(registration =>
+                    caches.keys()
+                        .then(cacheNames => Promise.all(cacheNames.map(cacheName => caches.delete(cacheName))))
+                        .then(() => registration.unregister())
+                );
+                return Promise.all(promises);
+            })
+            .then(() => {
+                console.log('All service workers and caches have been removed.');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    } else {
+        console.log('Service workers not supported.');
+    }
+}
+
+// helper functions for database management
 
 function arrayBufferToBase64(buffer) {
     const bytes = new Uint8Array(buffer);
@@ -316,8 +261,20 @@ function decompressString(compressedBase64) {
         throw error;
     }
 }
+
+// Password and security
+
+async function saveMagicStringInLocalStorage(password) {
+    const cryptoKey = await getKey(password);
+    const encryptedMagicString = await encryptData(cryptoKey, "magicString");
+    const magicStrings = JSON.parse(localStorage.getItem('magicStrings')) || {};
+
+    magicStrings[CurrentUsername] = encryptedMagicString;
+    localStorage.setItem('magicStrings', JSON.stringify(magicStrings));
+}
+
 async function removeInvalidMagicStrings() {
-    const validUsernames = new Set(await getAllUsers());
+    const validUsernames = new Set(await getallusers());
     const magicStrings = JSON.parse(localStorage.getItem('magicStrings'));
     if (!magicStrings) return;
     for (const username in magicStrings) {
@@ -327,6 +284,33 @@ async function removeInvalidMagicStrings() {
     }
     localStorage.setItem('magicStrings', JSON.stringify(magicStrings));
 }
+async function changePassword(oldPassword, newPassword) {
+    lethalpasswordtimes = true;
+    if (!await checkPassword(oldPassword)) {
+        lethalpasswordtimes = false;
+        return false;
+    }
+    try {
+        memory = await getdb();
+        password = newPassword;
+        
+        dbCache = null;
+        cryptoKeyCache = null;
+        await setdb("change password");
+        eventBusWorker.deliver({
+			"type":"memory",
+			"event":"update",
+			"id":"passwordChange"
+		});
+        await saveMagicStringInLocalStorage(newPassword);
+    } catch (error) {
+        lethalpasswordtimes = false;
+        return false;
+    }
+    lethalpasswordtimes = false;
+    return true;
+}
+
 async function checkPassword(password) {
     const magicStrings = JSON.parse(localStorage.getItem('magicStrings')) || {};
 
@@ -368,6 +352,9 @@ async function getallusers() {
         console.error("Error in getAllKeysFromStore function:", error);
     }
 }
+
+// memory collector
+
 let MemoryTimeCache = null;
 let isFetchingMemory = false;
 let cachedData = null;
@@ -433,6 +420,9 @@ async function getdbWithDefault(databaseName, storeName, key, defaultValue) {
         return defaultValue;
     }
 }
+
+// settings
+
 const defaultPreferences = {
     "defFileLayout": "List",
     "wsnapping": true,
@@ -544,117 +534,9 @@ async function remSetting(key) {
         console.log("Error removing settings", error);
     }
 }
-async function saveMagicStringInLocalStorage(password) {
-    const cryptoKey = await getKey(password);
-    const encryptedMagicString = await encryptData(cryptoKey, "magicString");
-    const magicStrings = JSON.parse(localStorage.getItem('magicStrings')) || {};
 
-    magicStrings[CurrentUsername] = encryptedMagicString;
-    localStorage.setItem('magicStrings', JSON.stringify(magicStrings));
-}
-async function removeInvalidMagicStrings() {
-    const validUsernames = new Set(await getallusers());
-    const magicStrings = JSON.parse(localStorage.getItem('magicStrings'));
-    if (!magicStrings) return;
-    for (const username in magicStrings) {
-        if (!validUsernames.has(username)) {
-            delete magicStrings[username];
-        }
-    }
-    localStorage.setItem('magicStrings', JSON.stringify(magicStrings));
-}
-async function changePassword(oldPassword, newPassword) {
-    lethalpasswordtimes = true;
-    if (!await checkPassword(oldPassword)) {
-        lethalpasswordtimes = false;
-        return false;
-    }
-    try {
-        memory = await getdb();
-        password = newPassword;
-        
-        dbCache = null;
-        cryptoKeyCache = null;
-        await setdb("change password");
-        eventBusWorker.deliver({
-			"type":"memory",
-			"event":"update",
-			"id":"passwordChange"
-		});
-        await saveMagicStringInLocalStorage(newPassword);
-    } catch (error) {
-        lethalpasswordtimes = false;
-        return false;
-    }
-    lethalpasswordtimes = false;
-    return true;
-}
-async function erdbsfull() {
-    if (await justConfirm("Are you really sure?", "Removing all the users data includes your settings, files, and other data. Click cancel keep it.")) {
-        localStorage.removeItem('todo');
-        localStorage.removeItem('magicString');
-        localStorage.removeItem('updver');
-        localStorage.removeItem('qsets');
-        let indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
-        let dbName = 'trojencat';
-        let deleteRequest = indexedDB.deleteDatabase(dbName);
-deleteRequest.onsuccess = () => location.reload();
-deleteRequest.onerror = deleteRequest.onblocked = () => location.reload();
-    };
-
-}
-async function removeUser(username = CurrentUsername) {
-    const key = 'dataStore';
-    try {
-        const db = await openDB(databaseName, 1, {
-            upgrade(db) {
-                if (!db.objectStoreNames.contains(key)) {
-                    db.createObjectStore(key, { keyPath: 'CurrentUsername' });
-                }
-            }
-        });
-        const transaction = db.transaction(key, 'readwrite');
-        const store = transaction.objectStore(key);
-        const existingUser = await store.get(username);
-        const magicStrings = JSON.parse(localStorage.getItem('magicStrings')) || {};
-
-        delete magicStrings[CurrentUsername];
-        localStorage.setItem('magicStrings', JSON.stringify(magicStrings));
-        if (existingUser) {
-            await store.delete(username);
-            console.log(`User ${username} removed successfully.`);
-        } else {
-            console.warn(`User ${username} does not exist.`);
-        }
-        await transaction.complete;
-        logoutofnova()
-    } catch (error) {
-        console.error("Error in removeUser function:", error);
-    }
-}
-
-function removeSWs() {
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations()
-            .then(registrations => {
-                const promises = registrations.map(registration =>
-                    caches.keys()
-                        .then(cacheNames => Promise.all(cacheNames.map(cacheName => caches.delete(cacheName))))
-                        .then(() => registration.unregister())
-                );
-                return Promise.all(promises);
-            })
-            .then(() => {
-                console.log('All service workers and caches have been removed.');
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-    } else {
-        console.log('Service workers not supported.');
-    }
-}
 // memory management
+
 async function getFileNamesByFolder(folderPath) {
     folderPath = folderPath.endsWith('/') ? folderPath : folderPath + '/';
     try {
@@ -1035,6 +917,8 @@ async function createFolder(folderNames, folderData) {
 		console.error("Error creating folders and data:", error);
 	}
 }
+
+// other
 
 function dragfl(ev, obj) {
     ev.dataTransfer.setData("Text", obj.getAttribute('unid'));

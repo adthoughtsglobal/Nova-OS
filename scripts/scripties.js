@@ -241,3 +241,7 @@ document.querySelectorAll('.tooltip').forEach(tooltip => {
         tooltip.querySelector('.tooltiptext').style.transform = 'translate(0, 0)';
     });
 });
+
+async function qsetsRefresh() {
+	return await updateMemoryData();
+}

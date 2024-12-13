@@ -204,3 +204,13 @@ function getRandomNothingQuote() {
 
 	return nothingquotes[Math.floor(Math.random() * nothingquotes.length)]
 }
+
+const rllog = console.log;
+console.log = function (...args) {
+	const stack = new Error().stack;
+	const caller = stack.split('\n')[2].trim();
+	const match = caller.match(/at (\S+)/);
+	const source = match ? (match[1].startsWith('http') ? 'system' : match[1]) : 'anonymous';
+	const style = 'font-size: 0.8em; color:grey;';
+	rllog(`%c${source}\n`, style, ...args);
+};

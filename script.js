@@ -1,17 +1,4 @@
-var batteryLevel, winds = {}, rp, flwint = true, contentpool = {}, memory = {}, _nowapp, fulsapp = false, nowappdo, appsHistory = [], nowwindow, appicns = {}, dev = true, appfound = 'files', fileslist = [], sessionSettings = {}, badlaunch = false;
-var really = false, initmenuload = true, fileTypeAssociations = {}, Gtodo, notifLog = {}, initialization = false, onstartup = [];
-var novaFeaturedImage = `Dev.png`;
-function setbgimagetourl(x) {
-	const bgImage = document.getElementById('bgimage');
-	bgImage.style.opacity = 0;
-	setTimeout(() => {
-		bgImage.src = x;
-		bgImage.onload = () => bgImage.style.opacity = 1;
-	}, parseFloat(getComputedStyle(bgImage).transitionDuration) * 1000);
-};
-
-setbgimagetourl(novaFeaturedImage);
-var defAppsList = [
+var batteryLevel, winds = {}, rp, flwint = true, contentpool = {}, memory = {}, _nowapp, fulsapp = false, nowappdo, appsHistory = [], nowwindow, appicns = {}, dev = true, appfound = 'files', fileslist = [], sessionSettings = {}, badlaunch = false, really = false, initmenuload = true, fileTypeAssociations = {}, Gtodo, notifLog = {}, initialization = false, onstartup = [], novaFeaturedImage = `Dev.png`, defAppsList = [
 	"store",
 	"files",
 	"settings",
@@ -24,24 +11,17 @@ var defAppsList = [
 	"gallery",
 	"browser",
 	"studio"
-];
-gid("nowrunninapps").style.display = "none";
-const rllog = console.log;
-console.log = function (...args) {
-	const stack = new Error().stack;
-	const caller = stack.split('\n')[2].trim();
-	const match = caller.match(/at (\S+)/);
-	const source = match ? (match[1].startsWith('http') ? 'system' : match[1]) : 'anonymous';
-	const style = 'font-size: 0.8em; color:grey;';
-	rllog(`%c${source}\n`, style, ...args);
+], timeFormat, timetypecondition = true;
+
+function setbgimagetourl(x) {
+	const bgImage = document.getElementById('bgimage');
+	bgImage.style.opacity = 0;
+	setTimeout(() => {
+		bgImage.src = x;
+		bgImage.onload = () => bgImage.style.opacity = 1;
+	}, parseFloat(getComputedStyle(bgImage).transitionDuration) * 1000);
 };
 
-async function qsetsRefresh() {
-	return await updateMemoryData();
-}
-gid('seprw-openb').onclick = function () {
-	gid('searchside').style.flexGrow = 1;
-}
 Object.defineProperty(window, 'nowapp', {
 	get() {
 		return _nowapp;
@@ -51,11 +31,13 @@ Object.defineProperty(window, 'nowapp', {
 		dewallblur()
 	}
 });
+
 function loginscreenbackbtn() {
 	document.getElementsByClassName("backbtnscont")[0].style.display = "none";
 	document.getElementsByClassName("userselect")[0].style.flex = "1";
 	document.getElementsByClassName("logincard")[0].style.flex = "0";
 }
+
 async function showloginmod() {
 	if (badlaunch) { return }
 	closeElementedis();
@@ -251,12 +233,19 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 	searchInput5342.addEventListener('keyup', (e) => {
 		if (keyHeld) {
-			keyHeld = false; // Reset key state
+			keyHeld = false;
 			opensearchpanel(searchInput5342.value);
 			gid('appdmod').close();
 			searchInput5342.value = "";
 		}
 	});
+
+	setbgimagetourl(novaFeaturedImage);
+
+	gid("nowrunninapps").style.display = "none";
+	gid('seprw-openb').onclick = function () {
+		gid('searchside').style.flexGrow = 1;
+	}
 
 	gid("versionswitcher")?.remove();
 	await registerDecryptWorker();
@@ -295,8 +284,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		dewallblur();
 	});
 });
-let timeFormat;
-var timetypecondition = true;
+
 function updateTime() {
 	const now = new Date();
 	let hours = now.getHours();
@@ -336,50 +324,48 @@ async function openn() {
 	initmenuload = false;
 
 	let existingAppElements = [...gid("appsindeck").children];
-let existingAppIds = new Set(existingAppElements.map((child) => child.dataset.appId));
-let newAppIds = new Set(x.map((app) => app.id));
+	let existingAppIds = new Set(existingAppElements.map((child) => child.dataset.appId));
+	let newAppIds = new Set(x.map((app) => app.id));
 
-// Remove apps that are no longer in the updated list.
-existingAppElements.forEach((element) => {
-	if (!newAppIds.has(element.dataset.appId)) {
-		element.remove();
-	}
-});
-
-// Add new apps that aren't already rendered.
-Promise.all(
-	x.map(async (app) => {
-		if (existingAppIds.has(app.id)) return;
-
-		var appShortcutDiv = document.createElement("div");
-		appShortcutDiv.className = "app-shortcut tooltip sizableuielement";
-		appShortcutDiv.dataset.appId = app.id;
-		appShortcutDiv.addEventListener("click", () => openfile(app.id));
-
-		var iconSpan = document.createElement("span");
-		iconSpan.innerHTML = "<span class='taskbarloader'></span>";
-		getAppIcon(false, app.id).then((appIcon) => {
-			iconSpan.innerHTML = appIcon;
-		});
-
-		function getapnme(x) {
-			return x.split(".")[0];
+	existingAppElements.forEach((element) => {
+		if (!newAppIds.has(element.dataset.appId)) {
+			element.remove();
 		}
-
-		var nameSpan = document.createElement("span");
-		nameSpan.className = "appname";
-		nameSpan.textContent = getapnme(app.name);
-
-		appShortcutDiv.appendChild(iconSpan);
-		appShortcutDiv.appendChild(nameSpan);
-
-		gid("appsindeck").appendChild(appShortcutDiv);
-	})
-)
-	.then(() => {})
-	.catch((error) => {
-		console.error("An error occurred:", error);
 	});
+
+	Promise.all(
+		x.map(async (app) => {
+			if (existingAppIds.has(app.id)) return;
+
+			var appShortcutDiv = document.createElement("div");
+			appShortcutDiv.className = "app-shortcut tooltip sizableuielement";
+			appShortcutDiv.dataset.appId = app.id;
+			appShortcutDiv.addEventListener("click", () => openfile(app.id));
+
+			var iconSpan = document.createElement("span");
+			iconSpan.innerHTML = "<span class='taskbarloader'></span>";
+			getAppIcon(false, app.id).then((appIcon) => {
+				iconSpan.innerHTML = appIcon;
+			});
+
+			function getapnme(x) {
+				return x.split(".")[0];
+			}
+
+			var nameSpan = document.createElement("span");
+			nameSpan.className = "appname";
+			nameSpan.textContent = getapnme(app.name);
+
+			appShortcutDiv.appendChild(iconSpan);
+			appShortcutDiv.appendChild(nameSpan);
+
+			gid("appsindeck").appendChild(appShortcutDiv);
+		})
+	)
+		.then(() => { })
+		.catch((error) => {
+			console.error("An error occurred:", error);
+		});
 
 	if (gid("closeallwinsbtn").checked) {
 		gid("closeallwinsbtn").checked = false;
