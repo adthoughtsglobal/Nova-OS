@@ -250,7 +250,6 @@ const ctntMgr = {
         try {
             return await getFileContents(id);
         } catch (error) {
-            console.error(`Error fetching file content with ID ${id}:`, error);
             throw error;
         }
     },
@@ -259,7 +258,6 @@ const ctntMgr = {
         try {
             return await setFileContents(id, content);
         } catch (error) {
-            console.error(`Error setting file content with ID ${id}:`, error);
             throw error;
         }
     },
@@ -268,7 +266,6 @@ const ctntMgr = {
         try {
             return await removeFileContents(id);
         } catch (error) {
-            console.error(`Error removing file content with ID ${id}:`, error);
             throw error;
         }
     }
