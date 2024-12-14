@@ -152,6 +152,19 @@
             background: #1f1f1f;
             padding: 1rem;
             border-radius: 0.5rem;
+            animation: msgpop .3s ease-out;
+        }
+
+        @keyframes msgpop {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(-5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: none;
+            }
         }
 
         .more {
@@ -273,6 +286,21 @@
             border-radius: 0.5rem;
             padding-right: 5px;
         }
+
+        .feedsbtn {
+            color: white;
+            overflow: hidden;
+        }
+
+        .feedsbtn button {
+            background-color: transparent;
+            border-radius: 0.5rem;
+            border: none;
+        }
+
+        .feedsbtn button.current {
+            background-color: #1f1f1f;
+        }
     </style>
 </head>
 
@@ -283,7 +311,11 @@
                 <span class="logo">
                     NovaOS Claw
                 </span>
-                <div class="navtools" onclick="loadFeed()">
+                <div class="feedsbtn">
+                    <button class="current" onclick="loadFeed('main')">Main</button>
+                    <button onclick="loadFeed('following')">Following</button>
+                </div>
+                <div class="navtools" onclick="loadFeed('current')">
                     <ion-icon name="arrow-up-circle-outline" title="Refresh feed"></ion-icon>
                 </div>
             </nav>
@@ -300,7 +332,7 @@
             </div>
             <div class="postmsgsection">
                 <textarea id="postinput" placeholder="What is going on!?"></textarea>
-                <button onclick="sendmsg()" class="postbtn">
+                <button onclick="newpost()" class="postbtn">
                     <span>Post</span>
                     <ion-icon name="chevron-forward-outline"></ion-icon>
                 </button>
@@ -309,53 +341,134 @@
     </main>
 
     <script>
-        async function loadFeed() {
-            const response = await fetch("https://claw.rotur.dev/feed?limit=5");
+        async function loadFeed(feedtype) {
+            var response;
+            if (feedtype == "following") {
+                if (!checkifaccs()) { return }
+                 response = await fetch("https://claw.rotur.dev/following?limit=10&auth="+ window.parent.roturExtension.userToken);
+            } else {
+                 response = await fetch("https://claw.rotur.dev/feed?limit=10");
+            }
             const posts = await response.json();
             const feedContainer = document.getElementById("feed");
             feedContainer.innerHTML = "";
 
-            let lastUser = null;
+            const wordFrequency = new Map();
 
             posts.forEach(post => {
                 const postElement = document.createElement("div");
                 postElement.classList.add("randompost");
 
-                postElement.innerHTML = `
-        ${post.user !== lastUser ? `
-        <div class="postnav">
-            <div class="postuserdata">
-                <div class="postuseravatar">
-                    <img class="postuseravatarsrc" src="${post.pfp}">
-                </div>
-                <div class="postuserdynamics">
-                    <div class="postusername">${post.user}</div>
-                    <div class="posttimestamp">${timeSince(post.timestamp)}</div>
-                </div>
-            </div>
-        </div>
-        ` : ''}
-        <div class="postcontent">${post.content}</div>
-        <div class="postfooter">
-            <div class="likes" onclick="likepost('${post.id}')">
-                <ion-icon name="heart-outline"></ion-icon>
-                <span class="likesnumber">${post.likes ? post.likes.length : 0}</span>
-            </div>
-            <div class="more">
-                <button onclick="copyId('${post.id}')">Copy ID</button>
-                <button class="quotebtn">Quote</button>
-            </div>
-        </div>
-    `;
+                const postNav = document.createElement("div");
+                postNav.classList.add("postnav");
+
+                const postUserData = document.createElement("div");
+                postUserData.classList.add("postuserdata");
+
+                const postUserAvatar = document.createElement("div");
+                postUserAvatar.classList.add("postuseravatar");
+
+                const userAvatarImg = document.createElement("img");
+                userAvatarImg.classList.add("postuseravatarsrc");
+                userAvatarImg.src = post.pfp;
+
+                postUserAvatar.appendChild(userAvatarImg);
+
+                const postUserDynamics = document.createElement("div");
+                postUserDynamics.classList.add("postuserdynamics");
+
+                const postUsername = document.createElement("div");
+                postUsername.classList.add("postusername");
+                postUsername.textContent = post.user;
+
+                const postTimestamp = document.createElement("div");
+                postTimestamp.classList.add("posttimestamp");
+                postTimestamp.textContent = timeSince(post.timestamp) + ((post.os) ? (" | Posted on " + post.os) : "");
+
+                postUserDynamics.appendChild(postUsername);
+                postUserDynamics.appendChild(postTimestamp);
+
+                postUserData.appendChild(postUserAvatar);
+                postUserData.appendChild(postUserDynamics);
+
+                postNav.appendChild(postUserData);
+                postElement.appendChild(postNav);
+
+                const postContent = document.createElement("div");
+                postContent.classList.add("postcontent");
+                postContent.textContent = post.content;
+                postElement.appendChild(postContent);
+
+                // Update word frequency
+                const words = post.content.split(/\W+/).filter(word => word.length > 3);
+                words.forEach(word => {
+                    const lowerWord = word.toLowerCase();
+                    wordFrequency.set(lowerWord, (wordFrequency.get(lowerWord) || 0) + 1);
+                });
+
+                const postFooter = document.createElement("div");
+                postFooter.classList.add("postfooter");
+
+                const likesDiv = document.createElement("div");
+                likesDiv.classList.add("likes");
+                likesDiv.onclick = function () {
+                    likepost(post.id);
+                };
+
+                const heartIcon = document.createElement("ion-icon");
+                heartIcon.setAttribute("name", "heart-outline");
+
+                const likesNumber = document.createElement("span");
+                likesNumber.classList.add("likesnumber");
+                likesNumber.textContent = post.likes ? post.likes.length : 0;
+
+                likesDiv.appendChild(heartIcon);
+                likesDiv.appendChild(likesNumber);
+
+                const moreDiv = document.createElement("div");
+                moreDiv.classList.add("more");
+
+                const copyButton = document.createElement("button");
+                copyButton.textContent = "Copy ID";
+                copyButton.onclick = function () {
+                    copyId(post.id);
+                };
+
+                const quoteButton = document.createElement("button");
+                quoteButton.classList.add("quotebtn");
+                quoteButton.textContent = "Quote";
+
+                moreDiv.appendChild(copyButton);
+                moreDiv.appendChild(quoteButton);
+
+                postFooter.appendChild(likesDiv);
+                postFooter.appendChild(moreDiv);
+                postElement.appendChild(postFooter);
 
                 feedContainer.appendChild(postElement);
-                lastUser = post.user;
             });
+
+            // Calculate top 5 hot words
+            const hotWords = Array.from(wordFrequency.entries())
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5)
+                .map(entry => entry[0]);
+
+            console.log("Top 5 hot words:", hotWords);
         }
 
+
         async function likepost(id) {
-            await fetch("https://claw.rotur.dev/rate?id="+ id+ "&auth=" + 
-            window.parent.roturExtension.userToken + "&rating=1");
+            await fetch("https://claw.rotur.dev/rate?id=" + id + "&auth=" +
+                window.parent.roturExtension.userToken + "&rating=1&os=novaOS");
+            loadFeed()
+        }
+
+        async function newpost() {
+            if (!checkifaccs()) { return }
+            let content = document.getElementById("postinput").value;
+            await fetch("https://claw.rotur.dev/post?content=" + content + "&os=novaOS&auth=" +
+                window.parent.roturExtension.userToken);
             loadFeed()
         }
 
@@ -377,6 +490,14 @@
 
         function copyId(id) {
             navigator.clipboard.writeText(id);
+        }
+
+        function checkifaccs() {
+            let signedinch = window.parent.roturExtension.loggedIn();
+            if (!signedinch) {
+                window.parent.say("You don't have a rotur account linked.")
+            }
+            return signedinch;
         }
 
         loadFeed();

@@ -252,3 +252,8 @@ async function setuprotur() {
 	}
 	roturExtension.connectToServer({DESIGNATION:"nva", SYSTEM:"novaOS", VERSION:"2"});
 }
+
+async function logoutofrtr() {
+	await roturExtension.logout();
+	roturExtension.disconnect();
+}
