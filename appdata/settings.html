@@ -1765,36 +1765,32 @@
 				<h1>Account</h1>
 				<segr>
 					<div setting class="spread">
-						<b id="userstatsi">Signed in as Admin</b>
+						<b id="rtruserstatsi">Signed in as Admin</b>
 						<button onclick="window.parent.logoutofnova()">Sign Out</button>
 					</div>
 				</segr>
 				<segr>
 					<div setting class="formlike">
 						<input id="roturaccsignname" placeholder="Enter username..." class="inputtype1" type="text">
-						<input id="roturaccsignpass" placeholder="Enter your password..." class="inputtype1" type="password">
-						<button>Sign in</button>
+						<input id="roturaccsignpass" placeholder="Enter your password..." class="inputtype1"
+							type="password">
+						<button onclick="loginrotur()">Sign in</button>
 					</div>
 				</segr>
 				<script>
-					async function chstpass() {
-						var setpass = '';
-						if (window.parent.password == 'nova') {
-							setpass = await window.parent.ask("Set a password: ", "")
-						} else {
-							setpass = await window.parent.ask("Choose an another password: ", window.parent.password);
-							if (setpass == window.parent.password) {
-								window.parent.say("That is your current password. Choose a different one.", "failed")
-								return;
+					async function loginrotur() {
+						await window.parent.setuprotur();
+
+						myWindow.eventBusWorker.listen("rotur",async (event) => {
+							console.log(event, window.parent.roturExtension || null)
+							if (event == "connected") {
+
+								let targetun = document.getElementById("roturaccsignname").value;
+								let targetpass = document.getElementById("roturaccsignpass").value;
+								await window.parent.roturExtension.login({ USERNAME: targetun, PASSWORD: targetpass });
 							}
-						}
-						if (await window.parent.justConfirm("Are you sure?", "All your data will be lost if you forget this password. Re-encrypt all your files with this one?")) {
-							await window.parent.changePassword(window.parent.password, setpass);
-							await window.parent.say("Click OK when you are ready to restart your OS.")
-							window.parent.location.reload()
-						} else {
-							return;
-						}
+						});
+
 					}
 				</script>
 				</segr>

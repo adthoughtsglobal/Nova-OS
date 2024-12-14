@@ -5,16 +5,19 @@ const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 var lethalpasswordtimes = true;
 
-// event bus
+// Event bus worker
 const eventBusBlob = new Blob([`
     const eventBus = new EventTarget();
     const listeners = new Map();
 
     self.addEventListener('message', (e) => {
+        console.log('Worker received:', e.data);
         const { type, event: evt, key, id, action } = e.data;
 
         if (action === 'addListener') {
+            console.log('Adding listener for:', type, id);
             const handler = (e) => {
+                console.log('Handler executed for:', type, 'with detail:', e.detail);
                 self.postMessage({ type, detail: e.detail });
             };
             listeners.set(id, { type, handler });
@@ -22,10 +25,12 @@ const eventBusBlob = new Blob([`
         } else if (action === 'removeListener') {
             const listener = listeners.get(id);
             if (listener) {
+                console.log('Removing listener for:', listener.type);
                 eventBus.removeEventListener(listener.type, listener.handler);
                 listeners.delete(id);
             }
         } else {
+            console.log('Dispatching event of type:', type);
             eventBus.dispatchEvent(new CustomEvent(type, { detail: { event: evt, key, id } }));
         }
     });
@@ -34,12 +39,16 @@ const eventBusBlob = new Blob([`
 const eventBusURL = URL.createObjectURL(eventBusBlob);
 const eventBusWorkerE = new Worker(eventBusURL);
 
+// EventBus Wrapper
 const eventBusWorker = {
-    deliver: (message) => eventBusWorkerE.postMessage(message),
+    deliver: (message) => {
+        console.log('Delivering message:', message);
+        eventBusWorkerE.postMessage(message);
+    },
     listen: (type, handler, initiator) => {
-        const id = Math.random().toString(36).slice(2);
         const cleanup = () => {
-            eventBusWorkerE.postMessage({ action: 'removeListener', id });
+            console.log('Cleaning up listener for type:', type);
+            eventBusWorkerE.postMessage({ action: 'removeListener', type });
         };
 
         if (initiator instanceof Node) {
@@ -53,13 +62,15 @@ const eventBusWorker = {
         }
 
         eventBusWorkerE.addEventListener('message', (event) => {
-            if (event.data.type === type && event.data.detail.id === id) {
+            if (event.data.type === type) { // Match only by type
                 handler(event.data.detail.event);
             }
         });
-        eventBusWorkerE.postMessage({ action: 'addListener', type, id });
+
+        eventBusWorkerE.postMessage({ action: 'addListener', type });
     }
 };
+
 
 // database functions
 

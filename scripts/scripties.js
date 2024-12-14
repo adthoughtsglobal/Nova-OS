@@ -228,7 +228,7 @@ draggableTimeDiv.addEventListener('dragstart', (e) => {
 	e.dataTransfer.setData('text/plain', getReadableTimestamp());
 });
 
-const roturExtension = new RoturExtension();
+var roturExtension = new RoturExtension();
 
 document.querySelectorAll('.tooltip').forEach(tooltip => {
     tooltip.addEventListener('mousemove', (e) => {
@@ -244,4 +244,11 @@ document.querySelectorAll('.tooltip').forEach(tooltip => {
 
 async function qsetsRefresh() {
 	return await updateMemoryData();
+}
+
+async function setuprotur() {
+	if (roturExtension.is_connected) {
+		return
+	}
+	roturExtension.connectToServer({DESIGNATION:"nva", SYSTEM:"novaOS", VERSION:"2"});
 }
