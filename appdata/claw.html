@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
-    <title>Nova OS Claw</title>
+    <title>Nova OS</title>
     <link rel="stylesheet" href="style.css">
     </script>
     <!--ion icons-->
@@ -152,19 +152,6 @@
             background: #1f1f1f;
             padding: 1rem;
             border-radius: 0.5rem;
-            animation: msgpop .3s ease-out;
-        }
-
-        @keyframes msgpop {
-            from {
-                opacity: 0;
-                transform: scale(0.9) translateY(-5px);
-            }
-
-            to {
-                opacity: 1;
-                transform: none;
-            }
         }
 
         .more {
@@ -176,10 +163,18 @@
             opacity: 0.7;
         }
 
+        .postnav {
+            height: 45px;
+        }
+
         .postuserdata {
             display: flex;
             flex-direction: row;
             gap: 0.5rem;
+            transition: .3s ease-in-out;
+            z-index: 5;
+            position: relative;
+            cursor: pointer;
         }
 
         .postuseravatar {
@@ -287,19 +282,151 @@
             padding-right: 5px;
         }
 
-        .feedsbtn {
-            color: white;
-            overflow: hidden;
+        @keyframes pop {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: none;
+            }
         }
 
-        .feedsbtn button {
-            background-color: transparent;
-            border-radius: 0.5rem;
+        dialog {
+            animation: pop .2s ease-in-out;
+        }
+
+        dialog#profilewindow {
+            background: #1f1f1f;
+            color: inherit;
             border: none;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 5px 1rem black;
+            transition: .3s ease-in-out;
         }
 
-        .feedsbtn button.current {
-            background-color: #1f1f1f;
+        .profileseperator {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-items: stretch;
+            gap: 1rem;
+        }
+
+        img#pfpuserdet {
+            border-radius: 0.5rem;
+            height: 120px;
+            object-fit: cover;
+        }
+
+        .userdata {
+            display: flex;
+            gap: 0.5rem;
+            flex-direction: column;
+        }
+
+        .userdatatext {
+            display: flex;
+            flex-direction: column;
+        }
+
+        h2#undispusdat {
+            margin: 0;
+            font-weight: normal;
+            font-size: 2rem;
+        }
+
+        p#postsnoteaser {
+            margin: 0;
+            opacity: 0.5;
+            font-size: 1rem;
+        }
+
+        .userdatabtns {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .primebtn {
+            background-color: #2f2f2f;
+            padding: 0.3rem 0.8rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            cursor: pointer;
+        }
+
+        .primebtn button {
+            background: transparent;
+            border: none;
+            padding: 0;
+            font-size: inherit;
+            font-family: inherit;
+        }
+
+        .primebtn span {
+            padding-left: 7px;
+            opacity: 0.7;
+            padding-top: 2px;
+            font-size: 0.7rem;
+            border-left: 1px solid lightblue;
+        }
+
+        .active.primebtn {
+            background: #4e5fa7;
+        }
+
+        .modalnav {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            background: #2f2f2f;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            align-items: center;
+        }
+
+        .modalnav .navsubgrp {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .ion-icon {
+            font-size: 1rem;
+        }
+
+        .feedswitcher {
+            display: flex;
+            flex-direction: row;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .feedsnav button {
+            background: transparent;
+            border: none;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.5rem;
+        }
+
+        .feedsnav button.active {
+            background: #1f1f1f;
+        }
+
+        .postuserdata:hover {
+            background: #2f2f2f;
+            padding: 1rem;
+            border-radius: 1rem;
+            z-index: 5;
+            box-shadow: 0 5px 10px #00000075;
         }
     </style>
 </head>
@@ -308,14 +435,24 @@
     <main id="main">
         <div id="feedsection">
             <nav id="nav">
-                <span class="logo">
-                    NovaOS Claw
-                </span>
-                <div class="feedsbtn">
-                    <button class="current" onclick="loadFeed('main')">Main</button>
-                    <button onclick="loadFeed('following')">Following</button>
+                <div class="feedswitcher">
+                    <span class="logo">
+                        NovaOS
+                    </span>
+                    <div class="feedsnav">
+                        <button class="active" id="clawfeedbtn" onclick="loadFeed('claw', this)">
+                            Claw
+                        </button>
+                        <button id="followingfeedbtn" onclick="loadFeed('following',this)">
+                            Following
+                        </button>
+                        <button id="otherfeed" style="display: none;">
+                            Other
+                        </button>
+                    </div>
                 </div>
-                <div class="navtools" onclick="loadFeed('current')">
+
+                <div class="navtools">
                     <ion-icon name="arrow-up-circle-outline" title="Refresh feed"></ion-icon>
                 </div>
             </nav>
@@ -339,21 +476,62 @@
             </div>
         </div>
     </main>
+    <dialog class="modal" id="profilewindow">
+        <div class="modalnav">
+            <div class="navsubgrp">
+                <ion-icon name="person-outline"></ion-icon>
+                <span>Profile</span>
+            </div>
+            <ion-icon name="close-outline" onclick="document.getElementById('profilewindow').close()"></ion-icon>
+        </div>
+        <div class="profileseperator">
+            <div class="profilepic">
+                <img src="https://avatars.githubusercontent.com/u/92952823?v=4" id="pfpuserdet">
+            </div>
+            <div class="userdata">
+                <div class="userdatatext">
+                    <h2 id="undispusdat">UserName</h2>
+                    <p id="postsnoteaser">Created 2 months ago</p>
+                </div>
+                <div class="userdatabtns">
+                    <div class="active primebtn" id="followbtn">
+                        <button id="followbtntxt">Follow</button>
+                        <span id="follownumbers">00</span>
+                    </div>
+                    <div class="primebtn">
+                        See posts
+                    </div>
+                </div>
+            </div>
+        </div>
+    </dialog>
 
     <script>
-        async function loadFeed(feedtype) {
+        var selecteduser = "darkdot";
+        async function loadFeed(type = 'claw', obj) {
+            document.getElementById("otherfeed").style.display = "none";
+            const activeElement = document.querySelector('.feedsnav .active');
+            if (activeElement) {
+                activeElement.classList.remove('active');
+            }
             var response;
-            if (feedtype == "following") {
+            if (type == 'claw') {
+                response = await fetch("https://claw.rotur.dev/feed?limit=10");
+                document.getElementById("clawfeedbtn").classList.add('active');
+            } else if (type == 'following') {
                 if (!checkifaccs()) { return }
-                 response = await fetch("https://claw.rotur.dev/following?limit=10&auth="+ window.parent.roturExtension.userToken);
+                response = await fetch("https://claw.rotur.dev/following_feed?auth=" + window.parent.roturExtension.userToken);
+                document.getElementById("followingfeedbtn").classList.add('active');
             } else {
-                 response = await fetch("https://claw.rotur.dev/feed?limit=10");
+                response = await fetch("https://claw.rotur.dev/feed?limit=10");
+                document.getElementById("otherfeed").style.display = "block";
+                document.getElementById("otherfeed").classList.add('active');
             }
             const posts = await response.json();
             const feedContainer = document.getElementById("feed");
             feedContainer.innerHTML = "";
 
-            const wordFrequency = new Map();
+            let lastUser = null;
 
             posts.forEach(post => {
                 const postElement = document.createElement("div");
@@ -364,6 +542,9 @@
 
                 const postUserData = document.createElement("div");
                 postUserData.classList.add("postuserdata");
+                postUserData.onclick = () => {
+                    viewprofile(post.user)
+                }
 
                 const postUserAvatar = document.createElement("div");
                 postUserAvatar.classList.add("postuseravatar");
@@ -398,13 +579,6 @@
                 postContent.classList.add("postcontent");
                 postContent.textContent = post.content;
                 postElement.appendChild(postContent);
-
-                // Update word frequency
-                const words = post.content.split(/\W+/).filter(word => word.length > 3);
-                words.forEach(word => {
-                    const lowerWord = word.toLowerCase();
-                    wordFrequency.set(lowerWord, (wordFrequency.get(lowerWord) || 0) + 1);
-                });
 
                 const postFooter = document.createElement("div");
                 postFooter.classList.add("postfooter");
@@ -447,29 +621,6 @@
 
                 feedContainer.appendChild(postElement);
             });
-
-            // Calculate top 5 hot words
-            const hotWords = Array.from(wordFrequency.entries())
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 5)
-                .map(entry => entry[0]);
-
-            console.log("Top 5 hot words:", hotWords);
-        }
-
-
-        async function likepost(id) {
-            await fetch("https://claw.rotur.dev/rate?id=" + id + "&auth=" +
-                window.parent.roturExtension.userToken + "&rating=1&os=novaOS");
-            loadFeed()
-        }
-
-        async function newpost() {
-            if (!checkifaccs()) { return }
-            let content = document.getElementById("postinput").value;
-            await fetch("https://claw.rotur.dev/post?content=" + content + "&os=novaOS&auth=" +
-                window.parent.roturExtension.userToken);
-            loadFeed()
         }
 
         function timeSince(timestamp) {
@@ -488,14 +639,82 @@
             return "Just now";
         }
 
+        async function likepost(id) {
+            if (!checkifaccs()) { return }
+            await fetch("https://claw.rotur.dev/rate?id=" + id + "&auth=" +
+                window.parent.roturExtension.userToken + "&rating=1&os=novaOS");
+            loadFeed()
+        }
+
+        async function newpost() {
+            if (!checkifaccs()) { return }
+            let content = document.getElementById("postinput").value;
+            await fetch("https://claw.rotur.dev/post?content=" + content + "&os=novaOS&auth=" +
+                window.parent.roturExtension.userToken);
+            loadFeed()
+        }
+
+        async function followuser() {
+            if (!checkifaccs()) { return }
+            let content = document.getElementById("postinput").value;
+            await fetch("https://claw.rotur.dev/post?content=" + content + "&os=novaOS&auth=" +
+                window.parent.roturExtension.userToken);
+        }
+
         function copyId(id) {
             navigator.clipboard.writeText(id);
+        }
+
+        async function viewprofile(name) {
+            if (!checkifaccs()) { return }
+            document.getElementById("profilewindow").style.opacity = 0.5;
+            document.getElementById("profilewindow").style.filter = "blur(5px)";
+            document.getElementById("profilewindow").showModal();
+            var profileitems = {
+                img: document.getElementById("pfpuserdet"),
+                name: document.getElementById("undispusdat"),
+                desc: document.getElementById("postsnoteaser"),
+                follows: document.getElementById("follownumbers"),
+                followbtn: document.getElementById("followbtn"),
+                followbtntxt: document.getElementById("followbtntxt"),
+            }
+
+            profileitems.name.innerHTML = name;
+
+            const response = await fetch("https://claw.rotur.dev/profile?name=" + name);
+            const userclouddat = await response.json();
+            console.log(userclouddat);
+
+            profileitems.img.src = userclouddat?.pfp || "https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/no-profile-picture-icon.png";
+            profileitems.desc.innerText = "Created " + timeSince(userclouddat.created);
+            profileitems.follows.innerText = userclouddat.followers;
+            document.getElementById("profilewindow").style.opacity = 1;
+            document.getElementById("profilewindow").style.filter = "none";
+
+            const responsefol = await fetch("https://claw.rotur.dev/followers?username=" + name);
+            const userclouddatfol = await responsefol.json();
+            if (userclouddatfol.followers.includes(window.parent.roturExtension.user.username)) {
+                followbtntxt.innerHTML = "Unfollow";
+                followbtn.style.background = "#2f2f2f";
+                followbtn.onclick = async () => {
+                    await fetch("https://claw.rotur.dev/unfollow?username=" + name + "&os=novaOS&auth=" +
+                        window.parent.roturExtension.userToken);
+                }
+            } else {
+                followbtntxt.innerHTML = "Follow";
+                followbtn.style.background = "#4e5fa7";
+                followbtn.onclick = async () => {
+                    await fetch("https://claw.rotur.dev/follow?username=" + name + "&os=novaOS&auth=" +
+                        window.parent.roturExtension.userToken);
+                }
+            }
         }
 
         function checkifaccs() {
             let signedinch = window.parent.roturExtension.loggedIn();
             if (!signedinch) {
-                window.parent.say("You don't have a rotur account linked.")
+                window.parent.say("You don't have a rotur account linked.");
+                loadFeed()
             }
             return signedinch;
         }

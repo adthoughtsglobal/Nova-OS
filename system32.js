@@ -7,41 +7,85 @@ var lethalpasswordtimes = true;
 
 // event bus
 const eventBusBlob = new Blob([`
+    
     const eventBus = new EventTarget();
     const listeners = new Map();
-
     self.addEventListener('message', (e) => {
-        const { type, event: evt, key, id, action } = e.data;
+    const { type, event: evt, key, id, action } = e.data;
 
-        if (action === 'addListener') {
-            const handler = (e) => {
-                self.postMessage({ type, detail: e.detail });
-            };
-            listeners.set(id, { type, handler });
-            eventBus.addEventListener(type, handler);
-        } else if (action === 'removeListener') {
-            const listener = listeners.get(id);
-            if (listener) {
-                eventBus.removeEventListener(listener.type, listener.handler);
-                listeners.delete(id);
-            }
-        } else {
-            eventBus.dispatchEvent(new CustomEvent(type, { detail: { event: evt, key, id } }));
+    if (action === 'addListener') {
+        const handler = (e) => {
+            console.log('Handler invoked in Worker:', { type: e.type, detail: e.detail });
+            self.postMessage({
+                type: e.type,
+                detail: e.detail,
+            });
+        };
+        listeners.set(id, { type, handler });
+        eventBus.addEventListener(type, handler);
+        console.log('Listener added:', { id, type });
+    } else if (action === 'removeListener') {
+        const listener = listeners.get(id);
+        if (listener) {
+            eventBus.removeEventListener(listener.type, listener.handler);
+            listeners.delete(id);
+            console.log('Listener removed:', id);
         }
-    });`
+    } else {
+        console.log('Dispatching event:', { type, evt, key });
+        eventBus.dispatchEvent(
+            new CustomEvent(type, {
+                detail: { event: evt, key }, // No longer tied to specific IDs
+            })
+        );
+    }
+});`
 ], { type: 'application/javascript' });
 
 const eventBusURL = URL.createObjectURL(eventBusBlob);
 const eventBusWorkerE = new Worker(eventBusURL);
 
 const eventBusWorker = {
-    deliver: (message) => eventBusWorkerE.postMessage(message),
+    // Internal map to manage type-handler-ID mapping
+    handlers: new Map(),
+
+    // Deliver events to the worker
+    deliver: (message) => {
+        const id = message.id || Date.now().toString(36) + Math.random().toString(36).slice(2);
+        eventBusWorkerE.postMessage({ ...message, id });
+    },
+
+    // Listen for events from the worker
     listen: (type, handler, initiator) => {
-        const id = Math.random().toString(36).slice(2);
+        const id = Date.now().toString(36) + Math.random().toString(36).slice(2);
         const cleanup = () => {
+            console.log('Cleaning up listener:', id);
             eventBusWorkerE.postMessage({ action: 'removeListener', id });
+            eventBusWorker.handlers.delete(id);
         };
 
+        eventBusWorkerE.addEventListener('message', (event) => {
+            const { type: eventType, detail } = event.data;
+        
+            console.log('Message received from Worker:', { eventType, detail });
+        
+            // Notify all relevant handlers of the same type
+            for (const [id, { type, handler }] of eventBusWorker.handlers.entries()) {
+                if (eventType === type) {
+                    handler(detail.event);
+                }
+            }
+        });
+
+        // Add listener to the worker
+        eventBusWorkerE.postMessage({ action: 'addListener', type, id });
+
+        // Store the handler for cleanup
+        eventBusWorker.handlers.set(id, { type, handler });
+
+        console.log('Listener created:', { type, id });
+
+        // Automatically manage cleanup if the initiator (a DOM node) is removed
         if (initiator instanceof Node) {
             const observer = new MutationObserver(() => {
                 if (!document.body.contains(initiator)) {
@@ -52,15 +96,9 @@ const eventBusWorker = {
             observer.observe(document.body, { childList: true, subtree: true });
         }
 
-        eventBusWorkerE.addEventListener('message', (event) => {
-            if (event.data.type === type && event.data.detail.id === id) {
-                handler(event.data.detail.event);
-            }
-        });
-        eventBusWorkerE.postMessage({ action: 'addListener', type, id });
-    }
+        return cleanup;
+    },
 };
-
 
 // database functions
 
@@ -157,8 +195,8 @@ async function erdbsfull() {
         let indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
         let dbName = 'trojencat';
         let deleteRequest = indexedDB.deleteDatabase(dbName);
-deleteRequest.onsuccess = () => location.reload();
-deleteRequest.onerror = deleteRequest.onblocked = () => location.reload();
+        deleteRequest.onsuccess = () => location.reload();
+        deleteRequest.onerror = deleteRequest.onblocked = () => location.reload();
     };
 
 }
@@ -294,15 +332,15 @@ async function changePassword(oldPassword, newPassword) {
     try {
         memory = await getdb();
         password = newPassword;
-        
+
         dbCache = null;
         cryptoKeyCache = null;
         await setdb("change password");
         eventBusWorker.deliver({
-			"type":"memory",
-			"event":"update",
-			"id":"passwordChange"
-		});
+            "type": "memory",
+            "event": "update",
+            "id": "passwordChange"
+        });
         await saveMagicStringInLocalStorage(newPassword);
     } catch (error) {
         lethalpasswordtimes = false;
@@ -430,8 +468,8 @@ const defaultPreferences = {
     "smartsearch": true,
     "CamImgFormat": "WEBP",
     "defSearchEngine": "Bing",
-    "darkMode":true,
-    "simpleMode":true
+    "darkMode": true,
+    "simpleMode": true
 };
 
 async function ensurePreferencesFileExists() {
@@ -440,7 +478,7 @@ async function ensurePreferencesFileExists() {
         memory.root["System/"] = memory.root["System/"] || {};
 
         if (!memory.root["System/"]["preferences.json"]) {
-            
+
             const dataUri = `data:application/json;base64,${btoa(JSON.stringify(defaultPreferences))}`;
             await createFile("System/", "preferences.json", false, dataUri);
         }
@@ -485,10 +523,10 @@ async function setSetting(key, value) {
         contentpool[content.id] = newContent;
         await setdb("set setting " + key);
         eventBusWorker.deliver({
-			"type":"settings",
-			"event":"set",
-            "key":key
-		});
+            "type": "settings",
+            "event": "set",
+            "key": key
+        });
     } catch (error) {
         console.log("Error setting settings", error, key);
     }
@@ -498,15 +536,15 @@ async function resetSettings() {
         if (!memory) return;
         await ensurePreferencesFileExists();
         const content = memory.root["System/"]["preferences.json"];
-        
+
         const newContent = `data:application/json;base64,${btoa(JSON.stringify(defaultPreferences))}`;
         contentpool[content.id] = newContent;
-        
+
         await setdb("reset settings");
         eventBusWorker.deliver({
-			"type":"settings",
-			"event":"reset"
-		});
+            "type": "settings",
+            "event": "reset"
+        });
     } catch (error) {
         console.log("Error resetting settings", error);
     }
@@ -519,15 +557,15 @@ async function remSetting(key) {
             let preferences = JSON.parse(decodeBase64Content(contentpool[content.id]));
             if (preferences[key]) {
                 delete preferences[key];
-                
+
                 const newContent = `data:application/json;base64,${btoa(JSON.stringify(preferences))}`;
                 contentpool[content.id] = newContent;
-                
+
                 await setdb("remove setting");
                 eventBusWorker.deliver({
-                    "type":"settings",
-                    "event":"remove",
-                    "key":key
+                    "type": "settings",
+                    "event": "remove",
+                    "key": key
                 });
             }
         }
@@ -684,10 +722,10 @@ async function remfile(ID) {
         } else {
             await setdb("remove file");
             eventBusWorker.deliver({
-                "type":"memory",
-                "event":"update",
-                "id":"removeFile",
-                "key":fileParent
+                "type": "memory",
+                "event": "update",
+                "id": "removeFile",
+                "key": fileParent
             });
         }
     } catch (error) {
@@ -721,11 +759,11 @@ async function remfolder(folderPath) {
         }
         await setdb("remove folder");
         eventBusWorker.deliver({
-			"type":"memory",
-			"event":"update",
-			"id":"removeFolder",
-            "key":folderPath
-		});
+            "type": "memory",
+            "event": "update",
+            "id": "removeFolder",
+            "key": folderPath
+        });
     } catch (error) {
         console.error("Error removing folder:", error);
     }
@@ -773,9 +811,9 @@ async function updateFile(folderName, fileId, newData) {
             }
             await setdb("modify file");
             eventBusWorker.deliver({
-                "type":"memory",
-                "event":"update",
-                "id":"updateFile"
+                "type": "memory",
+                "event": "update",
+                "id": "updateFile"
             });
             console.log(`Modified: "${fileToUpdate.fileName}"`);
         } else {
@@ -789,9 +827,9 @@ async function updateFile(folderName, fileId, newData) {
             contentpool[fileId] = newData.content || '';
             await setdb("create new file");
             eventBusWorker.deliver({
-                "type":"memory",
-                "event":"update",
-                "id":"createFile"
+                "type": "memory",
+                "event": "update",
+                "id": "createFile"
             });
         }
     } catch (error) {
@@ -866,57 +904,57 @@ async function createFile(folderName, fileName, type, content, metadata = {}) {
             contentpool[uid] = base64data;
             await setdb("handling file: " + fileNameWithExtension);
             eventBusWorker.deliver({
-                "type":"memory",
-                "event":"update",
-                "id":"updateFile",
-                "key":folderName
+                "type": "memory",
+                "event": "update",
+                "id": "updateFile",
+                "key": folderName
             });
             return uid;
         }
     }
 }
 async function createFolder(folderNames, folderData) {
-	try {
-		await updateMemoryData();
-		if (typeof folderNames === 'string') {
-			folderNames = [folderNames];
-		} else if (!(folderNames instanceof Set || Array.isArray(folderNames))) {
-			throw new Error('folderNames should be a Set or a string');
-		}
-		folderNames = Array.from(folderNames);
-		for (const folderName of folderNames) {
-			const parts = folderName.replace(/\/$/, '').split('/');
-			let current = memory.root;
-			for (const part of parts) {
-				const folderKey = part + '/';
-				current[folderKey] = current[folderKey] || {};
+    try {
+        await updateMemoryData();
+        if (typeof folderNames === 'string') {
+            folderNames = [folderNames];
+        } else if (!(folderNames instanceof Set || Array.isArray(folderNames))) {
+            throw new Error('folderNames should be a Set or a string');
+        }
+        folderNames = Array.from(folderNames);
+        for (const folderName of folderNames) {
+            const parts = folderName.replace(/\/$/, '').split('/');
+            let current = memory.root;
+            for (const part of parts) {
+                const folderKey = part + '/';
+                current[folderKey] = current[folderKey] || {};
 
-				current = current[folderKey];
-			}
-		}
-		const insertData = (target, data) => {
-			for (const key in data) {
-				if (typeof data[key] === 'object' && data[key] !== null) {
-					target[key] = target[key] || {};
+                current = current[folderKey];
+            }
+        }
+        const insertData = (target, data) => {
+            for (const key in data) {
+                if (typeof data[key] === 'object' && data[key] !== null) {
+                    target[key] = target[key] || {};
 
-					insertData(target[key], data[key]);
-				} else {
-					target[key] = data[key];
-				}
-			}
-		};
+                    insertData(target[key], data[key]);
+                } else {
+                    target[key] = data[key];
+                }
+            }
+        };
 
-		insertData(memory.root, folderData);
-		await setdb("making folders");
-		eventBusWorker.deliver({
-			"type":"memory",
-			"event":"update",
-			"id":"createFolder",
-            "key":folderNames
-		});
-	} catch (error) {
-		console.error("Error creating folders and data:", error);
-	}
+        insertData(memory.root, folderData);
+        await setdb("making folders");
+        eventBusWorker.deliver({
+            "type": "memory",
+            "event": "update",
+            "id": "createFolder",
+            "key": folderNames
+        });
+    } catch (error) {
+        console.error("Error creating folders and data:", error);
+    }
 }
 
 // other
@@ -924,13 +962,13 @@ async function createFolder(folderNames, folderData) {
 function dragfl(ev, obj) {
     ev.dataTransfer.setData("Text", obj.getAttribute('unid'));
 }
-async function crashScreen(err) { 
+async function crashScreen(err) {
     closeallwindows();
     await say(`
         <h1>Your System is curropt.</h1>
         <p>Reload your OS to continue.<p>
         <code>${err}</code>
         `, "failed");
-    if (badlaunch) {return}
+    if (badlaunch) { return }
     location.reload()
 }

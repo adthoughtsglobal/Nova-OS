@@ -1761,23 +1761,28 @@
 						<input id="roturaccsignname" placeholder="Enter username..." class="inputtype1" type="text">
 						<input id="roturaccsignpass" placeholder="Enter your password..." class="inputtype1"
 							type="password">
-						<button onclick="loginrotur()">Sign in</button>
+						<button id="rtrsigninbtn">Connecting...</button>
 					</div>
 				</segr>
 				<script>
 					document.getElementById("rtrsignupform").style.display = "none";
 					document.getElementById("rtrsignedinsec").style.display = "none";
+					document.getElementById("rtrsigninbtn").style.opacity = "0.5";
 					async function loginrotur() {
 						let targetun = document.getElementById("roturaccsignname").value;
 						let targetpass = document.getElementById("roturaccsignpass").value;
 						await window.parent.roturExtension.login({ USERNAME: targetun, PASSWORD: targetpass });
 						document.getElementById("rtrsignedinsec").style.display = "block";
+						document.getElementById("rtrsignupform").style.display = "none";
 						document.getElementById("rtruserstatsi").innerText = "Signed in as " + targetun;
 					}
 					async function initrotur() {
 						await window.parent.setuprotur();
 						document.getElementById("rtrsignupform").style.display = "block";
-						document.getElementById("rtrinitspace").style.display = "none"
+						document.getElementById("rtrinitspace").style.display = "none";
+						document.getElementById("rtrsigninbtn").style.opacity = "1";
+						document.getElementById("rtrsigninbtn").innerText = "Login";
+						document.getElementById("rtrsigninbtn").onclick = loginrotur;
 					}
 				</script>
 				</segr>

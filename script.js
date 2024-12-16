@@ -929,7 +929,7 @@ async function initialiseOS() {
 	await say(`
 		<h2>Terms of service and License</h2>
 		<p>By using Nova OS, you agree to the <a href="https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use">Adthoughtsglobal Nova Terms of Use</a>. 
-		<br><small>We do not store your personal information. <br>Read the terms before use.</small></p>
+		<br><small>We do not store your personal information. <br><iframe src="https://adthoughtsglobal.github.io/termsofuse.html"> <br>Read the terms before use.</small></p>
 	`);
 	console.log("Setting Up NovaOS\n\nUsername: " + CurrentUsername + "\nWith: Sample preset\nUsing host: " + location.href)
 	initialization = true
