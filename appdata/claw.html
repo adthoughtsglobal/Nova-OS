@@ -206,6 +206,8 @@
         .postcontent {
             font-size: 110%;
             margin: 0.7rem 0px;
+    overflow-x: auto;
+    width: 100%;
         }
 
         .more button {
@@ -410,6 +412,20 @@
             align-items: center;
         }
 
+        .feedsnav {
+    display: flex
+;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+button.morebtn {
+    background: #1f1f1f;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+}
+
         .feedsnav button {
             background: transparent;
             border: none;
@@ -498,7 +514,7 @@
                         <button id="followbtntxt">Follow</button>
                         <span id="follownumbers">00</span>
                     </div>
-                    <div class="primebtn">
+                    <div class="primebtn" onclick="loadFeed('user')">
                         See posts
                     </div>
                 </div>
@@ -507,27 +523,31 @@
     </dialog>
 
     <script>
-        var selecteduser = "darkdot";
+        var selecteduser = "darkdot", postlimit = 10;
         async function loadFeed(type = 'claw', obj) {
+            document.getElementById('profilewindow').close()
             document.getElementById("otherfeed").style.display = "none";
             const activeElement = document.querySelector('.feedsnav .active');
             if (activeElement) {
                 activeElement.classList.remove('active');
             }
-            var response;
+            var response, posts;
             if (type == 'claw') {
-                response = await fetch("https://claw.rotur.dev/feed?limit=10");
+                response = await fetch("https://claw.rotur.dev/feed?limit=" + postlimit);
                 document.getElementById("clawfeedbtn").classList.add('active');
+                 posts = await response.json();
             } else if (type == 'following') {
                 if (!checkifaccs()) { return }
-                response = await fetch("https://claw.rotur.dev/following_feed?auth=" + window.parent.roturExtension.userToken);
+                response = await fetch("https://claw.rotur.dev/following_feed?auth=" + window.parent.roturExtension.userToken + "&limit=" + postlimit);
                 document.getElementById("followingfeedbtn").classList.add('active');
+                 posts = await response.json();
             } else {
-                response = await fetch("https://claw.rotur.dev/feed?limit=10");
+                response = await fetch("https://claw.rotur.dev/profile?name="+selecteduser);
+                document.getElementById("otherfeed").innerText = selecteduser;
                 document.getElementById("otherfeed").style.display = "block";
                 document.getElementById("otherfeed").classList.add('active');
+                 posts = (await response.json()).posts;
             }
-            const posts = await response.json();
             const feedContainer = document.getElementById("feed");
             feedContainer.innerHTML = "";
 
@@ -621,6 +641,15 @@
 
                 feedContainer.appendChild(postElement);
             });
+            
+            var moreelemt = document.createElement("button");
+            moreelemt.classList.add("morebtn");
+            moreelemt.innerHTML = `Load more`
+            moreelemt.onclick = () => {
+                postlimit += 10;
+                loadFeed();
+            }
+            feedContainer.appendChild(moreelemt);
         }
 
         function timeSince(timestamp) {
@@ -667,6 +696,7 @@
 
         async function viewprofile(name) {
             if (!checkifaccs()) { return }
+            selecteduser = name;
             document.getElementById("profilewindow").style.opacity = 0.5;
             document.getElementById("profilewindow").style.filter = "blur(5px)";
             document.getElementById("profilewindow").showModal();
