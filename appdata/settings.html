@@ -1765,9 +1765,17 @@
 					</div>
 				</segr>
 				<script>
-					document.getElementById("rtrsignupform").style.display = "none";
-					document.getElementById("rtrsignedinsec").style.display = "none";
-					document.getElementById("rtrsigninbtn").style.opacity = "0.5";
+					if (window.parent.roturExtension.loggedIn()) {
+						document.getElementById("rtrinitspace").style.display = "none";
+						document.getElementById("rtrsignedinsec").style.display = "block";
+    document.getElementById("rtrsignupform").style.display = "none";
+					} else {
+						
+						document.getElementById("rtrsignedinsec").style.display = "none";
+						document.getElementById("rtrsigninbtn").style.opacity = "0.5";
+						document.getElementById("rtruserstatsi").innerText = "Signed in as " + window.parent.roturExtension.user.username;
+					}
+
 					async function loginrotur() {
 						let targetun = document.getElementById("roturaccsignname").value;
 						let targetpass = document.getElementById("roturaccsignpass").value;
