@@ -60,13 +60,6 @@ function isBase64(str) {
 	}
 }
 
-function toTitleCase(str) {
-	rp = str
-	return str.toLowerCase().replace(/(?:^|\s)\w/g, function (match) {
-		return match.toUpperCase();
-	});
-}
-
 function isElement(element) {
 	return element instanceof Element || element instanceof HTMLDocument;
 }
