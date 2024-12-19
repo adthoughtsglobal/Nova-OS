@@ -4,8 +4,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
-    <title>Nova OS</title>
+    <title>Nova OS Claw</title>
     <link rel="stylesheet" href="style.css">
+    <meta name="nova-icon"
+        content="<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='101.95947' height='96.90546' viewBox='0,0,101.95947,96.90546'><defs><linearGradient x1='240' y1='131.54727' x2='240' y2='228.45273' gradientUnits='userSpaceOnUse' id='color-dsfgsgsgsdgs'><stop offset='0' stop-color='#fff5c6'/><stop offset='1' stop-color='#ffd57e'/></linearGradient></defs><g transform='translate(-189.02026,-131.54727)'><g fill='url(#color-dsfgsgsgsdgs)' stroke='none' stroke-width='none' stroke-miterlimit='10'><path d='M189.02027,228.45273c0,0 11.43863,-109.70203 78.82693,-95.66469c15.91347,3.31486 27.61431,28.45432 21.46701,43.50216c-6.70161,16.40474 -16.55144,15.97346 -32.71778,14.27743c-30.58479,-3.2087 -67.57616,37.8851 -67.57616,37.8851z'/></g></g></svg>">
     </script>
     <!--ion icons-->
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
@@ -73,6 +75,10 @@
             height: calc(100% - 2rem);
         }
 
+        * {
+            text-overflow: ellipsis;
+        }
+
         #main {
             display: flex;
             flex-direction: row;
@@ -84,6 +90,7 @@
         #main #feedsection,
         #main #toolsection {
             width: 0;
+            transition: .3s;
         }
 
         #main #feedsection {
@@ -152,6 +159,7 @@
             background: #1f1f1f;
             padding: 1rem;
             border-radius: 0.5rem;
+            animation: pop .3s;
         }
 
         .more {
@@ -165,6 +173,9 @@
 
         .postnav {
             height: 45px;
+            width: fit-content;
+            max-width: 100%;
+            overflow: hidden;
         }
 
         .postuserdata {
@@ -206,8 +217,8 @@
         .postcontent {
             font-size: 110%;
             margin: 0.7rem 0px;
-    overflow-x: auto;
-    width: 100%;
+            overflow-x: auto;
+            width: 100%;
         }
 
         .more button {
@@ -238,6 +249,9 @@
         .posttimestamp {
             font-size: 80%;
             opacity: 70%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .quotebtn {
@@ -249,27 +263,30 @@
             flex-direction: row;
             justify-content: space-between;
             opacity: 0.7;
-            padding: 10px;
+            padding: 0.3rem;
+            width: calc(100% - 20px);
+            overflow: hidden;
         }
 
         #postinput {
-            background: #1f1f1f;
-            padding: 0.5rem;
-            border-radius: 0.5rem;
+            background-color: transparent;
             border: none;
-            width: calc(100% - 1rem);
+            width: 100%;
             min-width: 0;
             max-height: 70vh;
             font-size: 130%;
             height: 150px;
-            resize: vertical;
+            resize: none;
         }
 
         .postmsgsection {
+            background: #1f1f1f;
             display: flex;
+            padding: 0.5rem;
             flex-direction: column;
             align-items: flex-end;
             gap: 0.5rem;
+            border-radius: 0.5rem;
         }
 
         button.postbtn {
@@ -298,16 +315,6 @@
 
         dialog {
             animation: pop .2s ease-in-out;
-        }
-
-        dialog#profilewindow {
-            background: #1f1f1f;
-            color: inherit;
-            border: none;
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 5px 1rem black;
-            transition: .3s ease-in-out;
         }
 
         .profileseperator {
@@ -413,18 +420,29 @@
         }
 
         .feedsnav {
-    display: flex
-;
-    flex-direction: row;
-    flex-wrap: nowrap;
-}
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+        }
 
-button.morebtn {
-    background: #1f1f1f;
+        button.morebtn {
+            background: #1f1f1f;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+        }
+
+        img.postimg {
+            display: block;
+    width: fit-content;
+    height: 200px;
     border: none;
     border-radius: 0.5rem;
-    padding: 0.5rem;
-}
+    outline: none;
+    background: linear-gradient(325deg, #3e97826e, #5f7bff7a);
+    margin-top: 0.5rem;
+    object-fit: scale-down;
+        }
 
         .feedsnav button {
             background: transparent;
@@ -437,12 +455,44 @@ button.morebtn {
             background: #1f1f1f;
         }
 
-        .postuserdata:hover {
-            background: #2f2f2f;
-            padding: 1rem;
-            border-radius: 1rem;
-            z-index: 5;
-            box-shadow: 0 5px 10px #00000075;
+        .postuserdata:hover && .postuserdata {
+            color: #4e5fa7;
+        }
+
+        .buttonlike {
+            animation: slidein .2s;
+        }
+
+        @keyframes slidein {
+            from {
+                transform: translateY(0.5rem);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .novaos {
+            background: linear-gradient(45deg, purple, lightblue);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
+
+        .likestatuses {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .wholikedhint {
+            opacity: 0.5;
+            font-size: smaller;
         }
     </style>
 </head>
@@ -462,7 +512,7 @@ button.morebtn {
                         <button id="followingfeedbtn" onclick="loadFeed('following',this)">
                             Following
                         </button>
-                        <button id="otherfeed" style="display: none;">
+                        <button id="otherfeed" style="display: none;" class="buttonlike">
                             Other
                         </button>
                     </div>
@@ -472,6 +522,7 @@ button.morebtn {
                     <ion-icon name="arrow-up-circle-outline" title="Refresh feed"></ion-icon>
                 </div>
             </nav>
+
             <div id="feed">
 
             </div>
@@ -485,77 +536,81 @@ button.morebtn {
             </div>
             <div class="postmsgsection">
                 <textarea id="postinput" placeholder="What is going on!?"></textarea>
-                <button onclick="newpost()" class="postbtn">
+                <button onclick="newpost()" class="postbtn buttonlike">
                     <span>Post</span>
                     <ion-icon name="chevron-forward-outline"></ion-icon>
                 </button>
             </div>
         </div>
     </main>
-    <dialog class="modal" id="profilewindow">
-        <div class="modalnav">
-            <div class="navsubgrp">
-                <ion-icon name="person-outline"></ion-icon>
-                <span>Profile</span>
-            </div>
-            <ion-icon name="close-outline" onclick="document.getElementById('profilewindow').close()"></ion-icon>
-        </div>
-        <div class="profileseperator">
-            <div class="profilepic">
-                <img src="https://avatars.githubusercontent.com/u/92952823?v=4" id="pfpuserdet">
-            </div>
-            <div class="userdata">
-                <div class="userdatatext">
-                    <h2 id="undispusdat">UserName</h2>
-                    <p id="postsnoteaser">Created 2 months ago</p>
-                </div>
-                <div class="userdatabtns">
-                    <div class="active primebtn" id="followbtn">
-                        <button id="followbtntxt">Follow</button>
-                        <span id="follownumbers">00</span>
-                    </div>
-                    <div class="primebtn" onclick="loadFeed('user')">
-                        See posts
-                    </div>
-                </div>
-            </div>
-        </div>
-    </dialog>
 
     <script>
-        var selecteduser = "darkdot", postlimit = 10;
+        var selecteduser = "darkdot", postlimit = 10, lastrendereditem = null;
+
+        function arrayToString(arr) {
+            if (arr.length === 0) return "";
+            if (arr.length === 1) return arr[0];
+            if (arr.length === 2) return `${arr[0]} and ${arr[1]}`;
+
+            return `${arr[0]}, ${arr[1]} and ${arr.length - 2} more..`;
+        }
+
         async function loadFeed(type = 'claw', obj) {
-            document.getElementById('profilewindow').close()
             document.getElementById("otherfeed").style.display = "none";
             const activeElement = document.querySelector('.feedsnav .active');
             if (activeElement) {
                 activeElement.classList.remove('active');
             }
+
+            const feedContainer = document.getElementById("feed");
+            feedContainer.innerHTML = "";
             var response, posts;
             if (type == 'claw') {
                 response = await fetch("https://claw.rotur.dev/feed?limit=" + postlimit);
                 document.getElementById("clawfeedbtn").classList.add('active');
-                 posts = await response.json();
+                posts = await response.json();
             } else if (type == 'following') {
                 if (!checkifaccs()) { return }
                 response = await fetch("https://claw.rotur.dev/following_feed?auth=" + window.parent.roturExtension.userToken + "&limit=" + postlimit);
                 document.getElementById("followingfeedbtn").classList.add('active');
-                 posts = await response.json();
+                posts = await response.json();
             } else {
-                response = await fetch("https://claw.rotur.dev/profile?name="+selecteduser);
+                response = await fetch("https://claw.rotur.dev/profile?name=" + selecteduser);
                 document.getElementById("otherfeed").innerText = selecteduser;
                 document.getElementById("otherfeed").style.display = "block";
                 document.getElementById("otherfeed").classList.add('active');
-                 posts = (await response.json()).posts;
+                posts = (await response.json()).posts;
+                feedContainer.innerHTML = `<div class="profileseperator">
+                <div class="profilepic">
+                    <img src="" id="pfpuserdet">
+                </div>
+                <div class="userdata">
+                    <div class="userdatatext">
+                        <h2 id="undispusdat">UserName</h2>
+                        <p id="postsnoteaser">Created 2 months ago</p>
+                    </div>
+                    <div class="userdatabtns">
+                        <div class="active primebtn buttonlike" id="followbtn">
+                            <button id="followbtntxt">Follow</button>
+                            <span id="follownumbers">00</span>
+                        </div>
+                        <div class="primebtn">
+                            See posts
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+                listprofilefeatures();
             }
-            const feedContainer = document.getElementById("feed");
-            feedContainer.innerHTML = "";
 
             let lastUser = null;
 
             posts.forEach(post => {
                 const postElement = document.createElement("div");
                 postElement.classList.add("randompost");
+                postElement.id = "postitem" + post.id;
+
+                lastrendereditem = postElement.id;
 
                 const postNav = document.createElement("div");
                 postNav.classList.add("postnav");
@@ -584,7 +639,15 @@ button.morebtn {
 
                 const postTimestamp = document.createElement("div");
                 postTimestamp.classList.add("posttimestamp");
-                postTimestamp.textContent = timeSince(post.timestamp) + ((post.os) ? (" | Posted on " + post.os) : "");
+                if (post.os) {
+                    if (post.os == "novaOS") {
+                        postTimestamp.innerHTML = timeSince(post.timestamp) + " | Posted here";
+                    } else {
+                        postTimestamp.textContent = timeSince(post.timestamp) + " | Posted on " + post.os;
+                    }
+                } else {
+                    postTimestamp.textContent = timeSince(post.timestamp);
+                }
 
                 postUserDynamics.appendChild(postUsername);
                 postUserDynamics.appendChild(postTimestamp);
@@ -598,56 +661,91 @@ button.morebtn {
                 const postContent = document.createElement("div");
                 postContent.classList.add("postcontent");
                 postContent.textContent = post.content;
+
+                if (post.attachment) {
+                    const postImges = document.createElement("img");
+                    postImges.classList.add("postimg");
+                    postImges.src = post['attachment'];
+                    postContent.appendChild(postImges);
+                }
+
                 postElement.appendChild(postContent);
 
-                const postFooter = document.createElement("div");
-                postFooter.classList.add("postfooter");
+                try {
+                    const postFooter = document.createElement("div");
+                    postFooter.classList.add("postfooter");
 
-                const likesDiv = document.createElement("div");
-                likesDiv.classList.add("likes");
-                likesDiv.onclick = function () {
-                    likepost(post.id);
-                };
+                    const likestatuses = document.createElement("div");
+                    likestatuses.classList.add("likestatuses");
 
-                const heartIcon = document.createElement("ion-icon");
-                heartIcon.setAttribute("name", "heart-outline");
+                    const likesDiv = document.createElement("div");
+                    likesDiv.classList.add("likes");
+                    likesDiv.onclick = function () {
+                        likepost(post.id);
+                    };
 
-                const likesNumber = document.createElement("span");
-                likesNumber.classList.add("likesnumber");
-                likesNumber.textContent = post.likes ? post.likes.length : 0;
+                    const wholiked = document.createElement("div");
 
-                likesDiv.appendChild(heartIcon);
-                likesDiv.appendChild(likesNumber);
+                    if (post.likes && post?.likes?.length != 0) {
 
-                const moreDiv = document.createElement("div");
-                moreDiv.classList.add("more");
+                        wholiked.classList.add("wholikedhint");
+                        wholiked.innerText = "Liked by " + arrayToString(post.likes);
+                    }
 
-                const copyButton = document.createElement("button");
-                copyButton.textContent = "Copy ID";
-                copyButton.onclick = function () {
-                    copyId(post.id);
-                };
 
-                const quoteButton = document.createElement("button");
-                quoteButton.classList.add("quotebtn");
-                quoteButton.textContent = "Quote";
+                    const heartIcon = document.createElement("ion-icon");
+                    heartIcon.setAttribute("name", "heart-outline");
 
-                moreDiv.appendChild(copyButton);
-                moreDiv.appendChild(quoteButton);
+                    const likesNumber = document.createElement("span");
+                    likesNumber.classList.add("likesnumber");
+                    likesNumber.textContent = post.likes ? post.likes.length : 0;
 
-                postFooter.appendChild(likesDiv);
-                postFooter.appendChild(moreDiv);
-                postElement.appendChild(postFooter);
 
-                feedContainer.appendChild(postElement);
+                    likesDiv.appendChild(heartIcon);
+                    likesDiv.appendChild(likesNumber);
+
+                    likestatuses.appendChild(likesDiv);
+                    if (post.likes && post.likes.length > 0) {
+                        likestatuses.appendChild(wholiked);
+                    }
+
+
+                    const moreDiv = document.createElement("div");
+                    moreDiv.classList.add("more");
+
+                    const copyButton = document.createElement("button");
+                    copyButton.textContent = "Copy ID";
+                    copyButton.onclick = function () {
+                        copyId(post.id);
+                    };
+
+                    const quoteButton = document.createElement("button");
+                    quoteButton.classList.add("quotebtn");
+                    quoteButton.textContent = "Quote";
+
+                    moreDiv.appendChild(copyButton);
+                    moreDiv.appendChild(quoteButton);
+
+                    postFooter.appendChild(likestatuses);
+                    postFooter.appendChild(moreDiv);
+                    postElement.appendChild(postFooter);
+
+                    feedContainer.appendChild(postElement);
+                } catch (e) {
+                    console.error(e, post)
+                }
             });
-            
+
             var moreelemt = document.createElement("button");
             moreelemt.classList.add("morebtn");
             moreelemt.innerHTML = `Load more`
-            moreelemt.onclick = () => {
+            moreelemt.onclick = async () => {
                 postlimit += 10;
-                loadFeed();
+                let ouritem = lastrendereditem;
+                await loadFeed();
+
+                const targetElement = document.getElementById(ouritem);
+                feedContainer.scrollTop = targetElement.offsetTop - 80;
             }
             feedContainer.appendChild(moreelemt);
         }
@@ -694,12 +792,7 @@ button.morebtn {
             navigator.clipboard.writeText(id);
         }
 
-        async function viewprofile(name) {
-            if (!checkifaccs()) { return }
-            selecteduser = name;
-            document.getElementById("profilewindow").style.opacity = 0.5;
-            document.getElementById("profilewindow").style.filter = "blur(5px)";
-            document.getElementById("profilewindow").showModal();
+        async function listprofilefeatures(name = selecteduser) {
             var profileitems = {
                 img: document.getElementById("pfpuserdet"),
                 name: document.getElementById("undispusdat"),
@@ -718,8 +811,6 @@ button.morebtn {
             profileitems.img.src = userclouddat?.pfp || "https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/no-profile-picture-icon.png";
             profileitems.desc.innerText = "Created " + timeSince(userclouddat.created);
             profileitems.follows.innerText = userclouddat.followers;
-            document.getElementById("profilewindow").style.opacity = 1;
-            document.getElementById("profilewindow").style.filter = "none";
 
             const responsefol = await fetch("https://claw.rotur.dev/followers?username=" + name);
             const userclouddatfol = await responsefol.json();
@@ -740,6 +831,12 @@ button.morebtn {
             }
         }
 
+        async function viewprofile(name) {
+            if (!checkifaccs()) { return }
+            selecteduser = name;
+            await loadFeed('user');
+        }
+
         function checkifaccs() {
             let signedinch = window.parent.roturExtension.loggedIn();
             if (!signedinch) {
@@ -750,6 +847,15 @@ button.morebtn {
         }
 
         loadFeed();
+
+        document.getElementById("postinput").addEventListener("focus", () => {
+            document.getElementById("toolsection").style.flex = "4";
+            document.getElementById("feedsection").style.opacity = "0.5";
+        });
+        document.getElementById("postinput").addEventListener("blur", () => {
+            document.getElementById("toolsection").style.flex = "1";
+            document.getElementById("feedsection").style.opacity = "1";
+        });
     </script>
 </body>
 

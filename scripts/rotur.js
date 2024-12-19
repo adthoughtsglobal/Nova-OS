@@ -209,6 +209,7 @@ class RoturExtension {
     this.version = 5;
     this.outdated = false;
 
+    try {
     fetch("https://raw.githubusercontent.com/Mistium/Origin-OS/main/Resources/info.json")
       .then((response) => {
         if (response.ok) {
@@ -242,10 +243,13 @@ class RoturExtension {
           this.outdated = this.version < parseInt(data)
         })
     }
+  } catch (e) {
+    return e;
+  }
   }
 
   async _initializeBadges() {
-    await this._getBadges(); // Wait for the fetch operation to complete
+    await this._getBadges();
   }
 
   async _getBadges() {
@@ -374,7 +378,11 @@ class RoturExtension {
   }
 
   connectToWebsocket() {
-    this.ws = new WebSocket(this.server);
+    try {
+      this.ws = new WebSocket(this.server);
+    } catch (e) {
+      return e;
+    }
     this.ws.onopen = () => {
       this.sendHandshake();
 

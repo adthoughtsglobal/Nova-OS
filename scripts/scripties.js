@@ -248,7 +248,7 @@ async function qsetsRefresh() {
 
 async function setuprotur() {
 	if (roturExtension.is_connected) {
-		return
+		return;
 	}
 	roturExtension.connectToServer({DESIGNATION:"nva", SYSTEM:"novaOS", VERSION:"2"});
 }

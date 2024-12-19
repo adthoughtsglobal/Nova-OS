@@ -1787,7 +1787,11 @@
 						document.getElementById("rtruserstatsi").innerText = "Signed in as " + targetun;
 					}
 					async function initrotur() {
-						await window.parent.setuprotur();
+						let rtrstats = await window.parent.setuprotur() || true;
+						if (!rtrstats) {
+							window.parent.say("Cannot reach servers.")
+							return;
+						}
 						document.getElementById("rtrsignupform").style.display = "block";
 						document.getElementById("rtrinitspace").style.display = "none";
 						document.getElementById("rtrsigninbtn").style.opacity = "1";
