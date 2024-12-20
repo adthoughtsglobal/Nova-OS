@@ -169,8 +169,10 @@ async function startup() {
 					console.error("Failed to fetch data from the server.");
 				}
 			}
+			
+			
 
-			fetchDataAndUpdate();
+			await fetchDataAndUpdate();
 			await genTaskBar();
 			dod();
 			removeInvalidMagicStrings();
@@ -190,6 +192,16 @@ async function startup() {
 				cleanupInvalidAssociations();
 			}
 			await loadFileTypeAssociations();
+			const end = performance.now();
+			
+			rllog(
+				`You are using \n\n%cNovaOS%c\n%cNovaOS is the free, source-available,powerful and the cutest Web Operating system on the internet.%c\n\nStartup: ${(end - start).toFixed(2)}ms\nUsername: ${CurrentUsername}\nCurrent: ${localupdatedataver}\n12hr Time format: ${timetypecondition}\nNewest: ${fetchupdatedataver}`,
+				'color: white; background-color: #101010; font-size: 2rem; padding: 0.7rem 1rem; border-radius: 1rem;',
+				'',
+				'padding:5px 0; padding-top:1rem;',
+				'color: lightgreen; font-size:70%;'
+			);
+
 			try {
 				function runScriptsSequentially(scripts, delay) {
 					scripts.forEach((script, index) => {
@@ -198,14 +210,6 @@ async function startup() {
 				}
 				runScriptsSequentially(onstartup, 1000)
 			} catch (e) { }
-			const end = performance.now();
-			rllog(
-				`You are using \n\n%cNovaOS%c\n%cNovaOS is the free, source-available,powerful and the cutest Web Operating system on the internet.%c\n\nStartup: ${(end - start).toFixed(2)}ms\nUsername: ${CurrentUsername}\nCurrent: ${localupdatedataver}\n12hr Time format: ${timetypecondition}\nNewest: ${fetchupdatedataver}`,
-				'color: white; background-color: #101010; font-size: 2rem; padding: 0.7rem 1rem; border-radius: 1rem;',
-				'',
-				'padding:5px 0; padding-top:1rem;',
-				'color: lightgreen; font-size:70%;'
-			);
 		} catch (err) { console.error("startup error:", err); }
 	})
 }

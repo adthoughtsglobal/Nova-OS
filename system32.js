@@ -15,7 +15,6 @@ const eventBusBlob = new Blob([`
 
     if (action === 'addListener') {
         const handler = (e) => {
-            console.log('Handler invoked in Worker:', { type: e.type, detail: e.detail });
             self.postMessage({
                 type: e.type,
                 detail: e.detail,
@@ -23,7 +22,6 @@ const eventBusBlob = new Blob([`
         };
         listeners.set(id, { type, handler });
         eventBus.addEventListener(type, handler);
-        console.log('Listener added:', { id, type });
     } else if (action === 'removeListener') {
         const listener = listeners.get(id);
         if (listener) {
@@ -32,7 +30,6 @@ const eventBusBlob = new Blob([`
             console.log('Listener removed:', id);
         }
     } else {
-        console.log('Dispatching event:', { type, evt, key });
         eventBus.dispatchEvent(
             new CustomEvent(type, {
                 detail: { event: evt, key }, // No longer tied to specific IDs
@@ -46,16 +43,11 @@ const eventBusURL = URL.createObjectURL(eventBusBlob);
 const eventBusWorkerE = new Worker(eventBusURL);
 
 const eventBusWorker = {
-    // Internal map to manage type-handler-ID mapping
     handlers: new Map(),
-
-    // Deliver events to the worker
     deliver: (message) => {
         const id = message.id || Date.now().toString(36) + Math.random().toString(36).slice(2);
         eventBusWorkerE.postMessage({ ...message, id });
     },
-
-    // Listen for events from the worker
     listen: (type, handler, initiator) => {
         const id = Date.now().toString(36) + Math.random().toString(36).slice(2);
         const cleanup = () => {
@@ -66,10 +58,9 @@ const eventBusWorker = {
 
         eventBusWorkerE.addEventListener('message', (event) => {
             const { type: eventType, detail } = event.data;
-        
+
             console.log('Message received from Worker:', { eventType, detail });
-        
-            // Notify all relevant handlers of the same type
+
             for (const [id, { type, handler }] of eventBusWorker.handlers.entries()) {
                 if (eventType === type) {
                     handler(detail.event);
@@ -77,15 +68,11 @@ const eventBusWorker = {
             }
         });
 
-        // Add listener to the worker
         eventBusWorkerE.postMessage({ action: 'addListener', type, id });
-
-        // Store the handler for cleanup
         eventBusWorker.handlers.set(id, { type, handler });
 
         console.log('Listener created:', { type, id });
 
-        // Automatically manage cleanup if the initiator (a DOM node) is removed
         if (initiator instanceof Node) {
             const observer = new MutationObserver(() => {
                 if (!document.body.contains(initiator)) {
@@ -799,13 +786,29 @@ async function updateFile(folderName, fileId, newData) {
         let fileLocation = findFile(targetFolder, fileId);
         if (fileLocation) {
             let fileToUpdate = fileLocation.parent[fileLocation.key];
-            fileToUpdate.metadata = newData.metadata !== undefined ? JSON.stringify(newData.metadata) : fileToUpdate.metadata;
-            fileToUpdate.fileName = newData.fileName !== undefined ? newData.fileName : fileLocation.key;
-            fileToUpdate.type = newData.type !== undefined ? newData.type : fileToUpdate.type;
-            if (newData.fileName !== undefined && newData.fileName !== fileLocation.key) {
+
+            console.log(newData, fileToUpdate);
+
+            // Update metadata only if newData.metadata is defined and has properties
+            if (newData.metadata && Object.keys(newData.metadata).length > 0) {
+                fileToUpdate.metadata = newData.metadata;
+            }
+
+            // Update the fileName if provided; handle key change in the parent object
+            if (newData.fileName && newData.fileName !== fileLocation.key) {
+                fileToUpdate.fileName = newData.fileName;
                 fileLocation.parent[newData.fileName] = fileToUpdate;
                 delete fileLocation.parent[fileLocation.key];
+            } else {
+                fileToUpdate.fileName = fileLocation.key; // Keep the original key if no update
             }
+
+            // Update type if provided
+            if (newData.type) {
+                fileToUpdate.type = newData.type;
+            }
+
+            // Update content if provided
             if (newData.content !== undefined) {
                 contentpool[fileId] = newData.content;
             }

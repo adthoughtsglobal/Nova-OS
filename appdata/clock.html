@@ -397,40 +397,40 @@
 		}
 
 		function updateClock() {
-			let now = new Date();
-			let dname = now.getDay(),
-				mo = now.getMonth(),
-				dnum = now.getDate(),
-				yr = now.getFullYear(),
-				hou = now.getHours(),
-				min = now.getMinutes(),
-				sec = now.getSeconds(),
-				pe = "AM";
-			if (hou == 0) {
-				hou = 12;
-			}
-			if (hou > 12) {
-				hou = hou - 12;
-				pe = "PM";
-			}
-			if (min < 10) {
-				min = "0" + min;
-			}
-			if (hou < 10) {
-				hou = "0" + hou;
-			}
-			if (sec < 10) {
-				sec = "0" + sec;
-			}
+    let now = new Date();
+    let dname = now.getDay(),
+        mo = now.getMonth(),
+        dnum = now.getDate(),
+        yr = now.getFullYear(),
+        hou = now.getHours(),
+        min = now.getMinutes(),
+        sec = now.getSeconds(),
+        pe = "AM";
 
-			let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-			let week = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-			let idk = ["dayname", "monthnam", "daynum", "year", "hour", "minute", "second", "period"];
-			let value = [week[dname], months[mo], dnum, yr, hou, min, sec, pe];
-			for (var i = 0; i < idk.length; i++) {
-				document.getElementById(idk[i]).innerHTML = value[i];
-			}
-		}
+    // Convert to 12-hour format and set AM/PM
+    if (hou == 0) {
+        hou = 12; // Midnight
+    } else if (hou > 12) {
+        hou = hou - 12;
+        pe = "PM";
+    } else if (hou == 12) {
+        pe = "PM"; // Noon
+    }
+
+    // Add leading zeros
+    hou = hou < 10 ? "0" + hou : hou;
+    min = min < 10 ? "0" + min : min;
+    sec = sec < 10 ? "0" + sec : sec;
+
+    let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    let week = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    let idk = ["dayname", "monthnam", "daynum", "year", "hour", "minute", "second", "period"];
+    let value = [week[dname], months[mo], dnum, yr, hou, min, sec, pe];
+
+    for (var i = 0; i < idk.length; i++) {
+        document.getElementById(idk[i]).innerHTML = value[i];
+    }
+}
 
 		function initClock() {
 			updateClock();
