@@ -1,26 +1,57 @@
 var batteryLevel, winds = {}, rp, flwint = true, contentpool = {}, memory = {}, _nowapp, fulsapp = false, nowappdo, appsHistory = [], nowwindow, appicns = {}, dev = true, appfound = 'files', fileslist = [], sessionSettings = {}, badlaunch = false, really = false, initmenuload = true, fileTypeAssociations = {}, Gtodo, notifLog = {}, initialization = false, onstartup = [], novaFeaturedImage = `Dev.png`, defAppsList = [
-	"store",
-	"files",
-	"settings",
-	"calculator",
-	"text",
-	"musicplr",
-	"camera",
-	"clock",
-	"media",
-	"gallery",
-	"browser",
-	"studio"
+	"Store",
+	"Files",
+	"Settings",
+	"Calculator",
+	"Text",
+	"Musicplr",
+	"Camera",
+	"Clock",
+	"Media",
+	"Gallery",
+	"Browser",
+	"Studio"
 ], timeFormat, timetypecondition = true;
 
 function setbgimagetourl(x) {
-	const bgImage = document.getElementById('bgimage');
-	bgImage.style.opacity = 0;
-	setTimeout(() => {
-		bgImage.src = x;
-		bgImage.onload = () => bgImage.style.opacity = 1;
-	}, parseFloat(getComputedStyle(bgImage).transitionDuration) * 1000);
-};
+    const bgImage = document.getElementById('bgimage');
+    if (!bgImage) return;
+
+    bgImage.style.opacity = 0;
+    const transitionDuration = parseFloat(getComputedStyle(bgImage).transitionDuration) * 1000 || 300;
+
+    if (x.startsWith('data:')) {
+        try {
+            const byteString = atob(x.split(',')[1]);
+            const mimeString = x.split(',')[0].split(':')[1].split(';')[0];
+            const arrayBuffer = new Uint8Array(byteString.length);
+
+            for (let i = 0; i < byteString.length; i++) {
+                arrayBuffer[i] = byteString.charCodeAt(i);
+            }
+
+            const blob = new Blob([arrayBuffer], { type: mimeString });
+            const blobUrl = URL.createObjectURL(blob);
+
+            setTimeout(() => {
+                bgImage.src = blobUrl;
+                bgImage.onload = () => {
+                    bgImage.style.opacity = 1;
+                    setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+                };
+            }, transitionDuration);
+        } catch (e) {
+            console.error("Failed to decode base64 string:", e);
+        }
+    } else {
+        setTimeout(() => {
+            bgImage.src = x;
+            bgImage.onload = () => {
+                bgImage.style.opacity = 1;
+            };
+        }, transitionDuration);
+    }
+}
 
 Object.defineProperty(window, 'nowapp', {
 	get() {
@@ -798,11 +829,15 @@ function makedialogclosable(ok) {
 	const myDialog = gid(ok);
 	document.addEventListener('click', (event) => {
 		if (event.target === myDialog) {
-			myDialog.close();
+			myDialog.classList.add("*closeEffect");
+			setTimeout(
+				myDialog.close()
+			, 500);
 		}
 	});
 }
 makedialogclosable('appdmod');
+
 function openModal(type, { title = '', message, options = null, status = null, preset = '' } = {}) {
 	if (badlaunch) { return }
 	return new Promise((resolve) => {

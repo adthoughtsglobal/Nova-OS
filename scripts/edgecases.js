@@ -1,13 +1,15 @@
+var cantusetext, caniuse2;
+
 function edgecases() {
 	var issues = ``
-	const cantusetext = `<h1>Nova won't work here.</h1>
+	cantusetext = `<h1>Nova won't work here.</h1>
 		<p>And that's nothing to worry about!<br>Update your browser, or just move to a better browser. </p>
 		<p>Try these options:</p>
 		<ul>
 		<li><a href="https://www.google.com/chrome/">Google Chrome - install</a></li>
 		<li><a href="https://www.mozilla.org/en-US/firefox/new/">Firefox - install</a></li>
 	</ul><p>This is why you cannot get the best experience: </p><ol>`
-	const caniuse2 = `</ol>
+	caniuse2 = `</ol>
 	<p>But still, if you wish to continue, press 'OK'. But we are sure this won't give you the best results.</p>`
 
 	if (typeof HTMLDialogElement == 'undefined') {
@@ -118,14 +120,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 		if (location.origin == 'http://127.0.0.1:3000' || location.origin != 'https://adthoughtsglobal.github.io') {
 			// say("You are on an <b style='color:red;'>unsafe</b> copy of NovaOS. Do not use this.", "failed");
 		}
+		edgecases();
 
-		if (detectIE()) {
+		if (!detectIE()) {
 			issues = `<li><b>HTMLDialogElement Not supported: </b> We have taken some efforts to fix this for you.</li>
 			<li><b>Internet explorer detected: </b> i dunno what to say ;-;</li>`;
-			say(cantusetext + issues + caniuse2 + `<b>Anyway, it is so interesting why you still use explorer.</b>`, "failed");
+			say(cantusetext + issues + caniuse2 + `<br><b>Anyway, it is so interesting why you still use explorer.</b>`, "failed");
 			badlaunch = true;
 		}
-
-		edgecases();
 	});
 });

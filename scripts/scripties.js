@@ -257,3 +257,87 @@ async function logoutofrtr() {
 	await roturExtension.logout();
 	roturExtension.disconnect();
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    let contextMenu;
+
+    function createContextMenu() {
+        contextMenu = document.createElement('div');
+        contextMenu.style.position = 'absolute';
+        contextMenu.style.display = 'none';
+		contextMenu.classList.add("contextmenu")
+        return contextMenu;
+    }
+
+    document.addEventListener('contextmenu', (event) => {
+        event.preventDefault();
+
+        const dialog = event.target.closest('dialog'); // Check if the click is inside a dialog
+        const targetElement = event.target.closest('.app-shortcut, #desktop');
+        if (!targetElement) return;
+
+        if (!contextMenu) contextMenu = createContextMenu();
+
+        if (dialog) {
+            dialog.appendChild(contextMenu); // Attach the menu to the dialog
+        } else {
+            document.body.appendChild(contextMenu); // Attach to body for global usage
+        }
+
+        contextMenu.innerHTML = '';
+
+        const menuItems = getMenuItems(targetElement);
+        menuItems.forEach(item => {
+            const menuItem = document.createElement('div');
+            menuItem.textContent = item.label;
+            menuItem.style.padding = '5px 10px';
+            menuItem.style.cursor = 'pointer';
+            menuItem.addEventListener('click', () => {
+                item.action(targetElement);
+                contextMenu.style.display = 'none';
+            });
+            contextMenu.appendChild(menuItem);
+        });
+
+        if (dialog) {
+            const dialogRect = dialog.getBoundingClientRect(); // Get dialog's position
+            const x = event.clientX - dialogRect.left; // Position relative to the dialog
+            const y = event.clientY - dialogRect.top;
+            contextMenu.style.left = `${x}px`;
+            contextMenu.style.top = `${y}px`;
+        } else {
+            contextMenu.style.left = `${event.clientX}px`;
+            contextMenu.style.top = `${event.clientY}px`;
+        }
+
+        contextMenu.style.display = 'flex';
+    });
+
+    document.addEventListener('click', () => {
+        if (contextMenu) contextMenu.style.display = 'none';
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && contextMenu) {
+            contextMenu.style.display = 'none';
+        }
+    });
+});
+
+function getMenuItems(target) {
+    if (target.classList.contains('app-shortcut')) {
+        return [
+            { label: 'Open', action: (el) => alert(`Opening ${el.dataset.name || 'shortcut'}`) },
+            { label: 'Delete', action: (el) => alert(`Deleting ${el.dataset.name || 'shortcut'}`) },
+        ];
+    }
+    if (target.id === 'desktop') {
+        return [
+            { label: 'Refresh', action: () => alert('Refreshing desktop') },
+            { label: 'Change Wallpaper', action: () => alert('Changing wallpaper') },
+        ];
+    }
+    return [
+        { label: 'Inspect', action: () => console.log('Inspect clicked') },
+    ];
+}

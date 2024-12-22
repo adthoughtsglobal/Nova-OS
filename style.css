@@ -592,7 +592,7 @@ nav [navobj] div {
 	padding: 0 0.5rem;
 }
 
-.context-menu {
+.contextmenu {
 	position: absolute;
 	text-align: center;
 	background: var(--colors-BG-highlighted);
@@ -604,6 +604,7 @@ nav [navobj] div {
 	animation: pop3 var(--time-action) ;
 	z-index: 99;
 	font-size: var(--font-size-small);
+	display: flex;
 }
 
 @keyframes pop3 {
@@ -933,12 +934,10 @@ nav [navobj] div {
 @keyframes closeEffect {
 	0% {
 		opacity: 1;
-		filter: blur(0px);
 	}
 
 	100% {
 		opacity: 0;
-		filter: blur(10px);
 	}
 }
 
@@ -1266,7 +1265,7 @@ input#novamenusearchinp {
 }
 
 .snapping {
-	transition: 0.3s cubic-bezier(0.01, 0.55, 0.53, 0.8);
+	transition: 0.3s;
 }
 
 .windowheader svg {
