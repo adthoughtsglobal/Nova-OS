@@ -159,61 +159,61 @@ async function checkAndRunFromURL() {
 	}
 
 	const filePath = params.get('path');
-  
-  if (filePath) {
-    console.log(`Opening NovaOS path: ${filePath}`);
-    
-    onstartup.push(async () => {
-		let fileid = await getFileByPath(filePath);
-		openfile(fileid.id);
-	});
-  }
+
+	if (filePath) {
+		console.log(`Opening NovaOS path: ${filePath}`);
+
+		onstartup.push(async () => {
+			let fileid = await getFileByPath(filePath);
+			openfile(fileid.id);
+		});
+	}
 }
 const hardcodedMimeTypes = {
-    'html': 'text/html',
-    'app': 'text/html',
-    'js': 'application/javascript',
-    'css': 'text/css',
-    'json': 'application/json',
-    'jpg': 'image/jpeg',
-    'jpeg': 'image/jpeg',
+	'html': 'text/html',
+	'app': 'text/html',
+	'js': 'application/javascript',
+	'css': 'text/css',
+	'json': 'application/json',
+	'jpg': 'image/jpeg',
+	'jpeg': 'image/jpeg',
 	'webp': 'image/webp',
 	'webm': 'image/webm',
-    'png': 'image/png',
-    'gif': 'image/gif',
-    'txt': 'text/plain',
-    'pdf': 'application/pdf'
+	'png': 'image/png',
+	'gif': 'image/gif',
+	'txt': 'text/plain',
+	'pdf': 'application/pdf'
 };
 
 async function getMimeType(extension) {
-    if (globalmimeDb == null) {
-        const mimeDbUrl = 'https://cdn.jsdelivr.net/npm/mime-db@1.52.0/db.json';
-        try {
-            const responseformimedb = await fetch(mimeDbUrl);
-            if (!responseformimedb.ok) throw new Error('Network response was not ok');
-            globalmimeDb = await responseformimedb.json();
-        } catch (error) {
-            return hardcodedMimeTypes[extension] || 'application/octet-stream';
-        }
-    }
-    for (const [key, value] of Object.entries(globalmimeDb)) {
-        if (value.extensions && value.extensions.includes(extension)) {
-            return key;
-        }
-    }
-    return 'application/octet-stream';
+	if (globalmimeDb == null) {
+		const mimeDbUrl = 'https://cdn.jsdelivr.net/npm/mime-db@1.52.0/db.json';
+		try {
+			const responseformimedb = await fetch(mimeDbUrl);
+			if (!responseformimedb.ok) throw new Error('Network response was not ok');
+			globalmimeDb = await responseformimedb.json();
+		} catch (error) {
+			return hardcodedMimeTypes[extension] || 'application/octet-stream';
+		}
+	}
+	for (const [key, value] of Object.entries(globalmimeDb)) {
+		if (value.extensions && value.extensions.includes(extension)) {
+			return key;
+		}
+	}
+	return 'application/octet-stream';
 }
 
 function useNovaOffline() {
 	if ('serviceWorker' in navigator) {
 		navigator.serviceWorker.register('sw.js', { scope: '/' })
-		  .then((registration) => {
-			console.log('Service Worker registered with scope:', registration.scope);
-		  })
-		  .catch((error) => {
-			console.log('Service Worker registration failed:', error);
-		  });
-	  }
+			.then((registration) => {
+				console.log('Service Worker registered with scope:', registration.scope);
+			})
+			.catch((error) => {
+				console.log('Service Worker registration failed:', error);
+			});
+	}
 }
 
 function getReadableTimestamp() {
@@ -231,15 +231,15 @@ draggableTimeDiv.addEventListener('dragstart', (e) => {
 var roturExtension = new RoturExtension();
 
 document.querySelectorAll('.tooltip').forEach(tooltip => {
-    tooltip.addEventListener('mousemove', (e) => {
-        const tooltipText = tooltip.querySelector('.tooltiptext');
-        const moveX = e.offsetX * 0.3;
-        const moveY = e.offsetY * 0.3;
-        tooltipText.style.transform = `translate(${moveX}px, ${moveY}px)`;
-    });
-    tooltip.addEventListener('mouseleave', () => {
-        tooltip.querySelector('.tooltiptext').style.transform = 'translate(0, 0)';
-    });
+	tooltip.addEventListener('mousemove', (e) => {
+		const tooltipText = tooltip.querySelector('.tooltiptext');
+		const moveX = e.offsetX * 0.3;
+		const moveY = e.offsetY * 0.3;
+		tooltipText.style.transform = `translate(${moveX}px, ${moveY}px)`;
+	});
+	tooltip.addEventListener('mouseleave', () => {
+		tooltip.querySelector('.tooltiptext').style.transform = 'translate(0, 0)';
+	});
 });
 
 async function qsetsRefresh() {
@@ -250,7 +250,7 @@ async function setuprotur() {
 	if (roturExtension.is_connected) {
 		return;
 	}
-	roturExtension.connectToServer({DESIGNATION:"nva", SYSTEM:"novaOS", VERSION:"2"});
+	roturExtension.connectToServer({ DESIGNATION: "nva", SYSTEM: "novaOS", VERSION: "2" });
 }
 
 async function logoutofrtr() {
@@ -258,86 +258,140 @@ async function logoutofrtr() {
 	roturExtension.disconnect();
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    let contextMenu;
+let contextMenu;
 
-    function createContextMenu() {
-        contextMenu = document.createElement('div');
-        contextMenu.style.position = 'absolute';
-        contextMenu.style.display = 'none';
-		contextMenu.classList.add("contextmenu")
-        return contextMenu;
-    }
+function createContextMenu() {
+	contextMenu = document.createElement('div');
+	contextMenu.style.position = 'absolute';
+	contextMenu.style.display = 'none';
+	contextMenu.classList.add("contextmenu");
+	return contextMenu;
+}
 
-    document.addEventListener('contextmenu', (event) => {
-        event.preventDefault();
+function adjustPositionToFitViewport(x, y, menu) {
+	menu.style.display = 'block';
+	const menuRect = menu.getBoundingClientRect();
+	menu.style.display = 'none';
 
-        const dialog = event.target.closest('dialog'); // Check if the click is inside a dialog
-        const targetElement = event.target.closest('.app-shortcut, #desktop');
-        if (!targetElement) return;
+	const viewportWidth = window.innerWidth;
+	const viewportHeight = window.innerHeight;
+	const bottomMargin = 55;
 
-        if (!contextMenu) contextMenu = createContextMenu();
+	if (x + menuRect.width > viewportWidth) {
+		x = viewportWidth - menuRect.width;
+	}
+	if (y + menuRect.height > viewportHeight - bottomMargin) {
+		y = viewportHeight - menuRect.height - bottomMargin;
+	}
+	if (x < 0) {
+		x = 0;
+	}
+	if (y < 0) {
+		y = 0;
+	}
 
-        if (dialog) {
-            dialog.appendChild(contextMenu); // Attach the menu to the dialog
-        } else {
-            document.body.appendChild(contextMenu); // Attach to body for global usage
-        }
+	return { x, y };
+}
 
-        contextMenu.innerHTML = '';
 
-        const menuItems = getMenuItems(targetElement);
-        menuItems.forEach(item => {
-            const menuItem = document.createElement('div');
-            menuItem.textContent = item.label;
-            menuItem.style.padding = '5px 10px';
-            menuItem.style.cursor = 'pointer';
-            menuItem.addEventListener('click', () => {
-                item.action(targetElement);
-                contextMenu.style.display = 'none';
-            });
-            contextMenu.appendChild(menuItem);
-        });
+document.addEventListener('contextmenu', (event) => {
+	event.preventDefault();
 
-        if (dialog) {
-            const dialogRect = dialog.getBoundingClientRect(); // Get dialog's position
-            const x = event.clientX - dialogRect.left; // Position relative to the dialog
-            const y = event.clientY - dialogRect.top;
-            contextMenu.style.left = `${x}px`;
-            contextMenu.style.top = `${y}px`;
-        } else {
-            contextMenu.style.left = `${event.clientX}px`;
-            contextMenu.style.top = `${event.clientY}px`;
-        }
+	const dialog = event.target.closest('dialog');
+	const targetElement = event.target.closest('.app-shortcut, #desktop');
+	if (!targetElement) return;
 
-        contextMenu.style.display = 'flex';
-    });
+	if (!contextMenu) contextMenu = createContextMenu();
 
-    document.addEventListener('click', () => {
-        if (contextMenu) contextMenu.style.display = 'none';
-    });
+	if (dialog) {
+		dialog.appendChild(contextMenu);
+	} else {
+		document.body.appendChild(contextMenu);
+	}
 
-    document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && contextMenu) {
-            contextMenu.style.display = 'none';
-        }
-    });
+	contextMenu.innerHTML = '';
+
+	const menuItems = getMenuItems(targetElement);
+	menuItems.forEach(item => {
+		const menuItem = document.createElement('div');
+		menuItem.innerHTML = `<span class="material-symbols-rounded">
+${item.icon || ""}
+</span>
+<span>${item.label}</span>`;
+		menuItem.classList.add("ctxmenuitem");
+		menuItem.style.padding = '5px 10px';
+		menuItem.style.cursor = 'pointer';
+		menuItem.addEventListener('click', () => {
+			item.action(targetElement);
+			contextMenu.style.display = 'none';
+		});
+		contextMenu.appendChild(menuItem);
+	});
+
+	let x = event.clientX;
+	let y = event.clientY;
+
+	if (dialog) {
+		const dialogRect = dialog.getBoundingClientRect();
+		x -= dialogRect.left;
+		y -= dialogRect.top;
+	}
+
+	const adjustedPosition = adjustPositionToFitViewport(x, y, contextMenu);
+	contextMenu.style.left = `${adjustedPosition.x}px`;
+	contextMenu.style.top = `${adjustedPosition.y}px`;
+
+	contextMenu.style.display = 'flex';
+});
+
+document.addEventListener('click', () => {
+	const contextMenu = document.querySelector('.contextmenu');
+	if (contextMenu) contextMenu.style.display = 'none';
+});
+
+document.addEventListener('keydown', (event) => {
+	const contextMenu = document.querySelector('.contextmenu');
+	if (event.key === 'Escape' && contextMenu) {
+		contextMenu.style.display = 'none';
+	}
 });
 
 function getMenuItems(target) {
-    if (target.classList.contains('app-shortcut')) {
-        return [
-            { label: 'Open', action: (el) => alert(`Opening ${el.dataset.name || 'shortcut'}`) },
-            { label: 'Delete', action: (el) => alert(`Deleting ${el.dataset.name || 'shortcut'}`) },
-        ];
-    }
-    if (target.id === 'desktop') {
-        return [
-            { label: 'Refresh', action: () => alert('Refreshing desktop') },
-            { label: 'Change Wallpaper', action: () => alert('Changing wallpaper') },
-        ];
-    }
-    return [
-        { label: 'Inspect', action: () => console.log('Inspect clicked') },
-    ];
+	console.log(target)
+	if (target.classList.contains('app-shortcut')) {
+		var itemuid = target.getAttribute("unid");
+		return [
+			{
+				icon: 'arrow_forward',
+				label: 'Open',
+				action: (el) => {
+					openfile(itemuid)
+				}
+			},
+			{
+				icon: 'delete',
+				label: 'Delete',
+				action: (el) => remfile(itemuid)
+			},
+			{
+				icon: 'edit',
+				label: 'Rename',
+				action: async () => {
+					let file = await getFileById(itemuid);
+
+					file.fileName = await ask("New Name:", file.fileName);
+					await updateFile(false, itemuid, file);
+				}
+			},
+		];
+	}
+	if (target.id === 'desktop') {
+		return [
+			{ icon: 'refresh', label: 'Refresh homescreen', action: () => novarefresh() },
+			{ icon: 'power', label: 'Nova setup', action: () => launchbios() },
+		];
+	}
+	return [
+		{ label: 'Inspect', action: () => console.log('Inspect clicked') },
+	];
 }

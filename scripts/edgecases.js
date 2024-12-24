@@ -122,7 +122,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		}
 		edgecases();
 
-		if (!detectIE()) {
+		if (detectIE()) {
 			issues = `<li><b>HTMLDialogElement Not supported: </b> We have taken some efforts to fix this for you.</li>
 			<li><b>Internet explorer detected: </b> i dunno what to say ;-;</li>`;
 			say(cantusetext + issues + caniuse2 + `<br><b>Anyway, it is so interesting why you still use explorer.</b>`, "failed");

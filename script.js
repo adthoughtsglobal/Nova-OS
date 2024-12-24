@@ -374,6 +374,7 @@ async function openn() {
 
 			var appShortcutDiv = document.createElement("div");
 			appShortcutDiv.className = "app-shortcut tooltip sizableuielement";
+			appShortcutDiv.setAttribute("unid", app.id || '');
 			appShortcutDiv.dataset.appId = app.id;
 			appShortcutDiv.addEventListener("click", () => openfile(app.id));
 
@@ -433,6 +434,7 @@ async function loadrecentapps() {
 		}
 		var appShortcutDiv = document.createElement("div");
 		appShortcutDiv.className = "app-shortcut tooltip sizableuielement";
+		appShortcutDiv.setAttribute("unid", app.id || '');
 		appShortcutDiv.addEventListener("click", () => openapp(app.name, app.id));
 		var iconSpan = document.createElement("span");
 		if (!appicns[app.id]) {
@@ -570,6 +572,7 @@ async function dod() {
 		y.forEach(async function (app) {
 			var appShortcutDiv = document.createElement("div");
 			appShortcutDiv.className = "app-shortcut sizableuielement";
+			appShortcutDiv.setAttribute("unid", app.id || '');
 			app = await getFileById(app.id);
 			let islnk = false;
 			if (mtpetxt(app.fileName) == "lnk") {
@@ -917,6 +920,7 @@ async function loadtaskspanel() {
 
 		let appShortcutDiv = document.createElement("biv");
 		appShortcutDiv.className = "app-shortcut tooltip adock sizableuielement";
+		appShortcutDiv.setAttribute("unid", key.id || '');
 		appShortcutDiv.dataset.key = key;
 
 		appShortcutDiv.addEventListener("click", function () {
@@ -1210,33 +1214,6 @@ function calculateSimilarity(string1, string2) {
 function containsSmallSVGElement(str) {
 	var svgRegex = /^<svg\s*[^>]*>[\s\S]*<\/svg>$/i;
 	return svgRegex.test(str) && str.length <= 5000;
-}
-document.onclick = hideMenu;
-document.oncontextmenu = rightClick;
-function hideMenu() {
-	gid("contextMenu").style.display = "none"
-}
-function rightClick(e) {
-	e.preventDefault();
-	let menu = document.getElementById("contextMenu");
-	if (menu.style.display === "block") {
-		hideMenu();
-	} else {
-		menu.style.display = 'block';
-		let menuWidth = menu.offsetWidth;
-		let menuHeight = menu.offsetHeight;
-
-		let posX = e.pageX;
-		let posY = e.pageY;
-		if ((posX + menuWidth) > window.innerWidth) {
-			posX = window.innerWidth - menuWidth;
-		}
-		if ((posY + menuHeight) > window.innerHeight) {
-			posY = window.innerHeight - menuHeight;
-		}
-		menu.style.left = posX + "px";
-		menu.style.top = posY + "px";
-	}
 }
 var dash = gid("dashboard");
 function dashtoggle() {

@@ -27,7 +27,6 @@ const eventBusBlob = new Blob([`
         if (listener) {
             eventBus.removeEventListener(listener.type, listener.handler);
             listeners.delete(id);
-            console.log('Listener removed:', id);
         }
     } else {
         eventBus.dispatchEvent(
@@ -51,15 +50,12 @@ const eventBusWorker = {
     listen: (type, handler, initiator) => {
         const id = Date.now().toString(36) + Math.random().toString(36).slice(2);
         const cleanup = () => {
-            console.log('Cleaning up listener:', id);
             eventBusWorkerE.postMessage({ action: 'removeListener', id });
             eventBusWorker.handlers.delete(id);
         };
 
         eventBusWorkerE.addEventListener('message', (event) => {
             const { type: eventType, detail } = event.data;
-
-            console.log('Message received from Worker:', { eventType, detail });
 
             for (const [id, { type, handler }] of eventBusWorker.handlers.entries()) {
                 if (eventType === type) {
@@ -70,8 +66,6 @@ const eventBusWorker = {
 
         eventBusWorkerE.postMessage({ action: 'addListener', type, id });
         eventBusWorker.handlers.set(id, { type, handler });
-
-        console.log('Listener created:', { type, id });
 
         if (initiator instanceof Node) {
             const observer = new MutationObserver(() => {
@@ -756,12 +750,13 @@ async function remfolder(folderPath) {
     }
 }
 async function updateFile(folderName, fileId, newData) {
+    await updateMemoryData();
+    
     function findFile(folder, fileId) {
         for (let key in folder) {
             if (typeof folder[key] === 'object' && folder[key] !== null) {
                 if (folder[key].id === fileId) {
                     return { parent: folder, key: key };
-
                 } else if (key.endsWith('/') && typeof folder[key] === 'object') {
                     let result = findFile(folder[key], fileId);
                     if (result) {
@@ -772,8 +767,17 @@ async function updateFile(folderName, fileId, newData) {
         }
         return null;
     }
+
     try {
         let targetFolder = memory.root;
+        if (!folderName) {
+            let filePath = await getFileById(fileId, "path");
+            if (!filePath || !filePath.path) {
+                throw new Error(`File with ID "${fileId}" not found.`);
+            }
+            folderName = filePath.path;
+        }
+
         let folderNames = folderName.split('/');
         for (let name of folderNames) {
             if (name) {
@@ -783,6 +787,7 @@ async function updateFile(folderName, fileId, newData) {
                 }
             }
         }
+
         let fileLocation = findFile(targetFolder, fileId);
         if (fileLocation) {
             let fileToUpdate = fileLocation.parent[fileLocation.key];
