@@ -591,6 +591,32 @@
 	</dialog>
 	<script defer>
 
+		
+async function installapp(button, url) {
+    button.innerHTML = "Installing...";
+    button.style.backgroundColor = "grey";
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Failed to fetch app content");
+        const content = await response.text();
+        const appName = await window.parent.ask("Enter the App Name:", url);
+        if (appName) {
+            await window.parent.createFile("Apps", appName, "app", content);
+            setTimeout(() => {
+                button.innerHTML = 'Install/Search <div class="material-symbols-rounded installbtnicn">download</div>';
+                document.getElementById("fesinp").value = "";
+                button.style.backgroundColor = "#343c3f";
+            }, 1000);
+        }
+    } catch (error) {
+        console.error("Error installing app:", error);
+        button.innerHTML = 'Install/Search <div class="material-symbols-rounded installbtnicn">download</div>';
+        button.style.backgroundColor = "#ff4d4d";
+        alert("Failed to install app. Please try again.");
+    }
+}
+
 		function greenflag() {
 			initializeLoader();
 			fetchAppData().then(appData => {
@@ -899,30 +925,6 @@ async function handleSearchOrInstall(button) {
     }
 }
 
-async function installApp(button, url) {
-    button.innerHTML = "Installing...";
-    button.style.backgroundColor = "grey";
-
-    try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error("Failed to fetch app content");
-        const content = await response.text();
-        const appName = await window.parent.ask("Enter the App Name:", url);
-        if (appName) {
-            await window.parent.createFile("Apps", appName, "app", content);
-            setTimeout(() => {
-                button.innerHTML = 'Install/Search <div class="material-symbols-rounded installbtnicn">download</div>';
-                document.getElementById("fesinp").value = "";
-                button.style.backgroundColor = "#343c3f";
-            }, 1000);
-        }
-    } catch (error) {
-        console.error("Error installing app:", error);
-        button.innerHTML = 'Install/Search <div class="material-symbols-rounded installbtnicn">download</div>';
-        button.style.backgroundColor = "#ff4d4d";
-        alert("Failed to install app. Please try again.");
-    }
-}
 
 function searchApps(query) {
     const resultsDiv = document.getElementById("searchresults");
