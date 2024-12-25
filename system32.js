@@ -859,6 +859,7 @@ function createFolderStructure(folderName) {
     return current;
 }
 async function createFile(folderName, fileName, type, content, metadata = {}) {
+    console.log("creating: ", fileName)
     folderName = folderName.endsWith('/') ? folderName : folderName + '/';
     const fileNameWithExtension = fileName.includes('.') ? fileName : `${fileName}.${type || ''}`.trim();
     if (!fileNameWithExtension) return null;
