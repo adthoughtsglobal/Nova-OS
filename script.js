@@ -1,16 +1,16 @@
 var batteryLevel, winds = {}, rp, flwint = true, contentpool = {}, memory = {}, _nowapp, fulsapp = false, nowappdo, appsHistory = [], nowwindow, appicns = {}, dev = true, appfound = 'files', fileslist = [], sessionSettings = {}, badlaunch = false, really = false, initmenuload = true, fileTypeAssociations = {}, Gtodo, notifLog = {}, initialization = false, onstartup = [], novaFeaturedImage = `Dev.png`, defAppsList = [
-	"Store",
-	"Files",
-	"Settings",
-	"Calculator",
-	"Text",
-	"Musicplr",
-	"Camera",
-	"Clock",
-	"Media",
-	"Gallery",
-	"Browser",
-	"Studio"
+	"store",
+	"files",
+	"settings",
+	"calculator",
+	"text",
+	"musicplr",
+	"camera",
+	"clock",
+	"media",
+	"gallery",
+	"browser",
+	"studio"
 ], timeFormat, timetypecondition = true;
 
 function setbgimagetourl(x) {
