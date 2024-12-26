@@ -212,11 +212,25 @@ async function setFileContents(id, content) {
 }
 
 async function removeFileContents(id) {
+
     if (!dbCache) {
         dbCache = await openDB(databaseName, 1);
     }
 
     try {
+        function removeFileFromFolder(folder) {
+            for (const [name, content] of Object.entries(folder)) {
+                if (name.endsWith('/')) {
+                    if (removeFileFromFolder(content)) return true;
+                } else if (content.id === id) {
+                    delete folder[name];
+                    return true;
+                }
+            }
+            return false;
+        }
+        removeFileFromFolder(memory.root);
+
         const transaction = dbCache.transaction('dataStore', 'readwrite');
         const store = transaction.objectStore('dataStore');
 

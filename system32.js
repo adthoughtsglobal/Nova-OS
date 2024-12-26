@@ -30,10 +30,10 @@ const eventBusBlob = new Blob([`
         }
     } else {
         eventBus.dispatchEvent(
-            new CustomEvent(type, {
-                detail: { event: evt, key }, // No longer tied to specific IDs
-            })
-        );
+    new CustomEvent(type, {
+        detail: { ...e.data } // Spread all properties from e.data
+    })
+);
     }
 });`
 ], { type: 'application/javascript' });
@@ -59,7 +59,7 @@ const eventBusWorker = {
 
             for (const [id, { type, handler }] of eventBusWorker.handlers.entries()) {
                 if (eventType === type) {
-                    handler(detail.event);
+                    handler(detail);
                 }
             }
         });
@@ -682,9 +682,9 @@ async function moveFileToFolder(flid, dest) {
 async function remfile(ID) {
     try {
         await updateMemoryData();
-        let fileParent = null;
+        let fileParent = null, name;
         function removeFileFromFolder(folder) {
-            for (const [name, content] of Object.entries(folder)) {
+            for (const [content] of Object.entries(folder)) {
                 if (name.endsWith('/')) {
                     if (removeFileFromFolder(content)) return true;
                 } else if (content.id === ID) {
@@ -706,7 +706,7 @@ async function remfile(ID) {
                 "type": "memory",
                 "event": "update",
                 "id": "removeFile",
-                "key": fileParent
+                "key": fileParent[name]
             });
         }
     } catch (error) {
@@ -751,7 +751,7 @@ async function remfolder(folderPath) {
 }
 async function updateFile(folderName, fileId, newData) {
     await updateMemoryData();
-    
+
     function findFile(folder, fileId) {
         for (let key in folder) {
             if (typeof folder[key] === 'object' && folder[key] !== null) {
