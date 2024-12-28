@@ -1,46 +1,24 @@
 let dbCache = null;
 let cryptoKeyCache = null;
 const key = 'dataStore';
-
-
 async function openDB(databaseName, version) {
     return new Promise((resolve, reject) => {
         const request = indexedDB.open(databaseName, version);
-        request.onupgradeneeded = async (event) => {
+
+        request.onupgradeneeded = (event) => {
             const db = event.target.result;
-            if (!db.objectStoreNames.contains("dataStore")) {
-                db.createObjectStore("dataStore", { keyPath: 'key' });
-                await saveMagicStringInLocalStorage(password);
+
+            if (!db.objectStoreNames.contains('dataStore')) {
+                db.createObjectStore('dataStore', { keyPath: 'key' });
             }
         };
 
-        request.onsuccess = async (event) => {
-            const db = event.target.result;
-            if (db.version > 1) {
-                const dataToPreserve = await readAllData(db, 'dataStore');
-                db.close();
-                const deleteRequest = indexedDB.deleteDatabase(databaseName);
-                deleteRequest.onsuccess = () => {
-                    const resetRequest = indexedDB.open(databaseName, 1);
-                    resetRequest.onupgradeneeded = (resetEvent) => {
-                        const newDb = resetEvent.target.result;
-                        const objectStore = newDb.createObjectStore('dataStore', { keyPath: CurrentUsername });
-                        dataToPreserve.forEach(item => objectStore.add(item));
-                    };
-
-                    resetRequest.onsuccess = (resetEvent) => resolve(resetEvent.target.result);
-                    resetRequest.onerror = (resetEvent) => reject(resetEvent.target.error);
-                };
-
-                deleteRequest.onerror = (deleteEvent) => reject(deleteEvent.target.error);
-            } else {
-                resolve(db);
-            }
-        };
+        request.onsuccess = (event) => resolve(event.target.result);
 
         request.onerror = (event) => reject(event.target.error);
     });
 }
+
 
 async function flushDB(value) {
     if (!dbCache) {
@@ -55,34 +33,23 @@ async function flushDB(value) {
     if (!cryptoKeyCache) {
         cryptoKeyCache = await getKey(password);
     }
-    const encryptedContentPool = {};
-
-    for (const id in value.contentpool) {
-        encryptedContentPool[id] = await encryptData(
-            cryptoKeyCache, 
-            compressString(value.contentpool[id])
-        );
-    }
-    const memoryValue = {
-        key: CurrentUsername || 'Admin',
-        memory: value.memory,
-        contentpool: encryptedContentPool
-    };
 
     const transaction = dbCache.transaction(key, 'readwrite');
     const store = transaction.objectStore(key);
-    await store.put(memoryValue);
+    const request = store.get(CurrentUsername);
+
     return new Promise((resolve, reject) => {
-        transaction.oncomplete = resolve;
-        transaction.onerror = () => reject(transaction.error);
+        request.onsuccess = async () => {
+            const result = request.result || { key: CurrentUsername || 'Admin', memory: {}, contentpool: {} };
+            result.memory = value.memory;
+
+            const updateRequest = store.put(result);
+            updateRequest.onsuccess = resolve;
+            updateRequest.onerror = () => reject(updateRequest.error);
+        };
+
+        request.onerror = () => reject(request.error);
     });
-}
-
-function setdb() {
-    const value = { memory: { ...memory }, contentpool: { ...contentpool } };
-
-    return flushDB(value)
-        .catch(error => console.error("Error during setdb execution:", error));
 }
 
 async function getdb() {
@@ -101,14 +68,7 @@ async function getdb() {
                 const result = request.result;
                 if (result) {
                     try {
-                        const decryptedContentPool = {};
-
                         memory = result.memory;
-                        for (const id in result.contentpool) {
-                            const decryptedContent = await decryptData(cryptoKeyCache, result.contentpool[id]);
-                            decryptedContentPool[id] = decompressString(decryptedContent);
-                        }
-                        contentpool = decryptedContentPool;
                         resolve(memory);
                     } catch (error) {
                         console.error("Decryption error:", error);
@@ -130,7 +90,45 @@ async function getdb() {
     }
 }
 
-// Lazy loading of file content by ID
+function setdb(x) {
+    console.log("flushing... ", x)
+    const value = {
+        memory: { ...memory }
+    };
+
+    return flushDB(value)
+        .catch(error => console.error("Error during setdb execution:", error));
+}
+let requestQueue = [];
+let isProcessing = false;
+
+async function processQueue() {
+    if (isProcessing || requestQueue.length === 0) {
+        return;
+    }
+
+    isProcessing = true;
+
+    while (requestQueue.length > 0) {
+        const { resolve, reject, action, args } = requestQueue.shift();
+        try {
+            const result = await action(...args);
+            resolve(result);
+        } catch (error) {
+            reject(error);
+        }
+    }
+
+    isProcessing = false;
+}
+
+async function enqueueRequest(action, args) {
+    return new Promise((resolve, reject) => {
+        requestQueue.push({ resolve, reject, action, args });
+        processQueue();
+    });
+}
+
 async function getFileContents(id) {
     if (!dbCache) {
         dbCache = await openDB(databaseName, 1);
@@ -154,7 +152,6 @@ async function getFileContents(id) {
                         const uncompressedContent = decompressString(decryptedContent);
                         resolve(uncompressedContent);
                     } catch (error) {
-                        console.error("Error during decryption or decompression:", error);
                         reject(error);
                     }
                 } else {
@@ -165,12 +162,10 @@ async function getFileContents(id) {
             request.onerror = () => reject(request.error);
         });
     } catch (error) {
-        console.error("Error in getFileContents:", error);
         throw error;
     }
 }
 
-// Setter for file contents by ID, encrypting and storing the contentpool
 async function setFileContents(id, content) {
     if (!dbCache) {
         dbCache = await openDB(databaseName, 1);
@@ -180,12 +175,10 @@ async function setFileContents(id, content) {
     }
 
     try {
-        // Encrypt and compress the content before saving
         const encryptedContent = await encryptData(cryptoKeyCache, compressString(content));
 
         const transaction = dbCache.transaction('dataStore', 'readwrite');
         const store = transaction.objectStore('dataStore');
-
         const request = store.get(CurrentUsername);
 
         return new Promise((resolve, reject) => {
@@ -196,7 +189,7 @@ async function setFileContents(id, content) {
                     result.contentpool[id] = encryptedContent;
 
                     const updateRequest = store.put(result);
-                    updateRequest.onsuccess = resolve;
+                    updateRequest.onsuccess = () => resolve();
                     updateRequest.onerror = () => reject(updateRequest.error);
                 } else {
                     reject(new Error('User data not found'));
@@ -206,45 +199,28 @@ async function setFileContents(id, content) {
             request.onerror = () => reject(request.error);
         });
     } catch (error) {
-        console.error("Error in setFileContents:", error);
         throw error;
     }
 }
 
 async function removeFileContents(id) {
-
     if (!dbCache) {
         dbCache = await openDB(databaseName, 1);
     }
 
     try {
-        function removeFileFromFolder(folder) {
-            for (const [name, content] of Object.entries(folder)) {
-                if (name.endsWith('/')) {
-                    if (removeFileFromFolder(content)) return true;
-                } else if (content.id === id) {
-                    delete folder[name];
-                    return true;
-                }
-            }
-            return false;
-        }
-        removeFileFromFolder(memory.root);
-
         const transaction = dbCache.transaction('dataStore', 'readwrite');
         const store = transaction.objectStore('dataStore');
-
         const request = store.get(CurrentUsername);
 
         return new Promise((resolve, reject) => {
             request.onsuccess = async () => {
                 const result = request.result;
                 if (result && result.contentpool && result.contentpool[id]) {
-                    // Remove the content for the specified ID
                     delete result.contentpool[id];
 
                     const updateRequest = store.put(result);
-                    updateRequest.onsuccess = resolve;
+                    updateRequest.onsuccess = () => resolve();
                     updateRequest.onerror = () => reject(updateRequest.error);
                 } else {
                     reject(new Error('File not found'));
@@ -254,15 +230,15 @@ async function removeFileContents(id) {
             request.onerror = () => reject(request.error);
         });
     } catch (error) {
-        console.error("Error in removeFileContents:", error);
         throw error;
     }
 }
 
+
 const ctntMgr = {
     async get(id) {
         try {
-            return await getFileContents(id);
+            return await enqueueRequest(getFileContents, [id]);
         } catch (error) {
             throw error;
         }
@@ -270,7 +246,7 @@ const ctntMgr = {
 
     async set(id, content) {
         try {
-            return await setFileContents(id, content);
+            return await enqueueRequest(setFileContents, [id, content]);
         } catch (error) {
             throw error;
         }
@@ -278,7 +254,7 @@ const ctntMgr = {
 
     async remove(id) {
         try {
-            return await removeFileContents(id);
+            return await enqueueRequest(removeFileContents, [id]);
         } catch (error) {
             throw error;
         }

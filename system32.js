@@ -306,27 +306,79 @@ async function removeInvalidMagicStrings() {
 }
 async function changePassword(oldPassword, newPassword) {
     lethalpasswordtimes = true;
+
     if (!await checkPassword(oldPassword)) {
         lethalpasswordtimes = false;
         return false;
     }
-    try {
-        memory = await getdb();
-        password = newPassword;
 
+    try {
+        const oldKey = await getKey(oldPassword);
+        const newKey = await getKey(newPassword);
+
+        if (!dbCache) {
+            dbCache = await openDB(databaseName, 1);
+        }
+
+        const transaction = dbCache.transaction('dataStore', 'readonly');
+        const store = transaction.objectStore('dataStore');
+        const request = store.get(CurrentUsername);
+
+        const contentPool = await new Promise((resolve, reject) => {
+            request.onsuccess = () => {
+                const result = request.result;
+                resolve(result && result.contentpool ? result.contentpool : {});
+            };
+            request.onerror = () => reject(request.error);
+        });
+
+        const updatedContentPool = {};
+
+        for (const [id, encryptedData] of Object.entries(contentPool)) {
+            try {
+                const decryptedContent = await decryptData(oldKey, encryptedData);
+                const reEncryptedData = await encryptData(newKey, decryptedContent);
+                updatedContentPool[id] = reEncryptedData;
+            } catch (error) {
+                console.error(`Error processing file ${id}:`, error);
+                throw error;
+            }
+        }
+
+        const writeTransaction = dbCache.transaction('dataStore', 'readwrite');
+        const writeStore = writeTransaction.objectStore('dataStore');
+        const writeRequest = writeStore.get(CurrentUsername);
+
+        await new Promise((resolve, reject) => {
+            writeRequest.onsuccess = () => {
+                const result = writeRequest.result || { key: CurrentUsername || 'Admin', contentpool: {} };
+                result.contentpool = updatedContentPool;
+
+                const updateRequest = writeStore.put(result);
+                updateRequest.onsuccess = resolve;
+                updateRequest.onerror = () => reject(updateRequest.error);
+            };
+            writeRequest.onerror = () => reject(writeRequest.error);
+        });
+
+        password = newPassword;
         dbCache = null;
         cryptoKeyCache = null;
-        await setdb("change password");
-        eventBusWorker.deliver({
-            "type": "memory",
-            "event": "update",
-            "id": "passwordChange"
-        });
+
         await saveMagicStringInLocalStorage(newPassword);
+
+        eventBusWorker.deliver({
+            type: "memory",
+            event: "update",
+            id: "passwordChange"
+        });
+
     } catch (error) {
+        console.error("Error during password change:", error);
         lethalpasswordtimes = false;
         return false;
     }
+
     lethalpasswordtimes = false;
     return true;
 }
@@ -478,7 +530,7 @@ async function getSetting(key) {
         await ensurePreferencesFileExists();
         const content = memory.root["System/"]["preferences.json"];
         if (!content) return;
-        const base64Content = contentpool[content.id];
+        const base64Content = await ctntMgr.get(content.id);
         const preferences = JSON.parse(decodeBase64Content(base64Content));
         settingsCache[key] = { v: preferences[key], t: Date.now() };
 
@@ -495,13 +547,13 @@ async function setSetting(key, value) {
         let preferences = {};
 
         if (content) {
-            const existingContent = contentpool[content.id];
+            const existingContent = await ctntMgr.get(content.id);
             const decodedContent = decodeBase64Content(existingContent);
             preferences = JSON.parse(decodedContent);
         }
         preferences[key] = value;
         const newContent = `data:application/json;base64,${btoa(JSON.stringify(preferences))}`;
-        contentpool[content.id] = newContent;
+        await ctntMgr.set(content.id,newContent);
         await setdb("set setting " + key);
         eventBusWorker.deliver({
             "type": "settings",
@@ -519,7 +571,7 @@ async function resetSettings() {
         const content = memory.root["System/"]["preferences.json"];
 
         const newContent = `data:application/json;base64,${btoa(JSON.stringify(defaultPreferences))}`;
-        contentpool[content.id] = newContent;
+        await ctntMgr.set(content.id,newContent);
 
         await setdb("reset settings");
         eventBusWorker.deliver({
@@ -535,12 +587,12 @@ async function remSetting(key) {
     try {
         if (memory.root["System/"] && memory.root["System/"]["preferences.json"]) {
             const content = memory.root["System/"]["preferences.json"];
-            let preferences = JSON.parse(decodeBase64Content(contentpool[content.id]));
+            let preferences = JSON.parse(decodeBase64Content(await ctntMgr.get(content.id)));
             if (preferences[key]) {
                 delete preferences[key];
 
                 const newContent = `data:application/json;base64,${btoa(JSON.stringify(preferences))}`;
-                contentpool[content.id] = newContent;
+                await ctntMgr.set(content.id,newContent);
 
                 await setdb("remove setting");
                 eventBusWorker.deliver({
@@ -624,7 +676,7 @@ async function findFileDetails(id, folder, dataType, currentPath = '') {
                 return {
                     fileName: key,
                     id: item.id,
-                    content: !dataType || dataType === 'content' ? contentpool[id] : undefined,
+                    content: !dataType || dataType === 'content' ? await ctntMgr.get(id) : undefined,
                     metadata: item.metadata,
                     path: currentPath
                 };
@@ -678,19 +730,25 @@ async function moveFileToFolder(flid, dest) {
     let removeoutput = await remfile(flid);
     console.log(removeoutput, fileToMove)
     await createFile(dest, fileToMove.fileName, fileToMove.type, fileToMove.content, fileToMove.metadata);
+    eventBusWorker.deliver({
+        "type": "memory",
+        "event": "update",
+        "id": "moveFile",
+        "key": dest
+    });
 }
 async function remfile(ID) {
     try {
         await updateMemoryData();
         let fileParent = null, name;
         function removeFileFromFolder(folder) {
-            for (const [content] of Object.entries(folder)) {
+            for (const [name, content] of Object.entries(folder)) {
                 if (name.endsWith('/')) {
                     if (removeFileFromFolder(content)) return true;
                 } else if (content.id === ID) {
                     delete folder[name];
                     fileParent = folder;
-                    delete contentpool[ID]; // Remove content from contentpool
+                    ctntMgr.remove(content.id);
                     console.log("File eliminated.");
                     return true;
                 }
@@ -815,7 +873,7 @@ async function updateFile(folderName, fileId, newData) {
 
             // Update content if provided
             if (newData.content !== undefined) {
-                contentpool[fileId] = newData.content;
+                await ctntMgr.set(fileId, newData.content);
             }
             await setdb("modify file");
             eventBusWorker.deliver({
@@ -832,7 +890,7 @@ async function updateFile(folderName, fileId, newData) {
                 type: newData.type || ''
             };
 
-            contentpool[fileId] = newData.content || '';
+            await ctntMgr.set(fileId, newData.content || '');
             await setdb("create new file");
             eventBusWorker.deliver({
                 "type": "memory",
@@ -910,7 +968,7 @@ async function createFile(folderName, fileName, type, content, metadata = {}) {
             folder[fileNameWithExtension] = { id: uid, type, metadata };
 
             if (fileNameWithExtension.endsWith(".app")) extractAndRegisterCapabilities(uid, base64data);
-            contentpool[uid] = base64data;
+            await ctntMgr.set(uid, base64data);
             await setdb("handling file: " + fileNameWithExtension);
             eventBusWorker.deliver({
                 "type": "memory",

@@ -816,13 +816,24 @@ async function registerApp(appId, capabilities) {
 }
 async function cleanupInvalidAssociations() {
 	const validAppIds = await getAllValidAppIds();
+	let associationsChanged = false;
+
 	for (let fileType in fileTypeAssociations) {
-		fileTypeAssociations[fileType] = fileTypeAssociations[fileType].filter(appId => validAppIds.includes(appId));
+		const originalAssociations = fileTypeAssociations[fileType];
+		fileTypeAssociations[fileType] = originalAssociations.filter(appId => validAppIds.includes(appId));
+
 		if (fileTypeAssociations[fileType].length === 0) {
 			delete fileTypeAssociations[fileType];
 		}
+
+		if (originalAssociations.length !== fileTypeAssociations[fileType].length) {
+			associationsChanged = true;
+		}
 	}
-	await setSetting('fileTypeAssociations', fileTypeAssociations);
+
+	if (associationsChanged) {
+		await setSetting('fileTypeAssociations', fileTypeAssociations);
+	}
 }
 async function getAllValidAppIds() {
 	const appsFolder = await getFileNamesByFolder('Apps/');
@@ -1639,7 +1650,6 @@ async function cleanupram() {
 	contentpool = null;
 	CurrentUsername = null;
 	password = 'nova';
-	console.clear();
 	winds = [];
 	windowData = {};
 	MemoryTimeCache = null;
