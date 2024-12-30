@@ -56,6 +56,13 @@ async function checkdmode() {
 	const theme = darkMode ? "dark" : "bright";
 	const simplicity = simpleMode ? "simple" : "nonSimple";
 	switchtheme(theme, simplicity);
+
+	const themeColors = await window.parent.getSetting("themeColors");
+        if (!themeColors) return;
+
+        Object.entries(themeColors).forEach(([variableName, colorValue]) => {
+            document.documentElement.style.setProperty(variableName, colorValue);
+        });
 }
 
 const setStyle = (element, styles) => {

@@ -307,7 +307,7 @@
 
             if (file.type === "application/json") {
                 try {
-                    file.content = formatJS(JSON.stringify(JSON.parse(file.content), null, 2));
+                    file.content = formatJS(JSON.stringify(JSON.parse(file.content)));
                 } catch (e) {
                     console.error("Error parsing JSON content", e);
                 }

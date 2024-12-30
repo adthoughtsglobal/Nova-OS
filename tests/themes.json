@@ -1,0 +1,119 @@
+{
+    "NovaOS Classic": {
+        "type": "dark",
+        "colors": {
+            "--colors-BG-normal": "#101010",
+            "--colors-BG-section": "#171717",
+            "--colors-BG-sub": "#262626",
+            "--colors-BG-highlighted": "#44403C",
+            "--colors-BG-accent": "#44403C",
+            "--colors-text-normal": "#FFFFFF",
+            "--colors-special-good": "#49AC49",
+            "--colors-special-bad": "#AC4949"
+        }
+    },
+    "Obsidian": {
+        "type": "dark",
+        "colors": {
+            "--colors-BG-normal": "#000000",
+            "--colors-BG-sub": "#080808",
+            "--colors-BG-section": "#090909",
+            "--colors-BG-highlighted": "#512DA8",
+            "--colors-BG-accent": "#444444",
+            "--colors-text-normal": "#FFFFFF",
+            "--colors-special-good": "#49AC49",
+            "--colors-special-bad": "#AC4949"
+        }
+    },
+    "Crimson Midnight": {
+        "type": "dark",
+        "colors": {
+            "--colors-BG-normal": "#4C0519",
+            "--colors-BG-section": "#881337",
+            "--colors-BG-sub": "#BE123C",
+            "--colors-BG-highlighted": "#F43F5E",
+            "--colors-BG-accent": "#D4D4D4",
+            "--colors-text-normal": "#FFFFFF",
+            "--colors-special-good": "#49AC49",
+            "--colors-special-bad": "#AC4949"
+        }
+    },
+    "Material Dark": {
+        "type": "dark",
+        "colors": {
+            "--colors-BG-normal": "#212121",
+            "--colors-BG-sub": "#424242",
+            "--colors-BG-section": "#212121",
+            "--colors-BG-highlighted": "#455A64",
+            "--colors-BG-accent": "#444444",
+            "--colors-text-normal": "#FFFFFF",
+            "--colors-special-good": "#49AC49",
+            "--colors-special-bad": "#AC4949"
+        }
+    },
+    "Scarlet Gold": {
+        "type": "dark",
+        "colors": {
+            "--colors-BG-normal": "#000000",
+            "--colors-BG-section": "#1D0000",
+            "--colors-BG-sub": "#321800",
+            "--colors-BG-highlighted": "#9B5600",
+            "--colors-BG-accent": "#44403C",
+            "--colors-text-normal": "#FFDB53",
+            "--colors-special-good": "#FF9700",
+            "--colors-special-bad": "#FF0000"
+        }
+    },
+    "Material Bright": {
+        "type": "bright",
+        "colors": {
+            "--colors-BG-normal": "#ECEFF1",
+            "--colors-BG-sub": "#B0BEC5",
+            "--colors-BG-section": "#FAFAFA",
+            "--colors-BG-highlighted": "#90A4AE",
+            "--colors-BG-accent": "#D4D4D4",
+            "--colors-text-normal": "#161616",
+            "--colors-special-good": "#49AC49",
+            "--colors-special-bad": "#AC4949"
+        }
+    },
+    "Win Classic Dark": {
+        "type": "dark",
+        "colors": {
+            "--colors-BG-normal": "#232A32",
+            "--colors-BG-section": "#2E2E2E",
+            "--colors-BG-sub": "#374049",
+            "--colors-BG-highlighted": "#56738E",
+            "--colors-BG-accent": "#444444",
+            "--colors-text-normal": "#FFFFFF",
+            "--colors-special-good": "#49AC49",
+            "--colors-special-bad": "#AC4949"
+        }
+    },
+    "Monkai Yellow": {
+        "type": "dark",
+        "colors": {
+            "--colors-BG-normal": "#21211A",
+            "--colors-BG-section": "#1A1B17",
+            "--colors-BG-sub": "#2A2B23",
+            "--colors-BG-highlighted": "#4D4D4D",
+            "--colors-BG-accent": "#44403C",
+            "--colors-text-normal": "#FFF8CF",
+            "--colors-special-good": "#49AC49",
+            "--colors-special-bad": "#AC4949"
+        }
+    },
+    "Raw jungle": {
+        "type": "dark",
+        "colors": {
+            "--colors-BG-normal": "#010500",
+            "--colors-BG-section": "#030705",
+            "--colors-BG-sub": "#032600",
+            "--colors-BG-highlighted": "#0D1609",
+            "--colors-BG-accent": "#44403C",
+            "--colors-text-normal": "#3DFF00",
+            "--colors-special-good": "#3DFF00",
+            "--colors-special-bad": "#FF0000"
+        }
+    }
+}

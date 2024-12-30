@@ -550,6 +550,15 @@
 			margin-top: var(--sizing-huge);
 		}
 
+		h3 {
+			font-weight: normal;
+			font-size: var(--font-size-normal);
+			opacity: 0.7;
+			margin-top: var(--sizing-huge);
+    margin-bottom: var(--sizing-nano);
+
+		}
+
 		segr {
 			margin-bottom: var(--sizing-normal);
 			overflow: hidden;
@@ -566,7 +575,8 @@
 			gap: var(--sizing-nano);
 		}
 	</style>
-	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 </head>
 
 <body>
@@ -574,31 +584,31 @@
 		<div class="tab">
 
 			<button class="tablinks" onclick="openCity(event, 'storage')" id="defaultOpen"><i
-					class="material-icons">storage</i> Storage</button>
-			<button class="tablinks" onclick="openCity(event, 'battery')"><i class="material-icons">battery_full</i>
+					class="material-symbols-rounded">storage</i> Storage</button>
+			<button class="tablinks" onclick="openCity(event, 'battery')"><i class="material-symbols-rounded">battery_full</i>
 				Battery</button>
-			<button class="tablinks" onclick="openCity(event, 'devices')"><i class="material-icons">devices</i>
+			<button class="tablinks" onclick="openCity(event, 'devices')"><i class="material-symbols-rounded">devices</i>
 				Devices</button>
 			<button class="tablinks" onclick="openCity(event, 'defaults'); defs5(); defs2(); defs3()"><i
-					class="material-icons">settings</i> Preferances</button>
-			<button class="tablinks" onclick="openCity(event, 'activity'); taskmg()"><i class="material-icons">poll</i>
+					class="material-symbols-rounded">settings</i> Preferances</button>
+			<button class="tablinks" onclick="openCity(event, 'activity'); taskmg()"><i class="material-symbols-rounded">poll</i>
 				Activity</button>
 			<button class="tablinks" onclick="openCity(event, 'perform'); updateFPS()"><i
-					class="material-icons">speed</i>
+					class="material-symbols-rounded">speed</i>
 				Performance</button>
-			<button class="tablinks" onclick="openCity(event, 'exp'); defs();"><i class="material-icons">monitor</i>
+			<button class="tablinks" onclick="openCity(event, 'exp'); defs();"><i class="material-symbols-rounded">monitor</i>
 				Display</button>
-			<button class="tablinks" onclick="openCity(event, 'password')"><i class="material-icons">person</i>
+			<button class="tablinks" onclick="openCity(event, 'password')"><i class="material-symbols-rounded">person</i>
 				User</button>
 			<button class="tablinks" onclick="openCity(event, 'network'); defs();"><i
-					class="material-icons">language</i>
+					class="material-symbols-rounded">language</i>
 				Network</button>
 			<button class="tablinks" onclick="openCity(event, 'lclstgsc'); lclstgsc();"><i
-					class="material-icons">manage_search</i>
+					class="material-symbols-rounded">manage_search</i>
 				Data Manager</button>
 			<button class="tablinks" onclick="openCity(event, 'defaultappsforfiles'); defs2(); defs3()"><i
-					class="material-icons">open_in_browser</i> Defaults</button>
-			<button class="tablinks" onclick="openCity(event, 'about')"><i class="material-icons">info</i>
+					class="material-symbols-rounded">open_in_browser</i> Defaults</button>
+			<button class="tablinks" onclick="openCity(event, 'about')"><i class="material-symbols-rounded">info</i>
 				About</button>
 
 		</div>
@@ -648,7 +658,7 @@
 					flex: 3;
 				}
 
-				.lclstr .material-icons {
+				.lclstr .material-symbols-rounded {
 					width: 20px;
 					font-size: var(--sizing-huge);
 					display: grid;
@@ -660,7 +670,7 @@
 			<h1>Data Manager</h1>
 			<div class="datamangernav">
 				<span>LocalStorage</span>
-				<a onclick="lclstgsc()"><i class="material-icons">restart_alt</i></a>
+				<a onclick="lclstgsc()"><i class="material-symbols-rounded">restart_alt</i></a>
 			</div>
 			<div id="datalist">
 
@@ -690,7 +700,7 @@
 						});
 						elem.appendChild(elemval);
 						const delbtn = document.createElement("span");
-						delbtn.classList = "material-icons";
+						delbtn.classList = "material-symbols-rounded";
 						delbtn.innerHTML = "delete_forever";
 						delbtn.addEventListener('click', async function () {
 							localStorage.removeItem(key);
@@ -1344,7 +1354,7 @@
 							height: 1.3rem;
 						}
 
-						.material-icons {
+						.material-symbols-rounded {
 							color: #7b7b7b;
 							font-size: var(--sizing-huge) !important;
 							transform: translateY(-2px);
@@ -1533,7 +1543,7 @@
 
 					var chargingIcon = document.getElementById("chargingIcon");
 					if (batchar) {
-						document.getElementById("batperdisp").innerHTML += '<g id="chargingIcon"><i class="material-icons" >battery_charging_full</i></g>';
+						document.getElementById("batperdisp").innerHTML += '<g id="chargingIcon"><i class="material-symbols-rounded" >battery_charging_full</i></g>';
 					} else {
 					}
 				}
@@ -1683,7 +1693,7 @@
 			<div id="taskslist">
 				<div class="task">
 					<span>Settings</span>
-					<span class="material-icons stpicn">
+					<span class="material-symbols-rounded stpicn">
 						do_disturb
 					</span>
 				</div>
@@ -1715,7 +1725,7 @@
 						smallId.textContent = taskId;
 
 						const spanIcon = document.createElement("span");
-						spanIcon.classList.add("material-icons", "stpicn");
+						spanIcon.classList.add("material-symbols-rounded", "stpicn");
 						spanIcon.textContent = "do_disturb";
 						spanIcon.onclick = function () {
 							spanIcon.classList.add('wooboo-animation');
@@ -1787,7 +1797,7 @@
 						document.getElementById("rtruserstatsi").innerText = "Signed in as " + targetun;
 					}
 					async function initrotur() {
-						let rtrstats = await window.parent.setuprotur() || true;
+						let rtrstats = await window.parent.setuprotur();
 						if (!rtrstats) {
 							window.parent.say("Cannot reach servers.")
 							return;
@@ -1855,7 +1865,7 @@
 			<div id="deviceslist">
 				<div class="device">
 					<div class="dic">
-						<span class="material-icons">
+						<span class="material-symbols-rounded">
 							refresh
 						</span>
 					</div>
@@ -1911,7 +1921,7 @@
 							const powerDiv = document.createElement("div");
 							powerDiv.classList.add("dic");
 							const powerIcon = document.createElement("span");
-							powerIcon.classList.add("material-icons");
+							powerIcon.classList.add("material-symbols-rounded");
 							if (deviceInfo.type === 'microphone') {
 								powerIcon.textContent = "mic";
 							} else if (deviceInfo.type === 'camera') {
@@ -2023,11 +2033,110 @@
 					</div>
 				</div>
 			</segr>
-			<h1>Colors <label real>BETA</label></h1>
-			<button onclick="applyColorsFromImageURL()" style="margin-bottom: 1rem;">Adapt from image URL</button>
+			<h1>Colors</h1>
+			<h3>Color packs</h3>
+			<div class="colorpacks">
+				
+			<div id="themeslist">
 
-			<canvas id="canvas" style="display:none;"></canvas>
+			</div>
+			<div class="newthemebtn" id="copy-theme-btn">
+				<i class="material-symbols-rounded">content_copy</i>
+			</div>
+			<div class="newthemebtn" id="paste-theme-btn">
+				<i class="material-symbols-rounded">content_paste</i>
+			</div>
+			<script>
+				document.getElementById('copy-theme-btn').addEventListener('click', copyCurrentTheme);
+				document.getElementById('paste-theme-btn').addEventListener('click', pasteThemeFromClipboard);
+			
+				function copyCurrentTheme() {
+					const colorsToCopy = {};
+					document.querySelectorAll('[data-variable]').forEach(button => {
+						const variableName = button.dataset.variable;
+						const colorValue = button.jscolor.toHEXString();
+						colorsToCopy[variableName] = colorValue;
+					});
+					navigator.clipboard.writeText(JSON.stringify(colorsToCopy))
+						.then(() => window.parent.say('Theme copied to clipboard!'))
+						.catch(err => console.error('Error copying theme:', err));
+				}
+			
+				async function pasteThemeFromClipboard() {
+					try {
+						const text = await navigator.clipboard.readText();
+						const parsedColors = JSON.parse(text);
+			
+						if (typeof parsedColors === 'object' && parsedColors !== null) {
+							const buttons = document.querySelectorAll('[data-variable]');
+							buttons.forEach(button => {
+								const variableName = button.dataset.variable;
+								if (parsedColors[variableName]) {
+									button.jscolor.fromString(parsedColors[variableName]);
+									updateColor(button.jscolor, variableName);
+								}
+							});
+							saveColors();
+							window.parent.say('Theme applied from clipboard!');
+						} else {
+							window.parent.say('Clipboard does not contain a valid theme JSON.');
+						}
+					} catch (error) {
+						console.error('Error pasting theme:', error);
+						window.parent.say('Failed to apply theme from clipboard. Ensure it contains valid JSON.');
+					}
+				}
+			</script>
+			</div>
 			<style>
+				.colorpacks {
+					display: flex
+;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 0.3rem;
+    overflow-x: auto;
+    padding-bottom: 0.3rem;
+}
+
+				#themeslist {
+					display: flex;
+					flex-direction: row;
+					gap: 0.3rem;
+				}
+				.newthemebtn {
+    background: var(--colors-BG-section);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    display: flex
+;
+    align-items: center;
+    justify-content: center;
+}
+
+				#themeslist div {
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+	width: 100px;
+}
+.newthemebtn {
+	background: var(--colors-BG-section);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    display: flex
+;
+    align-items: center;
+    justify-content: center;
+    color: var(--colors-text-normal);
+    text-shadow: 0 0 9px var(--colors-BG-highlighted);
+    border: 1px solid var(--colors-BG-sub);
+}
+.newthemebtn i {
+	font-size: 1.5rem;
+}
+
 				label[real] {
 					font-size: var(--font-size-small);
 					background-color: rgb(139 62 62);
@@ -2038,9 +2147,14 @@
 				}
 
 				.jscolor {
-					width: 35px;
-					height: 35px;
-					border-radius: var(--sizing-border-radius);
+					width: 6rem;
+    height: 35px;
+    border-radius: var(--sizing-border-radius);
+    font-family: monospace;
+    font-size: var(--font-size-default);
+    background: transparent;
+    border: 1px solid var(--colors-BG-highlighted);
+    color: var(--colors-text-normal);
 				}
 
 				/* Styles for the color picker itself */
@@ -2077,224 +2191,129 @@
 					background: #444;
 				}
 			</style>
+			<h3>Backgrounds</h3>
 			<segr>
 				<div setting class="colorsetting">
 					<b>Normal Background</b>
-					<button id="normal-bg"
-						data-jscolor="{preset:'dark', width:150, paletteCols:0, onInput:'updateColor(this, \"
-						--colors-BG-normal\")'}"></button>
-				</div>
-				<div setting class="colorsetting">
-					<b>Sub Background</b>
-					<button id="sub-bg"
-						data-jscolor="{preset:'dark', width:150, paletteCols:0, onInput:'updateColor(this, \"
-						--colors-BG-sub\")'}"></button>
+					<input id="normal-bg" data-variable="--colors-BG-normal"></input>
 				</div>
 				<div setting class="colorsetting">
 					<b>Section Background</b>
-					<button id="section-bg"
-						data-jscolor="{preset:'dark', width:150, paletteCols:0, onInput:'updateColor(this, \"
-						--colors-BG-section\")'}"></button>
+					<input id="section-bg" data-variable="--colors-BG-section"></input>
+				</div>
+				<div setting class="colorsetting">
+					<b>Sub Background</b>
+					<input id="sub-bg" data-variable="--colors-BG-sub"></input>
 				</div>
 				<div setting class="colorsetting">
 					<b>Highlighted Background</b>
-					<button id="high-bg"
-						data-jscolor="{preset:'dark', width:150, paletteCols:0, onInput:'updateColor(this, \"
-						--colors-BG-highlighted\")'}"></button>
+					<input id="high-bg" data-variable="--colors-BG-highlighted"></input>
 				</div>
 			</segr>
+			<h3>Interface colors</h3>
 			<segr>
 				<div setting class="colorsetting">
-					<b>Accent color</b>
-					<button id="accent-bg"
-						data-jscolor="{preset:'dark', width:150, paletteCols:0, onInput:'updateColor(this, \"
-						--colors-BG-accent\")'}"></button>
+					<b>Accent Color</b>
+					<input id="accent-bg" data-variable="--colors-BG-accent"></input>
 				</div>
 				<div setting class="colorsetting">
-					<b>Text color</b>
-					<button id="text-normal"
-						data-jscolor="{preset:'dark', width:150, paletteCols:0, onInput:'updateColor(this, \"
-						--colors-text-normal\")'}"></button>
+					<b>Text Color</b>
+					<input id="text-normal" data-variable="--colors-text-normal"></input>
 				</div>
-
+				<div setting class="colorsetting">
+					<b>Confirm Color</b>
+					<input id="confirm-color" data-variable="--colors-special-good"></input>
+				</div>
+				<div setting class="colorsetting">
+					<b>Decline Color</b>
+					<input id="decline-color" data-variable="--colors-special-bad"></input>
+				</div>
 			</segr>
-			<button id="save-btn">Save</button>
+			<div id="themeslist"></div>
 			<script>
+				window.parent.fetch('/tests/themes.json')
+					.then(response => response.json())
+					.then(data => {
+						const container = document.getElementById("themeslist");
+			
+						Object.entries(data).forEach(([themeName, themeData]) => {
+							const div = document.createElement('div');
+							div.style.background = `linear-gradient(to bottom right, 
+								${themeData.colors["--colors-BG-normal"]} 0%, 
+								${themeData.colors["--colors-BG-sub"]} 25%, 
+								${themeData.colors["--colors-BG-section"]} 75%, 
+								${themeData.colors["--colors-BG-highlighted"]}) 100%`;
+							div.style.color = themeData.colors["--colors-text-normal"];
+							div.style.border = `2px solid ${themeData.colors["--colors-BG-accent"]}`;
+							div.innerText = themeName;
+							div.addEventListener('click', () => applyTheme(themeData.colors));
+							container.appendChild(div);
+						});
+					})
+					.catch(error => console.error('Error loading themes:', error));
+			
+				function initColorPickers() {
+					document.querySelectorAll('[data-variable]').forEach(button => {
+						const variableName = button.dataset.variable;
+						button.jscolor = new jscolor(button, {
+							preset: 'dark',
+							width: 150,
+							paletteCols: 0,
+							onInput: () => debouncedSaveColor(button.jscolor, variableName)
+						});
+						button.jscolor.fromString(getCSSVariableValue(variableName));
+					});
+				}
+			
+				function applyTheme(colors) {
+					const buttons = document.querySelectorAll('[data-variable]');
+					buttons.forEach(button => {
+						const variableName = button.dataset.variable;
+						const newColor = colors[variableName];
+						if (newColor) {
+							button.jscolor.fromString(newColor);
+							updateColor(button.jscolor, variableName);
+						}
+					});
+				}
+			
+				const debouncedSaveColor = debounce((picker, variableName) => {
+					updateColor(picker, variableName);
+					saveColors();
+				}, 300);
+			
 				function updateColor(picker, variableName) {
 					const colorValue = picker.toHEXString();
 					window.parent.document.documentElement.style.setProperty(variableName, colorValue);
+					document.documentElement.style.setProperty(variableName, colorValue);
 				}
-
+			
 				function getCSSVariableValue(varName) {
 					return window.parent.getComputedStyle(window.parent.document.documentElement).getPropertyValue(varName).trim();
 				}
-
-				// Convert HEX to HSL
-				function hexToHSL(hex) {
-					let r = parseInt(hex.substring(1, 3), 16) / 255;
-					let g = parseInt(hex.substring(3, 5), 16) / 255;
-					let b = parseInt(hex.substring(5, 7), 16) / 255;
-
-					let max = Math.max(r, g, b);
-					let min = Math.min(r, g, b);
-					let h, s, l = (max + min) / 2;
-
-					if (max === min) {
-						h = s = 0; // achromatic
-					} else {
-						let d = max - min;
-						s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-						switch (max) {
-							case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-							case g: h = (b - r) / d + 2; break;
-							case b: h = (r - g) / d + 4; break;
-						}
-						h /= 6;
-					}
-
-					return { h: h * 360, s: s * 100, l: l * 100 };
+			
+				async function saveColors() {
+					const colorsToSave = {};
+					const buttons = document.querySelectorAll('[data-variable]');
+					buttons.forEach(button => {
+						const variableName = button.dataset.variable;
+						const colorValue = button.jscolor.toHEXString();
+						colorsToSave[variableName] = colorValue;
+					});
+					await window.parent.setSetting("themeColors", colorsToSave);
 				}
-
-				// Convert HSL to HEX
-				function hslToHex(h, s, l) {
-					s /= 100;
-					l /= 100;
-
-					let c = (1 - Math.abs(2 * l - 1)) * s;
-					let x = c * (1 - Math.abs((h / 60) % 2 - 1));
-					let m = l - c / 2;
-					let r, g, b;
-
-					if (0 <= h && h < 60) { r = c; g = x; b = 0; }
-					else if (60 <= h && h < 120) { r = x; g = c; b = 0; }
-					else if (120 <= h && h < 180) { r = 0; g = c; b = x; }
-					else if (180 <= h && h < 240) { r = 0; g = x; b = c; }
-					else if (240 <= h && h < 300) { r = x; g = 0; b = c; }
-					else { r = c; g = 0; b = x; }
-
-					return `#${((1 << 24) + (Math.round((r + m) * 255) << 16) + (Math.round((g + m) * 255) << 8) + Math.round((b + m) * 255)).toString(16).slice(1)}`;
+			
+				function debounce(func, wait) {
+					let timeout;
+					return function(...args) {
+						clearTimeout(timeout);
+						timeout = setTimeout(() => func.apply(this, args), wait);
+					};
 				}
-
-				// Adjust color brightness based on saturation
-				function adjustBrightness(hex, amount) {
-					let { h, s, l } = hexToHSL(hex);
-
-					if (s === 0) {
-						// Color is grayscale, adjust brightness
-						l = Math.min(100, Math.max(0, l + amount));
-					} else {
-						// Color is not grayscale, adjust lightness
-						l = Math.min(100, Math.max(0, l + (amount * 0.1)));
-					}
-
-					return hslToHex(h, s, l);
-				}
-
-				function initColorPickers() {
-					// normal bg
-					document.querySelector("#normal-bg").jscolor.fromString(getCSSVariableValue('--colors-BG-normal'));
-					// text normal
-					document.querySelector("#text-normal").jscolor.fromString(getCSSVariableValue('--colors-text-normal'));
-					// section bg
-					document.querySelector("#section-bg").jscolor.fromString(getCSSVariableValue('--colors-BG-section'));
-					// high bg
-					document.querySelector("#high-bg").jscolor.fromString(getCSSVariableValue('--colors-BG-highlighted'));
-					// accent bg
-					document.querySelector("#accent-bg").jscolor.fromString(getCSSVariableValue('--colors-BG-accent'));
-					// sub bg
-					document.querySelector("#sub-bg").jscolor.fromString(getCSSVariableValue('--colors-BG-sub'));
-				}
-
-				function saveColors() {
-					const normalBgColor = document.querySelector("#normal-bg").jscolor.toHEXString();
-					const highlightedBgColor = document.querySelector("#high-bg").jscolor.toHEXString();
-					const textNormalColor = document.querySelector("#text-normal").jscolor.toHEXString();
-
-					// Adjust the normalBgColor slightly for other background-related variables
-					const sectionBgColor = document.querySelector("#section-bg").jscolor.toHEXString();
-					const subBgColor = document.querySelector("#sub-bg").jscolor.toHEXString();
-
-					window.parent.document.documentElement.style.setProperty('--colors-BG-normal', normalBgColor);
-					window.parent.document.documentElement.style.setProperty('--colors-BG-section', sectionBgColor);
-					window.parent.document.documentElement.style.setProperty('--colors-BG-highlighted', highlightedBgColor);
-					window.parent.document.documentElement.style.setProperty('--colors-BG-accent', highlightedBgColor);
-					window.parent.document.documentElement.style.setProperty('--colors-BG-sub', subBgColor);
-					window.parent.document.documentElement.style.setProperty('--colors-text-normal', textNormalColor);
-				}
-
+			
 				window.addEventListener('load', initColorPickers);
-				document.querySelector("#save-btn").addEventListener('click', saveColors);
-
-				async function applyColorsFromImageURL() {
-					let imageURL = await window.parent.ask("Enter image URL");
-					const canvas = document.getElementById('canvas');
-					const ctx = canvas.getContext('2d');
-					const image = new Image();
-
-					image.crossOrigin = 'Anonymous'; // This ensures the image can be processed if it's hosted on another domain
-
-					image.onload = () => {
-						canvas.width = image.width;
-						canvas.height = image.height;
-						ctx.drawImage(image, 0, 0, image.width, image.height);
-						const imgData = ctx.getImageData(0, 0, image.width, image.height);
-
-						const avgColor = getAverageColor(imgData);
-						const invertedColor = invertColor(avgColor);
-
-						// Apply the colors to CSS variables
-						document.documentElement.style.setProperty('--colors-BG-normal', colorToString(avgColor));
-						document.documentElement.style.setProperty('--colors-text-normal', colorToString(invertedColor));
-						document.documentElement.style.setProperty('--colors-BG-sub', colorToString(adjustBrightness(avgColor, -0.2)));
-						document.documentElement.style.setProperty('--colors-BG-section', colorToString(adjustBrightness(avgColor, -0.1)));
-						document.documentElement.style.setProperty('--colors-BG-highlighted', colorToString(adjustBrightness(avgColor, 0.2)));
-						document.documentElement.style.setProperty('--colors-BG-accent', colorToString(adjustBrightness(avgColor, 0.3)));
-
-						// Apply colors to jscolor inputs
-						document.querySelector("#normal-bg").jscolor.fromString(colorToString(avgColor));
-						document.querySelector("#text-normal").jscolor.fromString(colorToString(invertedColor));
-						document.querySelector("#section-bg").jscolor.fromString(colorToString(adjustBrightness(avgColor, -0.1)));
-						document.querySelector("#high-bg").jscolor.fromString(colorToString(adjustBrightness(avgColor, 0.2)));
-						document.querySelector("#sub-bg").jscolor.fromString(colorToString(adjustBrightness(avgColor, -0.2)));
-					};
-
-					image.src = imageURL;
-				}
-
-				function getAverageColor(imgData) {
-					const data = imgData.data;
-					let r = 0, g = 0, b = 0;
-					const pixelCount = imgData.width * imgData.height;
-
-					for (let i = 0; i < data.length; i += 4) {
-						r += data[i];
-						g += data[i + 1];
-						b += data[i + 2];
-					}
-
-					r = Math.floor(r / pixelCount);
-					g = Math.floor(g / pixelCount);
-					b = Math.floor(b / pixelCount);
-
-					return { r, g, b };
-				}
-
-				function invertColor({ r, g, b }) {
-					return { r: 255 - r, g: 255 - g, b: 255 - b };
-				}
-
-				function adjustBrightness({ r, g, b }, factor) {
-					return {
-						r: Math.min(255, Math.max(0, Math.floor(r * (1 + factor)))),
-						g: Math.min(255, Math.max(0, Math.floor(g * (1 + factor)))),
-						b: Math.min(255, Math.max(0, Math.floor(b * (1 + factor))))
-					};
-				}
-
-				function colorToString({ r, g, b }) {
-					return `rgb(${r}, ${g}, ${b})`;
-				}
 			</script>
+			
 			<h1>Personalization</h1>
 			<segr>
 				<div class="inpbox">
