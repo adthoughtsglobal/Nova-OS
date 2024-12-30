@@ -2231,7 +2231,7 @@
 			</segr>
 			<div id="themeslist"></div>
 			<script>
-				window.parent.fetch('/tests/themes.json')
+				window.parent.fetch('tests/themes.json')
 					.then(response => response.json())
 					.then(data => {
 						const container = document.getElementById("themeslist");
