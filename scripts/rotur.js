@@ -302,7 +302,7 @@ class RoturExtension {
       setTimeout(() => {
         this.connectToServer(args);
       }, 1000);
-      return;
+      return true;
     }
     if (this.ws) { wsClose; }
     this.designation = args.DESIGNATION;
