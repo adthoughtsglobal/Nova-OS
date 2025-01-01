@@ -26,7 +26,7 @@ jobs:
           COMMIT_URL=$(jq -r '.head_commit.url // "No commit URL"' < "$GITHUB_EVENT_PATH")
           REPO_NAME=$(jq -r '.repository.full_name // "Unknown repository"' < "$GITHUB_EVENT_PATH")
 
-          MESSAGE="-# New Update on Dev Version:\n## **${COMMIT_MESSAGE}**\n-# [View Code](<${COMMIT_URL}>)"
+          MESSAGE="-# New Update on Dev Version:\n${COMMIT_MESSAGE}\n-# [View Code](<${COMMIT_URL}>)"
 
           curl -H "Content-Type: application/json" \
                -X POST \
