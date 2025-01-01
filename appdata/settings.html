@@ -689,11 +689,11 @@
 						elem.classList = "lclstr";
 						const elemname = document.createElement("span");
 						elemname.classList = "name";
-						elemname.innerHTML = key;
+						elemname.innerText = key;
 						elem.appendChild(elemname);
 						const elemval = document.createElement("span");
 						elemval.classList = "value";
-						elemval.innerHTML = items[key];
+						elemval.innerText = items[key];
 						elemval.addEventListener('click', async function () {
 							let x = await window.parent.ask("Set value for '" + key + "':", items[key]);
 							localStorage.setItem(key, x)
