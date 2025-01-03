@@ -1156,6 +1156,39 @@
 	</dialog>
 
 	<script>
+		function liststuff() {
+			console.log("hi")
+			$(function () {
+				console.log("h")
+				const jsTreeData = memoryToJsTree(window.parent.memory.root);
+
+				if ($('#jstree').jstree(true)) {
+					$('#jstree').jstree('destroy').empty();
+				}
+
+				$('#jstree').jstree({
+					'core': {
+						'data': jsTreeData
+					}
+				}).on('loaded.jstree', function () {
+					addDragAndDropListeners();
+				});
+
+				$('#jstree').on("changed.jstree", function (e, data) {
+					if (data?.node?.li_attr?.['data-path']) {
+						let selectedPath = data.node.li_attr['data-path'];
+						listFiles(selectedPath);
+
+						if (!window.parent.getSetting("filesSidenavSize")) {
+							fitsizesidenav();
+						}
+					} else {
+						console.log('No folder selected');
+					}
+				});
+			});
+		}
+
 		function getLastSegment(path) {
 			const segments = path.replace(/\/$/, '').split('/');
 			return segments[segments.length - 1];
@@ -1316,39 +1349,7 @@
 			return traverse(memory, parentPath);
 		}
 
-		function liststuff() {
-			if (!navigator.onLine) {
-				return;
-			}
-			$(function () {
-				const jsTreeData = memoryToJsTree(window.parent.memory.root);
 
-				if ($('#jstree').jstree(true)) {
-					$('#jstree').jstree('destroy').empty();
-				}
-
-				$('#jstree').jstree({
-					'core': {
-						'data': jsTreeData
-					}
-				}).on('loaded.jstree', function () {
-					addDragAndDropListeners();
-				});
-
-				$('#jstree').on("changed.jstree", function (e, data) {
-					if (data?.node?.li_attr?.['data-path']) {
-						let selectedPath = data.node.li_attr['data-path'];
-						listFiles(selectedPath);
-
-						if (!window.parent.getSetting("filesSidenavSize")) {
-							fitsizesidenav();
-						}
-					} else {
-						console.log('No folder selected');
-					}
-				});
-			});
-		}
 		async function refresh() {
 			window.parent.updateMemoryData();
 			const refreshButton = document.getElementById('ogrefreshbtn');
@@ -2096,161 +2097,158 @@
 				initializeFilesApp(false);
 			}
 
-			myWindow.eventBusWorker.listen("memory", (event) => {
-				if (event.key && event.key.includes(getLastSegment(currentPath))) {
-					refresh();
-				}
-			});
 		}
+		/*
 		let contextMenu;
 
-function createContextMenu() {
-	contextMenu = document.createElement('div');
-	contextMenu.style.position = 'absolute';
-	contextMenu.style.display = 'none';
-	contextMenu.classList.add("contextmenu");
-	return contextMenu;
-}
+		function createContextMenu() {
+			contextMenu = document.createElement('div');
+			contextMenu.style.position = 'absolute';
+			contextMenu.style.display = 'none';
+			contextMenu.classList.add("contextmenu");
+			return contextMenu;
+		}
 
-function adjustPositionToFitViewport(x, y, menu) {
-	menu.style.display = 'block';
-	const menuRect = menu.getBoundingClientRect();
-	menu.style.display = 'none';
+		function adjustPositionToFitViewport(x, y, menu) {
+			menu.style.display = 'block';
+			const menuRect = menu.getBoundingClientRect();
+			menu.style.display = 'none';
 
-	const viewportWidth = window.innerWidth;
-	const viewportHeight = window.innerHeight;
-	const bottomMargin = 55;
+			const viewportWidth = window.innerWidth;
+			const viewportHeight = window.innerHeight;
+			const bottomMargin = 55;
 
-	if (x + menuRect.width > viewportWidth) {
-		x = viewportWidth - menuRect.width;
-	}
-	if (y + menuRect.height > viewportHeight - bottomMargin) {
-		y = viewportHeight - menuRect.height - bottomMargin;
-	}
-	if (x < 0) {
-		x = 0;
-	}
-	if (y < 0) {
-		y = 0;
-	}
+			if (x + menuRect.width > viewportWidth) {
+				x = viewportWidth - menuRect.width;
+			}
+			if (y + menuRect.height > viewportHeight - bottomMargin) {
+				y = viewportHeight - menuRect.height - bottomMargin;
+			}
+			if (x < 0) {
+				x = 0;
+			}
+			if (y < 0) {
+				y = 0;
+			}
 
-	return { x, y };
-}
+			return { x, y };
+		}
 
+		document.addEventListener('contextmenu', (event) => {
+			event.preventDefault();
 
-document.addEventListener('contextmenu', (event) => {
-	event.preventDefault();
+			const dialog = event.target.closest('dialog');
+			const targetElement = event.target.closest('.file, .jstree-anchor');
+			if (!targetElement) return;
 
-	const dialog = event.target.closest('dialog');
-	const targetElement = event.target.closest('.file, .jstree-anchor');
-	if (!targetElement) return;
+			if (!contextMenu) contextMenu = createContextMenu();
 
-	if (!contextMenu) contextMenu = createContextMenu();
+			if (dialog) {
+				dialog.appendChild(contextMenu);
+			} else {
+				document.body.appendChild(contextMenu);
+			}
 
-	if (dialog) {
-		dialog.appendChild(contextMenu);
-	} else {
-		document.body.appendChild(contextMenu);
-	}
+			contextMenu.innerHTML = '';
 
-	contextMenu.innerHTML = '';
-
-	const menuItems = getMenuItems(targetElement);
-	menuItems.forEach(item => {
-		const menuItem = document.createElement('div');
-		menuItem.innerHTML = `<span class="material-symbols-rounded">
+			const menuItems = getMenuItems(targetElement);
+			menuItems.forEach(item => {
+				const menuItem = document.createElement('div');
+				menuItem.innerHTML = `<span class="material-symbols-rounded">
 ${item.icon || ""}
 </span>
 <span>${item.label}</span>`;
-		menuItem.classList.add("ctxmenuitem");
-		menuItem.style.padding = '5px 10px';
-		menuItem.style.cursor = 'pointer';
-		menuItem.addEventListener('click', () => {
-			item.action(targetElement);
-			contextMenu.style.display = 'none';
-		});
-		contextMenu.appendChild(menuItem);
-	});
+				menuItem.classList.add("ctxmenuitem");
+				menuItem.style.padding = '5px 10px';
+				menuItem.style.cursor = 'pointer';
+				menuItem.addEventListener('click', () => {
+					item.action(targetElement);
+					contextMenu.style.display = 'none';
+				});
+				contextMenu.appendChild(menuItem);
+			});
 
-	let x = event.clientX;
-	let y = event.clientY;
+			let x = event.clientX;
+			let y = event.clientY;
 
-	if (dialog) {
-		const dialogRect = dialog.getBoundingClientRect();
-		x -= dialogRect.left;
-		y -= dialogRect.top;
-	}
-
-	const adjustedPosition = adjustPositionToFitViewport(x, y, contextMenu);
-	contextMenu.style.left = `${adjustedPosition.x}px`;
-	contextMenu.style.top = `${adjustedPosition.y}px`;
-
-	contextMenu.style.display = 'flex';
-});
-
-document.addEventListener('click', () => {
-	const contextMenu = document.querySelector('.contextmenu');
-	if (contextMenu) contextMenu.style.display = 'none';
-});
-
-document.addEventListener('keydown', (event) => {
-	const contextMenu = document.querySelector('.contextmenu');
-	if (event.key === 'Escape' && contextMenu) {
-		contextMenu.style.display = 'none';
-	}
-});
-
-function getMenuItems(target) {
-	console.log(target)
-	if (target.classList.contains('jstree-anchor')) {
-		var itemuid = target.innerText;
-		return [
-			{
-				icon: 'arrow_forward',
-				label: 'Open',
-				action: (el) => {
-					listFiles(itemuid);
-				}
-			},
-			{
-				icon: 'delete',
-				label: 'Delete',
-				action: (el) => window.parent.remfolder(itemuid)
+			if (dialog) {
+				const dialogRect = dialog.getBoundingClientRect();
+				x -= dialogRect.left;
+				y -= dialogRect.top;
 			}
-		];
-	}
-	
-	if (target.classList.contains('file')) {
-		var itemuid = target.getAttribute("unid");
-		return [
-			{
-				icon: 'arrow_forward',
-				label: 'Open',
-				action: (el) => {
-					window.parent.openfile(itemuid)
-				}
-			},
-			{
-				icon: 'delete',
-				label: 'Delete',
-				action: (el) => window.parent.remfile(itemuid)
-			},
-			{
-				icon: 'edit',
-				label: 'Rename',
-				action: async () => {
-					let file = await window.parent.getFileById(itemuid);
 
-					file.fileName = await window.parent.ask("New Name:", file.fileName);
-					await window.parent.updateFile(false, itemuid, file);
-				}
-			},
-		];
-	}
-	return [
-		{ label: 'Inspect', action: () => console.log('Inspect clicked') },
-	];
-}
+			const adjustedPosition = adjustPositionToFitViewport(x, y, contextMenu);
+			contextMenu.style.left = `${adjustedPosition.x}px`;
+			contextMenu.style.top = `${adjustedPosition.y}px`;
+
+			contextMenu.style.display = 'flex';
+		});
+
+		document.addEventListener('click', () => {
+		console.log("stgqyuedheadd")
+			const contextMenu = document.querySelector('.contextmenu');
+			if (contextMenu) contextMenu.style.display = 'none';
+		});
+
+		document.addEventListener('keydown', (event) => {
+			const contextMenu = document.querySelector('.contextmenu');
+			if (event.key === 'Escape' && contextMenu) {
+				contextMenu.style.display = 'none';
+			}
+		});
+
+		function getMenuItems(target) {
+			console.log(target)
+			if (target.classList.contains('jstree-anchor')) {
+				var itemuid = target.innerText;
+				return [
+					{
+						icon: 'arrow_forward',
+						label: 'Open',
+						action: (el) => {
+							listFiles(itemuid);
+						}
+					},
+					{
+						icon: 'delete',
+						label: 'Delete',
+						action: (el) => window.parent.remfolder(itemuid)
+					}
+				];
+			}
+
+			if (target.classList.contains('file')) {
+				var itemuid = target.getAttribute("unid");
+				return [
+					{
+						icon: 'arrow_forward',
+						label: 'Open',
+						action: (el) => {
+							window.parent.openfile(itemuid)
+						}
+					},
+					{
+						icon: 'delete',
+						label: 'Delete',
+						action: (el) => window.parent.remfile(itemuid)
+					},
+					{
+						icon: 'edit',
+						label: 'Rename',
+						action: async () => {
+							let file = await window.parent.getFileById(itemuid);
+
+							file.fileName = await window.parent.ask("New Name:", file.fileName);
+							await window.parent.updateFile(false, itemuid, file);
+						}
+					},
+				];
+			}
+			return [
+				{ label: 'Inspect', action: () => console.log('Inspect clicked') },
+			];
+		}
+*/
 	</script>
 </body>
 
