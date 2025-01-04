@@ -36,13 +36,17 @@
     }
 }
 
+
 ::-webkit-scrollbar {
 	width: var(--sizing-normal);
 }
 
+*:hover::-webkit-scrollbar-thumb {
+	background: var(--colors-BG-sub);
+}
+
 ::-webkit-scrollbar-track {
     background: var(--colors-BG-normal);
-    border-radius: var(--sizing-border-radius);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -51,7 +55,6 @@
 }
 
 ::-webkit-scrollbar-thumb:hover {
-	background: var(--colors-BG-sub);
 	cursor: grab;
 }
 

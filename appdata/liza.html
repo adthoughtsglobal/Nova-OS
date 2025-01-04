@@ -638,7 +638,7 @@
         async function evaluateMessage(message) {
             const normalizedMessage = message.toLowerCase();
 
-            if (isWhatIsQuery(normalizedMessage) || (normalizedMessage.split(" ").length >= 1)) {
+            if (isWhatIsQuery(normalizedMessage) && (normalizedMessage.split(" ").length >= 1)) {
                 const term = extractSearchTerm(normalizedMessage);
                 const searchResult = await searchForDefinition(term);
                 return searchResult || suggestAlternative(term);
@@ -703,7 +703,7 @@
         async function fetchDefinition(source, term) {
             if (source === "longman") {
                 const url = `https://www.ldoceonline.com/dictionary/${term}`;
-                return await fetchHTMLContent(url, ".DEF");
+                return await fetchHTMLContent(url, ".DEF") || "The internet doesn't know what '" + term + "' is.";
             }
             return "The internet doesn't know what '" + term + "' is.";
         }
@@ -925,7 +925,7 @@
                 if (Array.isArray(cslb)) {
                     cslb.push(x);
                     gid("cfdia").close();
-                    robomsg(
+                    displayMessage('bot',
                         "Learned what to do when you ask '" +
                         gid("cfuqi").value +
                         "'. As i have saved it in the local database, you will get this even if you reload or close this webpage."
