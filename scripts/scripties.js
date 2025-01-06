@@ -4,45 +4,6 @@ var defaultAppIcon = `<?xml version="1.0" encoding="UTF-8"?> <svg version="1.1" 
 
 var globalmimeDb = null;
 
-// Mode-specific styles
-const styles = {
-	dark: {
-		simple: {
-			flodiv: { backgroundColor: "rgb(42, 41, 41)", color: "white", backdropFilter: "none" },
-			appdmod: { background: "#333333", color: "white", backdropFilter: "none" },
-			searchinpe: { color: "white", backgroundColor: "#2a2929" },
-			searchnbtn: { background: "rgb(42, 41, 41)", color: "#878787" },
-			bob: { background: "rgb(42, 41, 41)" },
-			novaic: { fill: "white" }
-		},
-		nonSimple: {
-			flodiv: { color: "white", backdropFilter: "blur(10px)", backgroundColor: "rgb(0 0 0 / 33%)" },
-			appdmod: { background: "#00000091", color: "white", backdropFilter: "blur(14px) grayscale(0.5)" },
-			searchinpe: { color: "white", backgroundColor: "rgb(20 20 20)" },
-			searchnbtn: { background: "rgb(20 20 20)", color: "#878787" },
-			bob: { background: "rgb(20 20 20)" },
-			novaic: { fill: "white" }
-		}
-	},
-	bright: {
-		simple: {
-			flodiv: { backgroundColor: "#e9e9e9", backdropFilter: "none", color: "rgb(91 91 91)" },
-			appdmod: { background: "#f2f9ff", color: "rgb(91 91 91)", backdropFilter: "none" },
-			searchinpe: { color: "black", backgroundColor: "#e5e5e5" },
-			searchnbtn: { background: "rgb(229, 229, 229)", color: "#878787" },
-			bob: { background: "#e5e5e5", color: "#1f1f1f" },
-			novaic: { fill: "rgb(91 91 91)" }
-		},
-		nonSimple: {
-			flodiv: { backgroundColor: "rgb(255 255 255 / 18%)", color: "white", backdropFilter: "blur(10px)" },
-			appdmod: { background: "#7d7d7d73", color: "white", backdropFilter: "blur(14px)" },
-			searchinpe: { color: "white", backgroundColor: "rgba(0, 0, 0, 0.13)" },
-			searchnbtn: { background: "rgba(0, 0, 0, 0.13)", color: "#878787" },
-			bob: { backgroundColor: "rgba(0, 0, 0, 0.13)" },
-			novaic: { fill: "white" }
-		}
-	}
-};
 
 async function checkdmode() {
 	const [uiSizing, darkMode, simpleMode] = await Promise.all([
@@ -52,10 +13,6 @@ async function checkdmode() {
 	]);
 
 	if (uiSizing === 1) scaleUIElements(uiSizing);
-
-	const theme = darkMode ? "dark" : "bright";
-	const simplicity = simpleMode ? "simple" : "nonSimple";
-	switchtheme(theme, simplicity);
 
 	const themeColors = await window.parent.getSetting("themeColors");
         if (!themeColors) return;

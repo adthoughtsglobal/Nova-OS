@@ -291,6 +291,7 @@ async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
                         '--colors-BG-section': computedStyles.getPropertyValue('--colors-BG-section'),
                         '--colors-BG-highlighted': computedStyles.getPropertyValue('--colors-BG-highlighted'),
                         '--colors-text-normal': computedStyles.getPropertyValue('--colors-text-normal'),
+                        '--colors-text-high': computedStyles.getPropertyValue('--colors-text-high'),
                         '--sizing-border-radius': computedStyles.getPropertyValue('--sizing-border-radius'),
                         '--sizing-normal': computedStyles.getPropertyValue('--sizing-normal'),
                         '--sizing-nano': computedStyles.getPropertyValue('--sizing-nano'),

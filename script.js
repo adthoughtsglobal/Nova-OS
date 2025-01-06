@@ -83,15 +83,6 @@ async function showloginmod() {
 			userDiv.tabIndex = 0;
 			const selectUser = async function () {
 				try {
-					try {
-						navigator.registerProtocolHandler(
-							'web+nova',
-							`${location.origin}/?path=%s`,
-							'NovaOS'
-						);
-					} catch (err) {
-						console.error("Protocol handler failed: ", err);
-					}
 					await cleanupram();
 					CurrentUsername = cacusername;
 					let isdefaultpass = false;
@@ -596,26 +587,28 @@ async function dod() {
 			gid("desktop").appendChild(appShortcutDiv);
 		});
 		x = await getSetting("wall");
+		if (x != undefined && x != '' && x != ' ') {
+			let unshrinkbsfX;
+			console.log(x)
+			if (x.startsWith("http")) {
+				unshrinkbsfX = x;
+			} else {
+				unshrinkbsfX = await getFileById(x);
+				unshrinkbsfX = unshrinkbsfX.content;
+			}
+			setbgimagetourl(unshrinkbsfX);
+		}
+		document.getElementById("bgimage").onerror = async function (event) {
+			console.log("wallpaper error", event)
+			setbgimagetourl(novaFeaturedImage);
+			if (await getSetting("wall")) {
+				remSetting("wall");
+			}
+		};
 	} catch (error) {
 		console.error(error)
 	}
-	if (x != undefined) {
-		let unshrinkbsfX;
-		if (x.startsWith("http")) {
-			unshrinkbsfX = x;
-		} else {
-			unshrinkbsfX = await getFileById(x);
-			unshrinkbsfX = unshrinkbsfX.content;
-		}
-		setbgimagetourl(unshrinkbsfX);
-	}
-	document.getElementById("bgimage").onerror = async function (event) {
-		console.log("wallpaper error", event)
-		setbgimagetourl(novaFeaturedImage);
-		if (await getSetting("wall")) {
-			remSetting("wall");
-		}
-	};
+	
 
 	if (await getSetting("copilot")) {
 		gid("copilotbtn").style.display = "";
@@ -974,7 +967,7 @@ async function makewall(deid) {
 		}
 		setbgimagetourl(unshrinkbsfX);
 	}
-	setSetting("wall", deid);
+	await setSetting("wall", deid);
 }
 async function initialiseOS() {
 	if (badlaunch) { return }

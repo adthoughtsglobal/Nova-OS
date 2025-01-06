@@ -2098,7 +2098,6 @@
 			}
 
 		}
-		/*
 		let contextMenu;
 
 		function createContextMenu() {
@@ -2242,13 +2241,19 @@ ${item.icon || ""}
 							await window.parent.updateFile(false, itemuid, file);
 						}
 					},
+					{
+						icon: 'content_copy',
+						label: 'Copy ID',
+						action: async () => {
+							navigator.clipboard.writeText(itemuid)
+						}
+					},
 				];
 			}
 			return [
 				{ label: 'Inspect', action: () => console.log('Inspect clicked') },
 			];
 		}
-*/
 	</script>
 </body>
 

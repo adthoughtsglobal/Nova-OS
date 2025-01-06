@@ -486,11 +486,11 @@
 		}
 
 		button {
+			color: var(--colors-text-high);
 			border-radius: var(--sizing-border-radius);
 			border: none;
 			padding: 7px 15px;
 			background: var(--colors-BG-highlighted);
-			color: inherit;
 			font-size: inherit;
 			cursor: pointer;
 			transition: .2s;
@@ -501,8 +501,7 @@
 		}
 
 		[danger] {
-			background: #73414133;
-			color: #ff6262;
+			background: var(--colors-BG-highlighted);
 			opacity: 1;
 			cursor: pointer;
 		}
@@ -555,7 +554,7 @@
 			font-size: var(--font-size-normal);
 			opacity: 0.7;
 			margin-top: var(--sizing-huge);
-    margin-bottom: var(--sizing-nano);
+			margin-bottom: var(--sizing-nano);
 
 		}
 
@@ -585,22 +584,27 @@
 
 			<button class="tablinks" onclick="openCity(event, 'storage')" id="defaultOpen"><i
 					class="material-symbols-rounded">storage</i> Storage</button>
-			<button class="tablinks" onclick="openCity(event, 'battery')"><i class="material-symbols-rounded">battery_full</i>
+			<button class="tablinks" onclick="openCity(event, 'battery')"><i
+					class="material-symbols-rounded">battery_full</i>
 				Battery</button>
-			<button class="tablinks" onclick="openCity(event, 'devices')"><i class="material-symbols-rounded">devices</i>
+			<button class="tablinks" onclick="openCity(event, 'devices')"><i
+					class="material-symbols-rounded">devices</i>
 				Devices</button>
 			<button class="tablinks" onclick="openCity(event, 'defaults'); defs5(); defs2(); defs3()"><i
 					class="material-symbols-rounded">settings</i> Preferances</button>
-			<button class="tablinks" onclick="openCity(event, 'activity'); taskmg()"><i class="material-symbols-rounded">poll</i>
+			<button class="tablinks" onclick="openCity(event, 'activity'); taskmg()"><i
+					class="material-symbols-rounded">poll</i>
 				Activity</button>
 			<button class="tablinks" onclick="openCity(event, 'perform'); updateFPS()"><i
 					class="material-symbols-rounded">speed</i>
 				Performance</button>
-			<button class="tablinks" onclick="openCity(event, 'exp'); defs();"><i class="material-symbols-rounded">monitor</i>
+			<button class="tablinks" onclick="openCity(event, 'exp'); defs();"><i
+					class="material-symbols-rounded">monitor</i>
 				Display</button>
-			<button class="tablinks" onclick="openCity(event, 'password')"><i class="material-symbols-rounded">person</i>
+			<button class="tablinks" onclick="openCity(event, 'password')"><i
+					class="material-symbols-rounded">person</i>
 				User</button>
-			<button class="tablinks" onclick="openCity(event, 'network'); defs();"><i
+			<button class="tablinks" onclick="openCity(event, 'network');"><i
 					class="material-symbols-rounded">language</i>
 				Network</button>
 			<button class="tablinks" onclick="openCity(event, 'lclstgsc'); lclstgsc();"><i
@@ -1051,27 +1055,16 @@
 				<small>Retain quality while compression using PNG.</small>
 				<script>
 					async function defs() {
-						// dark mode 
-						document.getElementById("cbx-67").addEventListener("change", async function () {
-							let newValue2 = document.getElementById("cbx-67").checked;
-							await window.parent.setSetting("darkMode", newValue2)
-							window.parent.checkdmode();
-						});
+						document.getElementById("cbx-uspawa").addEventListener("change", async function () {
+					let newValue2 = document.getElementById("cbx-uspawa").checked;
+					await window.parent.setSetting("usepackwall", newValue2)
+					window.parent.checkdmode();
+				});
 
-						if (await window.parent.getSetting("darkMode")) {
-							document.getElementById("cbx-67").checked = true;
-						}
+				if (await window.parent.getSetting("usepackwall")) {
+					document.getElementById("cbx-uspawa").checked = true;
+				}
 
-						// simple mode 
-						document.getElementById("cbx-68").addEventListener("change", async function () {
-							let newValue2 = document.getElementById("cbx-68").checked;
-							await window.parent.setSetting("simpleMode", newValue2)
-							window.parent.checkdmode();
-						});
-
-						if (await window.parent.getSetting("simpleMode")) {
-							document.getElementById("cbx-68").checked = true;
-						}
 						let sizes2323 = {
 							"-1": 0.8,
 							0: 1,
@@ -1312,7 +1305,7 @@
 					}
 
 					.header-row {
-						background-color: #252525;
+						background-color: var(--colors-BG-section);
 						font-weight: normal;
 						opacity: 0.7;
 						font-size: var(--font-size-small);
@@ -1635,9 +1628,10 @@
 			<style>
 				.task {
 					padding: 10px;
-					background: var(--colors-BG-sub);
+					background: var(--colors-BG-section);
 					border-radius: var(--sizing-border-radius);
 					margin: 5px 0;
+					box-shadow: 0 3px 5px #0000007e;
 				}
 
 				.task .stpicn {
@@ -1766,13 +1760,13 @@
 					if (window.parent.roturExtension.loggedIn()) {
 						document.getElementById("rtrinitspace").style.display = "none";
 						document.getElementById("rtrsignedinsec").style.display = "block";
-    document.getElementById("rtrsignupform").style.display = "none";
+						document.getElementById("rtrsignupform").style.display = "none";
 					} else {
-						
+
 						document.getElementById("rtrsignedinsec").style.display = "none";
-						
-    document.getElementById("rtrsignupform").style.display = "none";
-    document.getElementById("rtrsigninbtn").style.opacity = "0.5";
+
+						document.getElementById("rtrsignupform").style.display = "none";
+						document.getElementById("rtrsigninbtn").style.opacity = "0.5";
 						document.getElementById("rtruserstatsi").innerText = "Signed in as " + window.parent.roturExtension.user.username;
 					}
 
@@ -1964,43 +1958,7 @@
 
 				</div>
 			</segr>
-			<segr>
-				<div setting>
-					<div class="checkbox-wrapper-51">
-						<input type="checkbox" id="cbx-67" role="submit">
-						<label for="cbx-67" class="toggle">
-							<span>
-								<svg width="10px" height="10px" viewBox="0 0 10 10">
-									<path
-										d="M5,1 L5,1 C2.790861,1 1,2.790861 1,5 L1,5 C1,7.209139 2.790861,9 5,9 L5,9 C7.209139,9 9,7.209139 9,5 L9,5 C9,2.790861 7.209139,1 5,1 L5,9 L5,1 Z">
-									</path>
-								</svg>
-							</span>
-						</label>
-					</div>
-					<b>Dark Mode</b>
-					<p>When you're a pro.
-					</p>
-				</div>
 
-				<div setting>
-					<div class="checkbox-wrapper-51">
-						<input type="checkbox" id="cbx-68" role="submit">
-						<label for="cbx-68" class="toggle">
-							<span>
-								<svg width="10px" height="10px" viewBox="0 0 10 10">
-									<path
-										d="M5,1 L5,1 C2.790861,1 1,2.790861 1,5 L1,5 C1,7.209139 2.790861,9 5,9 L5,9 C7.209139,9 9,7.209139 9,5 L9,5 C9,2.790861 7.209139,1 5,1 L5,9 L5,1 Z">
-									</path>
-								</svg>
-							</span>
-						</label>
-					</div>
-					<b>Simple Mode</b>
-					<p>Turns off fancy design elements like blur and transparency (works along with themes)
-					</p>
-				</div>
-			</segr>
 			<segr>
 				<div setting>
 					<b>UI Size <label real="">BETA</label></b>
@@ -2017,23 +1975,43 @@
 					</div>
 				</div>
 			</segr>
-			<h1>Colors</h1>
-			<h3>Color packs</h3>
+			<h1>Theme</h1>
+			<h3>Theme Packs</h3>
 			<div class="colorpacks">
-				
-			<div id="themeslist">
 
+				<div id="themeslist">
+
+				</div>
+				<div class="newthemebtn" id="copy-theme-btn">
+					<i class="material-symbols-rounded">content_copy</i>
+				</div>
+				<div class="newthemebtn" id="paste-theme-btn">
+					<i class="material-symbols-rounded">content_paste</i>
+				</div>
 			</div>
-			<div class="newthemebtn" id="copy-theme-btn">
-				<i class="material-symbols-rounded">content_copy</i>
-			</div>
-			<div class="newthemebtn" id="paste-theme-btn">
-				<i class="material-symbols-rounded">content_paste</i>
-			</div>
+			<segr style="margin-top: 0.3rem">
+				<div setting>
+					<div class="checkbox-wrapper-51">
+						<input type="checkbox" id="cbx-uspawa" role="submit">
+						<label for="cbx-uspawa" class="toggle">
+							<span>
+								<svg width="10px" height="10px" viewBox="0 0 10 10">
+									<path
+										d="M5,1 L5,1 C2.790861,1 1,2.790861 1,5 L1,5 C1,7.209139 2.790861,9 5,9 L5,9 C7.209139,9 9,7.209139 9,5 L9,5 C9,2.790861 7.209139,1 5,1 L5,9 L5,1 Z">
+									</path>
+								</svg>
+							</span>
+						</label>
+					</div>
+					<b>Use Pack Wallpaper</b>
+					<p>Use provided theme pack wallpapers</p>
+				</div>
+			</segr>
 			<script>
+
 				document.getElementById('copy-theme-btn').addEventListener('click', copyCurrentTheme);
 				document.getElementById('paste-theme-btn').addEventListener('click', pasteThemeFromClipboard);
-			
+
 				function copyCurrentTheme() {
 					const colorsToCopy = {};
 					document.querySelectorAll('[data-variable]').forEach(button => {
@@ -2045,12 +2023,12 @@
 						.then(() => window.parent.say('Theme copied to clipboard!'))
 						.catch(err => console.error('Error copying theme:', err));
 				}
-			
+
 				async function pasteThemeFromClipboard() {
 					try {
 						const text = await navigator.clipboard.readText();
 						const parsedColors = JSON.parse(text);
-			
+
 						if (typeof parsedColors === 'object' && parsedColors !== null) {
 							const buttons = document.querySelectorAll('[data-variable]');
 							buttons.forEach(button => {
@@ -2071,55 +2049,54 @@
 					}
 				}
 			</script>
-			</div>
 			<style>
 				.colorpacks {
-					display: flex
-;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    align-items: stretch;
-    justify-content: flex-start;
-    gap: 0.3rem;
-    overflow-x: auto;
-    padding-bottom: 0.3rem;
-}
+					display: flex;
+					flex-direction: row;
+					flex-wrap: nowrap;
+					align-items: stretch;
+					justify-content: flex-start;
+					gap: 0.3rem;
+					overflow-x: auto;
+					padding-bottom: 0.3rem;
+				}
 
 				#themeslist {
 					display: flex;
 					flex-direction: row;
 					gap: 0.3rem;
 				}
+
 				.newthemebtn {
-    background: var(--colors-BG-section);
-    padding: 1.5rem;
-    border-radius: 0.5rem;
-    display: flex
-;
-    align-items: center;
-    justify-content: center;
-}
+					background: var(--colors-text-high);
+					padding: 1.5rem;
+					border-radius: 0.5rem;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+				}
 
 				#themeslist div {
-    padding: 0.5rem;
-    border-radius: 0.5rem;
-	width: 100px;
-}
-.newthemebtn {
-	background: var(--colors-BG-section);
-    padding: 1.5rem;
-    border-radius: 0.5rem;
-    display: flex
-;
-    align-items: center;
-    justify-content: center;
-    color: var(--colors-text-normal);
-    text-shadow: 0 0 9px var(--colors-BG-highlighted);
-    border: 1px solid var(--colors-BG-sub);
-}
-.newthemebtn i {
-	font-size: 1.5rem;
-}
+					padding: 0.5rem;
+					border-radius: 0.5rem;
+					width: 100px;
+				}
+
+				.newthemebtn {
+					background: var(--colors-BG-section);
+					padding: 1.5rem;
+					border-radius: 0.5rem;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					color: var(--colors-text-high);
+					text-shadow: 0 0 9px var(--colors-BG-highlighted);
+					border: 1px solid var(--colors-BG-sub);
+				}
+
+				.newthemebtn i {
+					font-size: 1.5rem;
+				}
 
 				label[real] {
 					font-size: var(--font-size-small);
@@ -2132,13 +2109,13 @@
 
 				.jscolor {
 					width: 6rem;
-    height: 35px;
-    border-radius: var(--sizing-border-radius);
-    font-family: monospace;
-    font-size: var(--font-size-default);
-    background: transparent;
-    border: 1px solid var(--colors-BG-highlighted);
-    color: var(--colors-text-normal);
+					height: 35px;
+					border-radius: var(--sizing-border-radius);
+					font-family: monospace;
+					font-size: var(--font-size-default);
+					background: transparent;
+					border: 1px solid var(--colors-BG-highlighted);
+					color: var(--colors-text-normal);
 				}
 
 				/* Styles for the color picker itself */
@@ -2197,8 +2174,8 @@
 			<h3>Interface colors</h3>
 			<segr>
 				<div setting class="colorsetting">
-					<b>Accent Color</b>
-					<input id="accent-bg" data-variable="--colors-BG-accent"></input>
+					<b>Highlighted Text Color</b>
+					<input id="accent-bg" data-variable="--colors-text-high"></input>
 				</div>
 				<div setting class="colorsetting">
 					<b>Text Color</b>
@@ -2219,7 +2196,7 @@
 					.then(response => response.json())
 					.then(data => {
 						const container = document.getElementById("themeslist");
-			
+
 						Object.entries(data).forEach(([themeName, themeData]) => {
 							const div = document.createElement('div');
 							div.style.background = `linear-gradient(to bottom right, 
@@ -2228,14 +2205,14 @@
 								${themeData.colors["--colors-BG-section"]} 75%, 
 								${themeData.colors["--colors-BG-highlighted"]}) 100%`;
 							div.style.color = themeData.colors["--colors-text-normal"];
-							div.style.border = `2px solid ${themeData.colors["--colors-BG-accent"]}`;
+							div.style.border = `2px solid ${themeData.colors["--colors-BG-sub"]}`;
 							div.innerText = themeName;
-							div.addEventListener('click', () => applyTheme(themeData.colors));
+							div.addEventListener('click', () => applyTheme(themeData));
 							container.appendChild(div);
 						});
 					})
 					.catch(error => console.error('Error loading themes:', error));
-			
+
 				function initColorPickers() {
 					document.querySelectorAll('[data-variable]').forEach(button => {
 						const variableName = button.dataset.variable;
@@ -2248,36 +2225,46 @@
 						button.jscolor.fromString(getCSSVariableValue(variableName));
 					});
 				}
-			
-				function applyTheme(colors) {
+
+				function applyTheme(data) {
+					try {
+						if (data?.wallpaper) {
+							if (document.getElementById('cbx-uspawa').checked) {
+								console.log(data)
+								document.getElementById("wallpaperurl").value = data.wallpaper;
+								savewallpap();
+							}
+						}
+					} catch (e) { }
+
 					const buttons = document.querySelectorAll('[data-variable]');
 					buttons.forEach(button => {
 						const variableName = button.dataset.variable;
-						const newColor = colors[variableName];
+						const newColor = data.colors[variableName];
 						if (newColor) {
 							button.jscolor.fromString(newColor);
 							updateColor(button.jscolor, variableName);
 						}
 					});
-					
+
 					saveColors();
 				}
-			
+
 				const debouncedSaveColor = debounce((picker, variableName) => {
 					updateColor(picker, variableName);
 					saveColors();
 				}, 300);
-			
+
 				function updateColor(picker, variableName) {
 					const colorValue = picker.toHEXString();
 					window.parent.document.documentElement.style.setProperty(variableName, colorValue);
 					document.documentElement.style.setProperty(variableName, colorValue);
 				}
-			
+
 				function getCSSVariableValue(varName) {
 					return window.parent.getComputedStyle(window.parent.document.documentElement).getPropertyValue(varName).trim();
 				}
-			
+
 				async function saveColors() {
 					const colorsToSave = {};
 					const buttons = document.querySelectorAll('[data-variable]');
@@ -2288,18 +2275,18 @@
 					});
 					await window.parent.setSetting("themeColors", colorsToSave);
 				}
-			
+
 				function debounce(func, wait) {
 					let timeout;
-					return function(...args) {
+					return function (...args) {
 						clearTimeout(timeout);
 						timeout = setTimeout(() => func.apply(this, args), wait);
 					};
 				}
-			
+
 				window.addEventListener('load', initColorPickers);
 			</script>
-			
+
 			<h1>Personalization</h1>
 			<segr>
 				<div class="inpbox">
@@ -2356,7 +2343,8 @@
 				async function savewallpap() {
 					var newurl = document.getElementById("wallpaperurl");
 					await window.parent.setSetting("wall", newurl.value);
-					window.parent.dod();
+					setTimeout(() => {window.parent.dod()}, 1000)
+					
 				}
 				function openCity(evt, cityName) {
 					currentpage = cityName;
