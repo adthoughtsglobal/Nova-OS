@@ -11,7 +11,7 @@
             "--colors-special-good": "#49AC49",
             "--colors-special-bad": "#AC4949"
         },
-        "wallpaper":"https://images.unsplash.com/photo-1533135404995-a618910b7b6f?q=80&w=1769&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        "wallpaper": "https://images.unsplash.com/photo-1533135404995-a618910b7b6f?q=80&w=1769&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
     },
     "Obsidian": {
         "type": "dark",
@@ -119,6 +119,15 @@
     },
     "Aquamarine": {
         "type": "dark",
-        "colors": {"--colors-BG-normal":"#263A39","--colors-BG-section":"#365351","--colors-BG-sub":"#1E2E2D","--colors-BG-highlighted":"#2DA8A6","--colors-text-high":"#FFFFFF","--colors-text-normal":"#FFFFFF","--colors-special-good":"#49AC49","--colors-special-bad":"#AC4949"}
+        "colors": {
+            "--colors-BG-normal": "#263A39",
+            "--colors-BG-section": "#365351",
+            "--colors-BG-sub": "#1E2E2D",
+            "--colors-BG-highlighted": "#2DA8A6",
+            "--colors-text-high": "#FFFFFF",
+            "--colors-text-normal": "#FFFFFF",
+            "--colors-special-good": "#49AC49",
+            "--colors-special-bad": "#AC4949"
+        }
     }
 }

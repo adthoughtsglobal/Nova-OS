@@ -1056,14 +1056,14 @@
 				<script>
 					async function defs() {
 						document.getElementById("cbx-uspawa").addEventListener("change", async function () {
-					let newValue2 = document.getElementById("cbx-uspawa").checked;
-					await window.parent.setSetting("usepackwall", newValue2)
-					window.parent.checkdmode();
-				});
+							let newValue2 = document.getElementById("cbx-uspawa").checked;
+							await window.parent.setSetting("usepackwall", newValue2)
+							window.parent.checkdmode();
+						});
 
-				if (await window.parent.getSetting("usepackwall")) {
-					document.getElementById("cbx-uspawa").checked = true;
-				}
+						if (await window.parent.getSetting("usepackwall")) {
+							document.getElementById("cbx-uspawa").checked = true;
+						}
 
 						let sizes2323 = {
 							"-1": 0.8,
@@ -2080,6 +2080,9 @@
 					padding: 0.5rem;
 					border-radius: 0.5rem;
 					width: 100px;
+					text-overflow: ellipsis;
+					white-space: break-spaces;
+					overflow: hidden;
 				}
 
 				.newthemebtn {
@@ -2343,8 +2346,8 @@
 				async function savewallpap() {
 					var newurl = document.getElementById("wallpaperurl");
 					await window.parent.setSetting("wall", newurl.value);
-					setTimeout(() => {window.parent.dod()}, 1000)
-					
+					setTimeout(() => { window.parent.dod() }, 1000)
+
 				}
 				function openCity(evt, cityName) {
 					currentpage = cityName;
