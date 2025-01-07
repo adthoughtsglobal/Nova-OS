@@ -2012,13 +2012,16 @@
 				document.getElementById('copy-theme-btn').addEventListener('click', copyCurrentTheme);
 				document.getElementById('paste-theme-btn').addEventListener('click', pasteThemeFromClipboard);
 
-				function copyCurrentTheme() {
+				async function copyCurrentTheme() {
 					const colorsToCopy = {};
 					document.querySelectorAll('[data-variable]').forEach(button => {
 						const variableName = button.dataset.variable;
 						const colorValue = button.jscolor.toHEXString();
 						colorsToCopy[variableName] = colorValue;
 					});
+					if (await window.parent.justConfirm("Include current wallpaper?", "Include the currently set wallpaper with the theme code?")) {
+						colorsToCopy['wallpaper'] = window.parent.getSetting("wall");
+					}
 					navigator.clipboard.writeText(JSON.stringify(colorsToCopy))
 						.then(() => window.parent.say('Theme copied to clipboard!'))
 						.catch(err => console.error('Error copying theme:', err));
@@ -2038,6 +2041,9 @@
 									updateColor(button.jscolor, variableName);
 								}
 							});
+							if (await window.parent.justConfirm("Include theme wallpaper?", "Include the wallpaper included in the theme code?")) {
+								colorsToCopy['wallpaper'] = window.parent.getSetting("wall");
+							}
 							saveColors();
 							window.parent.say('Theme applied from clipboard!');
 						} else {
