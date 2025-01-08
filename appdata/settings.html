@@ -2022,14 +2022,14 @@
 					if (await window.parent.justConfirm("Include current wallpaper?", "Include the currently set wallpaper with the theme code?")) {
 						colorsToCopy['wallpaper'] = window.parent.getSetting("wall");
 					}
-					navigator.clipboard.writeText(JSON.stringify(colorsToCopy))
+					window.parent.navigator.clipboard.writeText(JSON.stringify(colorsToCopy))
 						.then(() => window.parent.say('Theme copied to clipboard!'))
 						.catch(err => console.error('Error copying theme:', err));
 				}
 
 				async function pasteThemeFromClipboard() {
 					try {
-						const text = await navigator.clipboard.readText();
+						const text = await window.parent.navigator.clipboard.readText();
 						const parsedColors = JSON.parse(text);
 
 						if (typeof parsedColors === 'object' && parsedColors !== null) {
