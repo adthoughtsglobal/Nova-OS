@@ -92,31 +92,6 @@
 			transform: rotate(360deg);
 		}
 
-		.sdfld {
-			width: 90%;
-			margin: auto;
-			margin-bottom: 3px;
-			background: #151515;
-			border-radius: 5px;
-			text-align: left;
-			overflow: hidden;
-			transition: 0.3s;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-			padding: 3px;
-			cursor: pointer;
-		}
-
-		.sdfld:hover {
-			background-color: var(--colors-BG-sub);
-		}
-
-		.sdfld span {
-			transform: translate(1px, 3px);
-			margin-right: 6px;
-			color: #fff996;
-		}
-
 		[flap-sidenav] {
 			width: 0;
 			overflow-y: auto;
@@ -656,11 +631,6 @@
 			width: fit-content;
 		}
 
-		.jstree-default .jstree-icon:empty {
-			color: #897b31;
-			margin-right: 5px;
-		}
-
 		.jstree-default .jstree-node {
 			margin-left: 10px !important;
 			margin-bottom: 0.1rem;
@@ -672,7 +642,14 @@
 		}
 
 		.jstree-default .jstree-icon:empty {
-			width: 17px !important;
+			width: 1rem !important;
+			font-size: 0.2rem;
+		}
+
+		.jstree-default .jstree-icon:empty {
+			color: var(--colors-text-normal);
+			opacity: 0.7;
+			margin-right: 5px;
 		}
 
 		.jstree-icon.jstree-themeicon {
@@ -1080,7 +1057,7 @@
 		}
 
 		.jstree-default .jstree-clicked {
-			background: var(--colors-BG-highlighted);
+			background: var(--colors-BG-sub);
 			box-shadow: none;
 		}
 
@@ -2097,6 +2074,7 @@
 				initializeFilesApp(false);
 			}
 
+
 		}
 		let contextMenu;
 
@@ -2184,7 +2162,7 @@ ${item.icon || ""}
 		});
 
 		document.addEventListener('click', () => {
-		console.log("stgqyuedheadd")
+			console.log("stgqyuedheadd")
 			const contextMenu = document.querySelector('.contextmenu');
 			if (contextMenu) contextMenu.style.display = 'none';
 		});

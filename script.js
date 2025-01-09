@@ -983,25 +983,12 @@ async function initialiseOS() {
 	memory = {
 		"root": {
 			"Downloads/": {
-				"Welcome.txt": {
-					"id": "sibq81"
-				},
-				"Help/": {
-					"Resources.txt": {
-						"id": "1283jh"
-					}
-				}
 			},
 			"Apps/": {},
 			"Desktop/": {},
 			"Dock/": {},
 			"Media/": {}
 		}
-	};
-
-	contentpool = {
-		'1283jh': 'TGVhcm4gaG93IHRvIGRvIHRoaW5ncyBpbiB0aGUgTm92YU9TIHdpa2kgcGFnZXMsIGh0dHBzOi8vZ2l0aHViLmNvbS9hZHRob3VnaHRzZ2xvYmFsL05vdmEtT1Mvd2lraS4gQW5kIG91ciB5b3V0dWJlIHBsYXlsaXN0IGhhcyBhbGwgdGhlIE5vdmFPUyB0aGluZ3MgeW91IG5lZWQgdG8ga25vdywgaHR0cHM6Ly93d3cueW91dHViZS5jb20vcGxheWxpc3Q/bGlzdD1QTFZZN3JhRjQ4S2o2Z1R2LXl4WGZqdVRxd2xPRl9sVmoyLg==',
-		'sibq81': 'V2VsY29tZSB0byBOb3ZhIE9TISBJZiB5b3UgYXJlIGhhdmluZyB0cm91YmxlLCBraW5kbHkgcmVhY2ggdXMgYXQgaHR0cHM6Ly9hZHRob3VnaHRzZ2xvYmFsLmdpdGh1Yi5pbyBhbmQgY29ubmVjdCB2aWEgdGhlIGF2YWlsYWJsZSBvcHRpb25zLCB3ZSB3aWxsIHJlc3BvbmQgeW91IGJhY2shIEVuam95IQ=='
 	};
 
 	setdb().then(async function () {
@@ -1021,6 +1008,12 @@ async function initialiseOS() {
 			})
 			.then(async () => {
 				await startup();
+				await createFile('Downloads/', 'Welcome.txt', 'text', `Welcome to Nova OS! If you are having trouble, kindly tell us in our discord, https://discord.gg/atkqbwEQU8.
+
+Learn how to do things in the NovaOS wiki pages, https://novaos.gitbook.io/main. 
+Browse the most used features at https://novaos.gitbook.io/main/docs/features.
+
+Support NovaOS at https://novaos.gitbook.io/main/how-to/support-novaos`)
 				notify("Welcome to NovaOS, " + CurrentUsername + "!", "We really hope you would enjoy your NovaOS", "NovaOS")
 				initialization = false;
 			})

@@ -334,7 +334,7 @@
 			width: 100%;
 			height: 100%;
 			border: none;
-			padding: 18px;
+			padding: 20px;
 			background: var(--colors-BG-sub);
 			color: var(--colors-text-normal);
 		}
@@ -626,7 +626,7 @@ async function installapp(x, appName, obj) {
 		}
 
 		function fetchAppData() {
-			return fetch('https://adthoughtsglobal.github.io/Nova-Store/database.json')
+			return fetch('https://adthoughtsglobal.github.io/Nova-Store/db/database.json')
 				.then(response => {
 					if (!response.ok) throw new Error('Network response was not ok');
 					return response.json();
@@ -644,24 +644,25 @@ async function installapp(x, appName, obj) {
 		}
 
 		function populateApps(data) {
+			console.log(data);
 			const vdevs = data.vdevs;
-			const featured = data.Featured;
+			const featured = data.featured;
 
 			data.data.sort((a, b) => Object.keys(a)[0].localeCompare(Object.keys(b)[0]));
 
-			data.data.forEach(app => {
-				const appName = Object.keys(app)[0];
-				const appDetails = app[appName];
+			data.data.forEach(appDetails => {
+    const appName = appDetails.name;
 
-				const appDiv = createAppDiv(appName, appDetails, vdevs, featured);
-				if (featured.includes(appName)) {
-					document.getElementById("featured-section").appendChild(appDiv);
-				} else if (appDetails.find(item => item.by).by === "adthoughtsglobal") {
-					document.getElementById("nova-section").appendChild(appDiv);
-				} else {
-					document.getElementById("apps-section").appendChild(appDiv);
-				}
-			});
+    const appDiv = createAppDiv(appName, appDetails, vdevs, featured);
+
+    if (featured.includes(appName)) {
+        document.getElementById("featured-section").appendChild(appDiv);
+    } else if (appDetails.by === "adthoughtsglobal") {
+        document.getElementById("nova-section").appendChild(appDiv);
+    } else {
+        document.getElementById("apps-section").appendChild(appDiv);
+    }
+});
 		}
 
 		function createAppDiv(appName, appDetails, vdevs, featured) {
@@ -681,27 +682,27 @@ async function installapp(x, appName, obj) {
 			appfesDiv.appendChild(h3);
 
 			const appInfoDiv = document.createElement('div');
-			appInfoDiv.textContent = appDetails.find(item => item.by).by;
+			appInfoDiv.textContent = appDetails.by;
 			appfesDiv.appendChild(appInfoDiv);
 
 			const cat = document.createElement('div');
 			cat.setAttribute("class", "material-symbols-rounded catonappdiv");
 			cat.textContent = vdevs.includes(appInfoDiv.textContent) ? "verified " : "";
-			cat.textContent += appDetails.find(item => item.cat).cat === "game" ? "sports_esports" : "widgets";
+			cat.textContent += appDetails.cat === "game" ? "sports_esports" : "widgets";
 			appfesDiv.appendChild(cat);
 
 			appDiv.appendChild(appfesDiv);
 
 			const p = document.createElement('p');
-			const appDescItem = appDetails.find(item => item.desc);
-			p.textContent = appDescItem ? appDescItem.desc : 'Description not available.';
+			const appDescItem = appDetails.desc;
+			p.textContent = appDescItem ? appDescItem : 'Free NovaOS application.';
 			appDiv.appendChild(p);
 
 			return appDiv;
 		}
 
 		function applyHoverStyle(appDiv, appDetails) {
-			const shadowColor = appDetails.find(item => item.th).th;
+			const shadowColor = appDetails.th;
 			appDiv.style.borderRight = `2px solid ${rotateHue(shadowColor, 25)}`;
 			appDiv.style.borderBottom = `2px solid ${rotateHue(shadowColor, 25)}`;
 			appDiv.style.borderTop = `2px solid ${shadowColor}`;
@@ -784,6 +785,7 @@ async function installapp(x, appName, obj) {
 		}
 
 		function openappinstr(appName, appDetails) {
+			console.log(appDetails)
 			const installButton = document.getElementById("installButton");
 
 			installButton.className = 'insbtn';
@@ -792,31 +794,31 @@ async function installapp(x, appName, obj) {
 					try {
 						const h3 = document.getElementById("installerappname");
 						h3.textContent = appName;
-						document.getElementById("installerappby").textContent = "" + appDetails.find(item => item.by).by;
+						document.getElementById("installerappby").textContent = "" + appDetails.by;
 						const p = document.getElementById("installerappdesc");
-						const appDescItem = appDetails.find(item => item.desc);
-						const appcatitem = appDetails.find(item => item.cat).cat;
-						const applditem = appDetails.find(item => item.ldesc)?.ldesc;
-						const appthitem = appDetails.find(item => item.th)?.th;
-						console.log("9344: " + appthitem)
-						const appqtitem = appDetails.find(item => item.qt)?.qt;
+						const appDescItem = appDetails?.desc || '';
+						const appcatitem = appDetails?.cat || '';
+						const applditem = appDetails?.ldesc || '';
+						const appthitem = appDetails?.th || '';
+						const appqtitem = appDetails?.qt || '';
 
 						document.getElementById("apptheme").innerHTML = ((appqtitem) ? appqtitem : appcatitem);
 						document.getElementById("apptheme").style.background = ((appthitem) ? appthitem : "#141414");
 
-						p.innerHTML = appDescItem.desc + '<br> <br><b>Description</b> <br>';
+						p.innerHTML = appDescItem + '<br> <br><b>Description</b> <br>';
 						if (applditem !== undefined) {
 							p.innerHTML += applditem;
 						} else {
 							p.innerHTML += `Overview not available yet.`;
 						}
 
-						let sourceurl = appDetails.find(item => item.src).src
+						let sourceurl = appDetails.src
 						if (sourceurl.startsWith("/Nova-Store")) {
 							sourceurl = "Nova Store"
 						}
 
-						p.innerHTML += `<br><a class="srca">Hosted on: ` + sourceurl + `</a>`;
+						p.innerHTML += `<br><a class="srca">Hosted on: ` + sourceurl + `
+					<br>Version: ` + appDetails.ver + `</a>`;
 
 						p.innerHTML += `<br><button>#` + appcatitem + `</button>`
 
@@ -836,19 +838,19 @@ async function installapp(x, appName, obj) {
 							installButton.style.backgroundColor = "#2f2f2f";
 
 							installButton.onclick = function () {
-								installapp(appDetails.find(item => item.src), appName, this);
+								installapp(appDetails.src, appName, this);
 							};
 						} else {
 							installButton.textContent = 'Install';
 							installButton.style.backgroundColor = "var(--colors-special-good)";
 							installButton.onclick = function () {
-								installapp(appDetails.find(item => item.src), appName, this);
+								installapp(appDetails.src, appName, this);
 							};
 
 							const openButton = document.getElementById('openbtn');
 							openButton.innerText = "Try";
 							openButton.onclick = async function () {
-								const item = appDetails.find(item => item.src); // Find the correct item
+								const item = appDetails.src; // Find the correct item
 								let prefixurl = "";
 								if (!item.src.startsWith("http")) {
 									prefixurl = "https://adthoughtsglobal.github.io/";
@@ -921,7 +923,7 @@ async function handleSearchOrInstall(button) {
 function searchApps(query) {
     const resultsDiv = document.getElementById("searchresults");
     resultsDiv.innerHTML = "<div class='loader'></div>";
-    fetch("https://adthoughtsglobal.github.io/Nova-Store/database.json")
+    fetch("https://adthoughtsglobal.github.io/Nova-Store/db/database.json")
         .then(response => response.json())
         .then(data => {
             const results = data.data.filter(app => {
@@ -957,7 +959,7 @@ function displaySearchResults(results) {
         title.textContent = appName;
 
         const description = document.createElement("p");
-        const descItem = appDetails.find(item => item.desc);
+        const descItem = appDetails.desc;
         description.textContent = descItem ? descItem.desc : "No description available.";
 
         dataSide.appendChild(title);

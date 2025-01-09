@@ -6,14 +6,15 @@
 	--font-size-subheading: 1.25rem;
 	--font-size-big: 2rem;
 
-    --colors-BG-normal: #101010;
-    --colors-BG-sub: #262626;
+	--colors-BG-normal: #101010;
     --colors-BG-section: #171717;
+    --colors-BG-sub: #262626;
     --colors-BG-highlighted: #44403C;
-	--colors-text-high: #ffffff;
-    --colors-text-normal: white;
-	--colors-special-good: #49ac49;
-	--colors-special-bad: #ac4949;
+    --colors-accent: #68c2ff;
+    --colors-text-high: #FFFFFF;
+    --colors-text-normal: #FFFFFF;
+    --colors-special-good: #49AC49;
+    --colors-special-bad: #AC4949;
 
     --sizing-border-radius: 0.5rem;
 	--sizing-border-radius-normal: 0.75rem;
