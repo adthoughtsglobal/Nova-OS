@@ -2042,7 +2042,7 @@
 								}
 							});
 							if (await window.parent.justConfirm("Include theme wallpaper?", "Include the wallpaper included in the theme code?")) {
-								colorsToCopy['wallpaper'] = window.parent.getSetting("wall");
+								window.parent.setSetting("wall", variableName);
 							}
 							saveColors();
 							window.parent.say('Theme applied from clipboard!');

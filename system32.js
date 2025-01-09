@@ -520,28 +520,75 @@ async function ensurePreferencesFileExists() {
     }
 }
 let settingsCache = {};
-
 const settingscacheDuration = 10;
-async function getSetting(key) {
-    try {
-        if (!memory) return;
-        const cached = settingsCache[key];
-        if (cached && (Date.now() - cached.t < settingscacheDuration)) return cached.v;
-        await ensurePreferencesFileExists();
-        const content = memory.root["System/"]["preferences.json"];
-        if (!content) return;
-        const base64Content = await ctntMgr.get(content.id);
-        const preferences = JSON.parse(decodeBase64Content(base64Content));
-        settingsCache[key] = { v: preferences[key], t: Date.now() };
+const settingsQueue = [];
+let isProcessingQueue = false;
 
-        return preferences[key];
-    } catch (error) {
-        console.log("Error getting settings", error);
+async function processsetQueue() {
+    if (isProcessingQueue) return;
+    isProcessingQueue = true;
+
+    while (settingsQueue.length > 0) {
+        const { action, resolve, reject } = settingsQueue.shift();
+        try {
+            const result = await action();
+            resolve(result);
+        } catch (error) {
+            reject(error);
+        }
     }
+
+    isProcessingQueue = false;
 }
+
+function enqueueAction(action) {
+    return new Promise((resolve, reject) => {
+        settingsQueue.push({ action, resolve, reject });
+        if (!isProcessingQueue) processsetQueue();
+    });
+}
+
+async function getSetting(key) {
+    return enqueueAction(async () => {
+        try {
+            if (!memory) {
+                console.error("Memory is not available.");
+                return null;
+            }
+
+            const cached = settingsCache[key];
+            if (cached && (Date.now() - cached.t < settingscacheDuration)) {
+                return cached.v;
+            }
+
+            await ensurePreferencesFileExists();
+            const content = memory.root["System/"]["preferences.json"];
+            if (!content) {
+                console.error("Preferences file is missing in memory.");
+                return null;
+            }
+
+            const base64Content = await ctntMgr.get(content.id);
+            if (!base64Content) {
+                console.error("Failed to fetch content from content manager.");
+                return null;
+            }
+
+            const preferences = JSON.parse(decodeBase64Content(base64Content));
+            settingsCache[key] = { v: preferences[key], t: Date.now() };
+
+            return preferences[key];
+        } catch (error) {
+            console.error("Error in getSetting:", error);
+            return null;
+        }
+    });
+}
+
+
 async function setSetting(key, value) {
-    try {
-        if (!memory) return null;
+    return enqueueAction(async () => {
+        if (!memory) return;
         await ensurePreferencesFileExists();
         const content = memory.root["System/"]["preferences.json"];
         let preferences = {};
@@ -551,19 +598,19 @@ async function setSetting(key, value) {
             const decodedContent = decodeBase64Content(existingContent);
             preferences = JSON.parse(decodedContent);
         }
+
         preferences[key] = value;
         const newContent = `data:application/json;base64,${btoa(JSON.stringify(preferences))}`;
-        await ctntMgr.set(content.id,newContent);
+        await ctntMgr.set(content.id, newContent);
         await setdb("set setting " + key);
         eventBusWorker.deliver({
-            "type": "settings",
-            "event": "set",
-            "key": key
+            type: "settings",
+            event: "set",
+            key: key
         });
-    } catch (error) {
-        console.log("Error setting settings", error, key);
-    }
+    });
 }
+
 async function resetSettings() {
     try {
         if (!memory) return;
