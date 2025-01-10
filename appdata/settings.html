@@ -2020,7 +2020,7 @@
 						colorsToCopy[variableName] = colorValue;
 					});
 					if (await window.parent.justConfirm("Include current wallpaper?", "Include the currently set wallpaper with the theme code?")) {
-						colorsToCopy['wallpaper'] = window.parent.getSetting("wall");
+						colorsToCopy['wallpaper'] = await window.parent.getSetting("wall");
 					}
 					window.parent.navigator.clipboard.writeText(JSON.stringify(colorsToCopy))
 						.then(() => window.parent.say('Theme copied to clipboard!'))

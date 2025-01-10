@@ -2162,9 +2162,10 @@ ${item.icon || ""}
 		});
 
 		document.addEventListener('click', () => {
-			console.log("stgqyuedheadd")
 			const contextMenu = document.querySelector('.contextmenu');
-			if (contextMenu) contextMenu.style.display = 'none';
+			setTimeout(() => {
+				if (contextMenu) contextMenu.style.display = 'none';
+			}, 200);
 		});
 
 		document.addEventListener('keydown', (event) => {
