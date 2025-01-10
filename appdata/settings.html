@@ -2031,11 +2031,12 @@
 					try {
 						const text = await window.parent.navigator.clipboard.readText();
 						const parsedColors = JSON.parse(text);
-						const variableName = button.dataset.variable;
+						var variableName;
 
 						if (typeof parsedColors === 'object' && parsedColors !== null) {
 							const buttons = document.querySelectorAll('[data-variable]');
 							buttons.forEach(button => {
+								const variableName = button.dataset.variable;
 								if (parsedColors[variableName]) {
 									button.jscolor.fromString(parsedColors[variableName]);
 									updateColor(button.jscolor, variableName);
