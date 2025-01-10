@@ -2031,6 +2031,7 @@
 					try {
 						const text = await window.parent.navigator.clipboard.readText();
 						const parsedColors = JSON.parse(text);
+						console.log(parsedColors)
 						var variableName;
 
 						if (typeof parsedColors === 'object' && parsedColors !== null) {
@@ -2043,7 +2044,8 @@
 								}
 							});
 							if (await window.parent.justConfirm("Include theme wallpaper?", "Include the wallpaper included in the theme code?")) {
-								window.parent.setSetting("wall", variableName);
+								document.getElementById("wallpaperurl").value = parsedColors['wallpaper'];
+								savewallpap();
 							}
 							saveColors();
 							window.parent.say('Theme applied from clipboard!');
