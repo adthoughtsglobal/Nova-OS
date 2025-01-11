@@ -2239,39 +2239,38 @@
 				}
 
 				function applyTheme(data) {
-					try {
-						if (data?.wallpaper) {
-							if (document.getElementById('cbx-uspawa').checked) {
-								console.log(data)
-								document.getElementById("wallpaperurl").value = data.wallpaper;
-								savewallpap();
-							}
-						}
-					} catch (e) { }
+    const buttons = document.querySelectorAll('[data-variable]');
+    buttons.forEach(button => {
+        const variableName = button.dataset.variable;
+        const newColor = data.colors[variableName];
+        if (newColor) {
+            button.jscolor.fromString(newColor);
+            updateColor(button.jscolor, variableName);
+        }
+    });
+    saveColors();
+}
 
-					const buttons = document.querySelectorAll('[data-variable]');
-					buttons.forEach(button => {
-						const variableName = button.dataset.variable;
-						const newColor = data.colors[variableName];
-						if (newColor) {
-							button.jscolor.fromString(newColor);
-							updateColor(button.jscolor, variableName);
-						}
-					});
+function updateColor(picker, variableName) {
+    const colorValue = picker.toHEXString();
+    window.parent.document.documentElement.style.setProperty(variableName, colorValue);
+    document.documentElement.style.setProperty(variableName, colorValue);
+}
 
-					saveColors();
-				}
+function getCSSVariableValue(varName) {
+    return window.parent.getComputedStyle(window.parent.document.documentElement).getPropertyValue(varName).trim();
+}
 
-				const debouncedSaveColor = debounce((picker, variableName) => {
-					updateColor(picker, variableName);
-					saveColors();
-				}, 300);
-
-				function updateColor(picker, variableName) {
-					const colorValue = picker.toHEXString();
-					window.parent.document.documentElement.style.setProperty(variableName, colorValue);
-					document.documentElement.style.setProperty(variableName, colorValue);
-				}
+async function saveColors() {
+    const colorsToSave = {};
+    const buttons = document.querySelectorAll('[data-variable]');
+    buttons.forEach(button => {
+        const variableName = button.dataset.variable;
+        const colorValue = button.jscolor.toHEXString();
+        colorsToSave[variableName] = colorValue;
+    });
+    await window.parent.setSetting("themeColors", colorsToSave);
+}
 
 				function getCSSVariableValue(varName) {
 					return window.parent.getComputedStyle(window.parent.document.documentElement).getPropertyValue(varName).trim();
@@ -2299,14 +2298,19 @@
 				window.addEventListener('load', initColorPickers);
 			</script>
 
-			<h1>Personalization</h1>
+			<h1>Wallpaper</h1>
 			<segr>
 				<div class="inpbox">
-					<span>Wallpaper</span>
+					<span>Current</span>
 					<div class="inputwithbtn">
 						<input placeholder="Paste a URL here..." id="wallpaperurl" class="inputtype1">
 						<button onclick="savewallpap()">Save</button>
 					</div>
+				</div>
+			</segr>
+			<segr>
+				<div setting>
+					<span>Past wallpapers</span>
 				</div>
 			</segr>
 			<style>

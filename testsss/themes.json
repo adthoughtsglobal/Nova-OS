@@ -13,46 +13,6 @@
         },
         "wallpaper": "https://images.unsplash.com/photo-1533135404995-a618910b7b6f?q=80&w=1769&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
     },
-    "Obsidian": {
-        "type": "dark",
-        "colors": {
-            "--colors-BG-normal": "#000000",
-            "--colors-BG-sub": "#080808",
-            "--colors-BG-section": "#090909",
-            "--colors-BG-highlighted": "#512DA8",
-            "--colors-text-high": "#ffffff",
-            "--colors-text-normal": "#FFFFFF",
-            "--colors-special-good": "#49AC49",
-            "--colors-special-bad": "#AC4949"
-        },
-        "wallpaper":"https://images.unsplash.com/photo-1688614598602-0a71fbfed6c5?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-    },
-    "Crimson Midnight": {
-        "type": "dark",
-        "colors": {
-            "--colors-BG-normal": "#4C0519",
-            "--colors-BG-section": "#5F061F",
-            "--colors-BG-sub": "#BE123C",
-            "--colors-BG-highlighted": "#F43F5E",
-            "--colors-text-high": "#D4D4D4",
-            "--colors-text-normal": "#FFFFFF",
-            "--colors-special-good": "#49AC49",
-            "--colors-special-bad": "#AC4949"
-        }
-    },
-    "Material Dark": {
-        "type": "dark",
-        "colors": {
-            "--colors-BG-normal": "#212121",
-            "--colors-BG-sub": "#424242",
-            "--colors-BG-section": "#212121",
-            "--colors-BG-highlighted": "#455A64",
-            "--colors-text-high": "#ffffff",
-            "--colors-text-normal": "#FFFFFF",
-            "--colors-special-good": "#49AC49",
-            "--colors-special-bad": "#AC4949"
-        }
-    },
     "Scarlet Gold": {
         "type": "dark",
         "colors": {
@@ -66,32 +26,6 @@
             "--colors-special-bad": "#FF0000"
         }
     },
-    "Material Bright": {
-        "type": "bright",
-        "colors": {
-            "--colors-BG-normal": "#ECEFF1",
-            "--colors-BG-sub": "#B0BEC5",
-            "--colors-BG-section": "#FAFAFA",
-            "--colors-BG-highlighted": "#90A4AE",
-            "--colors-text-high": "#000000",
-            "--colors-text-normal": "#161616",
-            "--colors-special-good": "#49AC49",
-            "--colors-special-bad": "#AC4949"
-        }
-    },
-    "Win Classic Dark": {
-        "type": "dark",
-        "colors": {
-            "--colors-BG-normal": "#232A32",
-            "--colors-BG-section": "#2E2E2E",
-            "--colors-BG-sub": "#374049",
-            "--colors-BG-highlighted": "#56738E",
-            "--colors-text-high": "#ffffff",
-            "--colors-text-normal": "#FFFFFF",
-            "--colors-special-good": "#49AC49",
-            "--colors-special-bad": "#AC4949"
-        }
-    },
     "Monkai Yellow": {
         "type": "dark",
         "colors": {
@@ -103,19 +37,6 @@
             "--colors-text-normal": "#FFF8CF",
             "--colors-special-good": "#49AC49",
             "--colors-special-bad": "#AC4949"
-        }
-    },
-    "Raw jungle": {
-        "type": "dark",
-        "colors": {
-            "--colors-BG-normal": "#010500",
-            "--colors-BG-section": "#030705",
-            "--colors-BG-sub": "#032600",
-            "--colors-BG-highlighted": "#0D1609",
-            "--colors-text-high": "#ffffff",
-            "--colors-text-normal": "#3DFF00",
-            "--colors-special-good": "#3DFF00",
-            "--colors-special-bad": "#FF0000"
         }
     },
     "Aquamarine": {

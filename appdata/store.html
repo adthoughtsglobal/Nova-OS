@@ -59,34 +59,27 @@
 		#topse {
 			display: flex;
 			border-radius: 10px;
-			padding: 5px;
-			background: var(--colors-BG-section);
-			margin: auto 10px;
-			margin-top: 5px;
-			margin-bottom: 10px;
+			padding-left: 0.3rem;
+			background: var(--colors-BG-sub);
 		}
 
 		#topse input {
-			flex-grow: 5;
+			flex-grow: 1;
 			border: none;
 			font-size: var(--font-size-normal);
 			outline: none;
-			padding: 5px 0;
-			margin-left: 5px;
-			background-color: transparent;
+			text-overflow: ellipsis;
 			color: var(--colors-text-normal);
-			border-radius: 15px;
+			background-color: transparent;
+			border-radius: 0.5rem;
 		}
 
 		#topse button {
 			border-radius: 7px;
-			flex-grow: 1;
 			border: none;
-			margin-left: 5px;
 			padding: 7px;
 			cursor: pointer;
 			transition: .2s;
-			background: var(--colors-BG-highlighted);
 			color: #dce9fc;
 			display: flex;
 			align-items: center;
@@ -95,13 +88,7 @@
 		}
 
 		.installbtnicn {
-			font-size: var(--font-size-normal) !important;
-			transform: translateY(0px) scale(1.5);
-			margin-left: 3px;
-		}
-
-		#topse button:hover {
-			color: white;
+			font-size: 1.3rem !important;
 		}
 
 		small {
@@ -132,6 +119,7 @@
 		.app:hover {
 			box-shadow: 0 0 10px #121212;
 			filter: brightness(110%);
+			background-color: var(--colors-BG-sub);
 		}
 
 		.app h3 {
@@ -335,7 +323,7 @@
 			height: 100%;
 			border: none;
 			padding: 20px;
-			background: var(--colors-BG-sub);
+			background: var(--colors-BG-normal);
 			color: var(--colors-text-normal);
 		}
 
@@ -357,7 +345,7 @@
 			text-overflow: ellipsis;
 			width: 0;
 			flex: 1;
-    margin-bottom: 0.3rem;
+			margin-bottom: 0.3rem;
 		}
 
 		#installer button {
@@ -500,10 +488,14 @@
 			justify-content: space-between;
 			flex-direction: row;
 			padding: 0.7rem;
-    background: var(--colors-BG-section);
-    margin: 0 1rem;
-    border-radius: 0.5rem;
-    margin-bottom: 0.3rem;
+			background: var(--colors-BG-section);
+			margin: 0 1rem;
+			border-radius: 0.5rem;
+			margin-bottom: 0.3rem;
+		}
+
+		.resultapp:hover {
+			background-color: var(--colors-BG-sub);
 		}
 
 		.resultapp b,
@@ -532,37 +524,248 @@
 		}
 
 		#searchresults {
-    margin-bottom: 1rem;
-    max-height: 193px;
-    overflow-y: auto;
+			margin-bottom: 1rem;
+			max-height: 193px;
+			overflow-y: auto;
+			display: none;
+		}
+
+		.searchnores {
+			text-align: center;
+			opacity: .5;
+		}
+
+		.nav {
+			display: flex;
+			margin: 0 auto;
+			width: fit-content;
+			margin-bottom: 0.5rem;
+			gap: .5rem;
+			background: var(--colors-BG-section);
+			border-radius: 0.5rem;
+			padding: 0.3rem;
+		}
+
+		.nav button[active] {
+			background: var(--colors-BG-sub);
+		}
+
+		.nav button {
+			background: transparent;
+			color: inherit;
+			border-radius: 0.5rem;
+			border: 0;
+		}
+
+		#themeslist {
+			display: flex;
+			flex-direction: row;
+			gap: 0.5rem;
+			margin: 1rem;
+
+			justify-content: flex-start;
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(134px, 1fr))
+		}
+
+		.themecolorssing {
+			width: 0;
+			flex: 1;
+			height: 20px;
+		}
+
+		.themesing {
+			background-color: var(--colors-BG-section);
+			padding: 0.5rem;
+			border-radius: 0.5rem;
+			text-overflow: ellipsis;
+			white-space: break-spaces;
+			overflow: hidden;
+			display: flex;
+			flex-direction: column;
+			gap: 0.5rem;
+		}
+		.themeinfodiv {
+    display: flex
+;
+    align-items: flex-start;
+    justify-content: space-between;
+	gap: 0.5rem;
 }
+
+.themeinfodiv button {
+    display: flex
+;
+border: 0;
+
+background-color: var(--colors-special-good);
+			color: inherit;
+			padding: 0.3rem;
+			border-radius: 0.5rem;
+}
+
+		.themecolors {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: nowrap;
+			border-radius: 0.5rem;
+		}
+
+		.openablewin {
+			display: none;
+		}
+
+		path,
+		svg {
+			border-radius: 0.5rem;
+			height: fit-content;
+		}
+
+		.themename {
+			flex: 1;
+    width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+		}
 	</style>
 </head>
 
 <body>
-	<div class="mains">
+	<div class="nav">
+		<button active onclick="openwin('appsmode', this)">
+			Apps
+		</button>
+		<button onclick="openwin('themesmode', this)">
+			Themes
+		</button>
+
 		<div id="topse">
-			<input placeholder="Paste a Link or search store..." id="fesinp" onkeydown="handleEnterKey(event)" oninput="updateButtonText()">
+			<input placeholder="Search or enter link" id="fesinp" onkeydown="handleEnterKey(event)"
+				oninput="updateButtonText()">
 			<button id="actionButton" onclick="handleSearchOrInstall(this)">
-				Search
 				<div class="material-symbols-rounded installbtnicn">download</div>
 			</button>
 		</div>
-		<div id="searchresults"></div>		
-		<div>
+	</div>
+	<div class="mains">
+		<div id="searchresults"></div>
+		<div id="appsmode" class="openablewin">
 			<div id="sugapps">
 				:( unexpected error
 			</div>
 
-		</div>
-
-		<div>
 			<small class="minisecnav">Default Apps <a class="farright"><i class="material-symbols-rounded">info</i>click
 					to update</a></small>
 			<div id="defapppack">
 			</div>
 
 		</div>
+		<div id="themesmode" class="openablewin">
+			<div id="themeslist"></div>
+			<script>
+				function openwin(winname, obj) {
+					if (winname == "appsmode") {
+						document.getElementById("topse").style.display = 'flex';
+					} else {
+						document.getElementById("topse").style.display = 'none'
+					}
+					document.querySelectorAll("[active]")[0].removeAttribute("active");
+					obj.setAttribute("active", 'true');
+					const elements = document.getElementsByClassName("openablewin");
+					for (let i = 0; i < elements.length; i++) {
+						elements[i].style.display = 'none';
+					}
+
+					document.getElementById(winname).style.display = 'block';
+				}
+				window.parent.fetch('https://adthoughtsglobal.github.io/Nova-Store/db/themes.json')
+					.then(response => response.json())
+					.then(data => {
+						const container = document.getElementById("themeslist");
+
+						Object.entries(data).forEach(([themeName, themeData]) => {
+							const themeContainer = document.createElement('div');
+							themeContainer.classList.add("themesing");
+
+							const colorsSvg = document.createElement('div');
+							colorsSvg.classList.add('themecolors');
+							const svgNS = "http://www.w3.org/2000/svg";
+
+							const colormainbg = themeData.colors["--colors-BG-normal"] || "#000000";
+							const colorsubbg = themeData.colors["--colors-BG-sub"] || "#080808";
+							const colorsectionbg = themeData.colors["--colors-BG-section"] || "#090909";
+							const colorhighlight = themeData.colors["--colors-BG-highlighted"] || "#512DA8";
+							const colorwhite = themeData.colors["--colors-text-high"] || "#FFFFFF";
+							const colortext = themeData.colors["--colors-text-normal"] || "#FFFFFF";
+							const colorgood = themeData.colors["--colors-special-good"] || "#49AC49";
+							const colorbad = themeData.colors["--colors-special-bad"] || "#AC4949";
+
+							const svg = document.createElementNS(svgNS, 'svg');
+							svg.setAttribute('version', '1.1');
+							svg.setAttribute('xmlns', svgNS);
+							svg.setAttribute('width', '186.92934');
+							svg.setAttribute('height', '127.61522');
+							svg.setAttribute('viewBox', '0 0 186.92934 127.61522');
+
+							const g1 = document.createElementNS(svgNS, 'g');
+							g1.setAttribute('transform', 'translate(-146.53533,-116.19239)');
+
+							const g2 = document.createElementNS(svgNS, 'g');
+							g2.setAttribute('stroke', 'none');
+							g2.setAttribute('stroke-width', 'none');
+							g2.setAttribute('stroke-miterlimit', '10');
+
+							const paths = [
+								{ d: "M146.53533,243.80761v-127.61522h186.92934v127.61522z", fill: colormainbg }, // main bg
+								{ d: "M153.33273,232.60246v-110.0906h50v110.0906z", fill: colorsectionbg }, // card section
+								{ d: "M153.33273,232.60246v-110.0906h117.15993v110.0906z", fill: colorsectionbg },
+								{ d: "M165.64709,197.15912v-13.89422h54.10463v13.89422z", fill: colorhighlight }, // button
+								{ d: "M165.75792,153.04796v-16.07118h38.50194v16.07118z", fill: colortext },
+								{ d: "M165.44056,166.29708v-8.03559h92.94427v8.03559z", fill: colortext },
+								{ d: "M165.44056,176.68927v-8.03559h74.55944v8.03559z", fill: colortext },
+								{ d: "M173.17094,193.3994v-6.37479h39.05692v6.37479z", fill: colorgood },
+								{ d: "M173.17094,193.3994v-6.37479h39.05692v6.37479z", fill: colorwhite }
+							];
+
+							paths.forEach(({ d, fill }) => {
+								const path = document.createElementNS(svgNS, 'path');
+								path.setAttribute('d', d);
+								path.setAttribute('fill', fill);
+								path.setAttribute('rx', '10');
+								g2.appendChild(path);
+							});
+
+							g1.appendChild(g2);
+							svg.appendChild(g1);
+							colorsSvg.appendChild(svg);
+
+							const infoDiv = document.createElement('div');
+							infoDiv.classList.add('themeinfodiv');
+
+							const nameDiv = document.createElement('div');
+							nameDiv.classList.add("themename")
+							nameDiv.innerText = themeName;
+							infoDiv.appendChild(nameDiv);
+
+							const instdiv = document.createElement('button');
+							instdiv.innerHTML = `<i
+						class="material-symbols-rounded">format_paint</i>`;
+							infoDiv.appendChild(instdiv);
+
+							themeContainer.appendChild(colorsSvg);
+							themeContainer.appendChild(infoDiv);
+
+							themeContainer.addEventListener('click', () => window.parent.applyThemeNonVisual(themeData, document));
+							container.appendChild(themeContainer);
+						});
+
+
+					})
+					.catch(error => console.error('Error loading themes:', error));
+			</script>
+		</div>
+	</div>
+
 	</div>
 	<script src="https://cdn.jsdelivr.net/npm/tinycolor2"></script>
 
@@ -590,23 +793,54 @@
 		</div>
 	</dialog>
 	<script defer>
+		function getAppNameFromUrl(url) {
+			let hostname = new URL(url).hostname;
+			hostname = hostname.replace(/^www\./, '');
+			let parts = hostname.split('.');
+			return parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
+		}
 
-		
-async function installapp(x, appName, obj) {
-			obj.innerHTML = `Installing...`
-			obj.style.backgroundColor = "#2f2f2f"
+		async function installapp(x, appName, obj, method = "icononly") {
 			console.log(x)
 			let prefixurl = ""
 			if (!x.src.startsWith("http")) {
 				prefixurl = "https://adthoughtsglobal.github.io/"
 			}
-			const response = await fetch(prefixurl + x.src);
-			const content = await response.text();
-			await window.parent.createFile("Apps", appName, "app", content);
-			obj.innerHTML = `Checking...`
-			setTimeout(() => {
-				obj.innerHTML = "Update"
-			}, 1000)
+			try {
+				if (method == 'icononly') {
+					obj.innerHTML = `<div class="material-symbols-rounded installbtnicn">pending</div>`
+				} else {
+					obj.innerHTML = `Checking...`
+				}
+				const response = await fetch(prefixurl + x.src);
+				const content = await response.text();
+				await window.parent.createFile("Apps", appName, "app", content);
+				setTimeout(() => {
+					if (method == 'icononly') {
+						obj.innerHTML = `<div class="material-symbols-rounded installbtnicn">check</div>`;
+						setTimeout(() => {
+							obj.innerHTML = `<div class="material-symbols-rounded installbtnicn">download</div>`
+						}, 1000)
+					} else {
+						obj.innerHTML = `Update`
+					}
+				}, 1000)
+			} catch (err) {
+				setTimeout(() => {
+					if (method == 'icononly') {
+						obj.innerHTML = `<div class="material-symbols-rounded installbtnicn">sentiment_dissatisfied</div>`;
+						setTimeout(() => {
+							obj.innerHTML = `<div class="material-symbols-rounded installbtnicn">download</div>`
+						}, 1000)
+					} else {
+						obj.innerHTML = "Failed";
+						setTimeout(() => {
+							obj.innerHTML = "Update";
+						}, 1000)
+					}
+				}, 1000)
+			}
+
 		}
 
 		function greenflag() {
@@ -651,18 +885,18 @@ async function installapp(x, appName, obj) {
 			data.data.sort((a, b) => Object.keys(a)[0].localeCompare(Object.keys(b)[0]));
 
 			data.data.forEach(appDetails => {
-    const appName = appDetails.name;
+				const appName = appDetails.name;
 
-    const appDiv = createAppDiv(appName, appDetails, vdevs, featured);
+				const appDiv = createAppDiv(appName, appDetails, vdevs, featured);
 
-    if (featured.includes(appName)) {
-        document.getElementById("featured-section").appendChild(appDiv);
-    } else if (appDetails.by === "adthoughtsglobal") {
-        document.getElementById("nova-section").appendChild(appDiv);
-    } else {
-        document.getElementById("apps-section").appendChild(appDiv);
-    }
-});
+				if (featured.includes(appName)) {
+					document.getElementById("featured-section").appendChild(appDiv);
+				} else if (appDetails.by === "adthoughtsglobal") {
+					document.getElementById("nova-section").appendChild(appDiv);
+				} else {
+					document.getElementById("apps-section").appendChild(appDiv);
+				}
+			});
 		}
 
 		function createAppDiv(appName, appDetails, vdevs, featured) {
@@ -838,13 +1072,13 @@ async function installapp(x, appName, obj) {
 							installButton.style.backgroundColor = "#2f2f2f";
 
 							installButton.onclick = function () {
-								installapp(appDetails.src, appName, this);
+								installapp(appDetails, appName, this, "full");
 							};
 						} else {
 							installButton.textContent = 'Install';
 							installButton.style.backgroundColor = "var(--colors-special-good)";
 							installButton.onclick = function () {
-								installapp(appDetails.src, appName, this);
+								installapp(appDetails, appName, this, "full");
 							};
 
 							const openButton = document.getElementById('openbtn');
@@ -870,117 +1104,118 @@ async function installapp(x, appName, obj) {
 
 		// This function updates the button text based on the input content
 		function updateButtonText() {
-    const input = document.getElementById("fesinp").value.trim();
-    const button = document.getElementById("actionButton");
-    const currentHtml = button.innerHTML;
+			const input = document.getElementById("fesinp").value.trim();
+			const button = document.getElementById("actionButton");
+			const currentHtml = button.innerHTML;
 
-    let newHtml;
+			let newHtml;
 
-    if (isValidUrl(input)) {
-        newHtml = 'Install <div class="material-symbols-rounded installbtnicn">download</div>';
-    } else if (input.length > 0) {
-        newHtml = 'Search <div class="material-symbols-rounded installbtnicn">search</div>';
-    } else {
-        newHtml = 'Search <div class="material-symbols-rounded installbtnicn">download</div>';
-    }
+			if (isValidUrl(input)) {
+				newHtml = ' <div class="material-symbols-rounded installbtnicn">download</div>';
+			} else if (input.length > 0) {
+				newHtml = ' <div class="material-symbols-rounded installbtnicn">search</div>';
+			} else {
+				newHtml = ' <div class="material-symbols-rounded installbtnicn">download</div>';
+			}
 
-    if (currentHtml !== newHtml) {
-        button.innerHTML = newHtml;
-    }
-}
+			if (currentHtml !== newHtml) {
+				button.innerHTML = newHtml;
+			}
+		}
 
-// This function checks if a string is a valid URL
-function isValidUrl(string) {
-    try {
-        new URL(string);
-        return true;
-    } catch {
-        return false;
-    }
-}
+		// This function checks if a string is a valid URL
+		function isValidUrl(string) {
+			try {
+				new URL(string);
+				return true;
+			} catch {
+				return false;
+			}
+		}
 
-// This function handles Enter key press to trigger the search/install action
-function handleEnterKey(event) {
-    if (event.key === "Enter") {
-        const input = document.getElementById("fesinp").value.trim();
-        if (input.length > 0) {
-            handleSearchOrInstall(document.getElementById("actionButton"));
-        }
-    }
-}
+		// This function handles Enter key press to trigger the search/install action
+		function handleEnterKey(event) {
+			if (event.key === "Enter") {
+				const input = document.getElementById("fesinp").value.trim();
+				if (input.length > 0) {
+					handleSearchOrInstall(document.getElementById("actionButton"));
+				}
+			}
+		}
 
-// This function handles either installing or searching based on the input content
-async function handleSearchOrInstall(button) {
-    const input = document.getElementById("fesinp").value.trim();
-    if (isValidUrl(input)) {
-        await installApp(button, input);
-    } else {
-        searchApps(input);
-    }
-}
+		async function handleSearchOrInstall(button) {
+			const input = document.getElementById("fesinp").value.trim();
+			if (isValidUrl(input)) {
+				await installapp({ "src": input }, getAppNameFromUrl(input), button);
+			} else {
+				searchApps(input);
+			}
+		}
 
+		function searchApps(query) {
+			const resultsDiv = document.getElementById("searchresults");
+			resultsDiv.style.display = 'block';
+			resultsDiv.innerHTML = "<div class='loader'></div>";
+			fetch("https://adthoughtsglobal.github.io/Nova-Store/db/database.json")
+				.then(response => response.json())
+				.then(data => {
+					const results = data.data.filter(app => {
+						const appName = app.name; // Directly access the 'name' property
+						return appName.toLowerCase().includes(query.toLowerCase());
+					});
+					displaySearchResults(results);
+				})
+				.catch(error => {
+					console.error("Error fetching app data:", error);
+					resultsDiv.innerHTML = "Error loading search results.";
+				});
+		}
 
-function searchApps(query) {
-    const resultsDiv = document.getElementById("searchresults");
-    resultsDiv.innerHTML = "<div class='loader'></div>";
-    fetch("https://adthoughtsglobal.github.io/Nova-Store/db/database.json")
-        .then(response => response.json())
-        .then(data => {
-            const results = data.data.filter(app => {
-                const appName = Object.keys(app)[0];
-                return appName.toLowerCase().includes(query.toLowerCase());
-            });
-            displaySearchResults(results);
-        })
-        .catch(error => {
-            console.error("Error fetching app data:", error);
-            resultsDiv.innerHTML = "Error loading search results.";
-        });
-}
+		function displaySearchResults(results) {
+			const resultsDiv = document.getElementById("searchresults");
+			resultsDiv.innerHTML = "";
+			if (results.length === 0) {
+				resultsDiv.innerHTML = "<p class='searchnores'>No results found.</p>";
+				return;
+			}
+			results.forEach(app => {
+				const appName = app.name; // Directly access the 'name' property
+				const appDetails = app; // app is already the flattened details object
 
-function displaySearchResults(results) {
-    const resultsDiv = document.getElementById("searchresults");
-    resultsDiv.innerHTML = "";
-    if (results.length === 0) {
-        resultsDiv.innerHTML = "<p>No results found.</p>";
-        return;
-    }
-    results.forEach(app => {
-        const appName = Object.keys(app)[0];
-        const appDetails = app[appName];
-        const resultDiv = document.createElement("div");
-        resultDiv.className = "resultapp";
+				const resultDiv = document.createElement("div");
+				resultDiv.className = "resultapp";
 
-        const dataSide = document.createElement("div");
-        dataSide.className = "dataside";
+				const dataSide = document.createElement("div");
+				dataSide.className = "dataside";
 
-        const title = document.createElement("b");
-        title.className = "resultapptit";
-        title.textContent = appName;
+				const title = document.createElement("b");
+				title.className = "resultapptit";
+				title.textContent = appName;
 
-        const description = document.createElement("p");
-        const descItem = appDetails.desc;
-        description.textContent = descItem ? descItem.desc : "No description available.";
+				const description = document.createElement("p");
+				const descText = appDetails.desc || "No description available."; // Use 'desc' directly
+				description.textContent = descText;
 
-        dataSide.appendChild(title);
-        dataSide.appendChild(description);
+				dataSide.appendChild(title);
+				dataSide.appendChild(description);
 
-        const actionSide = document.createElement("div");
-        actionSide.className = "actionside";
+				const actionSide = document.createElement("div");
+				actionSide.className = "actionside";
 
-        const actionButton = document.createElement("button");
-        actionButton.className = "chevronbtn";
-        actionButton.innerHTML = `<i class="material-symbols-rounded">chevron_forward</i>`;
-        actionButton.onclick = () => alert(`Open app details for ${appName}`);
+				const actionButton = document.createElement("button");
+				actionButton.className = "chevronbtn";
+				actionButton.innerHTML = `<i class="material-symbols-rounded">chevron_forward</i>`;
 
-        actionSide.appendChild(actionButton);
+				resultDiv.setAttribute("onclick", `openappinstr('${appName}', ${JSON.stringify(appDetails)})`);
 
-        resultDiv.appendChild(dataSide);
-        resultDiv.appendChild(actionSide);
+				actionSide.appendChild(actionButton);
 
-        resultsDiv.appendChild(resultDiv);
-    });
-}
+				resultDiv.appendChild(dataSide);
+				resultDiv.appendChild(actionSide);
+
+				resultsDiv.appendChild(resultDiv);
+			});
+		}
 	</script>
 </body>
 

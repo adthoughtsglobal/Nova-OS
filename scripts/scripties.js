@@ -359,3 +359,30 @@ function getMenuItems(target) {
 		{ label: 'Inspect', action: () => console.log('Inspect clicked') },
 	];
 }
+
+
+
+function applyThemeNonVisual(data, doc) {
+    try {
+        if (data?.wallpaper) {
+            if (document.getElementById('cbx-uspawa').checked) {
+                console.log(data);
+                document.getElementById("wallpaperurl").value = data.wallpaper;
+                savewallpap();
+            }
+        }
+    } catch (e) { }
+
+    saveColorsNonVisual(data.colors, doc);
+}
+
+function saveColorsNonVisual(colors, doc) {
+    const colorsToSave = {};
+    for (const variableName in colors) {
+        colorsToSave[variableName] = colors[variableName];
+		
+		window.parent.document.documentElement.style.setProperty(variableName, colors[variableName]);
+		doc.documentElement.style.setProperty(variableName, colors[variableName]);
+    }
+    window.parent.setSetting("themeColors", colorsToSave);
+}
