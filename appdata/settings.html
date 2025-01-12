@@ -2244,6 +2244,11 @@
 					});
 				}
 
+				const debouncedSaveColor = debounce((picker, variableName) => {
+					updateColor(picker, variableName);
+					saveColors();
+				}, 300);
+
 				function applyTheme(data) {
     const buttons = document.querySelectorAll('[data-variable]');
     buttons.forEach(button => {
