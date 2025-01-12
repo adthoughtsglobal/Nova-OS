@@ -585,24 +585,23 @@
 			flex-direction: column;
 			gap: 0.5rem;
 		}
+
 		.themeinfodiv {
-    display: flex
-;
-    align-items: flex-start;
-    justify-content: space-between;
-	gap: 0.5rem;
-}
+			display: flex;
+			align-items: flex-start;
+			justify-content: space-between;
+			gap: 0.5rem;
+		}
 
-.themeinfodiv button {
-    display: flex
-;
-border: 0;
+		.themeinfodiv button {
+			display: flex;
+			border: 0;
 
-background-color: var(--colors-special-good);
+			background-color: var(--colors-special-good);
 			color: inherit;
 			padding: 0.3rem;
 			border-radius: 0.5rem;
-}
+		}
 
 		.themecolors {
 			display: flex;
@@ -623,9 +622,9 @@ background-color: var(--colors-special-good);
 
 		.themename {
 			flex: 1;
-    width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
+			width: 0;
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 	</style>
 </head>
@@ -678,6 +677,12 @@ background-color: var(--colors-special-good);
 
 					document.getElementById(winname).style.display = 'block';
 				}
+				const elements = document.getElementsByClassName("openablewin");
+				for (let i = 0; i < elements.length; i++) {
+					elements[i].style.display = 'none';
+				}
+				document.getElementById('appsmode').style.display = 'block';
+
 				window.parent.fetch('https://adthoughtsglobal.github.io/Nova-Store/db/themes.json')
 					.then(response => response.json())
 					.then(data => {
