@@ -69,6 +69,7 @@
 			0% {
 				transform: translateX(-1rem);
 			}
+
 			100% {
 				transform: translateX(0rem);
 			}
@@ -83,6 +84,7 @@
 			color: var(--colors-text-normal);
 			background-color: transparent;
 			border-radius: 0.5rem;
+			width: 38vw;
 		}
 
 		#topse button {
@@ -623,7 +625,7 @@
 		<button active="true" onclick="openwin('appsmode', this)">
 			Apps
 		</button>
-		<button onclick="openwin('themesmode', this)">
+		<button id="themesmodebtn" onclick="openwin('themesmode', this)">
 			Themes
 		</button>
 
@@ -689,7 +691,7 @@
 								${themeData.colors["--colors-BG-sub"]} 25%, 
 								${themeData.colors["--colors-BG-section"]} 75%, 
 								${themeData.colors["--colors-BG-highlighted"]}) 100%`;
-								themeContainer.style.color = themeData.colors["--colors-text-normal"];
+							themeContainer.style.color = themeData.colors["--colors-text-normal"];
 
 							const colorsSvg = document.createElement('div');
 							colorsSvg.classList.add('themecolors');
@@ -850,6 +852,7 @@
 		}
 
 		function greenflag() {
+			
 			initializeLoader();
 			fetchAppData().then(appData => {
 				renderSections();
@@ -859,6 +862,11 @@
 				console.error('Error:', error);
 				displayErrorMessage("Failed to fetch data. Please try again later.");
 			});
+			const data = myWindow?.params?.opener;
+
+				if (data == 'themes') {
+					setTimeout(openwin('themesmode', document.getElementById('themesmodebtn')), 500);
+				}
 		}
 
 		function initializeLoader() {

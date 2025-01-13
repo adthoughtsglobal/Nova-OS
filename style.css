@@ -1684,6 +1684,7 @@ dialog#terminal {
 	.window {
 		resize: none;
 		border-radius: 0;
+        max-height: calc(100vh - 72px);
 	}
 
 	nav {
@@ -1697,11 +1698,11 @@ dialog#terminal {
 	}
 
 	#appsindeck {
-		height: calc(100vh - 13rem);
-		max-height: none !important;
-		justify-content: flex-start;
-		align-items: flex-start;
-		align-content: flex-start;
+        height: 100%;
+        overflow-y: auto;
+        max-height: calc(100vh - 14rem) !important;
+		justify-content: space-around;
+		justify-items: center;
 	}
 
 	#dashboard {

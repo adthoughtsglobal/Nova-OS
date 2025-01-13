@@ -1987,7 +1987,7 @@
 
 				</div>
 
-				<div class="newthemebtn">
+				<div class="newthemebtn" onclick="window.parent.openapp('store',1, {'opener':'themes'})">
 					Browse more
 
 					<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'
@@ -2039,8 +2039,6 @@
 				</div>
 			</segr>
 			<script>
-
-
 				async function copyCurrentTheme() {
 					const colorsToCopy = {};
 					document.querySelectorAll('[data-variable]').forEach(button => {
@@ -2282,6 +2280,16 @@
 							updateColor(button.jscolor, variableName);
 						}
 					});
+
+					try {
+						if (data?.wallpaper) {
+							if (document.getElementById('cbx-uspawa').checked) {
+								document.getElementById("wallpaperurl").value = data.wallpaper;
+								savewallpap();
+							}
+						}
+					} catch (e) { }
+
 					saveColors();
 				}
 

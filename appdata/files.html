@@ -1241,23 +1241,28 @@
 			if (defaultopenfold) {
 				currentPath = defaultopenfold;
 			}
+
+			
 			if (await window.parent.getSetting("filesSidenavSize")) {
 				document.getElementById("flap-sidenav").style.width = await window.parent.getSetting("filesSidenavSize");
 			} else {
 				fitsizesidenav();
 			}
 
-			if (navigator.onLine) {
-				$("#flap-sidenav").resizable({
-					handles: 'e',
-					stop: function (event, ui) {
-						const newWidth = ui.size.width;
-						window.parent.setSetting("filesSidenavSize", newWidth + 'px');
-					}
-				});
-
-				liststuff();
+			if (window.innerWidth <= 500) {
+				toggletree();
+				
 			}
+
+			$("#flap-sidenav").resizable({
+				handles: 'e',
+				stop: function (event, ui) {
+					const newWidth = ui.size.width;
+					window.parent.setSetting("filesSidenavSize", newWidth + 'px');
+				}
+			});
+
+			liststuff();
 			fllist = document.getElementById("filelist");
 			fdlist = document.getElementById("folders");
 
@@ -1600,6 +1605,7 @@
 				treeviewopen = true;
 			}
 		}
+
 
 		async function slfile(y, z) {
 			let x = y;
@@ -2073,7 +2079,6 @@
 				document.getElementById("choosefile").style.display = "none";
 				initializeFilesApp(false);
 			}
-
 
 		}
 		let contextMenu;

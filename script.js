@@ -14,43 +14,43 @@ var batteryLevel, winds = {}, rp, flwint = true, contentpool = {}, memory = {}, 
 ], timeFormat, timetypecondition = true;
 
 function setbgimagetourl(x) {
-    const bgImage = document.getElementById('bgimage');
-    if (!bgImage) return;
+	const bgImage = document.getElementById('bgimage');
+	if (!bgImage) return;
 
-    bgImage.style.opacity = 0;
-    const transitionDuration = parseFloat(getComputedStyle(bgImage).transitionDuration) * 1000 || 300;
+	bgImage.style.opacity = 0;
+	const transitionDuration = parseFloat(getComputedStyle(bgImage).transitionDuration) * 1000 || 300;
 
-    if (x.startsWith('data:')) {
-        try {
-            const byteString = atob(x.split(',')[1]);
-            const mimeString = x.split(',')[0].split(':')[1].split(';')[0];
-            const arrayBuffer = new Uint8Array(byteString.length);
+	if (x.startsWith('data:')) {
+		try {
+			const byteString = atob(x.split(',')[1]);
+			const mimeString = x.split(',')[0].split(':')[1].split(';')[0];
+			const arrayBuffer = new Uint8Array(byteString.length);
 
-            for (let i = 0; i < byteString.length; i++) {
-                arrayBuffer[i] = byteString.charCodeAt(i);
-            }
+			for (let i = 0; i < byteString.length; i++) {
+				arrayBuffer[i] = byteString.charCodeAt(i);
+			}
 
-            const blob = new Blob([arrayBuffer], { type: mimeString });
-            const blobUrl = URL.createObjectURL(blob);
+			const blob = new Blob([arrayBuffer], { type: mimeString });
+			const blobUrl = URL.createObjectURL(blob);
 
-            setTimeout(() => {
-                bgImage.src = blobUrl;
-                bgImage.onload = () => {
-                    bgImage.style.opacity = 1;
-                    setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
-                };
-            }, transitionDuration);
-        } catch (e) {
-            console.error("Failed to decode base64 string:", e);
-        }
-    } else {
-        setTimeout(() => {
-            bgImage.src = x;
-            bgImage.onload = () => {
-                bgImage.style.opacity = 1;
-            };
-        }, transitionDuration);
-    }
+			setTimeout(() => {
+				bgImage.src = blobUrl;
+				bgImage.onload = () => {
+					bgImage.style.opacity = 1;
+					setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+				};
+			}, transitionDuration);
+		} catch (e) {
+			console.error("Failed to decode base64 string:", e);
+		}
+	} else {
+		setTimeout(() => {
+			bgImage.src = x;
+			bgImage.onload = () => {
+				bgImage.style.opacity = 1;
+			};
+		}, transitionDuration);
+	}
 }
 
 Object.defineProperty(window, 'nowapp', {
@@ -191,8 +191,8 @@ async function startup() {
 					console.error("Failed to fetch data from the server.");
 				}
 			}
-			
-			
+
+
 
 			await fetchDataAndUpdate();
 			await genTaskBar();
@@ -215,7 +215,7 @@ async function startup() {
 			}
 			await loadFileTypeAssociations();
 			const end = performance.now();
-			
+
 			rllog(
 				`You are using \n\n%cNovaOS%c\n%cNovaOS is the free, source-available,powerful and the cutest Web Operating system on the internet.%c\n\nStartup: ${(end - start).toFixed(2)}ms\nUsername: ${CurrentUsername}\nCurrent: ${localupdatedataver}\n12hr Time format: ${timetypecondition}\nNewest: ${fetchupdatedataver}`,
 				'color: white; background-color: #101010; font-size: 2rem; padding: 0.7rem 1rem; border-radius: 1rem;',
@@ -608,7 +608,7 @@ async function dod() {
 	} catch (error) {
 		console.error(error)
 	}
-	
+
 
 	if (await getSetting("copilot")) {
 		gid("copilotbtn").style.display = "";
@@ -839,7 +839,7 @@ function makedialogclosable(ok) {
 			myDialog.classList.add("*closeEffect");
 			setTimeout(
 				myDialog.close()
-			, 500);
+				, 500);
 		}
 	});
 }
@@ -1442,11 +1442,17 @@ async function genTaskBar() {
 			if (Array.isArray(x) && x.length === 0) {
 				const y = await getFileNamesByFolder("Apps");
 				x = (await Promise.all(
-					y.filter(item =>
-						item.name === "Files.app" ||
-						item.name === "Settings.app" ||
-						item.name === "Store.app"
-					)
+					(window.innerWidth <= 500) ?
+						y.filter(item =>
+							item.name === "Files.app"
+						)
+						:
+						y.filter(item =>
+							item.name === "Files.app" ||
+							item.name === "Settings.app" ||
+							item.name === "Store.app"
+						)
+
 				)).filter(Boolean);
 			}
 			x.forEach(async function (app, index) {

@@ -121,6 +121,7 @@ function calculateWindowSize(aspectratio) {
 }
 
 async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
+    console.log("params: ",params)
     appsHistory.push(title);
     if (appsHistory.length > 5) {
         appsHistory = appsHistory.slice(-5);
@@ -271,6 +272,7 @@ async function openwindow(title, cont, ic, theme, aspectratio, appid, params) {
                 windowID: winuid,
                 ...(params && { params })
             };
+            console.log("inframe: ", iframe.contentWindow.myWindow)
 
             if (contentString.includes("nova-include") && getMetaTagContent(contentString, 'nova-include') != null) {
                 try {
@@ -551,7 +553,7 @@ function dragElement(elmnt) {
         return false;
     }
 }
-async function openapp(x, od) {
+async function openapp(x, od, customtodo) {
     // od is the app id, x is the app name
     if (gid('appdmod').open) {
         gid('appdmod').close()
@@ -565,12 +567,27 @@ async function openapp(x, od) {
             var y;
             if (od == 1) {
                 y = await fetchData("appdata/" + x + ".html");
-                od = await createFile("Apps/", toTitleCase(x), "app", y);
+                if (y.startsWith("App Launcher: CRITICAL ERR")) {
+                    y = null;
+                    await normieprocess();
+                    return;
+                } else {
+                    od = await createFile("Apps/", toTitleCase(x), "app", y);
+                }
             } else {
+                await normieprocess();
+            }
+            async function normieprocess() {
                 y = await getFileById(od);
                 y = y.content;
             }
+            if (Gtodo == null && customtodo) {
+                Gtodo = customtodo;
+            }
+            console.log('gtodo: ', Gtodo)
+            
             openwindow(x, y, await getAppIcon(y, x), getAppTheme(y), getAppAspectRatio(y), od, Gtodo);
+
             Gtodo = null;
         } catch (error) {
             console.error("Error fetching data:", error);

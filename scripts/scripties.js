@@ -363,15 +363,6 @@ function getMenuItems(target) {
 
 
 function applyThemeNonVisual(data, doc) {
-    try {
-        if (data?.wallpaper) {
-            if (document.getElementById('cbx-uspawa').checked) {
-                console.log(data);
-                document.getElementById("wallpaperurl").value = data.wallpaper;
-                savewallpap();
-            }
-        }
-    } catch (e) { }
 
     saveColorsNonVisual(data.colors, doc);
 }
