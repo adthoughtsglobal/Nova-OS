@@ -1,32 +1,33 @@
 ![Untitled design](https://github.com/user-attachments/assets/e8932e65-05fd-40de-9745-98abf9201dad)
 # Welcome to NovaOS!
-The **fully local**, **Free**, **Source available** Web Desktop Made for every modern browser and any device.
+The fully local, Free, and source-available Web Desktop, Made for every modern browser and device.
 
-[Homepage](https://adthoughtsglobal.github.io/NovaOS/) | [Docs](https://novaos.gitbook.io/novaos-docs) | [Discord](https://discord.gg/atkqbwEQU8) | [Try it](https://github.com/adthoughtsglobal/Nova-OS?tab=readme-ov-file#how-do-i-access)
+[Homepage](https://adthoughtsglobal.github.io/NovaOS/) | [Docs](https://novaos.gitbook.io/novaos-docs) | [Discord](https://discord.gg/atkqbwEQU8) | [**Try it**](https://github.com/adthoughtsglobal/Nova-OS?tab=readme-ov-file#how-do-i-access)
 
-<a href="https://discord.gg/atkqbwEQU8"><img src="https://github.com/user-attachments/assets/40715546-d00a-47c1-8b82-5c19d6fc3b85" height="30"></a>
-<a href="https://discord.gg/8mnnkUP2G8"><img src="https://github.com/user-attachments/assets/0e25c5e3-e65a-4ceb-ae31-6f9fcf8fe8bd" height="30"></a>
+```txt
+Version: 2.05
+Title: Solaris
+```
 
-<a href="https://www.dmca.com/compliance/adthoughtsglobal.github.io" title="DMCA Compliance information for adthoughtsglobal.github.io"><img height="15" src="https://www.dmca.com/img/dmca-compliant-grayscale.png" alt="DMCA compliant image" /></a>
-<img height="15" src="https://img.shields.io/github/languages/count/adthoughtsglobal/Nova-OS"/>
-<img height="15" src="https://img.shields.io/github/last-commit/adthoughtsglobal/Nova-dev-repl-rl"/>
+<img height="15" src="https://img.shields.io/github/languages/count/adthoughtsglobal/Nova-OS"/> <img height="15" src="https://img.shields.io/github/last-commit/adthoughtsglobal/Nova-dev-repl-rl"/>
 
 # NovaOS is the superpower for any device.
 
 ![image](https://github.com/user-attachments/assets/79dc5d0b-b794-4d44-b5b4-11dfddafa81e)
 
 NovaOS is a powerful web operating system built for everything. From daily tasks to endless fun, it has you covered. A customizable system designed for any device with a browser. It offers a fast, secure, and feature-rich experience for gaming and daily tasks, with dynamic personalization and seamless updates.
-Its 
 
 # What makes it special?
-- NovaOS is the **completely free**, **mobile supported**, **PWA installable**, **fully local** **web desktop** system. It has a fully self-created ecosystem of features and a very unique user experience. 
+- NovaOS is the **completely free**, **mobile supported**, **PWA installable**, **fully local** **web desktop** system. It has a fully self-created ecosystem of features and a very unique user experience.
 
-- NovaOS can function **fully offline**[^3], meaning it operates with all its features without needing an internet connection. Think of it this way, NovaOS is a Web application, which is fully client side, that lets you make full web applications that can interact with a **virtual filesystem**, on the go, even offline. 
+- NovaOS is the most stable web desktop system, due to its fully local nature and its pure HTML, JS, and CSS codebase.
 
-- With a wide array of stunning features, NovaOS can serve as a valid operating system. NovaOS can handle webapps in a breeze, SVG icons, settings and a wide array of default apps to ease your work.
+- NovaOS can function **fully offline**[^3], meaning it operates with all its features without needing an internet connection. Think of it this way, NovaOS is a fully client-side Web application, that lets you make full web applications that can interact with a **virtual filesystem**, on the go, even offline. 
 
-# How do i access?
-NovaOS is available for public at [https://adthoughtsglobal.github.io/Nova-OS/](https://adthoughtsglobal.github.io/Nova-OS). [^1]
+- NovaOS can handle locally created web apps in a breeze, SVG icons, powerful settings, massive amounts of detail in each feature and a wide array of default apps to ease your work.
+
+# How do I access it?
+NovaOS is available for the public at [https://adthoughtsglobal.github.io/Nova-OS/](https://adthoughtsglobal.github.io/Nova-OS). [^1]
 
 # Learn more
 - NovaOS top features list, [here](https://novaos.gitbook.io/novaos-docs/docs/features).
@@ -53,4 +54,4 @@ NovaOS app development is an amazing place to be, here are the basic NovaOS app 
 [^2]: Quotes are personal perspectives of users.
 [^3]: It must be initially loaded with internet, and the offline setting must be turned on for this feature to work.
 
-<a href="https://www.patreon.com/adthoughtsglobal/membership"><img src="https://github.com/user-attachments/assets/813732cd-d0ca-445a-827c-2f4e59d87b04" height="135"></a>
+<a href="https://www.patreon.com/adthoughtsglobal/membership">Pay for NovaOS</a>
