@@ -1,6 +1,6 @@
 ![Untitled design](https://github.com/user-attachments/assets/e8932e65-05fd-40de-9745-98abf9201dad)
 # Welcome to NovaOS!
-The fully local, Free, and source-available Web Desktop, Made for every modern browser and device.
+The highly capable, fully local, Free, and source-available Web Desktop, Made for every modern browser and device.
 
 [Homepage](https://adthoughtsglobal.github.io/NovaOS/) | [Docs](https://novaos.gitbook.io/novaos-docs) | [Discord](https://discord.gg/atkqbwEQU8) | [**Try it**](https://github.com/adthoughtsglobal/Nova-OS?tab=readme-ov-file#how-do-i-access)
 
@@ -30,9 +30,13 @@ NovaOS is a powerful web operating system built for everything. From daily tasks
 NovaOS is available for the public at [https://adthoughtsglobal.github.io/Nova-OS/](https://adthoughtsglobal.github.io/Nova-OS). [^1]
 
 # Learn more
-- NovaOS top features list, [here](https://novaos.gitbook.io/novaos-docs/docs/features).
-- NovaOS help videos on our [Youtube Playlist](https://www.youtube.com/watch?v=o3Xr6DHxcFo&list=PLVY7raF48Kj5cBsNIvvta5dTCleSSgQa-).
-- Support NovaOS on our [Patreon page](https://patreon.com/adthoughtsglobal)
+- 1️⃣ NovaOS original features list, [here](https://novaos.gitbook.io/novaos-docs/docs/features).
+- 📚 Read the documentation and help, [here](https://novaos.gitbook.io/main).
+- 🤔 NovaOS videos on our [Youtube Playlist](https://www.youtube.com/watch?v=o3Xr6DHxcFo&list=PLVY7raF48Kj5cBsNIvvta5dTCleSSgQa-).
+- ❣️ Support NovaOS on our [Patreon page](https://patreon.com/adthoughtsglobal)
+
+> [!NOTE]
+> Did NovaOS help you achieve something? Consider <a href="https://www.patreon.com/adthoughtsglobal/membership">Becoming a supporter</a>, helping us continue this project.
 
 # Quotes [^2]
 
@@ -41,9 +45,8 @@ NovaOS is available for the public at [https://adthoughtsglobal.github.io/Nova-O
 | Mistium | "Nova has potential to be very good, and is currently very cool" |
 | HolyMacaroni | "Nova has a pretty cool file system and uses html for apps to make it easier" |
 | JustNoone | "NovaOS is really nice, it has many functions that are very usefull. And as a web-os its compitable everywhere" |
-| Goviat3YT | "NovaOS is Never Gonna Give You Up. It will Never ever let you down. Its loading screen will never run around and desert you. It will never make you cry, It will never say goodbye without your consent" |
-| FunsparkTV | "Excited about the upcoming NovaOS 2, which will bring a local account system and enhanced filesystem, making it even easier for users to manage their files and data. Whether you're a developer or just someone who loves exploring new tech, NovaOS has something to offer." |
-| Felix | In my opinion it is one of the most powerful webOS i've ever seen |
+| Goviat3YT | "NovaOS is Never Gonna Give You Up. It will never ever let you down. Its loading screen will never run around and desert you. It will never make you cry, It will never say goodbye without your consent" |
+| Felix | In my opinion it is one of the most powerful webOS I've ever seen |
 
 # Creators
 NovaOS app development is an amazing place to be, here are the basic NovaOS app dev resources:
@@ -53,5 +56,3 @@ NovaOS app development is an amazing place to be, here are the basic NovaOS app 
 [^1]: The latest public version.
 [^2]: Quotes are personal perspectives of users.
 [^3]: It must be initially loaded with internet, and the offline setting must be turned on for this feature to work.
-
-<a href="https://www.patreon.com/adthoughtsglobal/membership">Pay for NovaOS</a>
