@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/928feace-3086-413a-8376-2f131c3e2f91)
+<img height="55" src="https://github.com/user-attachments/assets/928feace-3086-413a-8376-2f131c3e2f91"/>
 
 # Welcome to NovaOS!
 The highly capable, fully local, Free, and source-available Web Desktop, Made for every modern browser and device.
