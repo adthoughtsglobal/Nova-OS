@@ -16,14 +16,14 @@ Title: Solaris
 
 ![image](https://github.com/user-attachments/assets/79dc5d0b-b794-4d44-b5b4-11dfddafa81e)
 
-NovaOS is a powerful web operating system built for everything. From daily tasks to endless fun, it has you covered. A customizable system designed for any device with a browser. It offers a fast, secure, and feature-rich experience for gaming and daily tasks, with dynamic personalization and seamless updates.
+NovaOS is a powerful web system built for everything. From daily tasks to endless fun, it has you covered. A customizable system designed for any device with a browser. It offers a fast, secure, and feature-rich experience for gaming and daily tasks, with dynamic personalization and seamless updates.
 
 # What makes it special?
 - NovaOS is the **completely free**, **mobile supported**, **PWA installable**, **fully local** **web desktop** system. It has a fully self-created ecosystem of features and a very unique user experience.
 
-- NovaOS is the most stable web desktop system, due to its fully local nature and its pure HTML, JS, and CSS codebase.
+- NovaOS is one of the most reliable web systems, thanks to its fully local nature and a codebase built entirely on HTML, JavaScript, and CSS.
 
-- NovaOS can function **fully offline**[^3], meaning it operates with all its features without needing an internet connection. Think of it this way, NovaOS is a fully client-side Web application, that lets you make full web applications that can interact with a **virtual filesystem**, on the go, even offline. 
+NovaOS can function fully offline^[3], meaning it operates with all its features without an internet connection. Think of it this way: NovaOS is a fully client-side Web application that lets you make full web applications that can interact with a virtual filesystem on the go, even offline. 
 
 - NovaOS can handle locally created web apps in a breeze, SVG icons, powerful settings, massive amounts of detail in each feature and a wide array of default apps to ease your work.
 
@@ -45,15 +45,16 @@ NovaOS is available for the public at [https://adthoughtsglobal.github.io/Nova-O
 | --- | --- |
 | Mistium | "Nova has potential to be very good, and is currently very cool" |
 | HolyMacaroni | "Nova has a pretty cool file system and uses html for apps to make it easier" |
-| JustNoone | "NovaOS is really nice, it has many functions that are very usefull. And as a web-os its compitable everywhere" |
+| JustNoone | "NovaOS is really nice, it has many very useful functions. And as a web-os it's compatible everywhere" |
 | Goviat3YT | "NovaOS is Never Gonna Give You Up. It will never ever let you down. Its loading screen will never run around and desert you. It will never make you cry, It will never say goodbye without your consent" |
 | Felix | In my opinion it is one of the most powerful webOS I've ever seen |
 
-# Creators
-NovaOS app development is an amazing place to be, here are the basic NovaOS app dev resources:
+# Creators 💚
+NovaOS app development is an amazing place to be, here are some resources to help you do it:
 - [NovaOS Docs](https://novaos.gitbook.io/novaos-docs)
 - [Discord server](https://discord.gg/atkqbwEQU8)
 
+> This is a highly informative document, help us make it better by posting your comments in the [Discord server](https://discord.gg/atkqbwEQU8)
 [^1]: The latest public version.
 [^2]: Quotes are personal perspectives of users.
 [^3]: It must be initially loaded with internet, and the offline setting must be turned on for this feature to work.
