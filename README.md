@@ -1,8 +1,7 @@
 <img height="55" src="https://github.com/user-attachments/assets/928feace-3086-413a-8376-2f131c3e2f91"/>
 
 # Welcome to NovaOS!
-The highly capable, fully local, Free, and source-available Web Desktop, Made for every modern browser and device.
-
+The powerful, stable, fully local and source-available web system, made for every modern browser and device.
 [Homepage](https://adthoughtsglobal.github.io/NovaOS/) | [Docs](https://novaos.gitbook.io/novaos-docs) | [Discord](https://discord.gg/atkqbwEQU8) | [**Try it**](https://github.com/adthoughtsglobal/Nova-OS?tab=readme-ov-file#how-do-i-access)
 
 ```txt
