@@ -9,6 +9,9 @@ Version: 2.05
 Title: Solaris
 ```
 
+> [!Note]
+> The next major update, NovaOS 2.5 is under development. Join the [Discord](https://discord.gg/atkqbwEQU8) to take part.
+ 
 <img height="15" src="https://img.shields.io/github/languages/count/adthoughtsglobal/Nova-OS"/> <img height="15" src="https://img.shields.io/github/last-commit/adthoughtsglobal/Nova-dev-repl-rl"/>
 
 # NovaOS is the superpower for any device.
