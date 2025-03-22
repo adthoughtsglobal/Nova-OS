@@ -24,7 +24,7 @@ NovaOS is a powerful web system built for everything. From daily tasks to endles
 
 - NovaOS is one of the most reliable web systems, thanks to its fully local nature and a codebase built entirely on HTML, JavaScript, and CSS.
 
-NovaOS can function fully offline^[3], meaning it operates with all its features without an internet connection. Think of it this way: NovaOS is a fully client-side Web application that lets you make full web applications that can interact with a virtual filesystem on the go, even offline. 
+- NovaOS can function fully offline, it operates with all its features without an internet connection. Think of it this way: NovaOS is a fully client-side web application that lets you make full web applications that can interact with a virtual filesystem offline. 
 
 - NovaOS can handle locally created web apps in a breeze, SVG icons, powerful settings, massive amounts of detail in each feature and a wide array of default apps to ease your work.
 
