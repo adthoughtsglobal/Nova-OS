@@ -9,13 +9,11 @@ The powerful, stable, fully local and source-available web system, made for ever
 Version: 2.05
 Title: Solaris
 ```
+<img height="155" src="https://github.com/user-attachments/assets/2071d5ce-c5f3-42f3-ae99-50e6de72fc5d"/>
 
-> [!Note]
-> The next major update, NovaOS 2.5 is under development. Join the [Discord](https://discord.gg/atkqbwEQU8) to discuss.
- 
 <img height="15" src="https://img.shields.io/github/languages/count/adthoughtsglobal/Nova-OS"/> <img height="15" src="https://img.shields.io/github/last-commit/adthoughtsglobal/Nova-dev-repl-rl"/>
 
-![image](https://github.com/user-attachments/assets/79dc5d0b-b794-4d44-b5b4-11dfddafa81e)
+![image](https://github.com/user-attachments/assets/47978665-d2d2-4256-b784-da7eb43397b1)
 
 NovaOS is a powerful web system built for everything. From daily tasks to endless fun, it has you covered. A customizable system designed for any device with a browser. It offers a fast, secure, and feature-rich experience for gaming and daily tasks, with dynamic personalization and seamless updates.
 
@@ -32,7 +30,6 @@ NovaOS is a powerful web system built for everything. From daily tasks to endles
 NovaOS is available for the public at [https://adthoughtsglobal.github.io/Nova-OS/](https://adthoughtsglobal.github.io/Nova-OS). [^1]
 
 # Learn more
-- 1️⃣ NovaOS original features list, [here](https://novaos.gitbook.io/novaos-docs/docs/features).
 - 📚 Read the documentation and help, [here](https://novaos.gitbook.io/main).
 - 🤔 NovaOS videos on our [Youtube Playlist](https://www.youtube.com/watch?v=o3Xr6DHxcFo&list=PLVY7raF48Kj5cBsNIvvta5dTCleSSgQa-).
 - ❣️ Support NovaOS on our [Patreon page](https://patreon.com/adthoughtsglobal)
@@ -50,10 +47,9 @@ NovaOS is available for the public at [https://adthoughtsglobal.github.io/Nova-O
 
 # Creators 💚
 NovaOS apps are intended to be edited and worked on. Web development have never been this powerful. Find out more about NovaOS app development, here are some resources to help you do it:
-- [Documentation](https://novaos.gitbook.io/novaos-docs)
+- [Documentation](https://novaos.gitbook.io/main)
 - [Discord server](https://discord.gg/atkqbwEQU8)
 
-> This is a highly informative document, help us make it better by posting your comments on the [Discord server](https://discord.gg/atkqbwEQU8)
 [^1]: The latest public version.
 [^2]: Quotes are personal perspectives of users.
 [^3]: It must be initially loaded with internet, and the offline setting must be turned on for this feature to work.
