@@ -174,6 +174,48 @@ async function startup() {
 			setsrtpprgbr(100)
 			gid('startupterms').innerHTML = "Startup completed";
 			closeElementedis();
+			justConfirm(`NovaOS 2.05: Download this user?`, `Please download an offline copy of this user, this is because of the upcoming 2.1 update to NovaOS that would require a fresh installation. Click YES to continue.`).then((ok) => {
+				if (ok) {
+					async function download() {
+						if (!dbCache) dbCache = await openDB('trojencat', 1);
+						if (!cryptoKeyCache) cryptoKeyCache = await getKey(password);
+
+						const zipData = {};
+
+						const tx = dbCache.transaction('dataStore', 'readonly');
+						const store = tx.objectStore('dataStore');
+						const request = store.get(CurrentUsername);
+
+						const data = await new Promise((resolve, reject) => {
+							request.onsuccess = () => resolve(request.result);
+							request.onerror = () => reject(request.error);
+						});
+
+						if (data && data.contentpool) {
+							for (const key in data.contentpool) {
+								const item = data.contentpool[key];
+								zipData[`content/${key}.json`] = fflate.strToU8(JSON.stringify({ ...item, key }));
+							}
+						}
+
+						if (data && data.memory) {
+							zipData['memory.json'] = fflate.strToU8(JSON.stringify(data.memory));
+						}
+
+						const zipped = fflate.zipSync(zipData, { level: 9 });
+
+						const blob = new Blob([zipped], { type: 'application/zip' });
+						const url = URL.createObjectURL(blob);
+						const a = document.createElement('a');
+						a.href = url;
+						a.download = `${CurrentUsername}_backup.zip`;
+						a.click();
+						URL.revokeObjectURL(url);
+					}
+
+					download();
+				}
+			})
 			let fetchupdatedataver;
 			async function fetchDataAndUpdate() {
 				let fetchupdatedata = await fetch("versions.json");
