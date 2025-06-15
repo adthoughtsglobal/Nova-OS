@@ -10,9 +10,9 @@ Version: 2.05
 Title: Solaris
 ```
 
-<a href="https://discord.gg/atkqbwEQU8"> <img src="assets/discordjoin.png" height="180"> </a>
+<img height="20" src="https://img.shields.io/github/languages/count/adthoughtsglobal/Nova-OS"/> <img height="20" src="https://img.shields.io/github/last-commit/adthoughtsglobal/Nova-dev-repl-rl"/> <a href="https://rotur.dev"><img src="https://rotur.dev/rotur%20badge.png" height="20" alt="This OS supports rotur"></a>
 
-<img height="15" src="https://img.shields.io/github/languages/count/adthoughtsglobal/Nova-OS"/> <img height="15" src="https://img.shields.io/github/last-commit/adthoughtsglobal/Nova-dev-repl-rl"/>
+<a href="https://discord.gg/atkqbwEQU8"> <img src="assets/discordjoin.png" height="180"> </a>
 
 ![image](https://github.com/user-attachments/assets/47978665-d2d2-4256-b784-da7eb43397b1)
 
