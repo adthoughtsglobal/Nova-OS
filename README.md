@@ -37,7 +37,7 @@ Simply click the link, go through the installation screen and there you have it!
 # Learn more
 - 📚 Read the documentation and help, [here](https://novaos.gitbook.io/main).
 - 🤔 NovaOS videos on our [Youtube Playlist](https://www.youtube.com/watch?v=o3Xr6DHxcFo&list=PLVY7raF48Kj5cBsNIvvta5dTCleSSgQa-).
-- ❣️ Support NovaOS on our [Patreon page](https://patreon.com/adthoughtsglobal)
+- ❣️ Support NovaOS: [Buy Me a coffee](https://buymeacoffee.com/novaweb)
 
 # Creators: make apps
 NovaOS apps are intended to be edited and worked on. Web development has never been this powerful. Find out more about NovaOS app development. Here are some resources to help you do it:
