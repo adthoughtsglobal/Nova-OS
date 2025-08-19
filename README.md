@@ -47,7 +47,7 @@ NovaOS apps are intended to be edited and worked on. Web development has never b
 ---
 
 > [!NOTE]
-> Did NovaOS help you achieve something? Consider <a href="https://www.patreon.com/adthoughtsglobal/membership">Becoming a supporter</a>, helping us continue this project.
+> Did NovaOS help you achieve something? Consider <a href="https://buymeacoffee.com/novaweb">Becoming a supporter</a>, helping us continue this project.
 
 [^1]: The latest public version.
 [^2]: Quotes are personal perspectives of users.
