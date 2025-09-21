@@ -37,7 +37,6 @@ Simply click the link, go through the installation screen and there you have it!
 # Learn more
 - 📚 Read the documentation and help, [here](https://novaos.gitbook.io/main).
 - 🤔 NovaOS videos on our [Youtube Playlist](https://www.youtube.com/watch?v=o3Xr6DHxcFo&list=PLVY7raF48Kj5cBsNIvvta5dTCleSSgQa-).
-- ❣️ Support NovaOS: [Buy Me a coffee](https://buymeacoffee.com/novaweb)
 
 # Creators: make apps
 NovaOS apps are intended to be edited and worked on. Web development has never been this powerful. Find out more about NovaOS app development. Here are some resources to help you do it:
@@ -45,10 +44,6 @@ NovaOS apps are intended to be edited and worked on. Web development has never b
 - [Discord server](https://discord.gg/atkqbwEQU8)
 
 ---
-
-> [!NOTE]
-> Did NovaOS help you achieve something? Consider <a href="https://buymeacoffee.com/novaweb">Becoming a supporter</a>, helping us continue this project.
-
 [^1]: The latest public version.
 [^2]: Quotes are personal perspectives of users.
 [^3]: It must be initially loaded with internet, and the offline setting must be turned on for this feature to work.
