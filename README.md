@@ -43,7 +43,6 @@ NovaOS apps are intended to be edited and worked on. Web development has never b
 - [Documentation](https://novaos.gitbook.io/main)
 - [Discord server](https://discord.gg/atkqbwEQU8)
 
----
 [^1]: The latest public version.
 [^2]: Quotes are personal perspectives of users.
 [^3]: It must be initially loaded with internet, and the offline setting must be turned on for this feature to work.
