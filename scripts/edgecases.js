@@ -88,11 +88,6 @@ function edgecases() {
 		say(cantusetext + issues + caniuse2, "failed");
 		badlaunch = true;
 	}
-
-	if (!navigator.serviceWorker.controller) {
-		console.log("Reduced functions: No SW Access.")
-	}
-
 }
 
 function detectIE() {
@@ -114,19 +109,3 @@ const exit = function () {
 		gid("terminal").close()
 	}
 }
-
-document.addEventListener("DOMContentLoaded", async function () {
-	onstartup.push(async () => {
-		if (location.origin == 'http://127.0.0.1:3000' || location.origin != 'https://adthoughtsglobal.github.io') {
-			// say("You are on an <b style='color:red;'>unsafe</b> copy of NovaOS. Do not use this.", "failed");
-		}
-		edgecases();
-
-		if (detectIE()) {
-			issues = `<li><b>HTMLDialogElement Not supported: </b> We have taken some efforts to fix this for you.</li>
-			<li><b>Internet explorer detected: </b> i dunno what to say ;-;</li>`;
-			say(cantusetext + issues + caniuse2 + `<br><b>Anyway, it is so interesting why you still use explorer.</b>`, "failed");
-			badlaunch = true;
-		}
-	});
-});

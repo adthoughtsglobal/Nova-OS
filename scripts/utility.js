@@ -1,7 +1,5 @@
 function timeAgo(ms) {
-	if (!ms) {
-		return false;
-	}
+	if (!ms) return false;
 	let sec = Math.floor((Date.now() - ms) / 1000),
 		min = Math.floor(sec / 60),
 		hr = Math.floor(min / 60),
@@ -9,17 +7,17 @@ function timeAgo(ms) {
 		mo = Math.floor(day / 30),
 		yr = Math.floor(day / 365);
 	
-	return sec < 60 ? `${sec} seconds ago` :
-	       min < 60 ? `${min} minutes ago` :
-	       hr < 24 ? `${hr} hours ago` :
-	       day < 30 ? `${day} days ago` :
-	       mo < 12 ? `${mo} months ago` :
+	return sec < 60 ? `${sec} second${sec === 1 ? '' : 's'} ago` :
+	       min < 60 ? `${min} minute${min === 1 ? '' : 's'} ago` :
+	       hr < 24 ? `${hr} hour${hr === 1 ? '' : 's'} ago` :
+	       day < 30 ? `${day} day${day === 1 ? '' : 's'} ago` :
+	       mo < 12 ? `${mo} month${mo === 1 ? '' : 's'} ago` :
 	       yr === 1 ? `a year ago` :
 	       `${yr} years ago`;
 }
 
 function genUID() {
-	const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_=+].,><;|?}{!@#$%^&*()';
+	const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?!@#$%+';
 	let randomString = '';
 	for (let i = 0; i < 12; i++) {
 		const randomIndex = Math.floor(Math.random() * characters.length);
@@ -91,6 +89,7 @@ function getbaseflty(ext) {
 		case 'avi':
 		case 'mov':
 		case 'mkv':
+		case 'webm':
 			return 'video';
 		case 'jpg':
 		case 'jpeg':
@@ -168,11 +167,28 @@ function stringToPastelColor(str) {
     return `rgb(${pastelR}, ${pastelG}, ${pastelB})`;
   }
 
+  function stringToDarkPastelColor(str) {
+	if (!str) {
+		return `rgb(50,50,50)`;
+	}
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    
+    const r = (hash >> 24) & 0xFF;
+    const g = (hash >> 16) & 0xFF;
+    const b = (hash >> 8) & 0xFF;
+    
+    const darkPastelR = Math.max(50, r - 100);
+    const darkPastelG = Math.max(50, g - 100);
+    const darkPastelB = Math.max(50, b - 100);
+    
+    return `rgb(${darkPastelR}, ${darkPastelG}, ${darkPastelB})`;
+}
+
 function ptypext(str) {
-	try {
-		const parts = str.split('.');
-		return parts.length > 1 ? parts.pop() : '';
-	} catch { }
+	return mtpetxt(str);
 }
 
 function toTitleCase(str) {
@@ -180,8 +196,8 @@ function toTitleCase(str) {
 }
 
 function ercache() {
-	window.parent.appicns = {};
-	window.parent.memory = {};
+	window.top.appicns = {};
+	window.top.memory = {};
 }
 
 function getRandomNothingQuote() {
@@ -198,12 +214,91 @@ function getRandomNothingQuote() {
 	return nothingquotes[Math.floor(Math.random() * nothingquotes.length)]
 }
 
+var sysLogHeading;
+function sysLog(heading, description) {
+	if (sysLogHeading == heading){
+		rllog(`%c.%c${description}`,'background:: '+stringToDarkPastelColor(heading)+'; color: '+stringToDarkPastelColor(heading)+'; font-weight:bolder; padding:0 4px; margin-right: .5rem; border-radius: .5rem;','color: grey;',);
+	} else {
+		rllog(`%c${heading}%c${description}`,'color: white; background:: '+stringToDarkPastelColor(heading)+'; font-size: 0.5rem; padding: .2rem .6rem; margin-right: .5rem; border-radius: .5rem;','color: grey;',);
+	}
+	sysLogHeading = heading;
+}
+
 const rllog = console.log;
 console.log = function (...args) {
+	try {
+	sysLogHeading = null;
 	const stack = new Error().stack;
 	const caller = stack.split('\n')[2].trim();
 	const match = caller.match(/at (\S+)/);
 	const source = match ? (match[1].startsWith('http') ? 'system' : match[1]) : 'anonymous';
 	const style = 'font-size: 0.8em; color:grey;';
 	rllog(`%c${source}\n`, style, ...args);
+	} catch {}
 };
+
+const debounceMap = new Map();
+
+function debounce(func, delay = 300) {
+    return function (...args) {
+        const key = func.name;
+
+        if (debounceMap.has(key)) {
+            clearTimeout(debounceMap.get(key).timeout);
+        }
+
+        let resolvePromise;
+        const promise = new Promise((resolve) => {
+            resolvePromise = resolve;
+        });
+
+        const timeout = setTimeout(async () => {
+            debounceMap.delete(key);
+            const result = await func(...args);
+            resolvePromise(result);
+        }, delay);
+
+        debounceMap.set(key, { timeout, promise });
+
+        return promise;
+    };
+}
+function createBlobFromBase64(base64Data, mimeType) {
+	let byteString = atob(base64Data.split(',')[1]);
+	let ab = new ArrayBuffer(byteString.length);
+	let ia = new Uint8Array(ab);
+	for (let i = 0; i < byteString.length; i++) {
+		ia[i] = byteString.charCodeAt(i);
+	}
+	return new Blob([ab], { type: mimeType });
+}
+
+function insertSVG(svgString, targetElement) {
+	const parser = new DOMParser();
+	const svgDoc = parser.parseFromString(svgString, "image/svg+xml").documentElement;
+	targetElement.innerHTML = "";
+	targetElement.appendChild(svgDoc);
+}
+function createSafeHTMLRenderer(targetElement) {
+  const host = document.createElement('div');
+  const shadow = host.attachShadow({ mode: 'closed' });
+  targetElement.appendChild(host);
+
+  return {
+    render(html) {
+      const cleanNode = DOMPurify.sanitize(html, {
+        ALLOWED_TAGS: ['style', 'div', 'p', 'span', 'b', 'i', 'u', 'ul', 'ol', 'li', 'a', 'br', 'input', 'button', 'img', 'code', 'pre', 'h1', 'h2', 'h3', 'blockquote', 'select'],
+        ALLOWED_ATTR: ['href', 'title', 'alt', 'target'],
+        ALLOW_UNKNOWN_PROTOCOLS: false,
+        FORCE_BODY: true,
+        RETURN_DOM: true,
+        RETURN_DOM_FRAGMENT: true
+      });
+      shadow.innerHTML = '';
+      shadow.appendChild(cleanNode);
+    },
+    clear() {
+      shadow.innerHTML = '';
+    }
+  };
+}

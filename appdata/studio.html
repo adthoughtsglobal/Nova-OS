@@ -1,354 +1,455 @@
+<!--License addition: you should never open this site outside of NovaOS or not as a nova application.-->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="capabilities" content=".html,.js,.css,.osl,.py,.cpp,.wasm">
-	<meta name="nova-icon" content="<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='25.76994' height='26.02576' viewBox='0,0,25.76994,26.02576'><g transform='translate(-227.11503,-166.98712)'><g data-paper-data='{&quot;isPaintingLayer&quot;:true}' fill-rule='nonzero' stroke='none' stroke-width='0' stroke-linecap='butt' stroke-linejoin='miter' stroke-miterlimit='10' stroke-dasharray='' stroke-dashoffset='0' style='mix-blend-mode: normal'><path d='M228.2798,187.47756c0,0 2.39508,0.27621 3.97551,-1.30421c3.80695,-3.80695 10.63683,-10.63683 12.96363,-12.96363c1.52501,-1.52501 2.01133,-4.68262 2.01133,-4.68262c0,0 1.6857,-0.9856 2.12132,-0.54997c0.09297,0.09297 0.26437,0.23749 0.47664,0.41866c-0.4391,0.00653 -0.87619,0.17732 -1.21124,0.51237c-0.68342,0.68342 -0.68342,1.79145 0,2.47487c0.68342,0.68342 1.79145,0.68342 2.47487,0c0.32427,-0.32427 0.49468,-0.74414 0.51123,-1.16889c0.1075,0.16095 0.19627,0.32167 0.25848,0.47905c0.44289,1.12044 -0.38865,2.07656 -0.38865,2.07656c0,0 -3.50091,0.67248 -4.99689,2.16846c-2.38439,2.38439 -8.97331,9.13044 -12.72792,12.88505c-1.40538,1.40538 -1.22565,3.89694 -1.22565,3.89694c0,0 -1.0517,0.63065 -2.04981,0.14999c-0.02445,-0.01178 -0.04885,-0.02456 -0.07317,-0.03831c0.24019,-0.08412 0.46571,-0.22217 0.6577,-0.41417c0.68342,-0.68342 0.68342,-1.79145 0,-2.47487c-0.68342,-0.68342 -1.79145,-0.68342 -2.47487,0c-0.09153,0.09153 -0.17081,0.19069 -0.23782,0.29541c-0.23176,-0.71003 -0.06466,-1.76069 -0.06466,-1.76069z' fill='#cfcfcf'/><g><path d='M240.45171,181.81318c0,0 -9.97747,-9.97747 -12.2535,-12.2535c-0.87906,-0.87906 -1.08318,-2.57256 -1.08318,-2.57256c0,0 1.73399,0.24461 2.64026,1.15088c2.29782,2.29782 12.18579,12.18579 12.18579,12.18579z' fill='#cfcfcf'/><path d='M249.23218,193.01288c0,0 -4.34335,-4.34335 -7.22494,-7.22494c-0.14733,-0.14732 0.4075,-0.98915 0.26859,-1.12806c-0.37988,-0.37988 -0.72538,-0.72538 -1.02063,-1.02063c-0.22994,-0.22994 -1.12772,0.26893 -1.28923,0.10744c-0.8746,-0.8746 -1.90705,-1.90705 -1.90705,-1.90705l3.6528,-3.65279c0,0 0.9654,0.9654 1.79962,1.79961c0.1134,0.1134 -0.31653,1.08013 0,1.39666c0.30958,0.30958 0.61149,0.71893 0.91319,1.02063c0.19135,0.19135 1.11306,-0.39104 1.23551,-0.26859c2.80147,2.80148 7.22494,7.22494 7.22494,7.22494z' fill='#cf7b3a'/></g></g></g></svg>">
-	<title>Nova Studio</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<meta name="nova-include" content="nova.css">
+	<meta name="capabilities" content=".app,.html,.css,.js,.xml,.svg,code_editor">
+	<meta name="permissions" content="unsandboxed, utility, fileGet, olp, fileSet">
+	<title>Studio</title>
+	<meta name="nova-icon"
+		content="<svg width='232' height='232' viewBox='0 0 232 232' fill='none' xmlns='http://www.w3.org/2000/svg'> <g clip-path='url(#clip0_3_127)'> <path d='M-1 104.278C-1 38.2746 20.3206 0 84.6618 0C149.003 0 232 66.3944 232 132.398C232 198.401 177.635 216.381 124.637 228.474C31.259 249.78 -1 170.281 -1 104.278Z' fill='#6179FF'/> <path d='M68.8696 94.7143L48.0001 116.143' stroke='white' stroke-width='17' stroke-linecap='round'/> <path d='M68.8696 138.286L48.0001 116.143' stroke='white' stroke-width='17' stroke-linecap='round'/> <path d='M160 95L180.87 116.429' stroke='white' stroke-width='17' stroke-linecap='round'/> <path d='M160 138.571L180.87 116.429' stroke='white' stroke-width='17' stroke-linecap='round'/> <path d='M126 77L101 155' stroke='white' stroke-opacity='0.5' stroke-width='17' stroke-linecap='round'/> </g> <defs> <clipPath id='clip0_3_127'> <rect width='232' height='232' fill='white'/> </clipPath> </defs> </svg>">
 	<style>
-		@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&family=Ubuntu+Mono&display=swap');
-
-		::-webkit-scrollbar {
-			width: 0.5em;
+		html {
+			height: 100%;
+			width: 100%;
 		}
 
-		::-webkit-scrollbar-thumb {
-			background: #2b2b2b;
-			border-radius: 5px;
-		}
-
-		::-webkit-scrollbar-track {
-			background: transparent;
-		}
-
-		body {
-			justify-content: center;
-			align-items: center;
+		html>body {
 			margin: 0;
-			font-size: 12px;
-			color: white;
-			font-family: 'Poppins', sans-serif;
-			box-sizing: border-box;
-			background: #0c0c0c;
+			height: 100%;
+			display: flex;
+			flex-direction: column;
+			transition: .3s;
+			color: var(--col-txt1);
+			background-color: black;
 		}
 
-		::selection {
-			color: white;
-			background: #2f2f2f;
+		.ui.dropdown .menu {
+			background-color: var(--col-bg2) !important;
+			color: var(--col-txt1) !important;
 		}
 
-		textarea {
-			border-radius: 8px;
-			font-size: 14px;
-			display: block;
-			background-color: transparent;
-			color: #d0e1eb;
-			width: calc(100% - 23px);
-			margin: auto;
-			outline: none;
-			font-family: 'Ubuntu Mono', monospace;
-			height: calc(100vh - 39px);
-			resize: none;
-			border: none;
+		.ui.dropdown .menu>.item {
+			color: var(--col-txt1) !important;
+
 		}
 
-		nav {
-			margin: 5px 7px;
-			padding-bottom: 4px;
-			border-bottom: 1px solid #393939;
-		}
-
-		nav button {
-			background: transparent;
-			border: none;
-			border-radius: 0px;
-			color: white;
-			font-size: 10px;
-			padding: 0;
-			cursor: pointer;
-			padding-right: 6px;
-			border-right: 1px solid #414141;
-			margin-right: 2px;
-		}
-
-		.dropbtn {}
-
-		/* The container <div> - needed to position the dropup content */
-		.dropup {
-			position: relative;
-			display: inline-block;
-		}
-
-		@keyframes bop {
-			0% {
-				transform: scaleY(0.5) translateY(-25px);
-				opacity: 0%;
-			}
-
-			100% {
-				opacity: 100%;
-			}
-		}
-
-		/* Dropup content (Hidden by Default) */
-		.dropup-content {
-			display: none;
-			position: absolute;
-			animation: bop 0.2s;
-			top: 12px;
-			border-bottom: 5px solid #161616;
-			border-radius: 5px;
-			background-color: #282828;
-			min-width: 90px;
+		.nav {
+			padding: 0.5rem;
+			background-color: var(--col-bg1);
+			display: flex;
+			flex-direction: row;
+			justify-content: flex-start;
 			z-index: 1;
-			overflow: hidden;
+			display: flex;
+			gap: .2rem;
 		}
 
-		/* Links inside the dropup */
-		.dropup-content a {
-			color: white;
-			padding: 2px 8px;
-			text-decoration: none;
-			display: block;
+		.navitem {
+			background-color: var(--col-bg2);
+			padding: 0.2rem 0.5rem;
+			border-radius: 0.3rem;
 			cursor: pointer;
+			border: 1px solid #ffffff0c;
 		}
 
-		/* Change color of dropup links on hover */
-		.dropup-content a:hover {
-			color: #cbcbcb;
-			background: #1f1f1f;
+		.navitem:hover {
+			background-color: var(--col-bg3);
 		}
 
-		/* Show the dropup menu on hover */
-		.dropup:hover .dropup-content {
-			display: block;
+		.editorsection {
+			display: flex;
+			flex-direction: row;
+			gap: 1px;
+			padding: 1px;
+			flex: 1;
 		}
 
-		/* Change the background color of the dropup button when the dropup content is shown */
-		.dropup:hover .dropbtn {
-			background-color: #393939;
-		}
-
-		.zobtns {
-			position: fixed;
-			right: 23px;
-			bottom: 11px;
-		}
-
-		.zobtn {
-			background: transparent;
-			border: none;
-			color: white;
-			backdrop-filter: brightness(250%) blur(5px);
-			border-radius: 50px;
-			padding: 3px 7px;
-			min-width: 22px;
-			min-height: 22px;
-			text-align: center;
-			display: block;
-			margin-top: 5px;
-		}
-
-		h1 {
-			font-weight: normal;
-			padding-bottom: 5px;
-			border-bottom: 1px solid #36434e;
-		}
-
-		#issuesmd {
-			border: none;
-			background: #1d1d1d;
+		.codepart {
 			width: 50vw;
-			color: #c1cfd5;
-			height: 80%;
-			border-radius: 6px;
-			padding: 15px;
-			box-shadow: 0 0 20px 0px #0000005e;
 		}
 
-		.issue {
-			padding: 10px;
-			border-radius: 5px;
-			background: #1a1a1a;
-			color: white;
-			border: 1px solid #3d3d3d;
-			margin-bottom: 10px;
+		.editorpart {
+			width: 100%;
+			overflow: hidden;
+			resize: horizontal;
 		}
 
-		.issue b {
-			margin-top: 7px;
-			display: block;
-			font-size: 13px;
-			font-weight: normal;
+		#editor {
+			width: 100%;
+			height: 100%;
+			font-size: 1rem;
+		}
+
+		.ui.dropdown .menu .menu {
+			max-height: 200px !important;
+			overflow-y: scroll;
+		}
+
+		#runbtn {
+			background-color: rgb(0 255 0 / 13%);
+			color: rgb(114 255 124);
+		}
+
+
+		.ui.dropdown.navitem .text {
+			color: var(--col-txt1) !important;
+		}
+
+		.ui.dropdown.navitem .description {
+			color: var(--col-txt1) !important;
+			opacity: .7;
+		}
+
+		.ui.dropdown.navitem .menu {
+			background-color: var(--col-bg2);
+			border: 1px solid var(--col-bg3);
+		}
+
+		.ui.dropdown.navitem .menu .item {
+			color: var(--col-txt1) !important;
+		}
+
+		.ui.dropdown.navitem .menu .item:hover {
+			background-color: var(--col-bg3);
+			color: var(--col-txt1) !important;
+		}
+
+		.ui.dropdown.navitem .dropdown.icon {
+			color: var(--col-txt1) !important;
 		}
 	</style>
-	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link
+		href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&family=Poppins:wght@400;700&display=swap"
+		rel="stylesheet">
+	<link rel="stylesheet" type="text/css"
+		href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ace-builds@1.31.1/css/ace.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.9/beautify-html.min.js"></script>
+
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js"
+		integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
 </head>
 
 <body>
+	<script src="https://cdn.jsdelivr.net/npm/ace-builds@1.31.1/src-min-noconflict/ace.min.js"></script>
 
-	<nav>
-		<button onclick="window.top.openwindow('App Preview',disp.value)">Run</button>
-		<small>This app is deprecated.</small>
-	</nav>
-
-	<textarea id="thedisplay" spellcheck="false" autocapitalize="false" autocomplete="off">&lt;!DOCTYPE html&gt;
-		&lt;html&gt;
-		&lt;head&gt;
-			&lt;style&gt;
-			body {
-			color: white;
-			background-color: black;
-			text-align: center;
-			margin-top: calc(50vh - 20px)
-			}
-			&lt;/style&gt;
-		&lt;/head&gt;
-		&lt;body&gt;
-			&lt;p id="p"&gt;
-			Please consider using Apps in the store like WCanvas for a better experience&lt;br&gt;
-			Use Text app to save files. This app is being updated.
-			&lt;/p&gt;
-
-			&lt;script&gt;
-			function greenflag() {
-			const p = document.getElementById("p");
-			p.innerHTML += "!"
-			}
-			&lt;/script&gt;
-		&lt;/body&gt;
-		&lt;/html&gt;</textarea>
-	<dialog id="issuesmd">
-
-		<span class="material-icons" style="float: right; font-size: 12px;"
-			onclick="document.getElementById('issuesmd').close()">close</span>
-		<h1>Issues</h1>
-		<div id="issues">
-			<br>
-			<center>No Issues, you are great asset for the humanity!</center>
+	<nav class="nav" id="nav">
+		<div class="ui dropdown navitem">
+			<div class="text">File</div>
+			<div class="menu">
+				<div class="item">New
+				</div>
+				<div class="item" onclick="openfromfiles()">
+					Open
+				</div>
+				<div class="item" onclick="savetx()">
+					Save
+				</div>
+				<!-- <div class="item">
+					Save As
+				</div> -->
+				<div class="divider"></div>
+				<div class="item">
+					<i class="dropdown icon"></i>
+					Export
+					<div class="menu">
+						<div class="item" onclick="exportToDevice()">To device (HTML)</div>
+					</div>
+				</div>
+			</div>
 		</div>
-	</dialog>
-	<script>
-		function issueshuh() {
+		<div class="ui dropdown navitem">
+			<div class="text">View</div>
+			<div class="menu">
+				<div class="item">Code
+					<i class="dropdown icon"></i>
+					<div class="menu">
+						<div class="item" onclick="togglewordwrap()">Word wrap
+							<span class="description" id="wordwrapdisp">Off</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="ui dropdown navitem">
+			<div class="text">Edit</div>
+			<div class="menu">
+				<div class="item" onclick="showFindBox(editor)">Find and replace
+					<span class="description" id="wordwrapdisp">ctrl+f</span>
+				</div>
+				<div class="item" onclick="editor.setValue(html_beautify(editor.getValue()), -1);">Beautify
+					<span class="description" id="wordwrapdisp">HTML</span>
+				</div>
 
-			console.log("lol")
-			document.getElementById('issuesmd').showModal();
-			let issus = document.getElementById("issues");
-			issus.innerHTML = ""
-			if (!disp.value.includes("function greenflag()")) {
-				issus.innerHTML += `<div class="issue">
-					<b>No Greenflag defined</b>
-					<p>Greenflag must be defined in an application.</p>
-				</div>`;
-			}
-			if (!disp.value.includes("<script")) {
-				issus.innerHTML += `<div class="issue">
-					<b>No Scripts</b>
-					<p>A script should exist to determine the greenflag.</p>
-				</div>`;
-			}
-			if (disp.value.includes(`<script src=`)) {
-				issus.innerHTML += `<div class="issue">
-					<b>External Libraries</b>
-					<p>External libraries cannot be used for JavaScript.</p>
-				</div>`;
-			}
-			if (disp.value.includes("window.")) {
-				issus.innerHTML += `<div class="issue">
-					<b>Navigator usage</b>
-					<p>Permissions needed must be added in a meta tag. Undefined permissions will cause usage errors.</p>
-				</div>`;
-			}
-
-			if (issus.innerHTML === "") {
-				issus.innerHTML = "<center>You are great, Zero issues in code! Nice work.</center>";
-			}
-
-
-		}
-
-		function runCodeInNewWindow(htmlContent) {
-			return new Promise((resolve, reject) => {
-				// Create a new iframe element
-				const iframe = document.createElement('iframe');
-				iframe.style.display = 'none'; // Hide the iframe
-
-				// Append the iframe to the document body
-				document.body.appendChild(iframe);
-
-			});
-		}
-
-	</script>
-
-	<div class="zobtns">
-		<button class="zobtn" onclick="currentFontSize = parseInt(window.getComputedStyle(disp).fontSize); // Get the current font size as an integer
-		disp.style.fontSize = (currentFontSize + 2) + 'px';">+</button>
-		<button class="zobtn" onclick="currentFontSize = parseInt(window.getComputedStyle(disp).fontSize); // Get the current font size as an integer
-		disp.style.fontSize = (currentFontSize - 2) + 'px';">-</button>
-		<button class="zobtn" onclick="issueshuh()" style="
-			padding: 1px;
-		"><span class="material-icons" style="
-			font-size: 14px;
-		">check_circle</span></button>
-
+				<div class="item" onclick="editor.execCommand('showSettingsMenu');
+">Settings
+					<span class="description">Ace</span>
+				</div>
+			</div>
+		</div>
+		</div>
+		<div title="Run in new window" class="navitem" id="runbtn" onclick="runnewwin()">
+			Run
+		</div>
+	</nav>
+	<div class="editorsection">
+		<div class="codepart editorpart">
+			<div id="editor">
+				<textarea id="editortextarea"></textarea>
+			</div>
+		</div>
 	</div>
 
+	<script defer>
+		var mode = "new";
+		var currentfile = {};
+		var currentMime = 'text/html';
+		var currentreqID = null;
 
-	<script>
-		var disp
-		var currentFontSize
-		async function greenflag() {
+		async function openfromfiles() {
+			let fileID = await ntxSession.send("olp.useHandler", "file_manager", { "opener": 'any', "dir": "Downloads/" });
+			const file = await ntxSession.send("fileGet.byId", fileID);
+			readthefile(file);
+		}
 
-			try {
+		function exportToDevice() {
+			var editorContent = ace.edit("editor").getValue();
+			var docTitle = /<title>(.*?)<\/title>/i.exec(editorContent);
+			var editorId = docTitle ? docTitle[1] : window.parent.genUID();
+			var blob = new Blob([editorContent], { type: 'text/html' });
+			var link = document.createElement('a');
+			link.href = URL.createObjectURL(blob);
+			link.download = editorId + '-content.html';
+			link.click();
+		}
 
-				var sbtn = document.getElementById("sbtn");
-				var todo = localStorage.getItem("todo");
-				disp = document.getElementById("thedisplay")
-				disp.value = formatHTML(disp.value)
-				var defile;
+		async function readthefile(file) {
+			currentfile = file;
+			mode = "edit";
+			const mimePrefix = file.content.match(/^data:([^;]+);base64,/i);
 
-				const parsedTodo = JSON.parse(todo);
-
-				if (parsedTodo.appname === "studio" && parsedTodo.data && parsedTodo.data.lclfile) {
-					console.log("Data is valid")
-					const theID = parsedTodo.data.lclfile;
-					defile = theID;
-					let file = await window.parent.getFileById(theID);
-
-					if (file && file.content) {
-						console.log("file is valid: " + JSON.stringify(file.content));
-						file.content = window.parent.unshrinkbsf(file.content);
-						if (file.content.startsWith("data:") && file.content.includes("base64")) {
-							if (await window.parent.justConfirm("Convert Base64?", "The code you tried to open is encoded with base64. Do you want to decode it?")) {
-								document.getElementById("thedisplay").value = atob(file.content.split(',')[1]);
-							} else {
-								document.getElementById("thedisplay").value = file.content;
-							}
-						} else {
-							document.getElementById("thedisplay").value = file.content;
-						}
-
-						console.log("0002");
-						localStorage.setItem("todo", "");
-					} else {
-						console.error("0004");
-					}
-				} else {
-					document.getElementById("thedisplay").value = "Please open the files app to read a file from your system memory.";
-				}
-			} catch (error) {
-				console.error("Error fetching or parsing:", error);
+			if (mimePrefix) {
+				file.type = mimePrefix[1];
+				currentMime = mimePrefix[1];
+				file.content = file.content.replace(/^data:([^;]+);base64,/i, '');
+				await processFileContent(file);
+			} else {
+				const extension = window.parent.mtpetxt(file.fileName);
+				await window.parent.getMimeType(extension).then(mimeType => {
+					file.type = mimeType || 'application/octet-stream';
+					processFileContent(file);
+				});
 			}
 		}
 
-		function formatHTML(htmlString) {
-			const doc = new DOMParser().parseFromString(htmlString, 'text/html');
-			return new XMLSerializer().serializeToString(doc);
+		async function processFileContent(file) {
+			file.content = await window.parent.decodeBase64Content(file.content);
+
+			if (file.content == undefined) {
+				await window.parent.say("Currupted file", "Your file is having no reader data.")
+				editor.setValue(file.content);
+				return;
+			}
+
+			if (file.type === "application/json") {
+				try {
+					file.content = formatJS(JSON.stringify(JSON.parse(file.content)));
+				} catch (e) {
+					console.error("Error parsing JSON content", e);
+				}
+			}
+
+			if (file) {
+				editor.setValue(file.content);
+				console.log("Content displayed successfully");
+			} else {
+				console.error("Error displaying content");
+			}
+
+			run();
 		}
 
+
+		async function savetx() {
+
+			const content = editor.getValue();
+			const encodedContent = btoa(content);
+
+			if (mode === "edit") {
+				const dataUri = `data:${currentMime};base64,${encodedContent}`;
+				await ntxSession.send("fileSet.updateFile", currentfile.path, currentfile.id, {
+					metadata: currentfile.metadata,
+					content: dataUri,
+					fileName: currentfile.fileName
+				});
+			} else {
+				const dataUri = `data:text/plain;base64,${encodedContent}`;
+				let y = await window.parent.ask("Enter a file name:", "untitled.txt");
+				ntxSession.send("fileSet.createFile", "Documents", y, false, dataUri);
+			}
+
+			mode = "edit";
+		}
+
+		var wordwrap = false, currentmode = 'html';
+
+		document.getElementsByClassName("editorpart")[0].addEventListener('resize', function (event) {
+			editor.resize()
+		});
+
+		function gid(x) {
+			return document.getElementById(x)
+		}
+
+		var editor;
+		try {
+
+			$('.ui.dropdown').dropdown({
+				action: 'hide'
+			})
+
+			editor = ace.edit("editor");
+			editor.setTheme("ace/theme/monokai");
+		} catch (e) {
+			editor = {
+				getValue: () => {
+					return document.getElementById("editortextarea").value;
+				},
+				setValue: (newValue) => {
+					document.getElementById("editortextarea").value = newValue;
+				}
+			}
+			document.getElementById("editortextarea").style.display = "block";
+		}
+
+		function showFindBox() {
+			editor.execCommand("find");
+		}
+
+		editor.session.setUseWrapMode(true);
+		wordwrap = true;
+		wordwrapdisp.innerHTML = "On";
+
+
+		function togglewordwrap() {
+			let wordwrapdisp = gid("wordwrapdisp");
+			if (wordwrap) {
+				editor.session.setUseWrapMode(false);
+				wordwrap = false;
+				wordwrapdisp.innerHTML = "Off"
+			} else {
+				editor.session.setUseWrapMode(true);
+				wordwrap = true;
+				wordwrapdisp.innerHTML = "On"
+			}
+		}
+
+		function runnewwin() {
+			var prog = editor.getValue();
+			window.top.openwindow('App Preview', prog)
+		}
+
+		setUpForHTML()
+		run()
+
+		function setUpForHTML() {
+			editor.session.setMode("ace/mode/html");
+			editor.setValue(`<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<meta name="nova-include" content="nova.css">
+
+<head>
+    <style>
+        html {
+            height:100%;
+        }
+        body {
+        display:flex;
+        font-size: 1em;
+        flex-direction:column;
+        padding:2rem;
+        margin:0;
+        gap: .5em;
+        }
+        
+        a {
+            color:lightblue;
+        }
+        
+        p {
+            margin: 0;
+        }
+        
+        #p {
+            margin-bottom: 1em;
+        }
+        note {
+            background-color:var(--col-bg2);
+            padding: 1em;
+            border-radius: var(--siz-radius1);
+            border:var(--box-crisp);
+            &>b {
+                display: block;
+                margin-bottom: .5em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <p id="p">
+        Check out <a href="https://novaos.gitbook.io/main">NovaOS Docs</a> to learn how to make NovaOS apps.
+    </p>
+    <note>
+<b>App previews are sandboxed by default</b>
+    <p>Previews cannot register any permission on NTX as they are not installed. You won't be able to access NTXSession without required permissions. Saving the file with a .app extension can install it in your user.</p></note>
+</body>
+
+</html>`, 1);
+		}
+
+		function saveas(x) {
+			var now = new Date();
+			var hours = String(now.getHours()).padStart(2, '0');
+			var minutes = String(now.getMinutes()).padStart(2, '0');
+			var timeString = hours + '-' + minutes;
+
+			function createCanvasFile(extension) {
+				ntxSession.send("fileSet.createFile", "Downloads/", "Canvas-" + timeString, extension, editor.getValue());
+			}
+
+			createCanvasFile("app");
+
+			gid("console").style.display = "block"
+			consolelog("WCANVAS: File saved as Canvas-" + timeString + " in Downloads/")
+		}
+
+		async function greenflag() {
+
+			var defile;
+			try {
+				if (myWindow.params.appid == myWindow.appID) {
+					editor.setValue("Loading...");
+					defile = myWindow.params.data;
+					const file = await ntxSession.send("fileGet.byId", defile);
+					readthefile(file);
+				}
+			} catch (error) {
+				console.error("Error parsing todo JSON:", error);
+			}
+
+		}
 	</script>
 </body>
 

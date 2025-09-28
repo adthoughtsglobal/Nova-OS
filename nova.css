@@ -1,55 +1,79 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap&family=IBM+Plex+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;800&display=swap');
 
 :root {
 	--font-size-base: 1rem;
+
+	/* basic colors */
+	--col-bg1: #101010;
+	--col-txt1: #FFFFFF;
+	--col-bg2: #171717;
+	--col-bg3: #262626;
+	--col-bgh: #44403C;
+	--col-txth: #FFFFFF;
+
+	--col-good: #5be45b;
+	--col-bad: #d44343;
+
+	/* sizing */
+	--sizing-normal: 0.5rem;
+	--sizing-huge: 1rem;
+	--sizing-nano: .3rem;
+
+	--siz-radius1: 0.5em;
+	--siz-radius2: 0.35em;
+	--siz-radius3: 0.2em;
+
+	--spacing-normal: 0.3rem;
+	--spacing-gap: 6px;
+
+	/* easing */
+	--time1: .3s cubic-bezier(0.36, 0.38, 0, 0.94);
+	--time2: .3s cubic-bezier(0.42, 1.67, 0.21, 0.90);
+
+	/* decor */
+	--box-crisp: 1px solid #ffffff0c;
+	--box-crisp-col: #ffffff0c;
+
+	/* Extended support */
+	--colors-accent: rgb(97, 121, 255);
+
 	--font-size-small: calc(var(--font-size-base) * 0.85);
 	--font-size-normal: var(--font-size-base);
 	--font-size-subheading: calc(var(--font-size-base) * 1.25);
 	--font-size-big: calc(var(--font-size-base) * 2);
-
-	--colors-BG-normal: #101010;
-	--colors-BG-section: #171717;
-	--colors-BG-sub: #262626;
-	--colors-BG-highlighted: #44403C;
-	--colors-accent: #68c2ff;
-	--colors-text-high: #FFFFFF;
-	--colors-text-normal: #FFFFFF;
-	--colors-special-good: #49AC49;
-	--colors-special-bad: #AC4949;
-
-	--sizing-border-radius: 0.5rem;
-	--sizing-border-radius-normal: 0.75rem;
-	--sizing-border-radius-full: 1rem;
-
-	--sizing-huge: 1rem;
-	--sizing-normal: 0.5rem;
-	--sizing-nano: 0.3rem;
-
-	--time-action: .3s;
 }
 
 @media (max-width: 768px) {
 	:root {
-		--time-action: .5s;
+		----time1: .5s;
 	}
 }
 
-
 ::-webkit-scrollbar {
-	width: var(--sizing-normal);
-}
-
-*:hover::-webkit-scrollbar-thumb {
-	background: var(--colors-BG-sub);
+	width: .5rem;
+	height: .5em;
 }
 
 ::-webkit-scrollbar-track {
-	background: var(--colors-BG-normal);
+	background: var(--col-bg2);
+	width: 5px;
+	border-radius: var(--siz-radius1);
+}
+
+@keyframes barExpandVert {
+	0% {
+		width: 0;
+	}
+	100% {
+		width: 100%;
+	}
 }
 
 ::-webkit-scrollbar-thumb {
-	background: var(--colors-BG-sub);
-	border-radius: var(--sizing-border-radius);
+	background-color: var(--col-bg3);
+	border-radius: var(--siz-radius1);
+	border: 1px solid #7a7a7a4a;
+	animation: barExpandVert var(--time2);
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -68,38 +92,44 @@ html {
 
 button,
 input,
-textarea {
+textarea,
+select {
 	outline: none;
 	font-family: inherit;
 	font-size: inherit;
 }
 
+button {
+	cursor: pointer;
+}
+
 body {
 	margin: 0;
-	background-color: var(--colors-BG-normal);
-	color: var(--colors-text-normal);
-	font-family: 'Poppins', sans-serif;
+	background-color: var(--col-bg1);
+	color: var(--col-txt1);
 	user-select: none;
+	font-family: 'Poppins', sans-serif;
 }
 
 body * {
-	transition-timing-function: ease-out;
+	transition-timing-function: cubic-bezier(0.36, 0.38, 0, 0.94);
 }
 
-p {
-	font-family: "IBM Plex Sans", sans-serif;
+input::placeholder,
+textarea::placeholder {
+	color: var(--col-txt1);
+	opacity: .5;
 }
-
 
 .contextmenu {
 	position: absolute;
 	text-align: center;
-	background: var(--colors-BG-section);
-	border: 1px solid var(--colors-BG-section);
-	color: var(--colors-text-normal);
+	background: var(--col-bg2);
+	border: 1px solid var(--col-bg2);
+	color: var(--col-txt1);
 	border-radius: 0.5rem;
 	box-shadow: 0px 3px 5px 0px #0000005c;
-	overflow: hidden;
+	overflow: visible;
 	animation: pop3 .2s;
 	z-index: 99;
 	font-size: var(--font-size-small);
@@ -125,7 +155,7 @@ p {
 }
 
 .ctxmenuitem:hover {
-	background: var(--colors-BG-sub);
+	background: var(--col-bg3);
 }
 
 @keyframes pop3 {
@@ -137,4 +167,8 @@ p {
 	to {
 		filter: opacity(100%);
 	}
+}
+
+.material-symbols-rounded {
+	font-weight: normal !important;
 }

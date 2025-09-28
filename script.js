@@ -1,4 +1,4 @@
-var batteryLevel, winds = {}, rp, flwint = true, contentpool = {}, memory = {}, _nowapp, fulsapp = false, nowappdo, appsHistory = [], nowwindow, appicns = {}, dev = true, appfound = 'files', fileslist = [], sessionSettings = {}, badlaunch = false, really = false, initmenuload = true, fileTypeAssociations = {}, Gtodo, notifLog = {}, initialization = false, onstartup = [], novaFeaturedImage = `Dev.png`, defAppsList = [
+var batteryLevel, winds = {}, memory = {}, _nowapp, fulsapp = false, appsHistory = [], nowwindow, appicns = {}, fileslist = [], badlaunch = false, initmenuload = true, fileTypeAssociations = {}, handlers = {}, Gtodo, notifLog = {}, initialization = false, onstartup = [], novaFeaturedImage = `Dev.png`, defAppsList = [
 	"store",
 	"files",
 	"settings",
@@ -6,19 +6,38 @@ var batteryLevel, winds = {}, rp, flwint = true, contentpool = {}, memory = {}, 
 	"text",
 	"musicplr",
 	"camera",
-	"clock",
-	"media",
+	"time",
 	"gallery",
 	"browser",
 	"studio"
-], timeFormat, timetypecondition = true;
+], timeFormat, timetypecondition = true, genTaskBar, genDesktop, nonotif;
 
+let currentImage = 1;
 function setbgimagetourl(x) {
-	const bgImage = document.getElementById('bgimage');
-	if (!bgImage) return;
+	const img1 = document.getElementById('bgimage1');
+	const img2 = document.getElementById('bgimage2');
+	if (!img1 || !img2) return;
 
-	bgImage.style.opacity = 0;
-	const transitionDuration = parseFloat(getComputedStyle(bgImage).transitionDuration) * 1000 || 300;
+	const activeImg = currentImage === 1 ? img1 : img2;
+	const nextImg = currentImage === 1 ? img2 : img1;
+
+	nextImg.style.opacity = 0;
+
+	const setImageSrc = (url) => {
+		nextImg.src = url;
+		nextImg.onload = async () => {
+			nextImg.style.opacity = 1;
+			activeImg.style.opacity = 0;
+			activeImg.classList.remove('current-bg');
+			nextImg.classList.add('current-bg');
+			currentImage = currentImage === 1 ? 2 : 1;
+
+			const wallpos = await getSetting("wallpaperPos") || "center";
+			document.getElementsByClassName("current-bg")[0].style.objectPosition = wallpos;
+			const wallsiz = await getSetting("wallpaperSiz") || "cover";
+			document.getElementsByClassName("current-bg")[0].style.objectFit = wallsiz;
+		};
+	};
 
 	if (x.startsWith('data:')) {
 		try {
@@ -33,24 +52,17 @@ function setbgimagetourl(x) {
 			const blob = new Blob([arrayBuffer], { type: mimeString });
 			const blobUrl = URL.createObjectURL(blob);
 
-			setTimeout(() => {
-				bgImage.src = blobUrl;
-				bgImage.onload = () => {
-					bgImage.style.opacity = 1;
-					setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
-				};
-			}, transitionDuration);
+			setImageSrc(blobUrl);
+			setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
 		} catch (e) {
 			console.error("Failed to decode base64 string:", e);
 		}
 	} else {
-		setTimeout(() => {
-			bgImage.src = x;
-			bgImage.onload = () => {
-				bgImage.style.opacity = 1;
-			};
-		}, transitionDuration);
+		setImageSrc(x);
 	}
+
+	(async () => {
+	})();
 }
 
 Object.defineProperty(window, 'nowapp', {
@@ -59,7 +71,6 @@ Object.defineProperty(window, 'nowapp', {
 	},
 	set(value) {
 		_nowapp = value;
-		dewallblur()
 	}
 });
 
@@ -71,12 +82,22 @@ function loginscreenbackbtn() {
 
 async function showloginmod() {
 	if (badlaunch) { return }
-	closeElementedis();
+	var imgprvtmp = gid("wallbgpreview");
+	imgprvtmp.src = novaFeaturedImage;
+	imgprvtmp.onload = function handler() {
+		imgprvtmp.onload = null;
+
+		imgprvtmp.decode().then(() => {
+			closeElementedis();
+		}).catch(() => {
+			closeElementedis();
+		});
+	};
+
 	document.getElementsByClassName("backbtnscont")[0].style.display = "none";
 	function createUserDivs(users) {
 		const usersChooser = document.getElementById('userschooser');
 		usersChooser.innerHTML = '';
-		const defaultIcon = `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="66" height="61" viewBox="0,0,66.9,61.3"><g transform="translate(-206.80919,-152.00164)"><g fill="#ffffff" stroke="none" stroke-miterlimit="10"><path d="M206.80919,213.33676c0,0 3.22013,-18.32949 21.37703,-24.2487c3.5206,-1.14773 5.89388,2.28939 12.33195,2.29893c6.51034,0.00899 8.33976,-3.45507 11.71219,-2.35934c18.01675,5.85379 21.54426,24.30912 21.54426,24.30912z" stroke-width="none"/><path d="M222.47948,169.52215c0,-9.67631 7.8442,-17.52052 17.52052,-17.52052c9.67631,0 17.52052,7.8442 17.52052,17.52052c0,9.67631 -7.8442,17.52052 -17.52052,17.52052c-9.67631,0 -17.52052,-7.8442 -17.52052,-17.52052z" stroke-width="0"/></g></g></svg>`
 		users.forEach(async (cacusername) => {
 			const userDiv = document.createElement('div');
 			userDiv.className = 'user';
@@ -112,9 +133,9 @@ async function showloginmod() {
 					selectUser();
 				}
 			});
-			const img = document.createElement('span');
+			const img = document.createElement('img');
 			img.className = 'icon';
-			img.innerHTML = defaultIcon;
+			sharedStore.get(cacusername, "icon").then((icon) => { img.src = icon });
 			const nameDiv = document.createElement('div');
 			nameDiv.className = 'name';
 			nameDiv.textContent = cacusername;
@@ -123,7 +144,7 @@ async function showloginmod() {
 			usersChooser.appendChild(userDiv);
 		});
 	}
-	let users = await getallusers();
+	let users = await sharedStore.getAllUsers();
 	createUserDivs(users);
 	if (users.length > 0) {
 		document.querySelector('.user').focus();
@@ -145,20 +166,36 @@ function setsrtpprgbr(val) {
 	let width = val;
 	progressBar.style.width = width + '%';
 }
+
+async function loadFileTypeAssociations() {
+	const associations = await getSetting('fileTypeAssociations');
+	fileTypeAssociations = associations || {};
+	const associations2 = await getSetting('handlers');
+	handlers = associations2 || {};
+
+	cleanupInvalidAssociations();
+}
+
+function closeElementedis(element) {
+	if (!element) {
+		element = document.getElementById("edison");
+	}
+	element.classList.add("closeEffect");
+	setTimeout(function () {
+		element.close()
+		element.classList.remove("closeEffect");
+	}, 200);
+}
+
 async function startup() {
 	gid("edison").showModal();
+	gid('loginmod').close();
 	if (badlaunch) { return }
 	lethalpasswordtimes = false;
 	setsrtpprgbr(50);
 	const start = performance.now();
 
-	let localupdatedataver = localStorage.getItem("updver");
-	let localupdatedataverstring = parseFloat(localStorage.getItem("updver"));
-	if (localupdatedataverstring <= 1.7 || !localupdatedataverstring) {
-		console.log("Preparing NovaOS2 switch.");
-		gid("versionswitcher").showModal();
-		return;
-	}
+	updateNavSize();
 
 	await updateMemoryData().then(async () => {
 		try {
@@ -167,78 +204,43 @@ async function startup() {
 				qsetsRefresh()
 				timetypecondition = await getSetting("timefrmt") == '24 Hour' ? false : true;
 			} catch { }
-			gid('startupterms').innerHTML = "Initialising...";
+			gid('startupterms').innerHTML = "Initializing...";
 			updateTime();
 			setsrtpprgbr(80);
 			await checkdmode();
-			setsrtpprgbr(100)
+			setsrtpprgbr(90);
+			await genTaskBar();
+			setsrtpprgbr(100);
 			gid('startupterms').innerHTML = "Startup completed";
+			await genDesktop();
 			closeElementedis();
-			justConfirm(`NovaOS 2.05: Download this user?`, `Please download an offline copy of this user, this is because of the upcoming 2.1 update to NovaOS that would require a fresh installation. Click YES to continue.`).then((ok) => {
-				if (ok) {
-					async function download() {
-						if (!dbCache) dbCache = await openDB('trojencat', 1);
-						if (!cryptoKeyCache) cryptoKeyCache = await getKey(password);
 
-						const zipData = {};
-
-						const tx = dbCache.transaction('dataStore', 'readonly');
-						const store = tx.objectStore('dataStore');
-						const request = store.get(CurrentUsername);
-
-						const data = await new Promise((resolve, reject) => {
-							request.onsuccess = () => resolve(request.result);
-							request.onerror = () => reject(request.error);
-						});
-
-						if (data && data.contentpool) {
-							for (const key in data.contentpool) {
-								const item = data.contentpool[key];
-								zipData[`content/${key}.json`] = fflate.strToU8(JSON.stringify({ ...item, key }));
-							}
-						}
-
-						if (data && data.memory) {
-							zipData['memory.json'] = fflate.strToU8(JSON.stringify(data.memory));
-						}
-
-						const zipped = fflate.zipSync(zipData, { level: 9 });
-
-						const blob = new Blob([zipped], { type: 'application/zip' });
-						const url = URL.createObjectURL(blob);
-						const a = document.createElement('a');
-						a.href = url;
-						a.download = `${CurrentUsername}_backup.zip`;
-						a.click();
-						URL.revokeObjectURL(url);
-					}
-
-					download();
-				}
-			})
 			let fetchupdatedataver;
 			async function fetchDataAndUpdate() {
 				let fetchupdatedata = await fetch("versions.json");
 				if (fetchupdatedata.ok) {
-					fetchupdatedataver = (await fetchupdatedata.json()).osver;
-					if (localupdatedataver !== fetchupdatedataver) {
-						if (await justConfirm("Update default apps?", "Your default apps are old. Update them to access new features and fixes.")) {
-							await installdefaultapps();
-							startup();
-						} else {
-							say("You can always update app on settings app/Preferances")
+					let fetchupdatedataver = await fetchupdatedata.json();
+					let lclver = await getSetting("versions", "defaultApps.json") || {};
+					let howmany = 0;
+					for (let item of Object.keys(fetchupdatedataver)) {
+						let local = lclver[item] || 6754999;
+						if (local && fetchupdatedataver[item] != local) {
+							initialization = 1;
+							await updateApp(item);
+							initialization = 0;
+							howmany++;
+							lclver[item] = fetchupdatedataver[item];
 						}
 					}
+					await setSetting("versions", lclver, "defaultApps.json")
+					if (howmany) toast(howmany + " default app(s) have been updated")
 				} else {
 					console.error("Failed to fetch data from the server.");
 				}
 			}
 
-
-
-			await fetchDataAndUpdate();
-			await genTaskBar();
-			dod();
+			let shouldcheckupd = await getSetting("nvaupdcheck");
+			if (shouldcheckupd) await fetchDataAndUpdate();
 			removeInvalidMagicStrings();
 			function startUpdateTime() {
 				let now = new Date();
@@ -249,17 +251,13 @@ async function startup() {
 				}, delay);
 			}
 			startUpdateTime();
-			async function loadFileTypeAssociations() {
-				const associations = await getSetting('fileTypeAssociations');
-				fileTypeAssociations = associations || {};
-
-				cleanupInvalidAssociations();
-			}
 			await loadFileTypeAssociations();
+			await ensureAllSettingsFilesExist();
+			await loadSessionSettings();
 			const end = performance.now();
 
 			rllog(
-				`You are using \n\n%cNovaOS%c\n%cNovaOS is the free, source-available,powerful and the cutest Web Operating system on the internet.%c\n\nStartup: ${(end - start).toFixed(2)}ms\nUsername: ${CurrentUsername}\nCurrent: ${localupdatedataver}\n12hr Time format: ${timetypecondition}\nNewest: ${fetchupdatedataver}`,
+				`You are using \n\n%cNovaOS%c\n%cNovaOS is the web system made for you.%c\n\nStartup: ${(end - start).toFixed(2)}ms\nUsername: ${CurrentUsername}\n12hr Time format: ${timetypecondition}`,
 				'color: white; background-color: #101010; font-size: 2rem; padding: 0.7rem 1rem; border-radius: 1rem;',
 				'',
 				'padding:5px 0; padding-top:1rem;',
@@ -267,91 +265,24 @@ async function startup() {
 			);
 
 			try {
+
+				console.log("889")
 				function runScriptsSequentially(scripts, delay) {
 					scripts.forEach((script, index) => {
 						setTimeout(script, index * delay);
 					});
 				}
 				runScriptsSequentially(onstartup, 1000)
+
+				// onstartup apps
+				let allOnstarts = await getSetting('RunOnStartup');
+				allOnstarts.forEach(item => {
+					openapp(0, item, {}, 1);
+				})
 			} catch (e) { }
 		} catch (err) { console.error("startup error:", err); }
 	})
 }
-async function registerDecryptWorker() {
-	if ('serviceWorker' in navigator) {
-		await navigator.serviceWorker.register('novaCrypt.js')
-			.then(decryptWorkerRegistered = true)
-			.catch(err => console.error('Service Worker registration failed:', err));
-	}
-}
-document.addEventListener("DOMContentLoaded", async function () {
-	console.log("DOMCL");
-	let localupdatedataver = parseFloat(localStorage.getItem("updver"));
-	if (localupdatedataver <= 1.7) {
-		console.log("Preparing NovaOS2 switch.");
-		gid("versionswitcher").showModal();
-		return;
-	}
-	const searchInput5342 = document.querySelector('#novamenusearchinp');
-	let keyHeld = false;
-
-	searchInput5342.addEventListener('keydown', () => {
-		keyHeld = true;
-	});
-
-	searchInput5342.addEventListener('keyup', (e) => {
-		if (keyHeld) {
-			keyHeld = false;
-			opensearchpanel(searchInput5342.value);
-			gid('appdmod').close();
-			searchInput5342.value = "";
-		}
-	});
-
-	setbgimagetourl(novaFeaturedImage);
-
-	gid("nowrunninapps").style.display = "none";
-	gid('seprw-openb').onclick = function () {
-		gid('searchside').style.flexGrow = 1;
-	}
-
-	gid("versionswitcher")?.remove();
-	await registerDecryptWorker();
-	gid("novanav").style.display = "none";
-	async function waitForNonNull() {
-		const startTime = Date.now();
-		const maxWaitTime = 3000;
-		while (Date.now() - startTime < maxWaitTime) {
-			const result = await updateMemoryData();
-			if (result !== null) {
-				return result;
-			}
-			await new Promise(resolve => setTimeout(resolve, 100));
-		}
-		return null;
-	}
-	waitForNonNull().then(async (result) => {
-		checkAndRunFromURL();
-		gid('startupterms').innerHTML = "<span>Checking database...</span>";
-		try {
-			if (result || result == 3) {
-				await showloginmod();
-			} else {
-				await cleanupram();
-				CurrentUsername = 'Admin';
-				await initialiseOS();
-			}
-		} catch (error) {
-			console.error('Error in database operations:', error);
-		}
-	});
-
-	var bgImage = document.getElementById("bgimage");
-	bgImage.addEventListener("click", function () {
-		nowapp = '';
-		dewallblur();
-	});
-});
 
 function updateTime() {
 	const now = new Date();
@@ -384,7 +315,7 @@ async function openn() {
 			`Did the OS initialization fail? If yes, we can re-initialize your OS and install all the default apps. \n\nNovaOS did not find any apps while the initial load of Nova Menu. \n\nRe-initializing your OS may delete your data.`
 		);
 		if (choicetoreinst) {
-			initialiseOS();
+			initializeOS();
 		}
 		return;
 	}
@@ -406,15 +337,17 @@ async function openn() {
 			if (existingAppIds.has(app.id)) return;
 
 			var appShortcutDiv = document.createElement("div");
-			appShortcutDiv.className = "app-shortcut tooltip sizableuielement";
+			appShortcutDiv.className = "app-shortcut ctxAvail tooltip sizableuielement";
 			appShortcutDiv.setAttribute("unid", app.id || '');
 			appShortcutDiv.dataset.appId = app.id;
 			appShortcutDiv.addEventListener("click", () => openfile(app.id));
 
 			var iconSpan = document.createElement("span");
+			iconSpan.classList.add("appicnspan");
 			iconSpan.innerHTML = "<span class='taskbarloader'></span>";
 			getAppIcon(false, app.id).then((appIcon) => {
 				iconSpan.innerHTML = appIcon;
+				insertSVG(appIcon, iconSpan);
 			});
 
 			function getapnme(x) {
@@ -448,7 +381,6 @@ async function openn() {
 	}
 
 	gid("appdmod").showModal();
-	scaleUIElements(await getSetting("UISizing"));
 }
 async function loadrecentapps() {
 	gid("serrecentapps").innerHTML = ``
@@ -466,10 +398,11 @@ async function loadrecentapps() {
 			return
 		}
 		var appShortcutDiv = document.createElement("div");
-		appShortcutDiv.className = "app-shortcut tooltip sizableuielement";
+		appShortcutDiv.className = "app-shortcut ctxAvail sizableuielement";
 		appShortcutDiv.setAttribute("unid", app.id || '');
 		appShortcutDiv.addEventListener("click", () => openapp(app.name, app.id));
 		var iconSpan = document.createElement("span");
+		iconSpan.classList.add("appicnspan");
 		if (!appicns[app.id]) {
 			const content = await getFileById(app.id);
 			const unshrunkContent = decodeBase64Content(content.content);
@@ -500,16 +433,11 @@ async function loadrecentapps() {
 		var nameSpan = document.createElement("span");
 		nameSpan.className = "appname";
 		nameSpan.textContent = basename(app.name);
-		var tooltisp = document.createElement("span");
-		tooltisp.className = "tooltiptext";
-		tooltisp.textContent = basename(app.name);
 
 		appShortcutDiv.appendChild(iconSpan);
 		appShortcutDiv.appendChild(nameSpan);
-		appShortcutDiv.appendChild(tooltisp);
 		gid("serrecentapps").appendChild(appShortcutDiv);
 	})).then(async () => {
-		scaleUIElements(await getSetting("UISizing"));
 
 		gid("novamenusearchinp").focus();
 	}).catch((error) => {
@@ -538,25 +466,27 @@ function makedefic(str) {
 		}
 	});
 	return result.join('').slice(0, 3);
-}
-function updateBattery() {
+} function updateBattery() {
 	var batteryPromise;
 	if ('getBattery' in navigator) {
 		batteryPromise = navigator.getBattery();
 	} else if ('battery' in navigator) {
 		batteryPromise = Promise.resolve(navigator.battery);
 	} else {
-		console.log('No Battery API');
-		gid("batterydisdiv").style.display = "none";
+		document.getElementById("batterydisdiv").style.display = "none";
 		return;
 	}
 	batteryPromise.then(function (battery) {
-		var batteryLevel = Math.floor(battery.level * 100);
-		var isCharging = battery.charging;
+		if (typeof battery.level !== 'number' || isNaN(battery.level)) {
+			document.getElementById("batterydisdiv").style.display = "none";
+			return;
+		}
+		var batteryLevel = Math.round(battery.level * 100);
+		var isCharging = !!battery.charging;
 		if ((batteryLevel === 100 && isCharging) || (batteryLevel === 0 && isCharging)) {
 			document.getElementById("batterydisdiv").style.display = "none";
 		} else {
-			document.getElementById("batterydisdiv").style.display = "block";
+			document.getElementById("batterydisdiv").style.display = "flex";
 		}
 		let iconClass;
 		if (batteryLevel >= 75) {
@@ -571,122 +501,32 @@ function updateBattery() {
 		var batteryDisplayElement = document.getElementById('battery-display');
 		var batteryPDisplayElement = document.getElementById('battery-p-display');
 		if (batteryDisplayElement && batteryPDisplayElement) {
-			if (iconClass !== batteryDisplayElement.innerText) {
+			if (iconClass !== batteryDisplayElement.innerText || batteryPDisplayElement.innerText !== batteryLevel + "%") {
 				batteryDisplayElement.innerHTML = iconClass;
 				batteryPDisplayElement.innerHTML = batteryLevel + "%";
 			}
 		}
-	}).catch(function (error) {
-		console.log("Battery Error: " + error);
+	}).catch(function () {
+		document.getElementById("batterydisdiv").style.display = "none";
 	});
 }
-updateBattery();
-navigator.getBattery().then(function (battery) {
-	battery.addEventListener('levelchange', updateBattery);
-});
-async function dod() {
-	let x;
-	try {
-		gid("desktop").innerHTML = ``;
-		let y = await getFileNamesByFolder("Desktop");
-		let dropZone = document.getElementById("desktop");
-		dropZone.addEventListener('dragover', (event) => {
-			event.preventDefault();
-		});
-		dropZone.addEventListener('drop', async (event) => {
-			event.preventDefault();
-			const unid = event.dataTransfer.getData("Text");
-			await moveFileToFolder(unid, "Desktop/");
-			dod()
-		});
-		dropZone.addEventListener('dragend', (event) => {
-			event.preventDefault();
-		});
-		y.forEach(async function (app) {
-			var appShortcutDiv = document.createElement("div");
-			appShortcutDiv.className = "app-shortcut sizableuielement";
-			appShortcutDiv.setAttribute("unid", app.id || '');
-			app = await getFileById(app.id);
-			let islnk = false;
-			if (mtpetxt(app.fileName) == "lnk") {
-				let z = JSON.parse(decodeBase64Content(app.content));
-				app = await getFileById(z.open);
-				islnk = true;
-			}
-			appShortcutDiv.setAttribute("draggable", true);
-			appShortcutDiv.setAttribute("ondragstart", "dragfl(event, this)");
-			appShortcutDiv.addEventListener("click", () => openfile(app.id));
-			appShortcutDiv.setAttribute("unid", app.id);
-			var iconSpan = document.createElement("span");
-			getAppIcon(app.content, app.id).then((icon) => {
-				iconSpan.innerHTML = `${icon}`;
-			})
-			var nameSpan = document.createElement("span");
-			nameSpan.className = "appname";
-			nameSpan.textContent = islnk ? basename(app.fileName) + `*` : basename(app.fileName);
-			appShortcutDiv.appendChild(iconSpan);
-			appShortcutDiv.appendChild(nameSpan);
-			gid("desktop").appendChild(appShortcutDiv);
-		});
-		x = await getSetting("wall");
-		if (x != undefined && x != '' && x != ' ') {
-			let unshrinkbsfX;
-			console.log(x)
-			if (x.startsWith("http")) {
-				unshrinkbsfX = x;
-			} else {
-				unshrinkbsfX = await getFileById(x);
-				unshrinkbsfX = unshrinkbsfX.content;
-			}
-			setbgimagetourl(unshrinkbsfX);
-		}
-		document.getElementById("bgimage").onerror = async function (event) {
-			console.log("wallpaper error", event)
-			setbgimagetourl(novaFeaturedImage);
-			if (await getSetting("wall")) {
-				remSetting("wall");
-			}
-		};
-	} catch (error) {
-		console.error(error)
-	}
 
-
-	if (await getSetting("copilot")) {
-		gid("copilotbtn").style.display = "";
-	} else {
-		gid("copilotbtn").style.display = "none";
-	}
-	scaleUIElements(await getSetting("UISizing"))
-}
-function closeElementedis() {
-	var element = document.getElementById("edison");
-	element.classList.add("closeEffect");
-	setTimeout(function () {
-		element.close()
-		element.classList.remove("closeEffect");
-	}, 500);
-}
 function clwin(x) {
-	const el = isElement(x) ? x : document.getElementById(x);
-	if (!el) return;
-
-	const windKey = el.getAttribute("data-winuid");
+	snappingconthide();
+	const el = isElement(x) ? x : document.getElementById(x.startsWith("window") ? x : "window" + x);
+	const windKey = isElement(x) ? el.getAttribute("data-winuid") : x;
 	if (windKey) {
-		console.log("data winds: removing", windKey)
+		console.log(windKey)
+		URL.revokeObjectURL(winds[windKey].src)
 		delete winds[windKey];
-		URL.revokeObjectURL(windowData[windKey].src);
-		delete windowData[windKey];
 	}
+	loadtaskspanel()
+	if (!el) return;
 
 	el.classList.add("transp3");
 	setTimeout(() => {
 		el.classList.remove("transp3");
 		el.remove();
-		if (!isElement(x)) {
-			nowapp = '';
-			loadtaskspanel();
-		}
 	}, 700);
 }
 
@@ -708,26 +548,96 @@ function getAppAspectRatio(unshrunkContent) {
 }
 async function getAppIcon(content, id, lazy = 0) {
 	try {
+		if (content, id == undefined) {
+			if (content == 'folder')
+				return `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="var(--col-txt1)"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h207q16 0 30.5 6t25.5 17l57 57h360q17 0 28.5 11.5T880-680q0 17-11.5 28.5T840-640H447l-80-80H160v480l79-263q8-26 29.5-41.5T316-560h516q41 0 64.5 32.5T909-457l-72 240q-8 26-29.5 41.5T760-160H160Zm84-80h516l72-240H316l-72 240Zm-84-262v-218 218Zm84 262 72-240-72 240Z"/></svg>`;
+
+			return defaultAppIcon;
+		} else if (id == "info") {
+			return `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="var(--col-txt1)"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>`
+		}
 		const withTimeout = (promise) =>
 			Promise.race([promise, new Promise((_, reject) => setTimeout(() => reject(), 3000))]);
-		if (!content) {
-			const file = await withTimeout(getFileById(id));
-			if (!file || !file.content) throw new Error("File content unavailable" + id);
-			return await withTimeout(getAppIcon(file.content, id));
+
+		const getAppIconFromRegistry = async (id, registry) => {
+			if (registry && registry.icon) {
+				appicns = registry.icon;
+				return appicns;
+			}
+			return null;
+		};
+
+		const saveIconToRegistry = async (id, iconContent, registry) => {
+			const updatedRegistry = {
+				...(registry || {}),
+				icon: iconContent
+			};
+			await setSetting(id, updatedRegistry, "AppRegistry.json");
+		};
+
+		try {
+			if (appicns[id]) return appicns[id];
+			if (lazy) return defaultAppIcon;
+
+			const registry = await getSetting(id, "AppRegistry.json") || {};
+			const cachedIcon = await getAppIconFromRegistry(id, registry);
+			if (cachedIcon) return cachedIcon;
+
+			if (!content) {
+				const file = await withTimeout(await getFileById(id));
+				if (!file || !file.content) throw new Error("File content unavailable " + id);
+				content = file.content;
+			}
+			const iconContent = await withTimeout(getMetaTagContent(content, 'nova-icon', true));
+			if (iconContent && containsSmallSVGElement(iconContent)) {
+				appicns[id] = iconContent;
+				await saveIconToRegistry(id, iconContent, registry);
+				return iconContent;
+			}
+		} catch (err) {
+			console.error("Error in getAppIcon:", err);
 		}
-		if (lazy) return appicns[id] || defaultAppIcon;
-		if (appicns[id]) return appicns[id];
-		const iconContent = await withTimeout(getMetaTagContent(content, 'nova-icon', true));
-		if (iconContent && containsSmallSVGElement(iconContent)) {
-			appicns[id] = iconContent;
-			return iconContent;
-		}
-	} catch (err) {
-		console.error(err);
-	}
-	let icondatatodo = await getFileNameByID(id) || id;
+
+	} catch (e) { }
+
+	const fallbackIcon = generateFallbackIcon(id);
+	appicns[id] = fallbackIcon;
+
+	return fallbackIcon;
+}
+
+async function generateFallbackIcon(id) {
+	const icondatatodo = await getFileNameByID(id) || id;
 	return `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="115.24806" height="130.92446" viewBox="0,0,115.24806,130.92446"><g transform="translate(-182.39149,-114.49081)"><g stroke="none" stroke-miterlimit="10"><path d="M182.39149,245.41527v-130.83054h70.53005l44.68697,44.95618v85.87436z" fill="` + stringToPastelColor(icondatatodo) + `" stroke-width="none"/><path d="M252.60365,158.84688v-44.35607l45.03589,44.35607z" style="opacity: 0.7" fill="#dadada" stroke-width="0"/><text transform="translate(189,229) scale(0.9,0.9)" font-size="3rem" xml:space="preserve" fill="#dadada" style="opacity: 0.7" stroke-width="1" font-family="monospace" font-weight="normal" text-anchor="start"><tspan x="0" dy="0" fill="black">${makedefic(icondatatodo)}</tspan></text></g></g></svg>`;
 }
+
+async function applyIconPack(iconPack) {
+	try {
+		for (const namespace in handlers) {
+			const appID = handlers[namespace];
+			const iconSVG = iconPack[namespace];
+
+			if (!iconSVG) continue;
+			try {
+				const appicn = await getSetting(appID, "AppRegistry.json") || {};
+
+				appicn["icon"] = iconSVG;
+
+				await setSetting(appID, appicn, "AppRegistry.json");
+				console.log(`Icon set for app ${appID} from namespace ${namespace}`);
+			} catch (err) {
+				console.error(`Failed to set icon for app ${appID}`, err);
+			}
+		}
+	} catch (err) {
+		console.error("Failed to apply icon pack", err);
+	}
+	appicns = {};
+	gid("appsindeck").innerHTML = "";
+	genTaskBar();
+	genDesktop();
+}
+
 async function fetchData(url) {
 	try {
 		const response = await fetch(url);
@@ -738,20 +648,60 @@ async function fetchData(url) {
 		return data;
 	} catch (error) {
 		console.error("Error fetching data:", error.message);
-		const data = "App Launcher: CRITICAL ERROR<br><br><sup>" + error.message + "</sup>";
+		const data = null;
 		return data;
 	}
 }
 var content;
 function putwinontop(x) {
+	Object.keys(winds).forEach(wid => {
+		if (gid(`window${wid}`).style.zIndex)
+			winds[wid].zIndex = Number(gid(`window${wid}`).style.zIndex || 0);
+		else
+			return;
+	});
+
 	if (Object.keys(winds).length > 1) {
-		const windValues = Object.values(winds).map(Number);
+		const windValues = Object.values(winds).map(wind => Number(wind.zIndex) || 0);
 		const maxWindValue = Math.max(...windValues);
 		document.getElementById(x).style.zIndex = maxWindValue + 1;
+		normalizeZIndexes(x);
 	} else {
 		document.getElementById(x).style.zIndex = 0;
 	}
+	if (typeof updateFocusedWindowBorder === "function") updateFocusedWindowBorder();
 }
+function isWinOnTop(x) {
+	const ourKey = x.replace(/^window/, '');
+	const maxKey = Object.keys(winds).reduce((a, b) => (Number(winds[a].zIndex) > Number(winds[b].zIndex) ? a : b));
+
+	return ourKey === maxKey;
+}
+
+function normalizeZIndexes(excludeWindowId = null) {
+	const windValues = Object.entries(winds)
+		.filter(([key]) => key !== excludeWindowId)
+		.map(([_, wind]) => Number(wind.zIndex) || 0);
+
+	const uniqueSorted = [...new Set(windValues)].sort((a, b) => a - b);
+	if (uniqueSorted.length === uniqueSorted[uniqueSorted.length - 1]) return;
+
+	const zIndexMap = uniqueSorted.reduce((map, value, index) => {
+		map[value] = index;
+		return map;
+	}, {});
+
+	winds = Object.keys(winds).reduce((normalizedWinds, key) => {
+		normalizedWinds[key] = {
+			...winds[key],
+			zIndex: key === excludeWindowId
+				? winds[key].zIndex
+				: zIndexMap[Number(winds[key].zIndex) || 0],
+		};
+		return normalizedWinds;
+	}, {});
+}
+
 function requestLocalFile() {
 	var requestID = genUID()
 	x = {
@@ -818,7 +768,7 @@ function isBase64(str) {
 async function extractAndRegisterCapabilities(appId, content) {
 	try {
 		if (!content) {
-			content = await window.parent.getFileById(appId);
+			content = await getFileById(appId);
 			content = content.content;
 		}
 		if (isBase64(content)) {
@@ -826,42 +776,155 @@ async function extractAndRegisterCapabilities(appId, content) {
 		}
 		let parser = new DOMParser();
 		let doc = parser.parseFromString(content, "text/html");
+
 		let metaTag = doc.querySelector('meta[name="capabilities"]');
+		let capabilities = [];
 		if (metaTag) {
-			let capabilities = metaTag.getAttribute("content").split(',');
-			await registerApp(appId, capabilities);
+			capabilities = metaTag.getAttribute("content").split(',').map(s => s.trim());
 		} else {
 			console.log(`No capabilities: ${appId}`);
 		}
+		let onlyDefPerms = false;
+		let totalperms = ['utility', 'sysUI'];
+		let metaTag2 = doc.querySelector('meta[name="permissions"]');
+		let requestedperms = [];
+		if (metaTag2) {
+			requestedperms = metaTag2.getAttribute("content").split(',').map(s => s.trim());
+		} else {
+			console.log(`No permissions: ${appId}`);
+			onlyDefPerms = true
+		}
+
+		function arraysEqualIgnoreOrder(arr1, arr2) {
+			if (arr1.length !== arr2.length) return false;
+			let sorted1 = [...arr1].sort();
+			let sorted2 = [...arr2].sort();
+			for (let i = 0; i < sorted1.length; i++) {
+				if (sorted1[i] !== sorted2[i]) return false;
+			}
+			return true;
+		}
+
+		onlyDefPerms = (onlyDefPerms) ? true : arraysEqualIgnoreOrder(requestedperms, totalperms);
+		if (onlyDefPerms) {
+			console.log("only def perms");
+		}
+
+		let permissions = Array.from(new Set([...totalperms, ...requestedperms]));
+
+		if (!onlyDefPerms) {
+			let modal = gid("AppInstDia");
+			gid("app_inst_dia_icon").innerHTML = await getAppIcon(0, appId);
+			gid("app_inst_mod_app_name").innerText = await getFileNameByID(appId);
+			let listelement = gid("app_inst_mod_li");
+			listelement.innerHTML = '';
+			if (capabilities.length > 0) {
+				let handlerList = capabilities.filter(c => !c.startsWith('.') && c !== 'onStartup').join(', ');
+				if (handlerList) {
+					let span = document.createElement("li");
+					span.innerHTML = `Function as ${handlerList}`;
+					listelement.appendChild(span);
+				}
+
+				let fileTypes = capabilities.filter(c => c.startsWith('.')).join(', ');
+				if (fileTypes) {
+					let span = document.createElement("li");
+					span.innerHTML = `Open ${fileTypes} by default`;
+					listelement.appendChild(span);
+				}
+
+				if (capabilities.includes('onStartup')) {
+					let span = document.createElement("li");
+					span.innerHTML = "Run during startup";
+					listelement.appendChild(span);
+				}
+			}
+
+			permissions.sort((a, b) => getNamespaceRisk(b) - getNamespaceRisk(a));
+
+			if (permissions.includes("unsandboxed")) {
+				let span = document.createElement("li");
+				span.innerHTML = describeNamespaces("unsandboxed").replace(/^./, c => c.toUpperCase());
+				span.innerHTML += `<small>Only recommended for apps you trust.</small>`;
+				listelement.appendChild(span);
+			} else {
+				permissions.forEach((perm) => {
+					let span = document.createElement("li");
+					span.innerHTML = describeNamespaces(perm).replace(/^./, c => c.toUpperCase());
+					listelement.appendChild(span);
+				});
+			}
+
+			let yesButton = gid("app_inst_mod_agbtn");
+			let noButton = gid("app_inst_mod_nobtn");
+
+			let condition = await new Promise((resolve) => {
+				if (initialization) {
+					resolve(true);
+				} else {
+					modal.showModal();
+				}
+				yesButton.onclick = () => {
+					modal.close();
+					resolve(true);
+				};
+				noButton.onclick = () => {
+					modal.close();
+					resolve(false);
+				};
+			});
+
+			if (!condition) return;
+		}
+
+		requestedperms.forEach((perm) => {
+			if (!totalperms.includes(perm)) {
+				totalperms.push(perm);
+			}
+		});
+		await registerApp(appId, capabilities);
+
+		let registry = {};
+		registry.perms = totalperms;
+		await setSetting(appId, registry, "AppRegistry.json");
+
 	} catch (error) {
 		console.error("Error extracting and registering capabilities:", error);
 	}
 }
 async function registerApp(appId, capabilities) {
-	notify(await getFileNameByID(appId) + " installed", "Registering complete.", "NovaOS System")
-	for (let fileType of capabilities) {
-		if (!fileTypeAssociations[fileType]) {
-			fileTypeAssociations[fileType] = [];
-		}
-		if (!fileTypeAssociations[fileType].includes(appId)) {
-			fileTypeAssociations[fileType].push(appId);
+	for (let rawCapability of capabilities) {
+		let capability = rawCapability.trim();
+		if (capability === 'onStartup') continue;
+		if (capability.startsWith('.')) {
+			fileTypeAssociations[capability] = [appId];
+		} else {
+			handlers[capability] = appId;
 		}
 	}
 	await setSetting('fileTypeAssociations', fileTypeAssociations);
+	await setSetting('handlers', handlers);
+
+	if (capabilities.includes('onStartup')) {
+		let startupApps = await getSetting('RunOnStartup') || [];
+		if (!startupApps.includes(appId)) startupApps.push(appId);
+		await setSetting('RunOnStartup', startupApps);
+	}
+
+	if (!initialization)
+		notify(await getFileNameByID(appId) + " installed", "Registered " + capabilities.toString(), "NovaOS System");
+	return capabilities.toString();
 }
+
 async function cleanupInvalidAssociations() {
 	const validAppIds = await getAllValidAppIds();
 	let associationsChanged = false;
 
 	for (let fileType in fileTypeAssociations) {
-		const originalAssociations = fileTypeAssociations[fileType];
-		fileTypeAssociations[fileType] = originalAssociations.filter(appId => validAppIds.includes(appId));
-
-		if (fileTypeAssociations[fileType].length === 0) {
+		const appId = fileTypeAssociations[fileType][0];
+		if (!validAppIds.includes(appId)) {
+			console.log(`Removing invalid file type association: ${fileType} for app ID ${appId}`);
 			delete fileTypeAssociations[fileType];
-		}
-
-		if (originalAssociations.length !== fileTypeAssociations[fileType].length) {
 			associationsChanged = true;
 		}
 	}
@@ -869,126 +932,236 @@ async function cleanupInvalidAssociations() {
 	if (associationsChanged) {
 		await setSetting('fileTypeAssociations', fileTypeAssociations);
 	}
+
+	let registry = await getSetting('full', "AppRegistry.json");
+
+	for (let key in registry) {
+		if (!await window.parent.getFileNameByID(key)) {
+			window.parent.remSettingKey(key, "AppRegistry.json")
+			continue;
+		}
+	}
 }
+
 async function getAllValidAppIds() {
 	const appsFolder = await getFileNamesByFolder('Apps/');
 	return Object.keys(appsFolder || {}).map(appFileName => appsFolder[appFileName].id);
 }
 function makedialogclosable(ok) {
 	const myDialog = gid(ok);
+
+	if (!myDialog.__originalClose) {
+		myDialog.__originalClose = myDialog.close;
+		myDialog.close = function () {
+			console.log(342, ok)
+			this.classList.add("closeEffect");
+
+			function handler() {
+				myDialog.__originalClose();
+				myDialog.classList.remove("closeEffect");
+			};
+			setTimeout(handler, 200);
+		};
+	}
+
 	document.addEventListener('click', (event) => {
 		if (event.target === myDialog) {
-			myDialog.classList.add("*closeEffect");
-			setTimeout(
-				myDialog.close()
-				, 500);
+			myDialog.close();
 		}
 	});
 }
-makedialogclosable('appdmod');
-
-function openModal(type, { title = '', message, options = null, status = null, preset = '' } = {}) {
+function openModal(type, { title = '', message, options = null, status = null, preset = '' } = {}, registerRef = false) {
 	if (badlaunch) { return }
 	return new Promise((resolve) => {
-		const modal = document.querySelector("#NaviconfDia");
-		const h1 = modal.querySelector('h1');
-		const p = modal.querySelector('p');
-		const dropdown = modal.querySelector('.dropdown');
-		const inputField = modal.querySelector('.input-field');
-		const yesButton = modal.querySelector('.yes-button');
-		const noButton = modal.querySelector('.notbn');
-		h1.textContent = title;
-		p.innerHTML = message;
-		dropdown.style.display = 'none';
-		inputField.style.display = 'none';
-		noButton.style.display = 'none';
-		yesButton.textContent = 'OK';
-		if (type === 'confirm') {
-			noButton.style.display = 'inline-block';
-			yesButton.textContent = 'Yes';
-		} else if (type === 'dropdown') {
-			dropdown.innerHTML = options.map(option => `<option value="${option}">${option}</option>`).join('');
-			dropdown.style.display = 'block';
-			noButton.style.display = 'inline-block';
-		} else if (type === 'say' && status) {
-			let ic = "warning";
-			if (status === "success") ic = "check_circle";
-			else if (status === "failed") ic = "dangerous";
-			p.innerHTML = `<span class="material-symbols-rounded">${ic}</span> ${message}`;
-		} else if (type === 'ask') {
-			inputField.value = preset;
-			inputField.style.display = 'block';
+		const modal = document.createElement('dialog');
+		modal.classList.add('modal');
+
+		const modalItemsCont = document.createElement('div');
+		modalItemsCont.classList.add('modal-items');
+
+		const icon = document.createElement('span');
+		icon.classList.add('material-symbols-rounded');
+		let ic = "warning";
+		if (status === "success") ic = "check_circle";
+		else if (status === "failed") ic = "dangerous";
+		icon.textContent = ic;
+		icon.classList.add('modal-icon');
+		modalItemsCont.appendChild(icon);
+
+		if (title && title.length > 0) {
+
+			const h1 = document.createElement('h1');
+			h1.textContent = title;
+			modalItemsCont.appendChild(h1);
 		}
-		// Button actions
+
+		const p = document.createElement('p');
+		if (type === 'say' || type === 'confirm') {
+			p.innerHTML = `${message}`;
+		} else {
+			p.textContent = message;
+		}
+		modalItemsCont.appendChild(p);
+
+		let dropdown = null;
+		if (type === 'dropdown') {
+			dropdown = document.createElement('select');
+			let items = Array.isArray(options) ? options : Object.values(options);
+			for (const option of items) {
+				const opt = document.createElement('option');
+				opt.value = option;
+				opt.textContent = option;
+				dropdown.appendChild(opt);
+			}
+			modalItemsCont.appendChild(dropdown);
+		}
+
+		let inputField = null;
+		if (type === 'ask') {
+			inputField = document.createElement('input');
+			inputField.type = 'text';
+			inputField.value = preset;
+			modalItemsCont.appendChild(inputField);
+		}
+
+		const btnContainer = document.createElement('div');
+		btnContainer.classList.add('button-container');
+		modalItemsCont.appendChild(btnContainer);
+
+		const yesButton = document.createElement('button');
+		yesButton.textContent = type === 'confirm' ? 'Yes' : 'OK';
+		btnContainer.appendChild(yesButton);
+
+		if (type === 'confirm' || type === 'dropdown') {
+			const noButton = document.createElement('button');
+			noButton.textContent = type === 'confirm' ? 'No' : 'Cancel';
+			btnContainer.appendChild(noButton);
+			noButton.onclick = () => {
+				modal.close();
+				modal.remove();
+				resolve(false);
+			};
+		}
+
 		yesButton.onclick = () => {
 			modal.close();
-			resolve(type === 'dropdown' ? dropdown.value : type === 'ask' ? inputField.value : true);
+			modal.remove();
+			if (type === 'dropdown') {
+				resolve(dropdown.value);
+			} else if (type === 'ask') {
+				resolve(inputField.value);
+			} else {
+				resolve(true);
+			}
 		};
 
-		noButton.onclick = () => {
-			modal.close();
-			resolve(false);
-		};
-
-		modal.showModal();
+		if (registerRef) {
+			document.getElementById("window" + notificationContext[registerRef]?.windowID).querySelectorAll(".windowcontent")[0].appendChild(modal);
+			modal.show();
+			modal.appendChild(modalItemsCont);
+		} else {
+			document.body.appendChild(modal);
+			modal.appendChild(modalItemsCont);
+			modal.showModal();
+		}
 	});
 }
-function justConfirm(title, message) {
-	return openModal('confirm', { title, message });
+
+function justConfirm(title, message, registerRef = false) {
+	return openModal('confirm', { title, message }, registerRef);
 }
-function showDropdownModal(title, message, options) {
-	return openModal('dropdown', { title, message, options });
+function showDropdownModal(title, message, options, registerRef = false) {
+	return openModal('dropdown', { title, message, options }, registerRef);
 }
-function say(message, status = null) {
-	return openModal('say', { message, status });
+function say(message, status = null, registerRef = false) {
+	return openModal('say', { message, status }, registerRef);
 }
-function ask(question, preset = '') {
-	return openModal('ask', { message: question, preset });
+function ask(question, preset = '', registerRef = false) {
+	return openModal('ask', { message: question, preset }, registerRef);
 }
+const removalQueue = new Map();
+
 async function loadtaskspanel() {
 	let appbarelement = gid("nowrunninapps");
-	let currentKeys = Array.from(appbarelement.querySelectorAll(".app-shortcut")).map(el => el.dataset.key);
+	let currentShortcuts = Array.from(appbarelement.querySelectorAll(".app-shortcut"));
+	let currentKeys = currentShortcuts.map(el => el.dataset.key);
 
-	let validKeys = Object.keys(winds).filter(key => gid("window" + key.slice(-12)) !== null);
-	let newKeys = validKeys.map(key => key.slice(0, -12) + key.slice(-12));
+	let validKeys = Object.entries(winds)
+		.filter(([winID, data]) => data.visualState !== "hidden" || gid("window" + winID) === null)
+		.map(([winID, data]) => data.title + winID);
 
-	let keysToAdd = newKeys.filter(key => !currentKeys.includes(key));
-	let keysToRemove = currentKeys.filter(key => !newKeys.includes(key));
+	let now = performance.now();
 
-	keysToRemove.forEach(key => {
-		let element = appbarelement.querySelector(`[data-key='${key}']`);
-		if (element) appbarelement.removeChild(element);
-	});
+	for (let element of currentShortcuts) {
+		let key = element.dataset.key;
+		if (validKeys.includes(key)) continue;
+		if (removalQueue.has(key)) continue;
 
-	keysToAdd.forEach(async key => {
+		let addedAt = parseFloat(element.dataset.addedAt) || 0;
+		let timeElapsed = now - addedAt;
+
+		if (timeElapsed < 1000) {
+			let delay = 1000 - timeElapsed;
+			removalQueue.set(key, setTimeout(() => tryRemoveElement(element, key), delay));
+		} else {
+			tryRemoveElement(element, key);
+		}
+	}
+
+	let keysToAdd = validKeys.filter(key => !currentKeys.includes(key));
+
+	for (let key of keysToAdd) {
 		let app = key.slice(0, -12);
 		let wid = key.slice(-12);
 
-		let appShortcutDiv = document.createElement("biv");
-		appShortcutDiv.className = "app-shortcut tooltip adock sizableuielement";
-		appShortcutDiv.setAttribute("unid", key.id || '');
+		let appShortcutDiv = document.createElement("div");
+		appShortcutDiv.className = "app-shortcut ctxAvail tooltip adock sizableuielement";
+		appShortcutDiv.setAttribute("unid", app);
 		appShortcutDiv.dataset.key = key;
+		appShortcutDiv.setAttribute("winid", wid);
+		appShortcutDiv.dataset.addedAt = performance.now();
 
-		appShortcutDiv.addEventListener("click", function () {
+		appShortcutDiv.addEventListener("click", () => {
 			putwinontop('window' + wid);
-			winds[app + wid] = Number(gid("window" + wid).style.zIndex);
-			gid('window' + wid).style.display = "flex";
+			minim(wid);
 		});
 
 		let iconSpan = document.createElement("span");
-		iconSpan.innerHTML = appicns[app] || defaultAppIcon;
+		iconSpan.classList.add("appicnspan");
+		insertSVG((await getAppIcon(0, winds[wid]?.appid)) || defaultAppIcon, iconSpan);
 
-		let tooltisp = document.createElement("span");
-		tooltisp.className = "tooltiptext";
-		tooltisp.innerText = basename(app);
+		let tooltip = document.createElement("span");
+		tooltip.className = "tooltiptext";
+		tooltip.innerText = basename(app);
 
 		appShortcutDiv.appendChild(iconSpan);
-		appShortcutDiv.appendChild(tooltisp);
+		appShortcutDiv.appendChild(tooltip);
 		appbarelement.appendChild(appShortcutDiv);
-	});
+	}
 
-	appbarelement.style.display = validKeys.length > 0 ? "flex" : "none";
+	let visibleShortcuts = appbarelement.querySelectorAll(".app-shortcut");
+	if (visibleShortcuts.length === 1) {
+		appbarelement.classList.add("closeDockObj");
+		setTimeout(() => {
+			appbarelement.style.display = validKeys.length > 0 ? "flex" : "none";
+			appbarelement.classList.remove("closeDockObj");
+		}, 500);
+	}
 }
+
+function tryRemoveElement(element, key) {
+	if (!element.isConnected) {
+		removalQueue.delete(key);
+		return;
+	}
+
+	element.classList.add("closeEffect");
+	setTimeout(() => {
+		if (element.parentNode) element.parentNode.removeChild(element);
+		removalQueue.delete(key);
+	}, 500);
+}
+
 var dev;
 function shrinkbsf(str) {
 	return str;
@@ -998,7 +1171,6 @@ function unshrinkbsf(compressedStr) {
 }
 async function makewall(deid) {
 	let x = deid;
-	console.log("Setting custom wallpaper", deid)
 	if (x != undefined) {
 		let unshrinkbsfX;
 		if (x.startsWith("http")) {
@@ -1011,14 +1183,28 @@ async function makewall(deid) {
 	}
 	await setSetting("wall", deid);
 }
-async function initialiseOS() {
+eventBusWorker.listen({
+	type: "settings",
+	event: "set",
+	key: "wall",
+	callback: () => {
+		console.log(342423424)
+		setTimeout(()=>{loadSessionSettings();renderWall()}, 1500)
+	}
+});
+async function initializeOS() {
 	if (badlaunch) { return }
 	dbCache = null;
 	cryptoKeyCache = null;
 	await say(`
-		<h2>Terms of service and License</h2>
-		<p>By using Nova OS, you agree to the <a href="https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use">Adthoughtsglobal Nova Terms of Use</a>. 
-		<br><small>We do not store your personal information. <br><iframe src="https://adthoughtsglobal.github.io/termsofuse.html"> <br>Read the terms before use.</small></p>
+		<h2>This is a source-available system</h2>
+		<p>By using Nova OS, you agree to the <a href="https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use">Terms of Use</a>. Which mentions the intended purpose of this system.
+		<div style="background:: #001b00; color: lightgreen; padding: 0.8rem; border: 1px solid #254625;font-size:inherit; border-radius: .5rem; margin: 0.8rem 0; display: flex;flex-direction:row; align-items: center; justify-content: flex-start;gap:0.5rem;">
+			<span class="material-symbols-rounded">check</span>
+			<div>We do not store or share your personal information.</div>
+		</div>
+		</p>
+		<iframe src="https://adthoughtsglobal.github.io/termsofuse.html"></iframe>
 	`);
 	console.log("Setting Up NovaOS\n\nUsername: " + CurrentUsername + "\nWith: Sample preset\nUsing host: " + location.href)
 	initialization = true
@@ -1035,125 +1221,134 @@ async function initialiseOS() {
 
 	setdb().then(async function () {
 		await saveMagicStringInLocalStorage(password);
-		await ensurePreferencesFileExists()
+		await ensureAllSettingsFilesExist()
 			.then(async () => await installdefaultapps())
 			.then(async () => getFileNamesByFolder("Apps"))
-			.then(async (fileNames) => {
-				if (defAppsList.length !== fileNames.length) {
-					setTimeout(installdefaultapps(), 3000);
-					gid('startupterms').innerText = "Fixing problems..."
-					return;
-				}
-			})
 			.catch(error => {
 				console.error("Error during initialization:", error);
 			})
 			.then(async () => {
+				sharedStore.set(CurrentUsername, "icon", "data:image/svg+xml,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22utf-8%22%3F%3E%3Csvg%20fill%3D%22%23ffffff%22%20width%3D%22800px%22%20height%3D%22800px%22%20viewBox%3D%220%200%20256%20256%22%20id%3D%22Flat%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M228%2C128A100%2C100%2C0%2C1%2C0%2C60.71%2C201.90967a3.97048%2C3.97048%2C0%2C0%2C0%2C.842.751%2C99.79378%2C99.79378%2C0%2C0%2C0%2C132.8982-.00195%2C3.96558%2C3.96558%2C0%2C0%2C0%2C.83813-.74756A99.76267%2C99.76267%2C0%2C0%2C0%2C228%2C128ZM36%2C128a92%2C92%2C0%2C1%2C1%2C157.17139%2C64.87207%2C75.616%2C75.616%2C0%2C0%2C0-44.50782-34.04053%2C44%2C44%2C0%2C1%2C0-41.32714%2C0%2C75.61784%2C75.61784%2C0%2C0%2C0-44.50782%2C34.04A91.70755%2C91.70755%2C0%2C0%2C1%2C36%2C128Zm92%2C28a36%2C36%2C0%2C1%2C1%2C36-36A36.04061%2C36.04061%2C0%2C0%2C1%2C128%2C156ZM68.86475%2C198.417a68.01092%2C68.01092%2C0%2C0%2C1%2C118.27.00049%2C91.80393%2C91.80393%2C0%2C0%2C1-118.27-.00049Z%22%2F%3E%3C%2Fsvg%3E")
+				nonotif = false;
 				await startup();
-				await createFile('Downloads/', 'Welcome.txt', 'text', `Welcome to Nova OS! If you are having trouble, kindly tell us in our discord, https://discord.gg/atkqbwEQU8.
-
-Learn how to do things in the NovaOS wiki pages, https://novaos.gitbook.io/main. 
-Browse the most used features at https://novaos.gitbook.io/main/docs/features.
-
-Support NovaOS at https://novaos.gitbook.io/main/how-to/support-novaos`)
-				notify("Welcome to NovaOS, " + CurrentUsername + "!", "We really hope you would enjoy your NovaOS", "NovaOS")
+				let textcontentwelcome = await fetch("appdata/welcome.html");
+				textcontentwelcome = await textcontentwelcome.text();
+				await createFile('Downloads/', 'Welcome.html', 'html', textcontentwelcome)
+				notify("Welcome to NovaOS, " + CurrentUsername + "!", "I really think you'd enjoy it!", "NovaOS")
 				initialization = false;
 			})
 	})
+} async function updateApp(appName, attempt = 1) {
+	try {
+		const filePath = "appdata/" + appName + ".html";
+		const response = await fetch(filePath);
+		if (!response.ok) {
+			throw new Error("Failed to fetch file for " + appName);
+		}
+		const fileContent = await response.text();
+		await createFile("Apps/", toTitleCase(appName), "app", fileContent);
+		return true;
+	} catch (error) {
+		console.error("Error updating " + appName + ":", error.message);
+		if (attempt < maxRetries) {
+			return await updateApp(appName, attempt + 1);
+		} else {
+			console.error("Max retries reached for " + appName + ". Skipping update.");
+			failedApps.push(appName);
+			return false;
+		}
+	}
 }
 async function installdefaultapps() {
+	nonotif = true;
 	gid("edison").showModal();
+	gid("lazarus").showModal()
 	if (gid('startupterms')) {
 		gid('startupterms').innerText = "Just a moment...";
 	}
 	gid("appdmod").close();
-	const maxRetries = 2;
-	async function updateApp(appName, attempt = 1) {
-		try {
-			const filePath = "appdata/" + appName + ".html";
-			const response = await fetch(filePath);
-			if (!response.ok) {
-				throw new Error("Failed to fetch file for " + appName);
-			}
-			const fileContent = await response.text();
-			await createFile("Apps/", toTitleCase(appName), "app", fileContent);
-		} catch (error) {
-			console.error("Error updating " + appName + ":", error.message);
-			if (attempt < maxRetries) {
-				await updateApp(appName, attempt + 1);
-			} else {
-				console.error("Max retries reached for " + appName + ". Skipping update.");
-			}
-		}
-	}
+	setTimeout(() => gid("lazarus").classList.add("closeEffect"), 2700);
+	setTimeout(() => gid("lazarus").close(), 3000);
+
+	const maxRetries = 3;
+	const failedApps = [];
 	async function waitForNonNull() {
 		let result = null;
 		while (result === null) {
 			result = await updateMemoryData();
 			if (result === null) {
-				gid('startupterms').innerText = "Waiting for DB to open..."
+				gid('startupterms').innerText = "Waiting for DB to open...";
 				await new Promise(resolve => setTimeout(resolve, 1000));
 			}
 		}
 		return result;
 	}
+
 	await waitForNonNull().then(async () => {
-		// Update each app sequentially
-		const hangMessages = ["Hang in tight...", "Almost there...", "Just a moment more...", "Patience, young grasshopper..."];
+		const hangMessages = ["Hang in tight...", "Almost there...", "Just a moment more...", "Patience, young grasshopper...", "await fellow padawan...", "Let's see if the stars are with us today...", "what's the meaning of it all...", "just a sec, let me get ready...", "So, what have you been doing lately?", "What are you doing after this?", "Some apps aren't installing, i'm trying again...", "Let's take it slow and precise right?"];
+
+		const interval = setInterval(() => {
+			const randomIndex = Math.floor(Math.random() * hangMessages.length);
+			gid('startupterms').innerText = hangMessages[randomIndex];
+		}, 2500);
+
 		for (let i = 0; i < defAppsList.length; i++) {
-			const appUpdatePromise = await updateApp(defAppsList[i]);
-			let delay = 0;
-			const interval = setInterval(() => {
-				if (delay >= 3000) {
-					gid('startupterms').innerText = hangMessages[(delay / 2000) % hangMessages.length];
-				}
-				delay += 2000;
-			}, 200);
+			await new Promise(res => setTimeout(res, 300));
+			const appName = defAppsList[i];
+			const appUpdatePromise = updateApp(appName);
+
 			await Promise.race([appUpdatePromise, new Promise(res => setTimeout(res, 3000))]);
-			clearInterval(interval);
-			if (gid('startupterms')) {
-				gid('startupterms').innerText = "Installing Apps";
-			}
 			setsrtpprgbr(Math.round((i + 1) / defAppsList.length * 100));
 		}
-		let fetchupdatedata = await fetch("versions.json");
-		if (fetchupdatedata.ok) {
-			let fetchupdatedataver = (await fetchupdatedata.json()).osver;
-			localStorage.setItem("updver", fetchupdatedataver);
-		} else {
-			console.error("Failed to fetch data from the server.");
+		clearInterval(interval);
+
+		if (failedApps.length > 0) {
+			const response = await say(failedApps.length + " apps failed to download. This might be an internet issue, retry?");
+			if (response === "yes" || response === true) {
+				const stillFailed = [];
+				for (let i = 0; i < failedApps.length; i++) {
+					const appName = failedApps[i];
+					const success = await updateApp(appName, 1);
+					if (!success) {
+						stillFailed.push(appName);
+					}
+				}
+				if (stillFailed.length > 0) {
+					console.error("These apps still failed after retry:", stillFailed);
+					await say("Some apps still failed to download: " + stillFailed.join(", "));
+				}
+			}
 		}
+
 		if (!initialization) {
 			closeElementedis();
 		}
-	})
+	});
 }
 async function prepareArrayToSearch() {
 	let arrayToSearch = [];
 	function scanFolder(folderPath, folderContents) {
 		for (let name in folderContents) {
-			let fullPath = `${folderPath}${name}`;
 			let item = folderContents[name];
+			let fullPath = `${folderPath}${name}`;
 			if (item.id) {
-				if (mtpetxt(name) == "app") {
-					name = basename(name)
-				}
-				arrayToSearch.push({ name, id: item.id, type: "file", path: folderPath });
+				let displayName = mtpetxt(name) == "app" ? basename(name) : name;
+				arrayToSearch.push({ name: displayName, id: item.id, type: "file", path: folderPath });
 			} else {
-				arrayToSearch.push({ name: name, type: "folder", path: folderPath });
+				let folderId = folderContents[name]._id || fullPath;
+				arrayToSearch.push({ name, id: folderId, type: "folder", path: fullPath });
 				scanFolder(fullPath, item);
 			}
 		}
 	}
-	for (const folder in memory["root"]) {
-		scanFolder(folder, memory["root"][folder]);
-	}
+	scanFolder("", memory["root"]);
 	fileslist = arrayToSearch;
 }
-async function strtappse(event) {
-	if (fileslist.length === 0) {
-		await prepareArrayToSearch();
-	}
+
+strtappse = debounce(rlstrtappse, 100);
+
+async function rlstrtappse(event) {
+	if (fileslist.length === 0) await prepareArrayToSearch();
 	const searchValue = gid("strtsear").value.toLowerCase().trim();
 	if (searchValue === "") return;
 	const abracadra = await getSetting("smartsearch");
@@ -1163,34 +1358,35 @@ async function strtappse(event) {
 	const itemsWithSimilarity = [];
 	fileslist.forEach(item => {
 		const itemName = item.name.toLowerCase();
-		if (item.type !== "folder") {
-			let similarity = abracadra ? calculateSimilarity(itemName, searchValue) : 0;
-			if (!abracadra && itemName.startsWith(searchValue)) {
-				similarity = 1;
-			}
-			if (similarity > maxSimilarity) {
-				maxSimilarity = similarity;
-				appToOpen = item;
-			}
-			if (similarity >= 0.2) {
-				itemsWithSimilarity.push({ item, similarity });
-			}
+		let similarity = abracadra ? calculateSimilarity(itemName, searchValue) : 0;
+		if (!abracadra && itemName.startsWith(searchValue)) similarity = 1;
+		if (similarity > maxSimilarity) {
+			maxSimilarity = similarity;
+			appToOpen = item;
+		}
+		if (similarity >= 0.2) {
+			itemsWithSimilarity.push({ item, similarity });
 		}
 	});
+
 	if (event.key === "Enter") {
 		event.preventDefault();
 		if (searchValue === "i love nova") {
-			gid("searchwindow").close();
-			notify("Aw i read what you just typed in,", "I love you too! :)", "Nova just replied you:");
-			really = true;
+			closeElementedis(gid("searchwindow"));
+			let x = await ask("What can i call you?");
+			say("i love you too, " + x);
 			return;
 		}
 		if (appToOpen) {
-			console.log(appToOpen);
-			openfile(appToOpen.id);
+			if (appToOpen.type === 'folder') {
+				useHandler('file_manager', { 'opener': 'showDir', 'path': appToOpen.path });
+			} else {
+				openfile(appToOpen.id);
+			}
 		}
 		return;
 	}
+
 	itemsWithSimilarity.sort((a, b) => b.similarity - a.similarity);
 	const groupedResults = itemsWithSimilarity.reduce((acc, { item }) => {
 		const path = item.path || '';
@@ -1201,38 +1397,59 @@ async function strtappse(event) {
 
 	gid("strtappsugs").innerHTML = "";
 	let elements = 0;
-	Object.keys(groupedResults).forEach(path => {
+	for (const path in groupedResults) {
 		const items = groupedResults[path];
-		const pathElement = document.createElement("div");
-		pathElement.innerHTML = `<strong>${path}</strong>`;
-		gid("strtappsugs").appendChild(pathElement);
-		items.forEach(item => {
+		if (path.length > 0) {
+			const pathElement = document.createElement("div");
+			pathElement.innerHTML = `<strong>${path}</strong>`;
+			gid("strtappsugs").appendChild(pathElement);
+		}
+
+		for (const item of items) {
 			if (!mostRelevantItem) mostRelevantItem = item;
 			const newElement = document.createElement("div");
-			newElement.innerHTML = `<div>${appicns[item.id] != undefined ? appicns[item.id] : defaultAppIcon} ${item.name}</div><span class="material-icons" onclick="openfile('${item.id}')">arrow_outward</span>`;
+
+			let icon;
+			if (item.type == "folder") {
+				icon = await getAppIcon('folder');
+				newElement.innerHTML = `<div>${icon} ${item.path}</div><span class="material-symbols-rounded">arrow_outward</span>`;
+				newElement.onclick = () => useHandler('file_manager', { 'opener': 'showDir', 'path': item.path });
+			} else {
+				icon = await getAppIcon(0, item.id);
+				newElement.innerHTML = `<div>${icon} ${item.name}</div><span class="material-symbols-rounded">arrow_outward</span>`;
+				newElement.onclick = () => openfile(item.id);
+			}
+
 			gid("strtappsugs").appendChild(newElement);
 			elements++;
-		});
-	});
-	gid("strtappsugs").style.display = "block";
+		}
+	}
+
+	gid("strtappsugs").style.display = "flex";
 	if (mostRelevantItem) {
 		gid("partrecentapps").style.display = "none";
 		document.getElementsByClassName("previewsside")[0].style.display = "flex";
 		gid("seapppreview").style.display = "block";
-		gid('seprw-icon').innerHTML = appicns[mostRelevantItem.id] != undefined ? appicns[mostRelevantItem.id] : defaultAppIcon;
+		gid('seprw-icon').innerHTML = await getAppIcon(0, mostRelevantItem.id);
 		gid('seprw-appname').innerText = mostRelevantItem.name;
 		gid('seprw-openb').onclick = function () {
-			openfile(mostRelevantItem.id);
+			if (mostRelevantItem.type === 'folder') {
+				useHandler('file_manager', { 'opener': 'showDir', 'path': mostRelevantItem.path });
+			} else {
+				openfile(mostRelevantItem.id);
+			}
 		};
-
 	} else {
 		gid("partrecentapps").style.display = "block";
 		gid("seapppreview").style.display = "none";
 	}
+
 	if (elements == 0) {
-		gid("strtappsugs").innerHTML = `<p style="margin:1rem; opacity: 0.5;">No results</p>`
+		gid("strtappsugs").innerHTML = `<p style="margin:1rem; opacity: 0.5;">No results</p>`;
 	}
+
 }
+
 function calculateSimilarity(string1, string2) {
 	const m = string1.length;
 	const n = string2.length;
@@ -1252,32 +1469,26 @@ function calculateSimilarity(string1, string2) {
 }
 function containsSmallSVGElement(str) {
 	var svgRegex = /^<svg\s*[^>]*>[\s\S]*<\/svg>$/i;
-	return svgRegex.test(str) && str.length <= 5000;
+	if (!svgRegex.test(str) || str.length > 10000) return false;
+
+	var idMap = {};
+	var idRegex = /\bid="([^"]+)"/g;
+	var urlRefRegex = /url\(#([^")]+)\)/g;
+
+	str = str.replace(idRegex, function (match, id) {
+		if (!idMap[id]) {
+			idMap[id] = 'svguid_' + Math.random().toString(36).substr(2, 8);
+		}
+		return `id="${idMap[id]}"`;
+	});
+
+	str = str.replace(urlRefRegex, function (match, id) {
+		return idMap[id] ? `url(#${idMap[id]})` : match;
+	});
+
+	return str;
 }
-var dash = gid("dashboard");
-function dashtoggle() {
-	if (dash.open) {
-		dash.close();
-	} else {
-		dash.showModal();
-	}
-}
-document.addEventListener('click', (event) => {
-	if (event.target === dash) {
-		dash.close();
-	}
-});
-async function dewallblur() {
-	if (!await getSetting("focusMode")) {
-		gid("bgimage").style.filter = "blur(0px)";
-		return;
-	}
-	if (nowapp != "" && nowapp != undefined) {
-		gid("bgimage").style.filter = "blur(5px)";
-	} else {
-		gid("bgimage").style.filter = "blur(0px)";
-	}
-}
+
 let countdown, countdown2;
 function startTimer(minutes) {
 	document.getElementById("sleepbtns").style.display = "none";
@@ -1339,10 +1550,16 @@ function displayTimeLeft(seconds) {
 	document.getElementById('sleeptimer').textContent = display;
 }
 
-function notify(title, description, appname) {
+async function notify(...args) {
+	if (nonotif) { return }
+	let appname = "System";
+	let [title = "Notification", description = "There is a notification", isid] = args;
+	let appID = notificationContext[isid]?.appID;
+	appname = (!(appID == undefined)) ? basename(await getFileNameByID(appID)) : appname;
+
 	if (document.getElementById("notification").style.display == "block") {
 		document.getElementById("notification").style.display = "none";
-		setTimeout(notify(title, description, appname), 500)
+		setTimeout(() => notify(title, description, appname), 2500);
 	}
 	var appnameb = document.getElementById('notifappName');
 	var descb = document.getElementById('notifappDesc');
@@ -1351,12 +1568,13 @@ function notify(title, description, appname) {
 		appnameb.innerText = appname;
 		descb.innerText = description;
 		titleb.innerText = title;
-		const windValues = Object.values(winds).map(Number);
-		// Calculate the maximum value from the array
+		const windValues = Object.values(winds).map(wind => Number(wind.zIndex) || 0);
 		const maxWindValue = Math.max(...windValues);
-		// Set the zIndex
 		document.getElementById("notification").style.zIndex = maxWindValue + 1;
 		document.getElementById("notification").style.display = "block";
+		document.getElementById("notification").onclick = () => {
+			openfile(appID);
+		}
 		setTimeout(function () {
 			document.getElementById("notification").style.display = "none";
 		}, 5000);
@@ -1365,8 +1583,70 @@ function notify(title, description, appname) {
 	}
 	const notificationID = genUID();
 	notifLog[notificationID] = { title, description, appname };
-
+	(isid) ? delete notificationContext[isid] : 0;
 }
+
+let toastInProgress = false;
+let totalDuration = 0;
+const maxToastDuration = 5000;
+let toastQueue = [];
+
+function toast(text, regref, duration = 5000,) {
+	console.log("Toast: ", duration);
+	let displayDuration = Math.min(duration, maxToastDuration);
+
+	if (toastInProgress) {
+		toastQueue.push({ text, duration: displayDuration });
+	} else {
+		totalDuration = displayDuration;
+		toastInProgress = true;
+		displayToast(text, displayDuration, regref);
+	}
+}
+
+function displayToast(text, duration, regref) {
+	console.log("Toast4534: ", regref);
+	var titleb = document.getElementById('toastdivtext');
+	if (titleb) {
+		titleb.innerText = text;
+		(async () => { insertSVG(await getAppIcon(0, notificationContext[regref]?.appID || "info"), document.getElementById('toasticon')); })();
+
+		const windValues = Object.values(winds).map(wind => Number(wind.zIndex) || 0);
+		const maxWindValue = Math.max(...windValues);
+		document.getElementById("toastdiv").style.zIndex = maxWindValue + 2;
+		document.getElementById("toastdiv").classList.add('notifpullanim');
+		document.getElementById("toastdiv").style.display = "block";
+
+		setTimeout(function () {
+			document.getElementById("toastdiv").classList.remove('closeEffect');
+		}, 200);
+
+		document.getElementById("toastdiv").onclick = function () {
+			document.getElementById("toastdiv").classList.add('closeEffect');
+			document.getElementById("toastdiv").style.display = "none";
+			toastInProgress = false;
+			if (toastQueue.length > 0) {
+				const nextToast = toastQueue.shift();
+				displayToast(nextToast.text, nextToast.duration);
+			}
+		};
+
+		setTimeout(function () {
+			document.getElementById("toastdiv").classList.add('closeEffect');
+			setTimeout(function () {
+				document.getElementById("toastdiv").style.display = "none";
+				toastInProgress = false;
+				if (toastQueue.length > 0) {
+					const nextToast = toastQueue.shift();
+					displayToast(nextToast.text, nextToast.duration);
+				}
+			}, 200);
+		}, duration);
+	} else {
+		console.error("DOM elements not found.");
+	}
+}
+
 function displayNotifications(x) {
 	if (x == "clear") {
 		notifLog = {};
@@ -1399,7 +1679,7 @@ function displayNotifications(x) {
 }
 function runAsOSL(content) {
 	const encodedContent = encodeURIComponent(content).replace(/'/g, "%27").replace(/"/g, "%22");
-	const cont = `<iframe class="oslframe" src="https://origin.mistium.com/Versions/originv4.9.2.html?embed=${encodedContent}"></iframe>
+	const cont = `<iframe class="oslframe" src="https://origin.mistium.com/Versions/originv5.5.4?embed=${encodedContent}"></iframe>
 	<style>
 		.oslframe {
 			width: 100%;
@@ -1430,61 +1710,51 @@ function runAsWasm(content) {
 	div.appendChild(script);
 	openwindow("Nova Wasm Runner", div.innerHTML);
 }
-// hotkeys
-document.addEventListener('keydown', function (event) {
-	if (event.ctrlKey && (event.key === 'f' || event.keyCode === 70)) {
+
+(async () => {
+	let appbarelement = document.getElementById("dock");
+	let dropZone = appbarelement;
+	dropZone.addEventListener('dragover', (event) => {
 		event.preventDefault();
-		openapp('files', 1);
-	}
-	if (event.ctrlKey && (event.key === 's')) {
+	});
+	dropZone.addEventListener('drop', async (event) => {
 		event.preventDefault();
-		openapp('settings', 1);
-	}
-});
-document.addEventListener('keydown', function (event) {
-	if (event.key === 'Escape') {
-		var appdmod = document.getElementById('appdmod');
-		if (appdmod && appdmod.open) {
-			appdmod.close();
+		const unid = event.dataTransfer.getData("Text");
+		await moveFileToFolder(unid, "Dock/");
+		genTaskBar();
+	});
+	dropZone.addEventListener('dragend', (event) => {
+		event.preventDefault();
+	});
+})();
+
+async function realgenTaskBar() {
+	gid("dock").style.display = "none";
+	gid("novanav").style.display = "grid";
+
+	// nav theme
+	try {
+
+		var NovNavCtrl = await getSetting("NovNavCtrl")
+		if (NovNavCtrl.bg) {
+			gid("novanav").style.backgroundColor = "transparent";
+		} else {
+			gid("novanav").style.backgroundColor = "var(--col-bg1)";
 		}
-	}
-});
-document.addEventListener('keydown', function (event) {
-	if (event.ctrlKey && event.key === '/') {
-		event.preventDefault();
-		opensearchpanel();
-	}
-});
-document.addEventListener('keydown', function (event) {
-	if (event.ctrlKey && event.key === ' ') {
-		event.preventDefault();
-		openn();
-	}
-});
-async function genTaskBar() {
-	gid("novanav").style.display = "none";
-	var appbarelement = document.getElementById("dock")
+
+		gid("novanav").style.justifyContent = NovNavCtrl.align;
+	} catch (e) { }
+
+	var appbarelement = document.getElementById("dock");
 	appbarelement.innerHTML = "<span class='taskbarloader' id='taskbarloaderprime'></span>";
 	if (appbarelement) {
 		try {
-			let dropZone = appbarelement;
-			dropZone.addEventListener('dragover', (event) => {
-				event.preventDefault();
-			});
-			dropZone.addEventListener('drop', async (event) => {
-				event.preventDefault();
-				const unid = event.dataTransfer.getData("Text");
-				await moveFileToFolder(unid, "Dock/");
-				genTaskBar();
-			});
-			dropZone.addEventListener('dragend', (event) => {
-				event.preventDefault();
-			});
+
 			let x = await getFileNamesByFolder("Dock");
 			if (Array.isArray(x) && x.length === 0) {
 				const y = await getFileNamesByFolder("Apps");
 				x = (await Promise.all(
-					(window.innerWidth <= 500) ?
+					('ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0) ?
 						y.filter(item =>
 							item.name === "Files.app"
 						)
@@ -1498,18 +1768,18 @@ async function genTaskBar() {
 				)).filter(Boolean);
 			}
 			x.forEach(async function (app, index) {
-				index++
+				index++;
 				var islnk = false;
+
 				var appShortcutDiv = document.createElement("biv");
 				appShortcutDiv.setAttribute("draggable", true);
 				appShortcutDiv.setAttribute("ondragstart", "dragfl(event, this)");
 				appShortcutDiv.setAttribute("unid", app.id || '');
-				appShortcutDiv.className = "app-shortcut tooltip adock sizableuielement";
+				appShortcutDiv.className = "app-shortcut ctxAvail tooltip adock sizableuielement";
 
 				let lnkappidcatched = app.id;
-				app = await getFileById(app.id)
-				if (mtpetxt(app.fileName) == "lnk") {
-					// LNK file usage
+				if (mtpetxt(app.name) == "lnk") {
+					app = await getFileById(app.id);
 					let z = JSON.parse(decodeBase64Content(app.content));
 					app = await getFileById(z.open);
 					if (!app) {
@@ -1520,26 +1790,125 @@ async function genTaskBar() {
 					}
 					islnk = true;
 				}
-				appShortcutDiv.addEventListener("click", () => openfile(app.id));
 
 				var iconSpan = document.createElement("span");
-				iconSpan.innerHTML = await getAppIcon(0, app.id, 0);
+				iconSpan.classList.add("appicnspan");
+
 				var tooltisp = document.createElement("span");
 				tooltisp.className = "tooltiptext";
-				tooltisp.innerHTML = islnk ? basename(app.fileName) + `*` : basename(app.fileName);
+				tooltisp.innerHTML = islnk ? basename(app.name) + `*` : basename(app.name);
 				appShortcutDiv.appendChild(iconSpan);
 				appShortcutDiv.appendChild(tooltisp);
 				appbarelement.appendChild(appShortcutDiv);
+
+				if (!app.id) {
+					let folderName = app.name;
+					await getAppIcon('folder')
+						.then(icon => iconSpan.innerHTML = icon)
+						.catch(error => console.error(error));
+					appShortcutDiv.addEventListener("click", async () => {
+
+						let filesInFolder = await getFileNamesByFolder(`Dock/${folderName}`);
+						console.log(45, filesInFolder, folderName)
+						let appIds = filesInFolder.map(file => file.id);
+						appGroupModal(folderName, appIds);
+					});
+				} else {
+					await getAppIcon(0, app.id, 0)
+						.then(icon => iconSpan.innerHTML = icon)
+						.catch(error => console.error(error));
+					appShortcutDiv.addEventListener("click", () => openfile(app.id));
+				}
+
 			});
-		} catch (err) { }
-		gid("novanav").style.display = "grid";
+			gid("dock").style.display = "flex";
+
+		} catch (err) {
+			console.log(err)
+		}
 		document.querySelector('#taskbarloaderprime').remove();
 	}
 }
-makedialogclosable('searchwindow');
-prepareArrayToSearch()
-async function opensearchpanel(preset = "") {
 
+(async () => {
+	let dropZone = document.getElementById("desktop");
+	dropZone.addEventListener('dragover', (event) => {
+		event.preventDefault();
+	});
+	dropZone.addEventListener('drop', async (event) => {
+		event.preventDefault();
+		const unid = event.dataTransfer.getData("Text");
+		await moveFileToFolder(unid, "Desktop/");
+		genDesktop()
+	});
+	dropZone.addEventListener('dragend', (event) => {
+		event.preventDefault();
+	});
+})();
+
+async function realgenDesktop() {
+	gid("desktop").innerHTML = ``;
+	let x;
+	try {
+		let y = await getFileNamesByFolder("Desktop");
+
+		y.forEach(async function (app) {
+			var appShortcutDiv = document.createElement("div");
+			appShortcutDiv.className = "app-shortcut ctxAvail sizableuielement";
+			appShortcutDiv.setAttribute("unid", app.id || '');
+			app = await getFileById(app.id);
+			let islnk = false;
+			if (mtpetxt(app.fileName) == "lnk") {
+				let z = JSON.parse(decodeBase64Content(app.content));
+				app = await getFileById(z.open);
+				islnk = true;
+			}
+			appShortcutDiv.setAttribute("draggable", true);
+			appShortcutDiv.setAttribute("ondragstart", "dragfl(event, this)");
+			appShortcutDiv.addEventListener("click", () => openfile(app.id));
+			appShortcutDiv.setAttribute("unid", app.id);
+			var iconSpan = document.createElement("span");
+
+			iconSpan.classList.add("appicnspan");
+			getAppIcon(app.content, app.id).then((icon) => {
+				iconSpan.innerHTML = `${icon}`;
+			})
+			var nameSpan = document.createElement("span");
+			nameSpan.className = "appname";
+			nameSpan.textContent = islnk ? basename(app.fileName) + `*` : basename(app.fileName);
+			appShortcutDiv.appendChild(iconSpan);
+			appShortcutDiv.appendChild(nameSpan);
+			gid("desktop").appendChild(appShortcutDiv);
+		});
+		renderWall();
+	} catch (error) {
+		console.error(error)
+	}
+
+}
+
+async function renderWall() {
+	let x = await getSetting("wall");
+	if (x != undefined && x != '' && x != ' ') {
+		let unshrinkbsfX;
+		if (x.startsWith("http")) {
+			unshrinkbsfX = x;
+		} else {
+			unshrinkbsfX = await getFileById(x);
+			unshrinkbsfX = unshrinkbsfX.content;
+		}
+		setbgimagetourl(unshrinkbsfX);
+	}
+	document.getElementById("bgimage").onerror = async function (event) {
+		toast("It doesn't seem to work as the wallpaper...")
+		setbgimagetourl(novaFeaturedImage);
+		if (await getSetting("wall")) {
+			remSettingKey("wall");
+		}
+	};
+}
+
+async function opensearchpanel(preset = "") {
 	gid("seapppreview").style.display = "none";
 	if (appsHistory.length > 0) {
 		gid("partrecentapps").style.display = "block";
@@ -1548,14 +1917,17 @@ async function opensearchpanel(preset = "") {
 		document.querySelector(".previewsside").style.display = "none";
 	}
 	if (await getSetting("smartsearch")) {
-		gid('searchiconthingy').style = `background: linear-gradient(-34deg, #79afff, #f66eff);opacity: 1; color: white;padding: 0.1rem 0.3rem; margin: 0.3rem; border-radius: 0.5rem;aspect-ratio: 1 / 1;display: grid;cursor: default; margin-right: 0.5rem;box-shadow: 0 0 6px inset #ffffff6b;`
+		gid('searchiconthingy').setAttribute("type", "smart")
 	} else {
-		gid('searchiconthingy').style = ``;
+		gid('searchiconthingy').setAttribute("type", "regular")
 	}
 	if (window.innerWidth > 500) {
 		gid("strtsear").focus()
 	}
-	gid("strtsear").value = preset;
+	if (typeof preset === "string") {
+		gid("strtsear").value = preset;
+	}
+
 	loadrecentapps();
 	displayNotifications();
 	gid('searchwindow').showModal();
@@ -1575,9 +1947,7 @@ function mtpetxt(str) {
 function closeallwindows() {
 	Object.keys(winds).forEach(key => {
 		const taskId = key.slice(-12);
-		const taskName = key.slice(0, -12);
-		clwin("window" + taskId);
-		delete winds[taskName + taskId];
+		clwin(taskId);
 	});
 	gid("closeallwinsbtn").checked = true;
 }
@@ -1585,94 +1955,21 @@ async function checkifpassright() {
 	lethalpasswordtimes = true;
 	var trypass = gid("loginform1").value;
 	if (await checkPassword(trypass)) {
-		gid('loginmod').close();
 		password = trypass;
 		lethalpasswordtimes = false;
 		startup();
 	} else {
 		gid("loginform1").classList.add("thatsnotrightcls");
-		gid("loginform1").value = '';
 		setTimeout(function () {
 			gid("loginform1").classList.remove("thatsnotrightcls");
 		}, 1000)
 	}
+	gid("loginform1").value = '';
 }
-var chat;
-function resetchat() {
-	chat = [{ "role": "system", "content": "You are NovaOS Copilot Assistant. NovaOS is a web OS that lets your run html apps and manage a local filesystem. You cannot use newlines (\n)" }];
-}
-resetchat()
-const nvacopilot = {
-	message: function (content, role) {
-		const messagesContainer = document.getElementById("nvacoplt-messages");
-		const messageDiv = document.createElement("div");
-		messageDiv.classList.add("usermsg");
-		if (role === "bot") {
-			messageDiv.classList.add("bot");
-		}
-		const navDiv = document.createElement("div");
-		navDiv.classList.add("usermsg-nav");
-		const icon = document.createElement("i");
-		icon.classList.add("material-icons");
-		icon.textContent = role === "bot" ? "auto_awesome" : "account_circle";
-		navDiv.appendChild(icon);
-		const contentDiv = document.createElement("div");
-		contentDiv.classList.add("usermsg-content");
-		contentDiv.innerHTML = markdownToHTML(content);
-		messageDiv.appendChild(navDiv);
-		messageDiv.appendChild(contentDiv);
-		messagesContainer.appendChild(messageDiv);
-		messagesContainer.scrollTop = messagesContainer.scrollHeight;
-	}
-};
-
-nvacopilot.message("Hi there!", "user");
-nvacopilot.message("Hello! How can I help you today?", "bot");
-const sendMessage = () => {
-	const messageInput = document.getElementById("nvacoplt-msginput");
-	const messageContent = messageInput.value.trim();
-	if (!messageContent) return;
-	chat.push({ "role": "user", "content": messageContent });
-	nvacopilot.message(messageContent, "user");
-	messageInput.value = "";
-	const payload = {
-		messages: chat,
-		model: 'novaOS'
-	};
-
-	fetch('https://api.milosantos.com/v1/chat/completions', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			"Authorization": "Bearer ml_rulKTOnMNP5dT4ieX4CqyWhS"
-		},
-		body: JSON.stringify(payload),
-	})
-		.then(response => response.json())
-		.then(data => {
-			console.log(data);
-			const responseMessage = data.choices[0].message.content;
-			chat.push({ "role": "assistant", "content": responseMessage });
-			nvacopilot.message(responseMessage, "bot");
-			if (responseMessage.includes("simply") || (responseMessage.includes("can") && (responseMessage.includes("by")))) {
-				nvacopilot.message("<small>Be aware following my instructions, i may make mistakes.</small>", "bot");
-			}
-		})
-		.catch(error => {
-			console.error('Error:', error);
-			const errorMessage = 'Sorry, we are unable to provide this service at the moment.';
-			chat.push({ "role": "assistant", "content": errorMessage });
-			nvacopilot.message(errorMessage, "bot");
-		});
-};
-
-document.getElementById("nvacoplt-msginput").addEventListener("keypress", e => {
-	if (e.key === "Enter") sendMessage();
-});
-document.querySelector(".nvacoplt-sndbtn").addEventListener("click", sendMessage);
 async function logoutofnova() {
 	await cleanupram();
 	await showloginmod();
+	removeTheme();
 	loginscreenbackbtn();
 	console.log("logged out of " + CurrentUsername);
 	CurrentUsername = null;
@@ -1681,32 +1978,271 @@ async function cleanupram() {
 	closeallwindows();
 	document.querySelectorAll('dialog[open].onramcloseable').forEach(dialog => dialog.close());
 	memory = null;
-	contentpool = null;
 	CurrentUsername = null;
 	password = 'nova';
-	winds = [];
-	windowData = {};
+	winds = {};
 	MemoryTimeCache = null;
 	lethalpasswordtimes = true;
 	dbCache = null;
 	cryptoKeyCache = null;
+	fileTypeAssociations = {};
+	handlers = {};
 }
 async function setandinitnewuser() {
 	gid("edison").showModal()
 	await cleanupram();
 	CurrentUsername = await ask("Enter a username:", "");
-	await initialiseOS();
+	await initializeOS();
 	gid('loginmod').close();
 }
 async function novarefresh() {
-	dod();
+	genDesktop();
 	genTaskBar();
 	cleanupInvalidAssociations();
 	checkdmode();
 	loadtaskspanel()
 	loadrecentapps();
+	sessionSettingsLoaded = false;
+	loadSessionSettings();
 }
 function launchbios() {
 	document.getElementById('novasetupusernamedisplay').innerText = CurrentUsername;
 	document.getElementById('bios').showModal();
+}
+function domLoad_checkedgecases() {
+	const request = indexedDB.deleteDatabase('trojencat');
+
+	let existed = false;
+
+	request.onblocked = function () { };
+
+	request.onsuccess = function (event) {
+		if (event.oldVersion > 0) existed = true;
+		if (existed) location.reload();
+	};
+
+	request.onerror = function () {
+		console.error('Failed to delete database trojencat');
+	};
+}
+document.addEventListener("DOMContentLoaded", async function () {
+	sysLog("DOM", "Loaded");
+	domLoad_checkedgecases()
+
+	genTaskBar = debounce(realgenTaskBar, 500);
+	genDesktop = debounce(realgenDesktop, 500);
+
+	const searchInput5342 = document.querySelector('#novamenusearchinp');
+	let keyHeld = false;
+
+	searchInput5342.addEventListener('keydown', () => {
+		keyHeld = true;
+	});
+
+	searchInput5342.addEventListener('keyup', (e) => {
+		if (keyHeld) {
+			keyHeld = false;
+			opensearchpanel(searchInput5342.value);
+			gid('appdmod').close();
+			searchInput5342.value = "";
+		}
+	});
+	const scriptSources = [
+		"scripts/fflate.js",
+		"scripts/encdec.js",
+		"scripts/kernel.js",
+		"scripts/rotur.js",
+		"scripts/ctxmenu.js",
+		"scripts/edgecases.js",
+		"scripts/dompurify.js",
+		"scripts/scripties.js",
+		"scripts/windman.js",
+		"scripts/ntx.js"
+	];
+
+	const loadScripts = async () => {
+		let prog = 10;
+		setsrtpprgbr(prog);
+		const increment = 40 / scriptSources.length;
+
+		for (const src of scriptSources) {
+			await new Promise((resolve, reject) => {
+				const script = document.createElement('script');
+				script.src = src;
+				script.onload = resolve;
+				script.onerror = reject;
+				document.body.appendChild(script);
+			});
+			prog += increment;
+			setsrtpprgbr(prog);
+		}
+
+		setsrtpprgbr(40);
+	};
+
+	await loadScripts();
+
+	setbgimagetourl(novaFeaturedImage);
+
+	gid("nowrunninapps").style.display = "none";
+	gid('seprw-openb').onclick = function () {
+		gid('searchside').style.flexGrow = 1;
+	}
+
+	function startfunctions() {
+		try {
+			updateBattery();
+			navigator.getBattery().then(function (battery) {
+				battery.addEventListener('levelchange', updateBattery);
+			});
+		} catch (e) { }
+
+		makedialogclosable('appdmod');
+
+		// hotkeys
+		document.addEventListener('keydown', function (event) {
+			if (event.ctrlKey && (event.key === 'f' || event.keyCode === 70)) {
+				event.preventDefault();
+				openapp('files', 1);
+			}
+			if (event.ctrlKey && (event.key === 's')) {
+				event.preventDefault();
+				openapp('settings', 1);
+			}
+		});
+		document.addEventListener('keydown', function (event) {
+			if (event.key === 'Escape') {
+				var appdmod = document.getElementById('appdmod');
+				if (appdmod && appdmod.open) {
+					appdmod.close();
+				}
+			}
+		});
+		document.addEventListener('keydown', function (event) {
+			if (event.ctrlKey && event.key === '/') {
+				event.preventDefault();
+				opensearchpanel();
+			}
+		});
+		document.addEventListener('keydown', function (event) {
+			if (event.ctrlKey && event.key === ' ') {
+				event.preventDefault();
+				openn();
+			}
+		});
+
+		makedialogclosable('searchwindow');
+		prepareArrayToSearch();
+
+		onstartup.push(async () => {
+			if (!location.href.startsWith('http://127.0.0.1') && location.origin != 'https://adthoughtsglobal.github.io') {
+				say("You are on an <b style='color:red;'>unsafe</b> copy of NovaOS. Do not use this.", "failed");
+			}
+			edgecases();
+
+			if (detectIE()) {
+				issues = `<li><b>HTMLDialogElement Not supported: </b> We have taken some efforts to fix this for you.</li>
+				<li><b>Internet explorer detected: </b> i dunno what to say ;-;</li>`;
+				say(cantusetext + issues + caniuse2 + `<br><b>Anyway, it is so interesting why you still use explorer.</b>`, "failed");
+				badlaunch = true;
+			}
+		});
+	}
+
+	startfunctions();
+	gid("novanav").style.display = "none";
+	async function waitForNonNull() {
+		const startTime = Date.now();
+		const maxWaitTime = 2000;
+		while (Date.now() - startTime < maxWaitTime) {
+			const result = await updateMemoryData();
+			if (result !== null) {
+				return result;
+			}
+			await new Promise(resolve => setTimeout(resolve, 100));
+		}
+		return null;
+	}
+	waitForNonNull().then(async (result) => {
+		await checkAndRunFromURL();
+		gid('startupterms').innerHTML = "<span>Checking database...</span>";
+		try {
+			if (result || result == 3) {
+				await showloginmod();
+			} else {
+				await cleanupram();
+				CurrentUsername = 'Admin';
+				await initializeOS();
+			}
+		} catch (error) {
+			console.error('Error in database operations:', error);
+		}
+	});
+
+	var bgImage = document.getElementById("bgimage");
+	bgImage.addEventListener("click", function () {
+		nowapp = '';
+	});
+});
+
+async function appGroupModal(name, list) {
+	const modal = gid("appgrpmodal");
+	const listElement = gid("appgrp_list");
+	const heading = gid("appgrp_name");
+
+	listElement.innerHTML = '';
+
+	if (name) {
+		heading.innerText = name;
+		heading.style.display = "block";
+	} else {
+		heading.style.display = "none";
+	}
+
+	if (list) {
+		modal.showModal();
+	}
+
+	list.forEach(async (appid) => {
+		let app = await getFileById(appid, "fileName");
+
+		var appShortcutDiv = document.createElement("div");
+		appShortcutDiv.className = "app-shortcut sizableuielement";
+		appShortcutDiv.setAttribute("unid", app.id || '');
+		appShortcutDiv.dataset.appId = app.id;
+		appShortcutDiv.addEventListener("click", () => openfile(app.id));
+
+		var iconSpan = document.createElement("span");
+		iconSpan.classList.add("appicnspan");
+		iconSpan.innerHTML = "<span class='taskbarloader'></span>";
+		getAppIcon(false, app.id).then((appIcon) => {
+			iconSpan.innerHTML = appIcon;
+		});
+
+		function getapnme(x) {
+			return x.split(".")[0];
+		}
+
+		var nameSpan = document.createElement("span");
+		nameSpan.className = "appname";
+		nameSpan.textContent = getapnme(app.fileName);
+
+		appShortcutDiv.appendChild(iconSpan);
+		appShortcutDiv.appendChild(nameSpan);
+
+		listElement.appendChild(appShortcutDiv);
+	})
+}
+
+function setTitle(windowID, title) {
+	if (typeof title !== "string") {
+		console.error("Title must be a string.");
+		return;
+	}
+	const element = document.getElementById("window" + windowID + "titlespan");
+	if (element) {
+		element.innerText = title;
+	} else {
+		console.warn("Title element not found in the DOM.");
+	}
 }

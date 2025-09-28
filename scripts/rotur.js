@@ -1,176 +1,15 @@
-MD5 = function (e) {
-  function h(a, b) {
-    var c, d, e, f, g;
-    e = a & 2147483648;
-    f = b & 2147483648;
-    c = a & 1073741824;
-    d = b & 1073741824;
-    g = (a & 1073741823) + (b & 1073741823);
-    return c & d
-      ? g ^ 2147483648 ^ e ^ f
-      : c | d
-        ? g & 1073741824
-          ? g ^ 3221225472 ^ e ^ f
-          : g ^ 1073741824 ^ e ^ f
-        : g ^ e ^ f;
-  }
+// Name: Rotur.js
+// Author: Mistium
+// Description: Utilise rotur in your projects
 
-  function k(a, b, c, d, e, f, g) {
-    a = h(a, h(h((b & c) | (~b & d), e), g));
-    return h((a << f) | (a >>> (32 - f)), b);
-  }
-
-  function l(a, b, c, d, e, f, g) {
-    a = h(a, h(h((b & d) | (c & ~d), e), g));
-    return h((a << f) | (a >>> (32 - f)), b);
-  }
-
-  function m(a, b, d, c, e, f, g) {
-    a = h(a, h(h(b ^ d ^ c, e), g));
-    return h((a << f) | (a >>> (32 - f)), b);
-  }
-
-  function n(a, b, d, c, e, f, g) {
-    a = h(a, h(h(d ^ (b | ~c), e), g));
-    return h((a << f) | (a >>> (32 - f)), b);
-  }
-
-  function p(a) {
-    var b = "",
-      d = "",
-      c;
-    for (c = 0; 3 >= c; c++)
-      (d = (a >>> (8 * c)) & 255),
-        (d = "0" + d.toString(16)),
-        (b += d.substr(d.length - 2, 2));
-    return b;
-  }
-  var f = [],
-    q,
-    r,
-    s,
-    t,
-    a,
-    b,
-    c,
-    d;
-  e = (function (a) {
-    a = a.replace(/\r\n/g, "\n");
-    for (var b = "", d = 0; d < a.length; d++) {
-      var c = a.charCodeAt(d);
-      128 > c
-        ? (b += String.fromCharCode(c))
-        : (127 < c && 2048 > c
-          ? (b += String.fromCharCode((c >> 6) | 192))
-          : ((b += String.fromCharCode((c >> 12) | 224)),
-            (b += String.fromCharCode(((c >> 6) & 63) | 128))),
-          (b += String.fromCharCode((c & 63) | 128)));
-    }
-    return b;
-  })(e);
-  f = (function (b) {
-    var a,
-      c = b.length;
-    a = c + 8;
-    for (
-      var d = 16 * ((a - (a % 64)) / 64 + 1), e = Array(d - 1), f = 0, g = 0;
-      g < c;
-
-    )
-      (a = (g - (g % 4)) / 4),
-        (f = (g % 4) * 8),
-        (e[a] |= b.charCodeAt(g) << f),
-        g++;
-    a = (g - (g % 4)) / 4;
-    e[a] |= 128 << ((g % 4) * 8);
-    e[d - 2] = c << 3;
-    e[d - 1] = c >>> 29;
-    return e;
-  })(e);
-  a = 1732584193;
-  b = 4023233417;
-  c = 2562383102;
-  d = 271733878;
-  for (e = 0; e < f.length; e += 16)
-    (q = a),
-      (r = b),
-      (s = c),
-      (t = d),
-      (a = k(a, b, c, d, f[e + 0], 7, 3614090360)),
-      (d = k(d, a, b, c, f[e + 1], 12, 3905402710)),
-      (c = k(c, d, a, b, f[e + 2], 17, 606105819)),
-      (b = k(b, c, d, a, f[e + 3], 22, 3250441966)),
-      (a = k(a, b, c, d, f[e + 4], 7, 4118548399)),
-      (d = k(d, a, b, c, f[e + 5], 12, 1200080426)),
-      (c = k(c, d, a, b, f[e + 6], 17, 2821735955)),
-      (b = k(b, c, d, a, f[e + 7], 22, 4249261313)),
-      (a = k(a, b, c, d, f[e + 8], 7, 1770035416)),
-      (d = k(d, a, b, c, f[e + 9], 12, 2336552879)),
-      (c = k(c, d, a, b, f[e + 10], 17, 4294925233)),
-      (b = k(b, c, d, a, f[e + 11], 22, 2304563134)),
-      (a = k(a, b, c, d, f[e + 12], 7, 1804603682)),
-      (d = k(d, a, b, c, f[e + 13], 12, 4254626195)),
-      (c = k(c, d, a, b, f[e + 14], 17, 2792965006)),
-      (b = k(b, c, d, a, f[e + 15], 22, 1236535329)),
-      (a = l(a, b, c, d, f[e + 1], 5, 4129170786)),
-      (d = l(d, a, b, c, f[e + 6], 9, 3225465664)),
-      (c = l(c, d, a, b, f[e + 11], 14, 643717713)),
-      (b = l(b, c, d, a, f[e + 0], 20, 3921069994)),
-      (a = l(a, b, c, d, f[e + 5], 5, 3593408605)),
-      (d = l(d, a, b, c, f[e + 10], 9, 38016083)),
-      (c = l(c, d, a, b, f[e + 15], 14, 3634488961)),
-      (b = l(b, c, d, a, f[e + 4], 20, 3889429448)),
-      (a = l(a, b, c, d, f[e + 9], 5, 568446438)),
-      (d = l(d, a, b, c, f[e + 14], 9, 3275163606)),
-      (c = l(c, d, a, b, f[e + 3], 14, 4107603335)),
-      (b = l(b, c, d, a, f[e + 8], 20, 1163531501)),
-      (a = l(a, b, c, d, f[e + 13], 5, 2850285829)),
-      (d = l(d, a, b, c, f[e + 2], 9, 4243563512)),
-      (c = l(c, d, a, b, f[e + 7], 14, 1735328473)),
-      (b = l(b, c, d, a, f[e + 12], 20, 2368359562)),
-      (a = m(a, b, c, d, f[e + 5], 4, 4294588738)),
-      (d = m(d, a, b, c, f[e + 8], 11, 2272392833)),
-      (c = m(c, d, a, b, f[e + 11], 16, 1839030562)),
-      (b = m(b, c, d, a, f[e + 14], 23, 4259657740)),
-      (a = m(a, b, c, d, f[e + 1], 4, 2763975236)),
-      (d = m(d, a, b, c, f[e + 4], 11, 1272893353)),
-      (c = m(c, d, a, b, f[e + 7], 16, 4139469664)),
-      (b = m(b, c, d, a, f[e + 10], 23, 3200236656)),
-      (a = m(a, b, c, d, f[e + 13], 4, 681279174)),
-      (d = m(d, a, b, c, f[e + 0], 11, 3936430074)),
-      (c = m(c, d, a, b, f[e + 3], 16, 3572445317)),
-      (b = m(b, c, d, a, f[e + 6], 23, 76029189)),
-      (a = m(a, b, c, d, f[e + 9], 4, 3654602809)),
-      (d = m(d, a, b, c, f[e + 12], 11, 3873151461)),
-      (c = m(c, d, a, b, f[e + 15], 16, 530742520)),
-      (b = m(b, c, d, a, f[e + 2], 23, 3299628645)),
-      (a = n(a, b, c, d, f[e + 0], 6, 4096336452)),
-      (d = n(d, a, b, c, f[e + 7], 10, 1126891415)),
-      (c = n(c, d, a, b, f[e + 14], 15, 2878612391)),
-      (b = n(b, c, d, a, f[e + 5], 21, 4237533241)),
-      (a = n(a, b, c, d, f[e + 12], 6, 1700485571)),
-      (d = n(d, a, b, c, f[e + 3], 10, 2399980690)),
-      (c = n(c, d, a, b, f[e + 10], 15, 4293915773)),
-      (b = n(b, c, d, a, f[e + 1], 21, 2240044497)),
-      (a = n(a, b, c, d, f[e + 8], 6, 1873313359)),
-      (d = n(d, a, b, c, f[e + 15], 10, 4264355552)),
-      (c = n(c, d, a, b, f[e + 6], 15, 2734768916)),
-      (b = n(b, c, d, a, f[e + 13], 21, 1309151649)),
-      (a = n(a, b, c, d, f[e + 4], 6, 4149444226)),
-      (d = n(d, a, b, c, f[e + 11], 10, 3174756917)),
-      (c = n(c, d, a, b, f[e + 2], 15, 718787259)),
-      (b = n(b, c, d, a, f[e + 9], 21, 3951481745)),
-      (a = h(a, q)),
-      (b = h(b, r)),
-      (c = h(c, s)),
-      (d = h(d, t));
-  return (p(a) + p(b) + p(c) + p(d)).toLowerCase();
-};
+// License: MPL-2.0
+// This Source Code is subject to the terms of the Mozilla Public License, v2.0,
+// If a copy of the MPL was not distributed with this file,
+// Then you can obtain one at https://mozilla.org/MPL/2.0/
 
 randomString = function (length) {
   var result = "";
-  var characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   var charactersLength = characters.length;
   for (var i = 0; i < length; i++) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
@@ -183,7 +22,8 @@ function wsClose() {
 }
 
 class RoturExtension {
-  constructor() {
+  constructor(runtime) {
+    this.runtime = runtime;
     this.ws = null;
     this.client = {};
     this.packets = {};
@@ -206,17 +46,15 @@ class RoturExtension {
     this.lastJoined = "";
     this.lastLeft = "";
 
-    this.version = 5;
+    this.version = 7;
     this.outdated = false;
 
-    try {
+    this.callJson = {};
+
     fetch("https://raw.githubusercontent.com/Mistium/Origin-OS/main/Resources/info.json")
       .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error('Network response was not ok');
-        }
+        if (response.ok) return response.json();
+        else throw new Error('Network response was not ok');
       })
       .then((data) => {
         this.accounts = data.name;
@@ -229,35 +67,17 @@ class RoturExtension {
 
     this._initializeBadges(); // Start fetching badges
 
-
-    if (typeof window.scaffolding !== "object") {
-      fetch("https://raw.githubusercontent.com/RoturTW/main/main/Implementations/SCRATCH/version.txt")
-        .then((response) => {
-          if (response.ok) {
-            return response.text();
-          } else {
-            throw new Error('Network response was not ok');
-          }
-        })
-        .then((data) => {
-          this.outdated = this.version < parseInt(data)
-        })
-    }
-  } catch (e) {
-    return e;
-  }
   }
 
   async _initializeBadges() {
-    await this._getBadges();
+    await this._getBadges(); // Wait for the fetch operation to complete
   }
 
   async _getBadges() {
     try {
       const response = await fetch("https://raw.githubusercontent.com/RoturTW/Badges/main/badges.json");
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
+      if (!response.ok) throw new Error('Network response was not ok');
+
       const data = await response.json();
       this.badges = data;
     } catch (error) {
@@ -265,36 +85,31 @@ class RoturExtension {
     }
   }
 
-  // buttons
-  openItemsDocs() {
-    window.open("https://github.com/RoturTW/main/wiki/Items")
-  }
-
-  openAccountDocs() {
-    window.open("https://github.com/RoturTW/main/wiki/Account-Keys")
-  }
-
-  openMailDocs() {
-    window.open("https://github.com/RoturTW/main/wiki/Rmail")
-  }
-
-  openFriendsDocs() {
-    window.open("https://github.com/RoturTW/main/wiki/Friends")
-  }
-
-  openStorageDocs() {
-    window.open("https://github.com/RoturTW/main/wiki/Data-Storage")
-  }
-
-  openCurrencyDocs() {
-    window.open("https://github.com/RoturTW/main/wiki/Currency")
-  }
-
-  openBadgesDocs() {
-    window.open("https://github.com/RoturTW/main/wiki/Badges")
+  openUpdate() {
+    window.open("https://extensions.mistium.com/featured/rotur.js");
   }
 
   // main functions
+
+  handlePromise(message, funcmain) {
+    const cmd = message?.val?.command;
+    return new Promise((resolve, reject) => {
+      this.ws.send(
+        JSON.stringify(message),
+      );
+
+      const func = (event) => {
+        const packet = JSON.parse(event.data);
+        if (packet?.origin?.username === this.accounts) {
+          if (cmd && packet?.val?.source_command === cmd) {
+            funcmain(packet, resolve, reject);
+            this.ws.removeEventListener("message", func);
+          }
+        }
+      }
+      this.ws.addEventListener("message", func);
+    });
+  }
 
   connectToServer(args) {
     if (!this.server || !this.accounts) {
@@ -302,9 +117,9 @@ class RoturExtension {
       setTimeout(() => {
         this.connectToServer(args);
       }, 1000);
-      return true;
+      return;
     }
-    if (this.ws) { wsClose; }
+    if (this.ws) { this.disconnect(); }
     this.designation = args.DESIGNATION;
     this.username = randomString(32);
     this.my_client = {
@@ -319,11 +134,8 @@ class RoturExtension {
     for (let key in this.packets) {
       ports.push(key);
     }
-    if (ports.length === 0) {
-      return ["No Open Ports"];
-    } else {
-      return ports;
-    }
+    if (ports.length === 0) return ["No Open Ports"];
+    else return ports;
   }
 
   accountKeys() {
@@ -331,58 +143,50 @@ class RoturExtension {
     for (let key of Object.keys(this.user)) {
       keys.push(key);
     }
-    if (keys.length === 0) {
-      return ["No User Keys"];
-    } else {
-      return keys;
-    }
+    if (!keys || keys.length === 0) return ["No User Keys"];
+    else return keys;
   }
 
   myFriends() {
-    if (this.authenticated && this.is_connected) {
-      let keys = [];
-      for (let key of this.user["sys.friends"]) {
-        keys.push(key);
+    if (!(this.authenticated && this.is_connected)) return ["Not Authenticated"];
+    let keys = this.user["sys.friends"];
+    if (typeof keys === "string") {
+      try {
+        keys = JSON.parse(keys);
+      } catch (e) {
+        console.error("Failed to parse friends list:", e);
+        return ["Invalid Friends List"];
       }
-      if (keys.length === 0) {
-        return ["No Friends"];
-      } else {
-        return keys;
-      }
-    } else {
-      return ["Not Authenticated"];
     }
+    if (!keys || keys.length === 0) return ["No Friends"];
+    else return keys;
   }
 
   myRequests() {
-    if (this.authenticated && this.is_connected) {
-      let keys = [];
-      for (let key of this.user["sys.requests"]) {
-        keys.push(key);
+    if (!(this.authenticated && this.is_connected)) return ["Not Authenticated"];
+    let keys = this.user["sys.requests"];
+    if (typeof keys === "string") {
+      try {
+        keys = JSON.parse(keys);
+      } catch (e) {
+        console.error("Failed to parse requests list:", e);
+        return ["Invalid Requests List"];
       }
-      if (keys.length === 0) {
-        return ["No Requests"];
-      } else {
-        return keys;
-      }
-    } else {
-      return ["Not Authenticated"];
     }
+    if (!keys || keys.length === 0) return ["No Requests"];
+    else return keys;
   }
 
   serverOnline() {
-    if (!this.is_connected) {
-      return false;
-    }
+    if (!this.is_connected) return false;
     return this.client.users.indexOf(this.accounts) !== -1;
   }
 
   connectToWebsocket() {
-    try {
-      this.ws = new WebSocket(this.server);
-    } catch (e) {
-      return e;
-    }
+
+    if (this.ws) this.disconnect();
+
+    this.ws = new WebSocket(this.server);
     this.ws.onopen = () => {
       this.sendHandshake();
 
@@ -390,16 +194,19 @@ class RoturExtension {
         let packet = JSON.parse(event.data);
         if (packet.cmd == "client_ip") {
           this.client.ip = packet.val;
-        } else if (packet.cmd == "client_obj") {
+        } else if (packet.cmd == "statuscode" && typeof (packet.val) === "object") {
+          this.client = Object.assign(this.client, packet.val);
           this.client.username = packet.val.username;
         } else if (packet.cmd == "ulist") {
           if (packet.mode == "add") {
             this.client.users.push(packet.val.username);
+            roturTWEventCall("roturEXT_onJoin");
             this.lastJoined = packet.val;
           } else if (packet.mode == "remove") {
             this.client.users = this.client.users.filter(
               (user) => user != packet.val.username,
             );
+            roturTWEventCall("roturEXT_onLeave");
             this.lastLeft = packet.val;
           } else if (packet.mode == "set") {
             this.client.users = [];
@@ -422,34 +229,82 @@ class RoturExtension {
             delete packet.val.source_command;
           }
           if (packet.origin === this.accounts) {
-            if (packet.source_command === "omail_received") {
-            } else if (packet.source_command === "account_update") {
-              if (packet.payload.key === "sys.requests") {
-                if (packet.payload.value.length > this.friends.requests.length) {
-                } else {
+            switch (packet.source_command) {
+              case "call":
+                if (packet.val.payload === "request") {
+                  this.callJson = packet.val;
+                  roturTWEventCall("roturEXT_whenCallReceived");
                 }
-              }
-              if (packet.payload.key === "sys.currency") {
-              }
-              this.user[packet.payload.key] = packet.payload.value;
+                break;
+              case "omail_received":
+                roturTWEventCall("roturEXT_whenMailReceived");
+                break;
+              case "account_update":
+                roturTWEventCall("roturEXT_whenAccountUpdate");
+                if (packet.payload.key === "sys.requests") {
+                  if (packet.payload.value.length > this.friends.requests.length) {
+                    roturTWEventCall("roturEXT_whenFriendRequestReceived");
+                  } else {
+                    roturTWEventCall("roturEXT_whenFriendRequestAccepted");
+                  }
+                }
+                if (packet.payload.key === "sys.currency") {
+                  roturTWEventCall("roturEXT_whenBalanceChanged");
+                }
+                this.user[packet.payload.key] = packet.payload.value;
+                break;
+              case "sync_set":
+                this.syncedVariables[packet.origin] ||= {};
+                this.syncedVariables[packet.origin][packet.payload.key] = packet.payload.value;
+                break;
+              case "sync_delete":
+                delete this.syncedVariables[packet.origin][packet.payload.key];
+                break;
+              case "sync_get":
+                if (this.syncedVariables[packet.origin]) {
+                  if (this.syncedVariables[packet.origin][packet.payload.key]) {
+                    packet.val = this.syncedVariables[packet.origin][packet.payload.key];
+                  } else {
+                    packet.val = null;
+                  }
+                }
+                break;
+              case "omail_received":
+                roturTWEventCall("roturEXT_whenMailReceived");
+                break;
+              case "account_update":
+                roturTWEventCall("roturEXT_whenAccountUpdate");
+                if (packet.payload.key === "sys.requests") {
+                  if (packet.payload.value.length > this.friends.requests.length) {
+                    roturTWEventCall("roturEXT_whenFriendRequestReceived");
+                  } else {
+                    roturTWEventCall("roturEXT_whenFriendRequestAccepted");
+                  }
+                }
+                if (packet.payload.key === "sys.currency") {
+                  roturTWEventCall("roturEXT_whenBalanceChanged");
+                }
             }
+            this.user[packet.payload.key] = packet.payload.value;
           } else {
-            if (packet.source_command === "sync_set") {
-              if (!this.syncedVariables[packet.origin]) {
-                this.syncedVariables[packet.origin] = {};
-              }
-              this.syncedVariables[packet.origin][packet.payload.key] = packet.payload.value;
+            console.log(packet);
+            if (packet.val && packet.val.target) {
+              this.packets[packet.val.target] ??= [];
+              this.packets[packet.val.target].push(packet);
+              roturTWEventCall("roturEXT_whenMessageReceived");
+              delete packet.val;
             }
-            if (packet.source_command === "sync_delete") {
-              delete this.syncedVariables[packet.origin][packet.payload.key];
-            }
-            if (!this.packets[packet.val.target]) {
-              this.packets[packet.val.target] = [];
-            }
-            this.packets[packet.val.target].push(packet);
-            delete packet.val;
+          }
+        } else {
+          if (packet.source_command === "sync_set") {
+            this.syncedVariables[packet.origin] ||= {};
+            this.syncedVariables[packet.origin][packet.payload.key] = packet.payload.value;
+          }
+          if (packet.source_command === "sync_delete") {
+            delete this.syncedVariables[packet.origin][packet.payload.key];
           }
         }
+
         if (packet.listener === "handshake_cfg") {
           let username = this.designation + "-" + this.username;
           let msg = {
@@ -461,7 +316,7 @@ class RoturExtension {
           this.ws.send(JSON.stringify(msg));
         }
         if (packet.listener == "set_username_cfg") {
-          this.client.username = this.designation + "-" + this.username;
+          this.client.username = this.username;
           let room = "roturTW";
           let msg = {
             cmd: "link",
@@ -471,21 +326,29 @@ class RoturExtension {
 
           this.ws.send(JSON.stringify(msg));
         }
-        if (packet.listener == "link_cfg") {
-          this.client.room = packet.val;
-          this.is_connected = true;
-          console.log("Connected!");
-          eventBusWorker.deliver({
-            "type": "rotur",
-            "event": "connected",
-            "key": "connected"
-          });
+        if (packet.cmd === "roomlist") {
+          this.client.room = packet.val[0];
         }
-      };
+        if (packet.listener == "link_cfg" && !this.is_connected) {
+          this.is_connected = true;
+          roturTWEventCall("roturEXT_whenConnected");
+
+        }
+      }
     };
+
     this.ws.onclose = () => {
       console.log("Disconnected!");
+      roturTWEventCall("roturEXT_whenDisconnected");
       this.is_connected = false;
+
+      // Log out locally when disconnected
+      if (this.authenticated) {
+        this.authenticated = false;
+        this.userToken = "";
+        this.user = {};
+        console.log("Logged out due to disconnection");
+      }
     };
   }
 
@@ -508,6 +371,7 @@ class RoturExtension {
   disconnect() {
     if (this.ws) {
       this.ws.close();
+      this.ws = null;
     }
   }
 
@@ -520,180 +384,150 @@ class RoturExtension {
   }
 
   firstLogin() {
-    return this.first_login;
+    return false;
   }
 
-  login(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (this.authenticated) {
-      return "Already Logged In";
-    }
-    return new Promise((resolve, reject) => {
+  login_prompt({ STYLE_URL }) {
+    if (!this.is_connected) { console.error("Not Connected"); return; }
+    if (this.authenticated) { console.error("Already Logged In"); return; }
+
+    const e = document.createElement("iframe");
+    e.id = "rotur-auth";
+    e.src = `https://rotur.dev/auth?styles=${encodeURIComponent(STYLE_URL)}`;
+    Object.assign(e.style, {
+      width: "70%",
+      height: "80%",
+      border: "none",
+      pointerEvents: "auto",
+      position: "absolute",
+      top: "10%",
+      right: "14.5%",
+      border: "var(--box-crisp)",
+      borderRadius: "1em",
+      zIndex: 999
+    });
+
+    document.body.appendChild(e);
+
+    const _roturAuthHandler = (a) => {
+      console.log("Rotur Auth Message Received", a);
+      if ("https://rotur.dev" === a.origin && "rotur-auth-token" === a.data?.type) {
+        t.remove()
+        window.removeEventListener("message", _roturAuthHandler);
+        this.loginToken({ TOKEN: a.data.token });
+        setSetting("roturLink", JSON.stringify({
+          "type": "token",
+          "token": a.data.token
+        }));
+      }
+    };
+
+    window.addEventListener("message", _roturAuthHandler);
+    return "Auth window opened";
+  }
+
+  login() { }
+  loginMd5() { }
+
+  loginToken(args) {
+    return this._loginWithToken(args.TOKEN);
+  }
+
+  async _loginWithToken(token) {
+    if (!this.is_connected) return "Not Connected";
+    if (this.authenticated) return "Already Logged In";
+
+    try {
+      const response = await fetch(`https://social.rotur.dev/get_user?auth=${encodeURIComponent(token)}`);
+
+      if (!response.ok) throw new Error(`Authentication failed: ${response.status}`);
+
+      const packet = await response.json();
+
+      this.userToken = packet.key || token;
+      this.user = { ...packet };
+
+      delete this.user.key;
+      delete this.user.password;
+
+      this.friends = {};
+
+      // Handle if the user has no friends :P
+      if (!this.user["sys.friends"]) this.user["sys.friends"] = [];
+      if (!this.user["sys.requests"]) this.user["sys.requests"] = [];
+
+      this.friends.list = this.user["sys.friends"];
+      this.friends.requests = this.user["sys.requests"];
+
+      delete this.user["sys.friends"];
+      delete this.user["sys.requests"];
+
+      this.username = this.designation + "-" + this.user.username + "Â§" + randomString(10);
+
       this.ws.send(
         JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            ip: this.client.ip,
-            client: this.my_client,
-            command: "login",
-            id: this.userToken,
-            payload: [args.USERNAME, MD5("" + args.PASSWORD)],
-          },
-          id: this.accounts,
-        }),
+          cmd: "setid",
+          val: this.username,
+          listener: "set_username_cfg",
+        })
       );
 
-      const handleLoginResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val?.source_command === "login") {
-            if (typeof packet.val?.payload === "object") {
-              this.ws.close();
-              this.userToken = packet.val.token;
-              this.user = packet.val.payload;
-              this.first_login = packet.val.first_login;
+      this.my_client.username = this.username;
+      this.authenticated = true;
 
-              delete packet.val
-              delete this.user.key
-              delete this.user.password
 
-              // friends data
-              this.friends = {};
-              // handle if the user has no friends :P
-              if (!this.user["sys.friends"]) this.user["sys.friends"] = [];
-              if (!this.user["sys.requests"]) this.user["sys.requests"] = [];
+      this.ws.send(
+        JSON.stringify({
+          cmd: "auth",
+          val: this.userToken
+        })
+      );
+      roturTWEventCall("roturEXT_whenAuthenticated");
 
-              this.friends.list = this.user["sys.friends"];
-              this.friends.requests = this.user["sys.requests"];
-              delete this.user.friends;
-              delete this.user.requests;
+      return `Logged in as ${this.user.username}`;
 
-              // setup username for reconnect
-              this.username = args.USERNAME + "§" + randomString(10);
-              this.connectToWebsocket();
-              while (!this.is_connected) { }
-              this.authenticated = true;
-              resolve(`Logged in as ${args.USERNAME}`);
-            } else {
-              this.authenticated = false;
-              reject(`Failed to login as ${args.USERNAME}`);
-            }
-            this.ws.removeEventListener("message", handleLoginResponse);
-          }
-        }
-      };
-
-      this.ws.addEventListener("message", handleLoginResponse);
-    });
+    } catch (error) {
+      this.authenticated = false;
+      throw new Error(`Failed to login: ${error.message}`);
+    }
   }
 
   register(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (this.authenticated) {
-      return "Already Logged In";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            client: this.my_client,
-            command: "new_account",
-            id: this.userToken,
-            ip: this.client.ip,
-            payload: {
-              username: args.USERNAME,
-              password: MD5("" + args.PASSWORD),
-            },
-          },
-          id: this.accounts,
-        }),
-      );
-
-      const handleRegisterResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin.username === this.accounts) {
-          if (packet.val?.source_command === "new_account") {
-            if (packet.val?.payload === "Account Created Successfully") {
-              resolve(`Registered as ${args.USERNAME}`);
-            } else {
-              reject(
-                `Failed to register as ${args.USERNAME}: ${packet.val.payload}`,
-              );
-            }
-            this.ws.removeEventListener("message", handleRegisterResponse);
-          }
-        }
-      };
-
-      this.ws.addEventListener("message", handleRegisterResponse);
-    });
+    if (!this.is_connected) return "Not Connected";
+    if (this.authenticated) return "Already Logged In";
+    return
   }
 
   deleteAccount() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    if (!confirm(`Are You Sure You Want To Delete ${this.client.username}? Everything will be lost!`)) {
-      return "Cancelled";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            client: this.my_client,
-            command: "delete_account",
-            id: this.userToken,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
+    if (!confirm(`Are You Sure You Want To Delete ${this.client.username}? Everything will be lost!`)) return "Cancelled";
 
-      const handleDeleteAccountResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin.username === this.accounts) {
-          if (packet.val?.source_command === "delete") {
-            if (packet.val.payload === "Account Deleted Successfully") {
-              this.userToken = "";
-              this.user = {};
-              this.authenticated = false;
-              this.ws.close();
-              resolve("Account Deleted Successfully");
-            } else {
-              reject("Failed to delete account: " + packet.val.payload);
-            }
-            this.ws.removeEventListener("message", handleDeleteAccountResponse);
-          }
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        client: this.my_client,
+        command: "delete_account",
+        id: ":3",
+      },
+      id: this.accounts,
+    }, (packet, resolve, reject) => {
+      if (packet.val?.source_command === "delete") {
+        if (packet.val.payload === "Account Deleted Successfully") {
+          this.userToken = "";
+          this.user = {};
+          this.authenticated = false;
+          this.ws.close();
+          resolve("Account Deleted Successfully");
+        } else {
+          reject("Failed to delete account: " + packet.val.payload);
         }
-      };
-
-      this.ws.addEventListener("message", handleDeleteAccountResponse);
+      }
     });
   }
 
   logout() {
-    if (!this.is_connected) {
-      return;
-    }
-    this.ws.send(
-      JSON.stringify({
-        cmd: "pmsg",
-        val: {
-          command: "logout",
-          client: this.my_client,
-          id: this.userToken,
-        },
-        id: this.accounts,
-      }),
-    );
+    if (!this.is_connected) return;
     this.authenticated = false;
     this.userToken = "";
     this.user = {};
@@ -705,12 +539,8 @@ class RoturExtension {
   }
 
   getkey(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
     if (args.KEY in this.user) {
       let keyData = this.user[args.KEY];
       if (typeof keyData === "object") {
@@ -724,137 +554,82 @@ class RoturExtension {
   }
 
   setkey(args) {
-    if (args.VALUE.length > 1000) {
-      // this is server side, removing this does nothing other than make the server reject the request
-      return "Key Too Long, Limit is 1000 Characters";
-    }
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    return new Promise((resolve) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "update",
-            client: this.my_client,
-            id: this.userToken,
-            payload: [args.KEY, args.VALUE],
-          },
-          id: this.accounts,
-        }),
-      );
+    // this is server side, removing this does nothing other than make the server reject the request
+    if (args.VALUE.length > 1000) return "Key Too Long, Limit is 1000 Characters";
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
 
-      const handleUpdateKeyResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin.username === this.accounts) {
-          if (packet.val?.source_command === "update") {
-            if (packet.val.payload === "Account Updated Successfully") {
-              this.user[args.KEY] = args.VALUE;
-            }
-            resolve(packet.val.payload);
-            this.ws.removeEventListener("message", handleUpdateKeyResponse);
-          }
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        command: "update",
+        client: this.my_client,
+        id: ":3",
+        payload: [args.KEY, args.VALUE],
+      },
+      id: this.accounts,
+    },
+      (packet, resolve) => {
+        if (packet.val.payload === "Account Updated Successfully") {
+          this.user[args.KEY] = args.VALUE;
         }
-      };
-
-      this.ws.addEventListener("message", handleUpdateKeyResponse);
-    });
+        resolve(packet.val.payload);
+      });
   }
 
   keyExists(args) {
-    if (!this.is_connected) {
-      return false;
-    }
-    if (!this.authenticated) {
-      return false;
-    }
+    if (!this.is_connected) return false;
+    if (!this.authenticated) return false;
     return args.KEY in this.user;
   }
 
   getkeys() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
     return JSON.stringify(Object.keys(this.user));
   }
 
   getvalues() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
     return JSON.stringify(Object.values(this.user));
   }
 
   getAccount() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
     return JSON.stringify(this.user);
   }
 
   setStorageID(args) {
-    if (this.authenticated && this.is_connected) {
-      if (!this.storage_id) {
-        if (
-          window.confirm(
-            "This project would like to use the storage id: " +
-            args.ID +
-            ". Do you want to continue?",
-          )
-        ) {
-          new Promise((resolve, reject) => {
-            this.ws.send(
-              JSON.stringify({
-                cmd: "pmsg",
-                val: {
-                  command: "storage_getid",
-                  client: this.my_client,
-                  id: this.userToken,
-                  payload: args.ID,
-                },
-                id: this.accounts,
-              }),
-            );
-
-            const handleStorageIdSet = (event) => {
-              let packet = JSON.parse(event.data);
-              if (packet?.origin?.username === this.accounts) {
-                if (packet.val.source_command === "storage_getid") {
-                  if (packet.val.payload !== "Not Logged In") {
-                    resolve("" + args.ID);
-                    this.storage_id = "" + args.ID;
-                    this.localKeys = JSON.parse(packet.val.payload);
-                  } else {
-                    console.error(
-                      "Failed to set storage id: " + packet.val.payload,
-                    );
-                    reject(packet.val.payload);
-                  }
-                  this.ws.removeEventListener("message", handleStorageIdSet);
-                }
-              }
-            };
-            this.ws.addEventListener("message", handleStorageIdSet);
-          });
-        }
-      } else {
-        console.error("Unable to set the storage ID: Already Set");
-      }
-    } else {
+    if (!(this.authenticated && this.is_connected)) {
       console.error("Unable to set the storage ID: Not Logged In");
+      return;
+    }
+    if (this.storage_id) {
+      console.error("Unable to set the storage ID: Already Set");
+      return;
+    }
+    if (window.confirm("This project would like to use the storage id: " + args.ID + ". Do you want to continue?")) {
+      this.handlePromise({
+        cmd: "pmsg",
+        val: {
+          command: "storage_getid",
+          client: this.my_client,
+          id: ":3",
+          payload: args.ID,
+        },
+        id: this.accounts,
+      }, (packet, resolve, reject) => {
+        if (packet.val.payload !== "Not Logged In") {
+          resolve("" + args.ID);
+          this.storage_id = "" + args.ID;
+          this.localKeys = JSON.parse(packet.val.payload);
+        } else {
+          console.error("Failed to set storage id: " + packet.val.payload);
+          reject(packet.val.payload);
+        }
+      });
     }
   }
 
@@ -867,168 +642,121 @@ class RoturExtension {
   }
 
   getStorageKey(args) {
-    if (this.authenticated && this.is_connected) {
-      if (this.storage_id) {
-        return this.localKeys[args.KEY] ?? "";
-      } else {
-        return "Storage Id Not Set";
-      }
-    } else {
+    if (!(this.authenticated && this.is_connected)) {
       return "Not Logged In";
+    } else if (!this.storage_id) {
+      return "Storage Id Not Set";
+    } else {
+      return this.localKeys[args.KEY] ?? "";
     }
   }
 
   setStorageKey(args) {
-    if (args.VALUE.length > 1000) {
-      // this is server side too, removing this does nothing other than make the server reject the request
-      return "Key Too Long, Limit is 1000 Characters";
-    }
-    if (this.authenticated && this.is_connected) {
-      if (this.storage_id) {
-        this.localKeys[args.KEY] = args.VALUE;
-        return new Promise((resolve, reject) => {
-          this.ws.send(
-            JSON.stringify({
-              cmd: "pmsg",
-              val: {
-                command: "storage_set",
-                id: this.userToken,
-                client: this.my_client,
-                payload: {
-                  key: args.KEY,
-                  value: args.VALUE,
-                  id: this.storage_id,
-                },
-              },
-              id: this.accounts,
-            }),
-          );
+    // this is server side, removing this does nothing other than make the server reject the request
+    if (args.VALUE.length > 1000) return "Key Too Long, Limit is 1000 Characters";
 
-          const handleStorageKey = (event) => {
-            let packet = JSON.parse(event.data);
-            if (packet?.origin.username === this.accounts) {
-              if (packet.val.source_command === "storage_set") {
-                if (packet.val.payload === "Successfully Set Key") {
-                  resolve("Key Set");
-                } else {
-                  reject(packet.val.payload);
-                }
-                this.ws.removeEventListener("message", handleStorageKey);
-              }
-            }
-          };
-          this.ws.addEventListener("message", handleStorageKey);
-        });
+    if (!(this.authenticated && this.is_connected)) return "Not Logged In";
+    if (!this.storage_id) return "Storage Id Not Set";
+
+    this.localKeys[args.KEY] = args.VALUE;
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        command: "storage_set",
+        id: ":3",
+        client: this.my_client,
+        payload: {
+          key: args.KEY,
+          value: args.VALUE,
+          id: this.storage_id,
+        }
+      },
+      id: this.accounts
+    }, (packet, resolve, reject) => {
+      if (packet.val.payload === "Successfully Set Key") {
+        resolve("Key Set");
       } else {
-        return "Storage Id Not Set";
+        reject(packet.val.payload);
       }
-    } else {
-      return "Not Logged In";
-    }
+    });
   }
 
   existsStorageKey(args) {
-    if (this.authenticated && this.is_connected) {
-      if (this.storage_id) {
-        return args.KEY in this.localKeys;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
-    }
+    if (!(this.authenticated && this.is_connected) || !this.storage_id) return false;
+    return args.KEY in this.localKeys;
   }
 
   deleteStorageKey(args) {
-    if (this.authenticated && this.is_connected) {
-      if (this.storage_id) {
-        delete this.localKeys[args.KEY];
-        return new Promise((resolve, reject) => {
-          this.ws.send(
-            JSON.stringify({
-              cmd: "pmsg",
-              val: {
-                command: "storage_delete",
-                id: this.userToken,
-                client: this.my_client,
-                payload: {
-                  key: args.KEY,
-                  id: this.storage_id,
-                },
-              },
-              id: this.accounts,
-            }),
-          );
+    if (!(this.authenticated && this.is_connected)) return "Not Logged In";
+    if (!this.storage_id) return "Storage Id Not Set";
 
-          const handleStorageKey = (event) => {
-            let packet = JSON.parse(event.data);
-            if (packet?.origin?.username === this.accounts) {
-              if (packet.val.source_command === "storage_delete") {
-                if (packet.val.payload === "Successfully Deleted Key") {
-                  resolve("Key Deleted");
-                } else {
-                  reject(packet.val.payload);
-                }
-                this.ws.removeEventListener("message", handleStorageKey);
-              }
-            }
-          };
-          this.ws.addEventListener("message", handleStorageKey);
-        });
+    delete this.localKeys[args.KEY];
+
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        command: "storage_delete",
+        id: ":3",
+        client: this.my_client,
+        payload: {
+          key: args.KEY,
+          id: this.storage_id,
+        },
+      },
+      id: this.accounts,
+    }, (packet, resolve, reject) => {
+      if (packet.val.payload === "Successfully Deleted Key") {
+        resolve("Key Deleted");
       } else {
-        console.error("Storage Id Not Set");
+        reject(packet.val.payload);
       }
-    } else {
-      console.error("Not Logged In");
-    }
+    });
   }
 
   getStorageKeys() {
-    if (this.authenticated && this.is_connected) {
-      if (this.storage_id) {
-        return JSON.stringify(Object.keys(this.localKeys));
-      } else {
-        return "Storage Id Not Set";
-      }
-    } else {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
+    if (!this.storage_id) return "Storage Id Not Set";
+    return JSON.stringify(Object.keys(this.localKeys));
   }
 
   getStorageValues() {
-    if (this.authenticated && this.is_connected) {
-      if (this.storage_id) {
-        return JSON.stringify(Object.values(this.localKeys));
-      } else {
-        return "Storage Id Not Set";
-      }
-    } else {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
+    if (!this.storage_id) return "Storage Id Not Set";
+    return JSON.stringify(Object.values(this.localKeys));
   }
 
   clearStorage() {
-    if (this.authenticated && this.is_connected) {
-      if (this.storage_id) {
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
+    if (!this.storage_id) return "Storage Id Not Set";
+
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        command: "storage_clear",
+        id: ":3",
+        client: this.my_client,
+        payload: this.storage_id
+      },
+      id: this.accounts
+    }, (packet, resolve, reject) => {
+      if (packet.val.payload === "Successfully Cleared Storage") {
         this.localKeys = {};
+        resolve("Storage Cleared");
       } else {
-        console.error("Storage Id Not Set");
+        reject(packet.val.payload);
       }
-    } else {
-      console.error("Not Logged In");
-    }
+    });
   }
 
   storageUsage() {
-    if (this.authenticated && this.is_connected) {
-      if (this.storage_id) {
-        return JSON.stringify(JSON.stringify(this.localKeys).length);
-      } else {
-        return "Storage Id Not Set";
-      }
-    } else {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
+    if (!this.storage_id) return "Storage Id Not Set";
+
+    return JSON.stringify(this.localKeys).length + "";
   }
 
   storageLimit() {
@@ -1036,49 +764,32 @@ class RoturExtension {
   }
 
   storageRemaining() {
-    if (this.authenticated && this.is_connected) {
-      if (this.storage_id) {
-        return 50000 - JSON.stringify(this.localKeys).length + "";
-      } else {
-        return "Storage Id Not Set";
-      }
-    } else {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
+    if (!this.storage_id) return "Storage Id Not Set";
+
+    return (50000 - JSON.stringify(this.localKeys).length) + "";
   }
 
   accountStorageUsage() {
-    if (this.authenticated && this.is_connected) {
-      return new Promise((resolve, reject) => {
-        this.ws.send(
-          JSON.stringify({
-            cmd: "pmsg",
-            val: {
-              command: "storage_usage",
-              client: this.my_client,
-              id: this.userToken,
-            },
-            id: this.accounts,
-          }),
-        );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
 
-        const handleStorageKey = (event) => {
-          let packet = JSON.parse(event.data);
-          if (packet?.origin?.username === this.accounts) {
-            if (packet.val.source_command === "storage_usage") {
-              if (packet.val.payload === "Not Logged In") {
-                reject("Not Logged In");
-              } else {
-                resolve(packet.val.payload);
-              }
-              this.ws.removeEventListener("message", handleStorageKey);
-            }
-          }
-        };
-        this.ws.addEventListener("message", handleStorageKey);
-      });
-    }
-    return "Not Logged In";
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        command: "storage_usage",
+        client: this.my_client,
+        id: ":3"
+      },
+      id: this.accounts
+    }, (packet, resolve, reject) => {
+      if (packet.val.payload === "Not Logged In") {
+        reject("Not Logged In");
+      } else {
+        resolve(packet.val.payload);
+      }
+    });
   }
 
   accountStorageLimit() {
@@ -1086,37 +797,24 @@ class RoturExtension {
   }
 
   accountStorageRemaining() {
-    if (this.authenticated && this.is_connected) {
-      return new Promise((resolve, reject) => {
-        this.ws.send(
-          JSON.stringify({
-            cmd: "pmsg",
-            val: {
-              command: "storage_usage",
-              client: this.my_client,
-              id: this.userToken,
-            },
-            id: this.accounts,
-          }),
-        );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
 
-        const handleStorageKey = (event) => {
-          let packet = JSON.parse(event.data);
-          if (packet?.origin?.username === this.accounts) {
-            if (packet.val.source_command === "storage_usage") {
-              if (packet.val.payload === "Not Logged In") {
-                reject("Not Logged In");
-              } else {
-                resolve(1000000 - Number(packet.val.payload));
-              }
-              this.ws.removeEventListener("message", handleStorageKey);
-            }
-          }
-        };
-        this.ws.addEventListener("message", handleStorageKey);
-      });
-    }
-    return "Not Logged In";
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        command: "storage_usage",
+        client: this.my_client,
+        id: ":3"
+      },
+      id: this.accounts
+    }, (packet, resolve, reject) => {
+      if (packet.val.payload === "Not Logged In") {
+        reject("Not Logged In");
+      } else {
+        resolve(1000000 - Number(packet.val.payload));
+      }
+    });
   }
 
   sendMessage(args) {
@@ -1161,7 +859,7 @@ class RoturExtension {
         return this.packets[args.TARGET]?.[0]?.origin || "";
       case "client":
         return (
-          this.packets[args.TARGET]?.[0]?.client ||
+          JSON.stringify(this.packets[args.TARGET]?.[0]?.client) ||
           '{"system":"Unknown", "version":"Unknown"}'
         );
       case "source port":
@@ -1201,30 +899,27 @@ class RoturExtension {
   }
 
   clientIP() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
+    if (!this.is_connected) return "Not Connected";
     return this.client.ip;
   }
 
   clientUsername() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
+    if (!this.is_connected) return "Not Connected";
     return this.client.username;
   }
 
+  getClient() {
+    if (!this.is_connected) return "Not Connected";
+    return JSON.stringify(this.client);
+  }
+
   clientUsers() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
+    if (!this.is_connected) return "Not Connected";
     return JSON.stringify(this.client.users);
   }
 
   getUserDesignation(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
+    if (!this.is_connected) return "Not Connected";
     return JSON.stringify(
       this.client.users.filter((user) =>
         user.startsWith(args.DESIGNATION + "-"),
@@ -1233,32 +928,22 @@ class RoturExtension {
   }
 
   usernameConnected(args) {
-    if (!this.is_connected) {
-      return false;
-    }
-    if (!this.authenticated) {
-      return false;
-    }
-    let regexp = new RegExp('(?<=")[a-zA-Z]{3}-' + args.USER + '§\\S{10}(?=")', "gi");
+    if (!this.is_connected) return false;
+    if (!this.authenticated) return false;
+    let regexp = new RegExp('(?<=")[a-zA-Z]{3}-' + args.USER + 'Â§\\S{10}(?=")', "gi");
     return JSON.stringify(this.client.users).match(regexp) !== null;
   }
 
   userConnected(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (args.DESIGNATION.length !== 3) {
-      return "Invalid Designation";
-    }
-    let regexp = new RegExp('(?<=")' + args.DESIGNATION + '-' + args.USER + '§\\S{10}(?=")', "gi");
+    if (!this.is_connected) return "Not Connected";
+    if (args.DESIGNATION.length !== 3) return "Invalid Designation";
+    let regexp = new RegExp('(?<=")' + args.DESIGNATION + '-' + args.USER + 'Â§\\S{10}(?=")', "gi");
     return JSON.stringify(this.client.users).match(regexp) !== null;
   }
 
   findID(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    let regexp = new RegExp('[a-zA-Z]{3}-' + args.USER + '§\\S{10}', "gi");
+    if (!this.is_connected) return "Not Connected";
+    let regexp = new RegExp('[a-zA-Z]{3}-' + args.USER + 'Â§\\S{10}', "gi");
     return JSON.stringify(
       this.client.users.filter((user) => user.match(regexp) !== null),
     );
@@ -1269,7 +954,7 @@ class RoturExtension {
   }
 
   RAWgetFirstPacket() {
-    return JSON.stringify(this.packetQueue[0] || "{}");
+    return JSON.stringify(this.packetQueue[0] || {});
   }
 
   RAWdeleteFirstPacket() {
@@ -1289,12 +974,8 @@ class RoturExtension {
   }
 
   setSyncedVariable(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
     this.ws.send(
       JSON.stringify({
         cmd: "pmsg",
@@ -1309,29 +990,19 @@ class RoturExtension {
         id: args.USER,
       }),
     )
-    if (!this.syncedVariables[args.USER]) {
-      this.syncedVariables[args.USER] = {};
-    }
+    this.syncedVariables[args.USER] ||= {};
     this.syncedVariables[args.USER][args.KEY] = args.VALUE;
   }
 
   getSyncedVariable(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
     return JSON.stringify(this.syncedVariables[args.USER][args.KEY] || "");
   }
 
   deleteSyncedVariable(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
     this.ws.send(
       JSON.stringify({
         cmd: "pmsg",
@@ -1349,416 +1020,230 @@ class RoturExtension {
   }
 
   getSyncedVariables(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
     return JSON.stringify(this.syncedVariables[args.USER] || {});
   }
 
   sendMail(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "omail_send",
-            client: this.my_client,
-            id: this.userToken,
-            payload: {
-              title: args.SUBJECT,
-              body: args.MESSAGE,
-              recipient: args.TO,
-            },
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
 
-      const handleSendMailResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val.source_command === "omail_send") {
-            if (packet.val.payload === "Successfully Sent Omail") {
-              resolve(`Mail sent to ${args.TO}`);
-            } else {
-              reject(
-                `Failed to send mail to ${args.TO}: ${packet.val.payload}`,
-              );
-            }
-            this.ws.removeEventListener("message", handleSendMailResponse);
-          }
-        }
-      };
-
-      this.ws.addEventListener("message", handleSendMailResponse);
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        command: "omail_send",
+        client: this.my_client,
+        id: ":3",
+        payload: {
+          title: args.SUBJECT,
+          body: args.MESSAGE,
+          recipient: args.TO,
+        },
+      },
+      id: this.accounts,
+    }, (packet, resolve, reject) => {
+      if (packet.val.payload === "Successfully Sent Omail") {
+        resolve(`Mail sent to ${args.TO}`);
+      } else {
+        reject(`Failed to send mail to ${args.TO}: ${packet.val.payload}`);
+      }
     });
   }
 
   getAllMail() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "omail_getinfo",
-            client: this.my_client,
-            id: this.userToken,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
 
-      const handleGetAllMailResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val.source_command === "omail_getinfo") {
-            resolve(JSON.stringify(packet.val.payload));
-            this.ws.removeEventListener("message", handleGetAllMailResponse);
-          } else {
-            reject("Failed to get all mail");
-          }
-        }
-      };
-
-      this.ws.addEventListener("message", handleGetAllMailResponse);
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        command: "omail_getinfo",
+        client: this.my_client,
+        id: ":3",
+      },
+      id: this.accounts,
+    }, (packet, resolve) => {
+      resolve(JSON.stringify(packet.val.payload));
     });
   }
 
   getMail(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "omail_getid",
-            client: this.my_client,
-            payload: args.ID,
-            id: this.userToken,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
 
-      const handleGetMailResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val?.source_command === "omail_getid") {
-            if (packet.val?.payload[0] === args.ID) {
-              resolve(JSON.stringify(packet.val?.payload[1]));
-            } else {
-              reject(`Failed to get mail with ID: ${args.ID}`);
-            }
-            this.ws.removeEventListener("message", handleGetMailResponse);
-          }
-        }
-      };
-
-      this.ws.addEventListener("message", handleGetMailResponse);
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        command: "omail_getid",
+        client: this.my_client,
+        payload: args.ID,
+        id: ":3",
+      },
+      id: this.accounts,
+    }, (packet, resolve, reject) => {
+      if (packet.val?.payload[0] === args.ID) {
+        resolve(JSON.stringify(packet.val.payload[1]));
+      } else {
+        reject(`Failed to get mail with ID: ${args.ID}`);
+      }
     });
   }
 
   deleteMail(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "omail_delete",
-            client: this.my_client,
-            payload: args.ID,
-            id: this.userToken,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
 
-      const handleDeleteMailResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin.username === this.accounts) {
-          if (packet.val.source_command === "omail_delete") {
-            if (packet.val.payload === "Deleted Successfully") {
-              resolve(`Mail with ID ${args.ID} deleted`);
-            } else {
-              reject(
-                `Failed to delete mail with ID ${args.ID}: ${packet.val.payload}`,
-              );
-            }
-            this.ws.removeEventListener("message", handleDeleteMailResponse);
-          }
-        }
-      };
-
-      this.ws.addEventListener("message", handleDeleteMailResponse);
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        command: "omail_delete",
+        client: this.my_client,
+        payload: args.ID,
+        id: ":3",
+      },
+      id: this.accounts,
+    }, (packet, resolve, reject) => {
+      if (packet.val.payload === "Deleted Successfully") {
+        resolve(`Mail with ID ${args.ID} deleted`);
+      } else {
+        reject(`Failed to delete mail with ID ${args.ID}: ${packet.val.payload}`);
+      }
     });
   }
 
   deleteAllMail() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "omail_delete",
-            client: this.my_client,
-            payload: "all",
-            id: this.userToken,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
 
-      const handleDeleteAllMailResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin.username === this.accounts) {
-          if (packet.val.source_command === "omail_delete") {
-            if (packet.val.payload === "Deleted Successfully") {
-              resolve("All mail deleted");
-            } else {
-              reject(`Failed to delete all mail: ${packet.val.payload}`);
-            }
-            this.ws.removeEventListener("message", handleDeleteAllMailResponse);
-          }
-        }
-      };
-
-      this.ws.addEventListener("message", handleDeleteAllMailResponse);
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        command: "omail_delete",
+        client: this.my_client,
+        payload: "all",
+        id: ":3",
+      },
+      id: this.accounts,
+    }, (packet, resolve, reject) => {
+      if (packet.val.payload === "Deleted Successfully") {
+        resolve("All mail deleted");
+      } else {
+        reject(`Failed to delete all mail: ${packet.val.payload}`);
+      }
     });
   }
 
   getFriendList() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
     return JSON.stringify(this.friends.list);
   }
 
   sendFriendRequest(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    if (this.friends.list.includes(args.FRIEND)) {
-      return "Already Friends";
-    }
-    if (args.FRIEND === this.user.username) {
-      return "You Need Other Friends :/";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "friend_request",
-            client: this.my_client,
-            payload: args.FRIEND,
-            id: this.userToken,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
+    if (this.friends.list.includes(args.FRIEND)) return "Already Friends";
+    if (args.FRIEND === this.user.username) return "You Need Other Friends :/";
 
-      const handleSendFriendRequestResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val.source_command === "friend_request") {
-            if (packet.val.payload === "Sent Successfully") {
-              resolve(`Sent Successfully`);
-            } else {
-              reject(packet.val.payload);
-            }
-            this.ws.removeEventListener(
-              "message",
-              handleSendFriendRequestResponse,
-            );
-          }
-        }
-      };
-
-      this.ws.addEventListener("message", handleSendFriendRequestResponse);
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        command: "friend_request",
+        client: this.my_client,
+        payload: args.FRIEND,
+        id: ":3",
+      },
+      id: this.accounts,
+    }, (packet, resolve, reject) => {
+      if (packet.val.payload === "Sent Successfully") {
+        resolve("Sent Successfully");
+      } else {
+        reject(packet.val.payload);
+      }
     });
   }
 
   removeFriend(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    if (!this.friends.list.includes(args.FRIEND)) {
-      return "Not Friends";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "friend_remove",
-            client: this.my_client,
-            payload: args.FRIEND,
-            id: this.userToken,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
+    if (!this.friends.list.includes(args.FRIEND)) return "Not Friends";
 
-      const handleRemoveFriendResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val.source_command === "friend_remove") {
-            if (packet.val.payload === "Friend Removed") {
-              resolve(`Friend removed: ${args.FRIEND}`);
-            } else {
-              reject(`Failed to remove friend: ${packet.val.payload}`);
-            }
-            this.ws.removeEventListener("message", handleRemoveFriendResponse);
-          }
-        }
-      };
-
-      this.ws.addEventListener("message", handleRemoveFriendResponse);
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        command: "friend_remove",
+        client: this.my_client,
+        payload: args.FRIEND,
+        id: ":3",
+      },
+      id: this.accounts,
+    }, (packet, resolve, reject) => {
+      if (packet.val.payload === "Friend Removed") {
+        this.friends.list = this.friends.list.filter(friend => friend !== args.FRIEND);
+        resolve(`Friend removed: ${args.FRIEND}`);
+      } else {
+        reject(`Failed to remove friend: ${packet.val.payload}`);
+      }
     });
   }
 
   acceptFriendRequest(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    if (!this.friends.requests.includes(args.FRIEND)) {
-      return "No Request";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "friend_accept",
-            client: this.my_client,
-            payload: args.FRIEND,
-            id: this.userToken,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
+    if (!this.friends.requests.includes(args.FRIEND)) return "No Request";
 
-      const handleRemoveFriendResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val.source_command === "friend_accept") {
-            if (packet.val.payload === "Request Accepted") {
-              this.friends.list.push(args.FRIEND);
-              this.friends.requests = this.friends.requests.filter(
-                (user) => user != args.FRIEND,
-              );
-              resolve(`Request Accepted`);
-            } else {
-              reject(packet.val.payload);
-            }
-            this.ws.removeEventListener("message", handleRemoveFriendResponse);
-          }
-        }
-      };
-
-      this.ws.addEventListener("message", handleRemoveFriendResponse);
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        command: "friend_accept",
+        client: this.my_client,
+        payload: args.FRIEND,
+        id: ":3",
+      },
+      id: this.accounts,
+    }, (packet, resolve, reject) => {
+      if (packet.val.payload === "Request Accepted") {
+        this.friends.list.push(args.FRIEND);
+        this.friends.requests = this.friends.requests.filter(
+          (user) => user != args.FRIEND,
+        );
+        resolve("Request Accepted");
+      } else {
+        reject(packet.val.payload);
+      }
     });
   }
 
   declineFriendRequest(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    if (!this.friends.requests.includes(args.FRIEND)) {
-      return "No Request";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "friend_decline",
-            client: this.my_client,
-            payload: args.FRIEND,
-            id: this.userToken,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
+    if (!this.friends.requests.includes(args.FRIEND)) return "No Request";
 
-      const handleDeclineFriendRequestResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val.source_command === "friend_decline") {
-            if (packet.val.payload === "Request Declined") {
-              this.friends.requests = this.friends.requests.filter(
-                (user) => user != args.FRIEND,
-              );
-              resolve(`Request Declined`);
-            } else {
-              reject(packet.val.payload);
-            }
-            this.ws.removeEventListener(
-              "message",
-              handleDeclineFriendRequestResponse,
-            );
-          }
-        }
-      };
-
-      this.ws.addEventListener("message", handleDeclineFriendRequestResponse);
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        command: "friend_decline",
+        client: this.my_client,
+        payload: args.FRIEND,
+        id: ":3",
+      },
+      id: this.accounts,
+    }, (packet, resolve, reject) => {
+      if (packet.val.payload === "Request Declined") {
+        this.friends.requests = this.friends.requests.filter(
+          (user) => user != args.FRIEND,
+        );
+        resolve("Request Declined");
+      } else {
+        reject(packet.val.payload);
+      }
     });
   }
 
   getFriendStatus(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
     if (this.friends.list.includes(args.FRIEND)) {
       return "Friend";
     } else if (this.friends.requests.includes(args.FRIEND)) {
@@ -1769,547 +1254,280 @@ class RoturExtension {
   }
 
   getFriendRequests() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
     return JSON.stringify(this.friends.requests) ?? "";
   }
 
   getFriendCount() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
     return this.friends.list.length ?? "";
   }
 
   getBalance() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
     return this.user["sys.currency"] ?? 0;
   }
 
   tranferCurrency(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "currency_transfer",
-            client: this.my_client,
-            payload: {
-              amount: args.AMOUNT,
-              recipient: args.USER,
-            },
-            id: this.userToken,
-            client: this.my_client,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
 
-      const handleTransferCurrencyResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val.source_command === "currency_transfer") {
-            if (packet.val.payload === "Transfer Successful") {
-              resolve(`Success`);
-            } else {
-              reject(packet.val.payload);
-            }
-            this.ws.removeEventListener(
-              "message",
-              handleTransferCurrencyResponse,
-            );
-          }
-        }
-      };
-      this.ws.addEventListener("message", handleTransferCurrencyResponse);
+    return this.handlePromise({
+      cmd: "pmsg",
+      val: {
+        command: "currency_transfer",
+        client: this.my_client,
+        payload: {
+          amount: args.AMOUNT,
+          recipient: args.USER,
+        },
+        id: ":3",
+        client: this.my_client,
+      },
+      id: this.accounts,
+    }, (packet, resolve, reject) => {
+      if (packet.val.payload === "Transfer Successful") {
+        resolve("Success");
+      } else {
+        reject(packet.val.payload);
+      }
     });
   }
 
   getTransactions() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
     return JSON.stringify(this.user["sys.transactions"]);
   }
 
   getTransactionCount() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
     return this.user["sys.transactions"].length;
   }
 
   getMyOwnedItems() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    return JSON.stringify(this.user["sys.purchases"]);
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
+
+    return fetch(`https://social.rotur.dev/keys/mine?auth=${this.userToken}`)
+      .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+      })
+      .then(data => {
+        return JSON.stringify(data);
+      })
+      .catch(error => {
+        return `Error: ${error.message}`;
+      });
   }
 
   ownsItem(args) {
-    if (!this.is_connected) {
-      return false;
-    }
-    if (!this.authenticated) {
-      return false;
-    }
-    return this.user["sys.purchases"].includes(args.ITEM);
-  }
+    if (!this.is_connected) return false;
+    if (!this.authenticated) return false;
 
-  getMyOwnedItemCount() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    return this.user["sys.purchases"].length;
+    const username = this.user.username;
+
+    return fetch(`https://social.rotur.dev/keys/check/${username}?key=${args.ITEM}`)
+      .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+      })
+      .then(data => {
+        return data.owns === true;
+      })
+      .catch(error => {
+        console.error(`Error checking key ownership: ${error.message}`);
+        return false;
+      });
   }
 
   itemData(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    if (this.user["sys.purchases"].indexOf(args.ITEM) === -1) {
-      return "You Do Not Own This Item";
-    }
-    return new Promise((resolve) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "item_data",
-            payload: args.ITEM,
-            id: this.userToken,
-            client: this.my_client,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
 
-      const handleItemDataResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val.source_command === "item_data") {
-            resolve(packet.val.payload);
-            this.ws.removeEventListener(
-              "message",
-              handleItemDataResponse,
-            );
-          }
-        }
-      };
-      this.ws.addEventListener("message", handleItemDataResponse);
-    });
+    return fetch(`https://social.rotur.dev/keys/get/${args.ITEM}?auth=${this.userToken}`)
+      .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+      })
+      .then(data => {
+        return data.data || "No data available";
+      })
+      .catch(error => {
+        return `Error: ${error.message}`;
+      });
   }
 
   purchaseItem(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    if (this.user["sys.purchases"].indexOf(args.ITEM) !== -1) {
-      return "You Already Own This Item";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "item_purchase",
-            payload: args.ITEM,
-            id: this.userToken,
-            client: this.my_client,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
 
-      const handlePurchaseItemResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val.source_command === "item_purchase") {
-            if (packet.val.payload === "Item Purchased") {
-              resolve("Item Purchased");
-            } else {
-              reject(packet.val.payload);
-            }
-            this.ws.removeEventListener(
-              "message",
-              handlePurchaseItemResponse,
-            );
-          }
+    return fetch(`https://social.rotur.dev/keys/purchase/${args.ITEM}?auth=${this.userToken}`)
+      .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+      })
+      .then(data => {
+        if (data.success) {
+          return "Item Purchased";
+        } else {
+          return data.message || "Purchase failed";
         }
-      };
-      this.ws.addEventListener("message", handlePurchaseItemResponse);
-    });
+      })
+      .catch(error => {
+        return `Error: ${error.message}`;
+      });
   }
 
   itemInfo(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    if (this.user["sys.purchases"].indexOf(args.ITEM) === -1) {
-      return "You Do Not Own This Item";
-    }
-    return new Promise((resolve) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "item_info",
-            payload: args.ITEM,
-            id: this.userToken,
-            client: this.my_client,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
 
-      const handleItemInfoResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val.source_command === "item_info") {
-            resolve(typeof packet.val.payload === 'object' ? JSON.stringify(packet.val.payload) : packet.val.payload);
-            this.ws.removeEventListener(
-              "message",
-              handleItemInfoResponse,
-            );
-          }
-        }
-      };
-      this.ws.addEventListener("message", handleItemInfoResponse);
-    });
+    return fetch(`https://social.rotur.dev/keys/get/${args.ITEM}?auth=${this.userToken}`)
+      .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+      })
+      .then(data => {
+        return JSON.stringify(data);
+      })
+      .catch(error => {
+        return `Error: ${error.message}`;
+      });
   }
 
   getPublicItems(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "item_public",
-            payload: args.PAGE,
-            id: this.userToken,
-            client: this.my_client,
-          },
-          id: this.accounts,
-        }),
-      );
-
-      const handlePublicItemsResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val.source_command === "item_public") {
-            reject(JSON.stringify(packet.val.payload));
-            this.ws.removeEventListener(
-              "message",
-              handlePublicItemsResponse,
-            );
-          }
-        }
-      };
-      this.ws.addEventListener("message", handlePublicItemsResponse);
-    });
+    return "[]";
   }
 
   getPublicItemPages() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    return new Promise((resolve) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "item_public_pages",
-            id: this.userToken,
-            client: this.my_client,
-          },
-          id: this.accounts,
-        }),
-      );
-
-      const handlePublicItemPagesResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val.source_command === "item_public_pages") {
-            resolve(packet.val.payload);
-            this.ws.removeEventListener(
-              "message",
-              handlePublicItemPagesResponse,
-            );
-          }
-        }
-      }
-      this.ws.addEventListener("message", handlePublicItemPagesResponse);
-    });
+    return "[]";
   }
 
   getMyCreatedItems() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    return JSON.stringify(this.user["sys.items"]);
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
+
+    return fetch(`https://social.rotur.dev/keys/mine?auth=${this.userToken}`)
+      .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+      })
+      .then(data => {
+        const createdItems = data.filter(item => item.isCreator === true);
+        return JSON.stringify(createdItems);
+      })
+      .catch(error => {
+        return `Error: ${error.message}`;
+      });
   }
 
   createItem(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "item_create",
-            payload: {
-              name: args.NAME,
-              description: args.DESCRIPTION,
-              price: args.PRICE,
-              data: args.CODE,
-              tradable: args.TRADABLE,
-            },
-            id: this.userToken,
-            client: this.my_client,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
 
-      const handleCreateItemResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val.source_command === "item_create") {
-            if (packet.val.payload === "Item Created") {
-              resolve("Item Created");
-            } else {
-              reject(packet.val.payload);
-            }
-            this.ws.removeEventListener("message", handleCreateItemResponse);
-          }
+    const url = `https://social.rotur.dev/keys/create?auth=${this.userToken}&data=${encodeURIComponent(args.CODE)}&price=${encodeURIComponent(args.PRICE)}`;
+
+    return fetch(url)
+      .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+      })
+      .then(data => {
+        if (data.success) {
+          return "Item Created";
+        } else {
+          return data.message || "Creation failed";
         }
-      };
-
-      this.ws.addEventListener("message", handleCreateItemResponse);
-    });
+      })
+      .catch(error => {
+        return `Error: ${error.message}`;
+      });
   }
 
   updateItem(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    if (this.user["sys.items"].indexOf(args.ITEM) === -1) {
-      return "You Do Not Own This Item";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "item_update",
-            payload: {
-              item: args.ITEM,
-              key: args.KEY,
-              data: args.DATA,
-            },
-            id: this.userToken,
-            client: this.my_client,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
 
-      const handleUpdateItemResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val.source_command === "item_update") {
-            if (packet.val.payload === "Item Updated") {
-              resolve("Item Updated");
-            } else {
-              reject(packet.val.payload);
-            }
-            this.ws.removeEventListener("message", handleUpdateItemResponse);
-          }
+    let updateUrl = `https://social.rotur.dev/keys/update/${args.ITEM}?auth=${this.userToken}&key=${args.ITEM}`;
+
+    if (args.KEY === "data") {
+      updateUrl += `&data=${encodeURIComponent(args.DATA)}`;
+    } else {
+      return "Only data updates are supported through the API. Use the key manager for other properties.";
+    }
+
+    return fetch(updateUrl)
+      .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+      })
+      .then(data => {
+        if (data.success) {
+          return "Item Updated";
+        } else {
+          return data.message || "Update failed";
         }
-      };
-
-      this.ws.addEventListener("message", handleUpdateItemResponse);
-    });
+      })
+      .catch(error => {
+        return `Error: ${error.message}`;
+      });
   }
 
   deleteItem(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    if (this.user["sys.items"].indexOf(args.ITEM) === -1) {
-      return "You Do Not Own This Item";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "item_delete",
-            payload: args.ITEM,
-            id: this.userToken,
-            client: this.my_client,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
 
-      const handleDeleteItemResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val.source_command === "item_delete") {
-            if (packet.val.payload === "Item Deleted") {
-              resolve("Item Deleted");
-            } else {
-              reject(packet.val.payload);
-            }
-            this.ws.removeEventListener("message", handleDeleteItemResponse);
-          }
+    return fetch(`https://social.rotur.dev/keys/delete/${args.ITEM}?auth=${this.userToken}`)
+      .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+      })
+      .then(data => {
+        if (data.success) {
+          return "Item Deleted";
+        } else {
+          return data.message || "Deletion failed";
         }
-      };
-
-      this.ws.addEventListener("message", handleDeleteItemResponse);
-    });
+      })
+      .catch(error => {
+        return `Error: ${error.message}`;
+      });
   }
 
   hideItem(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "item_hide",
-            payload: args.ID,
-            id: this.userToken,
-            client: this.my_client,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
 
-      const handleHideItemResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val.source_command === "item_hide") {
-            if (packet.val.payload === "Item Hidden") {
-              resolve("Item Hidden");
-            } else {
-              reject(packet.val.payload);
-            }
-            this.ws.removeEventListener("message", handleHideItemResponse);
-          }
-        }
-      };
-
-      this.ws.addEventListener("message", handleHideItemResponse);
-    });
+    return "Please use the key manager at https://rotur.dev/key-manager to hide keys";
   }
 
   showItem(args) {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
-    return new Promise((resolve, reject) => {
-      this.ws.send(
-        JSON.stringify({
-          cmd: "pmsg",
-          val: {
-            command: "item_show",
-            payload: args.ID,
-            id: this.userToken,
-            client: this.my_client,
-          },
-          id: this.accounts,
-        }),
-      );
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
 
-      const handleShowItemResponse = (event) => {
-        let packet = JSON.parse(event.data);
-        if (packet?.origin?.username === this.accounts) {
-          if (packet.val.source_command === "item_show") {
-            if (packet.val.payload === "Item Shown") {
-              resolve("Item Shown");
-            } else {
-              reject(packet.val.payload);
-            }
-            this.ws.removeEventListener("message", handleShowItemResponse);
-          }
-        }
-      };
+    return "Please use the key manager at https://rotur.dev/key-manager to show keys";
+  }
 
-      this.ws.addEventListener("message", handleShowItemResponse);
-    });
+  RAWgetAllPackets() {
+    return JSON.stringify(this.packetQueue);
+  }
+
+  RAWgetFirstPacket() {
+    return JSON.stringify(this.packetQueue[0] || "{}");
+  }
+
+  RAWdeleteFirstPacket() {
+    this.packetQueue.shift();
+  }
+
+  RAWdeleteAllPackets() {
+    this.packetQueue = [];
   }
 
   gotBadgesSuccessfully() {
@@ -2317,32 +1535,20 @@ class RoturExtension {
   }
 
   userBadges() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
     return JSON.stringify(this.user["sys.badges"]);
   }
 
   userBadgeCount() {
-    if (!this.is_connected) {
-      return "Not Connected";
-    }
-    if (!this.authenticated) {
-      return "Not Logged In";
-    }
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
     return this.user["sys.badges"].length;
   }
 
   hasBadge(args) {
-    if (!this.is_connected) {
-      return false;
-    }
-    if (!this.authenticated) {
-      return false;
-    }
+    if (!this.is_connected) return false;
+    if (!this.authenticated) return false;
     return this.user["sys.badges"].includes(args.BADGE);
   }
 
@@ -2358,17 +1564,155 @@ class RoturExtension {
   redownloadBadges() {
     this._initializeBadges()
   }
+
+  callUser(args) {
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
+    if (args.USERNAME === this.user.username) return "You Can't Call Yourself";
+
+    return new Promise((resolve, reject) => {
+      // Send the call request
+      this.ws.send(
+        JSON.stringify({
+          cmd: "pmsg",
+          val: {
+            command: "call",
+            client: this.my_client,
+            id: ":3",
+            payload: "request",
+            peer: args.USERNAME,
+            username: this.username,
+          },
+          id: this.accounts,
+        })
+      );
+
+      // Set up timeout for 10 seconds
+      const timeout = setTimeout(() => {
+        this.ws.removeEventListener("message", callResponseHandler);
+        resolve(JSON.stringify({
+          success: false,
+          message: "Call timed out - no response received"
+        }));
+      }, 10000);
+
+      // Handler for the call confirmation response
+      const callResponseHandler = (event) => {
+        try {
+          const packet = JSON.parse(event.data);
+
+          // Check if this is a call confirmation response
+          if (packet?.val?.source_command === "call" &&
+            packet?.val?.payload === "confirm" &&
+            packet?.origin?.username === this.accounts) {
+
+            // Clear the timeout and remove the event listener
+            clearTimeout(timeout);
+            this.ws.removeEventListener("message", callResponseHandler);
+
+            // Extract and return the call data
+            const callData = {
+              success: true,
+              from: packet.val.from,
+              from_username: packet.val.from_username,
+              from_rotur: packet.val.from_rotur,
+            };
+
+            // Store the call data and resolve with it
+            this.callJson = callData;
+            resolve(JSON.stringify(callData));
+          }
+        } catch (error) {
+          console.error("Error handling call response:", error);
+        }
+      };
+
+      // Add the event listener for call responses
+      this.ws.addEventListener("message", callResponseHandler);
+    });
+  }
+
+  callData() {
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
+    return JSON.stringify(this.callJson);
+  }
+
+  acceptCall() {
+    if (!this.is_connected) return "Not Connected";
+    if (!this.authenticated) return "Not Logged In";
+    if (!this.callJson) return "No Call Data";
+
+    this.ws.send(
+      JSON.stringify({
+        cmd: "pmsg",
+        val: {
+          command: "call",
+          client: this.my_client,
+          id: ":3",
+          payload: "confirm",
+          peer: this.callJson.from,
+          username: this.username,
+        },
+        id: this.accounts,
+      })
+    );
+  }
 }
 
-function randomString(length) {
-  const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  const charactersLength = characters.length;
-  let counter = 0;
-  while (counter < length) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    counter += 1;
+var roturExtension = null;
+onstartup.push(async () => {
+  let localroturdata = await window.getSetting("roturLink");
+  if (localroturdata) {
+    await attemptConnection();
   }
-  return result ?? "";
+});
+
+async function attemptConnection() {
+  if (roturExtension?.is_connected) {
+    return true;
+  } else if (!roturExtension) {
+    roturExtension = new RoturExtension();
+  }
+  roturExtension.connectToServer({ DESIGNATION: "nva", SYSTEM: "novaOS", VERSION: "2" });
+}
+
+async function logoutofrtr() {
+  remSettingKey("roturLink");
+  await roturExtension.logout();
+  roturExtension.disconnect();
+}
+
+function roturTWEventCall(data) {
+  if (data == "roturEXT_whenAuthenticated") {
+    fetch("https://social.rotur.dev/claim_daily?auth=" + roturExtension.userToken).then((response) => {
+      if (response.ok) {
+        notify(`Logged in as ${roturExtension.username}`, "You got the daily credit!", "RoturTW", 1)
+      } else {
+        notify(`Logged in as ${roturExtension.user.username}`, "Welcome back!", "RoturTW", 1)
+        throw new Error('Failed to claim daily reward');
+      }
+    })
+    eventBusWorker.deliver({
+      type: "rotur",
+      event: "authDone"
+    });
+  } else if (data == "roturEXT_whenConnected") {
+    (async () => {
+      let localroturdata = await window.getSetting("roturLink");
+      if (localroturdata) {
+        sysLog("RoturTW", `Trying to log in`);
+        let targettype = JSON.parse(localroturdata).type;
+        if (targettype == "pswd") {
+          let targetun = JSON.parse(localroturdata).username;
+          let targetpass = JSON.parse(localroturdata).password;
+          await roturExtension.login({ USERNAME: targetun, PASSWORD: targetpass });
+        } else if (targettype == "token") {
+          await roturExtension.loginToken({ TOKEN: JSON.parse(localroturdata).token })
+        }
+      } else {
+        roturExtension.login_prompt({ STYLE_URL: "https://adthoughtsglobal.github.io/nova-dev-repl-rl/libs/roturstyle.css" });
+      }
+    })();
+  }
 }

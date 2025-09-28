@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Lizabot 3</title>
+    <meta name="permissions" content="unsandboxed">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
 
@@ -24,8 +25,6 @@
             --colors-special-bad: #ac4949;
 
             --sizing-border-radius: 0.5rem;
-            --sizing-border-radius-normal: 0.75rem;
-            --sizing-border-radius-full: 1rem;
 
             --sizing-huge: 1rem;
             --sizing-normal: 0.5rem;
@@ -714,7 +713,6 @@
 
             if (searchResults?.query?.search.length) {
                 const bestMatch = findBestMatch(term, searchResults.query.search);
-                console.log(bestMatch)
                 if (bestMatch) return await formatWikiResult(bestMatch);
             }
             return null;
@@ -750,7 +748,6 @@
             if (!term1 || !term2) {
                 return 0;
             }
-            console.log(term1, term2)
             const set1 = new Set(term1.toLowerCase().split(" "));
             const set2 = new Set(term2.toLowerCase().split(" "));
             const intersection = [...set1].filter(word => set2.has(word)).length;

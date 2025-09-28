@@ -4,46 +4,9 @@ var defaultAppIcon = `<?xml version="1.0" encoding="UTF-8"?> <svg version="1.1" 
 
 var globalmimeDb = null;
 
-
-async function checkdmode() {
-	const [uiSizing, darkMode, simpleMode] = await Promise.all([
-		getSetting("UISizing"),
-		getSetting("darkMode"),
-		getSetting("simpleMode")
-	]);
-
-	if (uiSizing === 1) scaleUIElements(uiSizing);
-
-	const themeColors = await window.parent.getSetting("themeColors");
-        if (!themeColors) return;
-
-        Object.entries(themeColors).forEach(([variableName, colorValue]) => {
-            document.documentElement.style.setProperty(variableName, colorValue);
-        });
-}
-
-const setStyle = (element, styles) => {
-	if (element) {
-		Object.assign(element.style, styles);
-	}
-};
-
-const applyStyles = (elements, styles) => {
-	elements.forEach(element => setStyle(element, styles));
-};
-
-function switchtheme(theme, simplicity) {
-	const currentStyles = styles[theme][simplicity];
-
-	applyStyles(document.querySelectorAll('[navobj]'), currentStyles.flodiv);
-	setStyle(document.querySelector('#appdmod'), currentStyles.appdmod);
-	setStyle(document.querySelector('#searchwindow'), currentStyles.appdmod);
-	setStyle(document.querySelector('.searchinputcont'), currentStyles.searchinpe);
-	setStyle(document.querySelector('#strtsearcontbtn'), currentStyles.searchnbtn);
-	setStyle(document.querySelector('#bobthedropdown'), currentStyles.bob);
-
-	const novaic = document.querySelector('#novaic');
-	if (novaic) novaic.style.fill = currentStyles.novaic.fill;
+function updateNavSize() {
+	navheight = parseFloat(getComputedStyle(gid("novanav")).height);
+	navheight = navheight + (0.3 * remToPx);
 }
 
 // more stuff
@@ -63,7 +26,6 @@ function isDark(hexColor) {
 	return luminance <= 0.5;
 }
 
-
 function terminal() {
 	gid("terminal").showModal()
 }
@@ -71,7 +33,7 @@ function terminal() {
 function cuteee() {
 	let stylelement = document.createElement('style')
 	stylelement.innerHTML = `.windowheader {
-	background-color: #121212;
+	background:: #121212;
 	backdrop-filter: blur(5px) brightness(0.5);
 	position: absolute;
 	padding: 0.3rem 0.8rem;
@@ -96,24 +58,17 @@ function cuteee() {
 	document.body.appendChild(stylelement)
 }
 
-const originalFetch = window.fetch;
-window.fetch = async function (...args) {
-	console.log('NovaOS Fetch:', ...args);
-	return originalFetch.apply(this, args);
-};
-
-function scaleUIElements(scaleFactor) {
-	var elements = document.querySelectorAll('.scalableui');
-
-	elements.forEach(function (element) {
-		element.style.zoom = scaleFactor;
-	});
-}
-
 async function checkAndRunFromURL() {
 	const params = new URLSearchParams(window.location.search);
 
 	const run = params.get('run');
+	const viewapp = params.get('view');
+
+	if (viewapp) {
+		onstartup.push(async () => {
+			useHandler("content_store", { 'opener': 'viewapp', 'data': viewapp })
+		});
+	}
 
 	if (run === 'erdbsfull') {
 		let x = await justConfirm("Reset all your data?", "The link you opened NovaOS had a param to erase your device. Do this only if its instructed to do so by NovaOS developers.");
@@ -168,15 +123,18 @@ async function getMimeType(extension) {
 	return 'application/octet-stream';
 }
 
-function useNovaOffline() {
-	if ('serviceWorker' in navigator) {
-		navigator.serviceWorker.register('sw.js', { scope: '/' })
-			.then((registration) => {
-				console.log('Service Worker registered with scope:', registration.scope);
-			})
-			.catch((error) => {
-				console.log('Service Worker registration failed:', error);
-			});
+async function useNovaOffline() {
+	if (await justConfirm("Turn on offline mode?", "Offline mode saves a copy of NovaOS (~5MB) in your browser.")) {
+
+		if ('serviceWorker' in navigator) {
+			navigator.serviceWorker.register('sw.js', { scope: '/' })
+				.then((registration) => {
+					console.log('Service Worker registered with scope:', registration.scope);
+				})
+				.catch((error) => {
+					console.log('Service Worker registration failed:', error);
+				});
+		}
 	}
 }
 
@@ -192,188 +150,262 @@ draggableTimeDiv.addEventListener('dragstart', (e) => {
 	e.dataTransfer.setData('text/plain', getReadableTimestamp());
 });
 
-var roturExtension = new RoturExtension();
-
-document.querySelectorAll('.tooltip').forEach(tooltip => {
-	tooltip.addEventListener('mousemove', (e) => {
-		const tooltipText = tooltip.querySelector('.tooltiptext');
-		const moveX = e.offsetX * 0.3;
-		const moveY = e.offsetY * 0.3;
-		tooltipText.style.transform = `translate(${moveX}px, ${moveY}px)`;
-	});
-	tooltip.addEventListener('mouseleave', () => {
-		tooltip.querySelector('.tooltiptext').style.transform = 'translate(0, 0)';
-	});
-});
-
 async function qsetsRefresh() {
 	return await updateMemoryData();
 }
 
-async function setuprotur() {
-	if (roturExtension.is_connected) {
-		return true;
+// themes
+async function checkdmode() {
+	if (!novadotcsscache) {
+		const response = await fetch('nova.css');
+		novadotcsscache = await response.text();
 	}
-	await roturExtension.connectToServer({ DESIGNATION: "nva", SYSTEM: "novaOS", VERSION: "2" });
+
+	if (CurrentUsername) {
+		const themeColors = await getSetting("themeColors") || {};
+		applyTheme(themeColors, document);
+	}
 }
-
-async function logoutofrtr() {
-	await roturExtension.logout();
-	roturExtension.disconnect();
-}
-
-let contextMenu;
-
-function createContextMenu() {
-	contextMenu = document.createElement('div');
-	contextMenu.style.position = 'absolute';
-	contextMenu.style.display = 'none';
-	contextMenu.classList.add("contextmenu");
-	return contextMenu;
-}
-
-function adjustPositionToFitViewport(x, y, menu) {
-	menu.style.display = 'block';
-	const menuRect = menu.getBoundingClientRect();
-	menu.style.display = 'none';
-
-	const viewportWidth = window.innerWidth;
-	const viewportHeight = window.innerHeight;
-	const bottomMargin = 55;
-
-	if (x + menuRect.width > viewportWidth) {
-		x = viewportWidth - menuRect.width;
-	}
-	if (y + menuRect.height > viewportHeight - bottomMargin) {
-		y = viewportHeight - menuRect.height - bottomMargin;
-	}
-	if (x < 0) {
-		x = 0;
-	}
-	if (y < 0) {
-		y = 0;
-	}
-
-	return { x, y };
-}
-
-
-document.addEventListener('contextmenu', (event) => {
-	event.preventDefault();
-
-	const dialog = event.target.closest('dialog');
-	const targetElement = event.target.closest('.app-shortcut, #desktop');
-	if (!targetElement) return;
-
-	if (!contextMenu) contextMenu = createContextMenu();
-
-	if (dialog) {
-		dialog.appendChild(contextMenu);
-	} else {
-		document.body.appendChild(contextMenu);
-	}
-
-	contextMenu.innerHTML = '';
-
-	const menuItems = getMenuItems(targetElement);
-	menuItems.forEach(item => {
-		const menuItem = document.createElement('div');
-		menuItem.innerHTML = `<span class="material-symbols-rounded">
-${item.icon || ""}
-</span>
-<span>${item.label}</span>`;
-		menuItem.classList.add("ctxmenuitem");
-		menuItem.style.padding = '5px 10px';
-		menuItem.style.cursor = 'pointer';
-		menuItem.addEventListener('click', () => {
-			item.action(targetElement);
-			contextMenu.style.display = 'none';
-		});
-		contextMenu.appendChild(menuItem);
-	});
-
-	let x = event.clientX;
-	let y = event.clientY;
-
-	if (dialog) {
-		const dialogRect = dialog.getBoundingClientRect();
-		x -= dialogRect.left;
-		y -= dialogRect.top;
-	}
-
-	const adjustedPosition = adjustPositionToFitViewport(x, y, contextMenu);
-	contextMenu.style.left = `${adjustedPosition.x}px`;
-	contextMenu.style.top = `${adjustedPosition.y}px`;
-
-	contextMenu.style.display = 'flex';
-});
-
-document.addEventListener('click', () => {
-	const contextMenu = document.querySelector('.contextmenu');
-	if (contextMenu) contextMenu.style.display = 'none';
-});
-
-document.addEventListener('keydown', (event) => {
-	const contextMenu = document.querySelector('.contextmenu');
-	if (event.key === 'Escape' && contextMenu) {
-		contextMenu.style.display = 'none';
-	}
-});
-
-function getMenuItems(target) {
-	console.log(target)
-	if (target.classList.contains('app-shortcut')) {
-		var itemuid = target.getAttribute("unid");
-		return [
-			{
-				icon: 'arrow_forward',
-				label: 'Open',
-				action: (el) => {
-					openfile(itemuid)
-				}
-			},
-			{
-				icon: 'delete',
-				label: 'Delete',
-				action: (el) => remfile(itemuid)
-			},
-			{
-				icon: 'edit',
-				label: 'Rename',
-				action: async () => {
-					let file = await getFileById(itemuid);
-
-					file.fileName = await ask("New Name:", file.fileName);
-					await updateFile(false, itemuid, file);
-				}
-			},
-		];
-	}
-	if (target.id === 'desktop') {
-		return [
-			{ icon: 'refresh', label: 'Refresh homescreen', action: () => novarefresh() },
-			{ icon: 'power', label: 'Nova setup', action: () => launchbios() },
-		];
-	}
-	return [
-		{ label: 'Inspect', action: () => console.log('Inspect clicked') },
-	];
-}
-
-
 
 function applyThemeNonVisual(data, doc) {
+	applyTheme(data.colors, doc);
 
-    saveColorsNonVisual(data.colors, doc);
+	if (data.wallpaper) {
+		window.top.makewall(data.wallpaper);
+	}
+
+	window.top.setSetting("themeColors", data.colors);
 }
 
-function saveColorsNonVisual(colors, doc) {
-    const colorsToSave = {};
-    for (const variableName in colors) {
-        colorsToSave[variableName] = colors[variableName];
-		
-		window.parent.document.documentElement.style.setProperty(variableName, colors[variableName]);
-		doc.documentElement.style.setProperty(variableName, colors[variableName]);
-    }
-    window.parent.setSetting("themeColors", colorsToSave);
+const appliedThemeVars = new Set();
+let themeStyleTag = null;
+
+function applyTheme(colors, doc) {
+	if (!themeStyleTag) {
+		themeStyleTag = document.createElement('style');
+		themeStyleTag.id = "novacsstag";
+	}
+
+	if (!document.getElementById("novacsstag")) {
+		document.head.appendChild(themeStyleTag);
+	}
+
+	if (doc && doc !== document && !doc.getElementById("novacsstag")) {
+		doc.head.appendChild(themeStyleTag.cloneNode(true));
+	}
+
+	const cssVars = Object.fromEntries(
+		[...novadotcsscache.matchAll(/(--[\w-]+):\s*([^;]+)/g)]
+			.map(([_, key, value]) => [key, value.trim()])
+	);
+
+	const textColor = colors["--col-txt1"] ?? cssVars["--col-txt1"];
+	const textSelectors = [
+		"--colors-text-section",
+		"--colors-text-sub"
+	];
+
+	const baseRadius = parseFloat(colors["--siz-radius1"] ?? cssVars["--siz-radius1"]) || 0.5;
+	colors["--siz-radius2"] = (baseRadius / 2).toFixed(3) + "em";
+	colors["--siz-radius3"] = (baseRadius / 3).toFixed(3) + "em";
+
+	let cssText = '';
+	for (const variableName in cssVars) {
+		let colorValue = colors[variableName] ?? cssVars[variableName];
+		if (textSelectors.includes(variableName)) {
+			colorValue = textColor;
+		}
+		cssText += `${variableName}: ${colorValue};\n`;
+		appliedThemeVars.add(variableName);
+	}
+
+	cssText += `--siz-radius2: ${colors["--siz-radius2"]};\n`;
+	cssText += `--siz-radius3: ${colors["--siz-radius3"]};\n`;
+
+	themeStyleTag.textContent = `:root { ${cssText} }`;
+
+	if (doc && doc !== document) {
+		const docStyle = doc.getElementById("novacsstag");
+		if (docStyle) docStyle.textContent = themeStyleTag.textContent;
+	}
+
+	broadcastStyleToIframes(themeStyleTag.textContent);
+}
+
+const broadcastStyleToIframes = (css) => {
+	document.querySelectorAll('iframe').forEach((iframe) => {
+		if (iframe.contentWindow) {
+			iframe.contentWindow.postMessage({ type: 'nova-style', css }, '*');
+		}
+	});
+};
+
+function removeTheme() {
+	if (themeStyleTag) {
+		themeStyleTag.remove();
+		themeStyleTag = null;
+	}
+
+	appliedThemeVars.clear();
+}
+function convertTontxSession(jsCode) {
+	const hardcodedMethodMap = {
+		getFileById: "fileGet.byId",
+		getFileNameByID: "fileGet.nameById",
+		findFileDetails: "fileGet.detailsById",
+		getFileByPath: "fileGet.byPath",
+
+		createFile: "fileSet.createFile",
+		updateFile: "fileSet.updateFile",
+		remfile: "fileSet.removeFile",
+		moveFileToFolder: "fileSet.moveFile",
+
+		getFolderNames: "dir.getFolderNames",
+		remfolder: "dir.remove",
+		createFolder: "dir.create",
+
+		openfile: "olp.openFile",
+		openlaunchprotocol: "olp.launch",
+		useHandler: "olp.useHandler",
+
+		getSetting: "settings.get",
+		setSetting: "settings.set",
+		remSettingKey: "settings.remove",
+		resetAllSettings: "settings.resetAll",
+		ensureAllSettingsFilesExist: "settings.ensurePreferencesFile",
+
+		removeUser: "accounts.removeUser",
+		removeInvalidMagicStrings: "accounts.removeInvalidMagicStrings",
+		checkPassword: "accounts.changePassword",
+		password: "accounts.password",
+		getallusers: "accounts.getAllUsers",
+		CurrentUsername: "accounts.username",
+
+		getAppIcon: "apps.getIcon",
+		handlers: "apps.getHandlers",
+
+		justConfirm: "sysUI.confirm",
+		showDropdownModal: "sysUI.dropdown",
+		ask: "sysUI.ask",
+		say: "sysUI.say",
+		toast: "sysUI.toast",
+		openwindow: "sysUI.createWindow",
+		clwin: "sysUI.clwin",
+		notify: "sysUI.notify",
+		genDesktop: "sysUI.genDesktop",
+		genTaskBar: "sysUI.genTaskBar",
+		loadtaskspanel: "sysUI.loadtaskspanel",
+
+		timeAgo: "utility.timeAgo",
+		genUID: "utility.genUID",
+		isBase64: "utility.isBase64",
+		isElement: "utility.isElement",
+		decodeBase64Content: "utility.decodeBase64Content",
+		getfourthdimension: "utility.getTime",
+		getbaseflty: "utility.getBaseFileType",
+		basename: "utility.getBaseName",
+		markdownToHTML: "utility.markdownToHTML",
+		getMimeType: "utility.getMimeType",
+		stringToPastelColor: "utility.stringToPastelColor",
+		stringToDarkPastelColor: "utility.stringToDarkPastelColor",
+		toTitleCase: "utility.toTitleCase",
+		getRandomNothingQuote: "utility.getRandomNothingQuote",
+		debounce: "utility.debounce",
+		mtpetxt: "utility.mtpetxt",
+		calculateSimilarity: "utility.calculateSimilarity",
+
+		ercache: "system.ercache",
+		cleanupInvalidAssociations: "system.cleanupInvalidAssociations",
+		sysLog: "system.sysLog",
+
+		useNovaOffline: "specific.useNovaOffline",
+		removeSWs: "specific.removeSWs",
+		installdefaultapps: "specific.installdefaultapps",
+		erdbsfull: "system.eraseNova"
+	};
+
+	const convertedCode = jsCode.replace(
+		/(?<!await\s)(window\.parent\.)(\w+)\s*\(/g,
+		(match, base, fnName) => {
+			const path = hardcodedMethodMap[fnName];
+			if (path) {
+				return `await ntxSession.send("${path}", `;
+			}
+			return match;
+		}
+	).replace(
+		/await\s+window\.parent\.(\w+)\s*\(/g,
+		(match, fnName) => {
+			const path = hardcodedMethodMap[fnName];
+			if (path) {
+				return `await ntxSession.send("${path}", `;
+			}
+			return match;
+		}
+	);
+
+	const dialog = document.createElement("dialog");
+	dialog.style.padding = "20px";
+	dialog.style.border = "none";
+	dialog.style.boxShadow = "0px 4px 10px rgba(0, 0, 0, 0.2)";
+	dialog.style.width = "60vw";
+	dialog.innerHTML = `
+<h3>Converted Code</h3>
+<textarea style="width: 100%; height: 300px;">${convertedCode}</textarea>
+<br>
+<button id="closeDialog">Close</button>
+`;
+	document.body.appendChild(dialog);
+	dialog.showModal();
+
+	document.getElementById("closeDialog").addEventListener("click", () => {
+		dialog.close();
+		document.body.removeChild(dialog);
+	});
+}
+
+function backupsdia() {
+	let url = `bios.html?un=${CurrentUsername}`;
+	let title = "biowin";
+	let height = 250, width = 450;
+	const screenLeft = window.screenLeft !== undefined ? window.screenLeft : screen.left;
+	const screenTop = window.screenTop !== undefined ? window.screenTop : screen.top;
+
+	const screenWidth = window.innerWidth || document.documentElement.clientWidth || screen.width;
+	const screenHeight = window.innerHeight || document.documentElement.clientHeight || screen.height;
+
+	const left = screenLeft + (screenWidth - width) / 2;
+	const top = screenTop + (screenHeight - height) / 2;
+
+	const features = `width=${width},height=${height},top=${top},left=${left},resizable,scrollbars`;
+	window.open(url, title, features);
+}
+
+async function addShortcut(flid) {
+	const getFolderNames = (memory, parentPath = '', level = 0) => {
+		let folders = [];
+		Object.keys(memory).forEach(key => {
+			const fullPath = parentPath + key;
+			if (fullPath.endsWith('/')) {
+				const indent = '-'.repeat(level * 2);
+				folders.push(indent + fullPath);
+				folders = folders.concat(getFolderNames(memory[key], fullPath, level + 1));
+			}
+		});
+		return folders;
+	};
+
+	let folders = getFolderNames(memory.root);
+
+	let selectedFolder = await showDropdownModal("Select a folder", "Create shortcut for " + flid + " in:", folders);
+
+	if (selectedFolder) {
+		const openable = {
+			"open": flid
+		};
+		const dataUri = `data:application/json;base64,${btoa(JSON.stringify(openable))}`;
+		let x = await ask("Enter a shortcut file name: (without extension)", "MyFile");
+		await createFile(selectedFolder, x + ".lnk", false, dataUri);
+		toast("Shortcut created")
+	}
 }
