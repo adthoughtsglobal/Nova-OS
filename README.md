@@ -3,13 +3,13 @@
 # Say Hi to NovaOS:
 The powerful, stable, fully local, and source-available web system, made for every modern browser and device.
 
-[Homepage](https://adthoughtsglobal.github.io/NovaOS/) | [Docs](https://novaos.gitbook.io/novaos-docs) | [Discord](https://discord.gg/atkqbwEQU8) | [**Try it**](https://github.com/adthoughtsglobal/Nova-OS?tab=readme-ov-file#how-do-i-access)
+[Homepage](https://adthoughtsglobal.github.io/NovaOS/) | [Docs](https://novaos.gitbook.io/novaos-docs) | [Discord](https://discord.gg/atkqbwEQU8) | <a href="https://github.com/adthoughtsglobal/Nova-OS?tab=readme-ov-file#how-do-i-access"> <img src="https://i.ibb.co/GQxMggbW/Support-3.png" height="20" alt="Open  NovaOS"></a>
 
 ```txt
 Version: 2.1
 Title: Lazarus
 ```
-<img height="20" src="https://img.shields.io/github/languages/count/adthoughtsglobal/Nova-OS"/> <img height="20" src="https://img.shields.io/github/last-commit/adthoughtsglobal/Nova-dev-repl-rl"/> <a href="https://rotur.dev"><img src="https://rotur.dev/rotur%20badge.png" height="20" alt="This OS supports rotur"></a><img src="https://i.ibb.co/zV0KLg5w/Support-1.png" height="20" alt="Support NovaOS"></a>
+<img height="20" src="https://img.shields.io/github/languages/count/adthoughtsglobal/Nova-OS"/> <img height="20" src="https://img.shields.io/github/last-commit/adthoughtsglobal/Nova-dev-repl-rl"/> <a href="https://rotur.dev"><img src="https://rotur.dev/rotur%20badge.png" height="20" alt="This OS supports rotur"></a> <a href="https://adthoughtsglobal.github.io/screens/donate.html"> <img src="https://i.ibb.co/WvmDbGm0/Support-2.png" height="20" alt="Support NovaOS"></a>
 
 ![image](https://github.com/user-attachments/assets/47978665-d2d2-4256-b784-da7eb43397b1)
 
