@@ -12,8 +12,6 @@ Title: Lazarus
 
 <img height="20" src="https://img.shields.io/github/languages/count/adthoughtsglobal/Nova-OS"/> <img height="20" src="https://img.shields.io/github/last-commit/adthoughtsglobal/Nova-dev-repl-rl"/> <a href="https://rotur.dev"><img src="https://rotur.dev/rotur%20badge.png" height="20" alt="This OS supports rotur"></a>
 
-<a href="https://discord.gg/atkqbwEQU8"> <img src="assets/discordjoin.png" height="180"> </a>
-
 ![image](https://github.com/user-attachments/assets/47978665-d2d2-4256-b784-da7eb43397b1)
 
 NovaOS is a customizable web system designed for any device with a browser. With NovaOS, applications can easily do complex tasks just like native apps, on any modern device. It creates a fast, safe, and feature-rich experience for development and creative work, equipped with an array of personalization capabilities and immense stability.
@@ -29,10 +27,9 @@ NovaOS is a customizable web system designed for any device with a browser. With
 
 - NovaOS is designed for the user, not the technology. The system focuses on giving the most accurate experience that a user needs. Maintaining the balance between simplicity and efficiency in UI.
 
-# How to use it:
-NovaOS is available for the public at [https://adthoughtsglobal.github.io/Nova-OS/](https://adthoughtsglobal.github.io/Nova-OS). [^1]
-
-Simply click the link, go through the installation screen and there you have it!
+# Run it.
+NovaOS latest public version: [https://adthoughtsglobal.github.io/Nova-OS/](https://adthoughtsglobal.github.io/Nova-OS).
+> If you are on mobiles, NovaOS Mobile Mode works well as a PWA. Learn How To Install [here](https://novaos.gitbook.io/main/get-started/access-novaos#installing-novaos-as-an-app-in-chrome).
 
 # Learn more
 - 📚 Read the documentation and help, [here](https://novaos.gitbook.io/main).
