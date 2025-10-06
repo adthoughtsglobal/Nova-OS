@@ -11,7 +11,7 @@ Title: Lazarus
 ```
 <img height="20" src="https://img.shields.io/github/languages/count/adthoughtsglobal/Nova-OS"/> <img height="20" src="https://img.shields.io/github/last-commit/adthoughtsglobal/Nova-dev-repl-rl"/> <a href="https://rotur.dev"><img src="https://rotur.dev/rotur%20badge.png" height="20" alt="This OS supports rotur"></a> <a href="https://adthoughtsglobal.github.io/screens/donate.html"> <img src="https://i.ibb.co/WvmDbGm0/Support-2.png" height="20" alt="Support NovaOS"></a>
 
-![image](https://github.com/user-attachments/assets/47978665-d2d2-4256-b784-da7eb43397b1)
+![image](https://i.ibb.co/B2G7xV5f/image.png)
 <div align="center"> <a href="https://github.com/adthoughtsglobal/Nova-OS?tab=readme-ov-file#how-do-i-access"> <img src="https://i.ibb.co/GQxMggbW/Support-3.png" height="40" alt="Open  NovaOS"></a></div>
 <br>
 NovaOS is a web system designed for any modern device with a browser. NovaOS apps can perform complex tasks more easily than native apps by simulating an abstract virtual system within the browser. 
