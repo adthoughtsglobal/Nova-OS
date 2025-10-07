@@ -1,7 +1,7 @@
 <img height="55" src="https://github.com/user-attachments/assets/928feace-3086-413a-8376-2f131c3e2f91"/>
 
 # 👋 Say Hi to NovaOS:
-The powerful, stable, fully local, and source-available web system, made for every modern browser and device.
+The open-source, powerful, stable, fully local web system, made for every modern browser and device.
 
 [Homepage](https://adthoughtsglobal.github.io/NovaOS/) | [Docs](https://novaos.gitbook.io/novaos-docs) | [Discord](https://discord.gg/atkqbwEQU8) [ Join for News, polls and more ]
 
