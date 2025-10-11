@@ -18,7 +18,7 @@ NovaOS is a web system designed for any modern device with a browser. NovaOS app
 
 Nova Ecosystem is a collection of features, including apps, themes, permission systems, and styling standards. NovaOS acts as a filesystem access layer and gives exactly what the apps need, no more-no less.
 
-# Key features
+## Key features
 - NovaOS is a **mobile friendly**, **fully local and offline** web system with a **web desktop** packaged as a PWA.
 - NovaOS is **Open-Source** (under GPL v3).
 - It has a codebase built entirely on pure **HTML, vanilla JavaScript, and CSS** making it very reliable and private, as it can function fully offline, thanks to its local-first nature.
@@ -26,7 +26,7 @@ Nova Ecosystem is a collection of features, including apps, themes, permission s
 - NovaOS is designed for the user. The system focuses on giving a stable environment that a user needs. Maintaining simplicity and efficiency in UI. No flashy effects or extensive animations.
 - It supports [**RoturTW**](https://rotur.dev/), An accounts system over websockets. NovaOS also supports a few other authentication and cloud services as well.
 
-# Run it.
+## Run it.
 [https://adthoughtsglobal.github.io/Nova-OS/](https://adthoughtsglobal.github.io/Nova-OS).
 > If you are on mobiles, NovaOS Mobile Mode works well as a PWA. Learn How To Install [here](https://novaos.gitbook.io/main/get-started/access-novaos#installing-novaos-as-an-app-in-chrome).
 
