@@ -1,3 +1,7 @@
+Please go to the **new repository**: [github.com/runnova/NovaOS](https://github.com/runnova/NovaOS)
+
+---
+
 <img height="55" src="https://github.com/user-attachments/assets/928feace-3086-413a-8376-2f131c3e2f91"/>
 
 # NovaOS
