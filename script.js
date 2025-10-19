@@ -1198,7 +1198,7 @@ async function initializeOS() {
 	cryptoKeyCache = null;
 	await say(`
 		<h2>This is a source-available system</h2>
-		<p>By using Nova OS, you agree to the <a href="https://github.com/adthoughtsglobal/Nova-OS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use">Terms of Use</a>. Which mentions the intended purpose of this system.
+		<p>By using Nova OS, you agree to the <a href="https://github.com/runnova/NovaOS/blob/main/Adthoughtsglobal%20Nova%20Terms%20of%20use">Terms of Use</a>. Which mentions the intended purpose of this system.
 		<div style="background:: #001b00; color: lightgreen; padding: 0.8rem; border: 1px solid #254625;font-size:inherit; border-radius: .5rem; margin: 0.8rem 0; display: flex;flex-direction:row; align-items: center; justify-content: flex-start;gap:0.5rem;">
 			<span class="material-symbols-rounded">check</span>
 			<div>We do not store or share your personal information.</div>
