@@ -1067,8 +1067,8 @@ function openModal(type, { title = '', message, options = null, status = null, p
 	});
 }
 
-function justConfirm(title, message, registerRef = false) {
-	return openModal('confirm', { title, message }, registerRef);
+function justConfirm(title, message,status, registerRef = false) {
+	return openModal('confirm', { title, message, status }, registerRef);
 }
 function showDropdownModal(title, message, options, registerRef = false) {
 	return openModal('dropdown', { title, message, options }, registerRef);
@@ -2089,7 +2089,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 		gid('searchside').style.flexGrow = 1;
 	}
 
-	function startfunctions() {
+	async function startfunctions() {
 		try {
 			updateBattery();
 			navigator.getBattery().then(function (battery) {
@@ -2143,7 +2143,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 				say(cantusetext + issues + caniuse2 + `<br><b>Anyway, it is so interesting why you still use explorer.</b>`, "failed");
 				badlaunch = true;
 			}
+			if (await justConfirm("New version available."," Support for the current version (NovaOS adthoughtsglobal) will end in December 2025. You can still use this version until end of support by clicking NO. Click YES for changing the version. ", "success"))
+			location.replace("https://runnova.github.io/NovaOS/");
 		});
+		
 	}
 
 	startfunctions();
