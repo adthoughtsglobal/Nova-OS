@@ -1194,6 +1194,7 @@ eventBusWorker.listen({
 });
 async function initializeOS() {
 	if (badlaunch) { return }
+	location.replace("https://runnova.github.io/NovaOS/");
 	dbCache = null;
 	cryptoKeyCache = null;
 	await say(`
